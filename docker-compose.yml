@@ -1,0 +1,61 @@
+services:
+  server:
+    image: ghcr.io/ls1intum/thesis-track/thesis-track-server:latest
+    build:
+      context: ./server
+    container_name: thesis-track-server
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/thesis-track
+      - SPRING_DATASOURCE_USERNAME=thesis-track-postgres
+      - SPRING_DATASOURCE_PASSWORD=thesis-track-postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    ports:
+      - "8080:8080"
+
+  db:
+    image: 'postgres:15.2-alpine'
+    container_name: thesis-track-db
+    environment:
+      - POSTGRES_USER=thesis-track-postgres
+      - POSTGRES_PASSWORD=thesis-track-postgres
+      - POSTGRES_DB=thesis-track
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d thesis-track -U thesis-track-postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  client:
+    image: ghcr.io/ls1intum/thesis-track/thesis-track-client:latest
+    build:
+      context: ./client
+    container_name: thesis-track-client
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+
+  postfix:
+    image: ghcr.io/ls1admin/postfix:latest
+    container_name: thesis-track-postfix
+    restart: unless-stopped
+    volumes:
+      - ./postfix-config:/config # See https://github.com/ls1admin/postfix-container-tum-mailrelay/tree/main for details
+    hostname: thesis-track.ase.cit.tum.de
+    ports:
+      - "25:25"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0
+    container_name: thesis-track-keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    entrypoint: /opt/keycloak/bin/kc.sh start-dev
+    ports:
+      - "8081:8080"

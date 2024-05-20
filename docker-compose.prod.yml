@@ -1,0 +1,111 @@
+version: "3.8"
+
+services:
+  reverse-proxy:
+    image: traefik:v2.10
+    command:
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=thesis-track-network"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.letsencrypt.acme.email=valeryia.andraichuk@tum.de"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./letsencrypt:/letsencrypt
+    networks:
+      - thesis-track-network
+
+  server:
+    image: "ghcr.io/ls1intum/thesis-track/thesis-track-server:${SERVER_IMAGE_TAG}"
+    container_name: thesis-track-server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.server.rule=Host(`${SERVER_HOST}`) && PathPrefix(`/api`)"
+      - "traefik.http.services.server.loadbalancer.server.port=8080"
+      - "traefik.http.routers.server.entrypoints=websecure"
+      - "traefik.http.routers.server.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.api-ratelimit.ratelimit.average=300"
+      - "traefik.http.middlewares.api-ratelimit.ratelimit.burst=100"
+      - "traefik.http.routers.server.middlewares=api-ratelimit"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./thesis_uploads:/thesis_application_uploads
+      - ./mailing_templates:/mailing_templates
+    expose:
+      - "8080"
+    environment:
+      - TZ=Europe/Berlin
+      - ENVIRONMENT
+      - SPRING_DATASOURCE_URL
+      - SPRING_DATASOURCE_USERNAME
+      - SPRING_DATASOURCE_PASSWORD
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - CLIENT_HOST
+      - KEYCLOAK_CLIENT_SECRET
+      - KEYCLOAK_ISSUER_URI
+      - KEYCLOAK_JWK_SET_URI
+      - IOS_SENDER_MAIL
+      - CHAIR_MEMBER_RECIPIENTS
+    networks:
+      - thesis-track-network
+
+  db:
+    image: "postgres:15.2-alpine"
+    container_name: thesis-track-db
+    environment:
+      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${SPRING_DATASOURCE_USERNAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - thesis-track-network
+
+  client:
+    image: "ghcr.io/ls1intum/thesis-track/thesis-track-client:${CLIENT_IMAGE_TAG}"
+    container_name: thesis-track-client
+    environment:
+      - TZ=Europe/Berlin
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"
+      - "traefik.http.routers.client.entrypoints=websecure"
+      - "traefik.http.routers.client.tls.certresolver=letsencrypt"
+    expose:
+      - "80"
+    depends_on:
+      - server
+    networks:
+      - thesis-track-network
+
+  postfix:
+    image: ghcr.io/ls1admin/postfix:latest
+    container_name: thesis-track-postfix
+    restart: unless-stopped
+    volumes:
+      - ./thesis-track-config:/config
+    hostname: ${SERVER_HOST}
+    networks:
+      - thesis-track-network
+
+networks:
+  # Create network manually in advance: docker network create thesis-track-network
+  thesis-track-network:
+    name: thesis-track-network
+    external: true
