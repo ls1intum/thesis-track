@@ -39,7 +39,7 @@
     "file-loader": "^6.2.0",
     "i18n-iso-countries": "^7.11.2",
     "jwt-decode": "^4.0.0",
-    "keycloak-js": "^22.0.5",
+    "keycloak-js": "^24.0.4",
     "mantine-contextmenu": "^7.9.1",
     "mantine-datatable": "^7.9.1",
     "moment": "^2.30.1",
