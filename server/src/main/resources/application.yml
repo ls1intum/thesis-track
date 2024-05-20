@@ -1,0 +1,69 @@
+logging:
+  level:
+    liquibase: INFO
+
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/thesis-track}
+    username: ${SPRING_DATASOURCE_USERNAME:thesis-track-postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:thesis-track-postgres}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    change-log: db/changelog/db.changelog-master.xml
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    # show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    #   format_sql: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: thesis-track
+            client-secret: ${KEYCLOAK_CLIENT_SECRET:}
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/thesis-track}
+            user-name-attribute: preferred_username
+      resourceserver:
+        jwt:
+          jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8081/realms/thesis-track/protocol/openid-connect/certs}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/thesis-track}
+  mail:
+    host: postfix
+    # username:
+    # password:
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          starttls:
+            enable: true
+
+jwt:
+  auth:
+    converter:
+      resource-id: thesis-track-server
+      principal-attribute: preferred_username
+
+thesis-track:
+  environment: ${ENVIRONMENT:dev}
+  client:
+    host: ${CLIENT_HOST:localhost}
+  mail:
+    sender: ${IOS_SENDER_MAIL:test@ios.ase.cit.tum.de}
+    chair-member-recipients: ${CHAIR_MEMBER_RECIPIENTS:}
+  storage:
+    theses-application-uploads-location: thesis_application_uploads
+    mailing-templates-location: mailing_templates
+
+
+server:
+  servlet:
+    context-path: /api
