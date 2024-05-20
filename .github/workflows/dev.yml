@@ -1,0 +1,18 @@
+name: Build and Deploy to Dev
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-dev-container:
+    uses: ./.github/workflows/build_docker.yml
+    secrets: inherit
+  deploy-dev-container:
+    needs: build-dev-container
+    uses: ./.github/workflows/deploy_docker.yml
+    secrets: inherit
+    with:
+      environment: Dev
+      server_image_tag: "${{ needs.build-dev-container.outputs.server_image_tag }}"
+      client_image_tag: "${{ needs.build-dev-container.outputs.client_image_tag }}"

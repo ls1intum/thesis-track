@@ -1,0 +1,19 @@
+name: Build and Deploy to Prod
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-prod-container:
+    uses: ./.github/workflows/build_docker.yml
+    secrets: inherit
+  deploy-prod-container:
+    needs: build-prod-container
+    uses: ./.github/workflows/deploy_docker.yml
+    secrets: inherit
+    with:
+      environment: Production
+      server_image_tag: "latest"
+      client_image_tag: "latest"
+    
