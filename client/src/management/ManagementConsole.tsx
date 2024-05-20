@@ -30,7 +30,7 @@ export const ManagementConsole = (): JSX.Element => {
   const keycloak = new Keycloak({
     realm: keycloakRealmName,
     url: keycloakUrl,
-    clientId: 'prompt-client',
+    clientId: 'thesis-track-client',
   })
   const [keycloakValue, setKeycloakValue] = useState<Keycloak>(keycloak)
 
@@ -76,11 +76,11 @@ export const ManagementConsole = (): JSX.Element => {
               email: decodedJwt.email,
               username: decodedJwt.preferred_username,
               mgmtAccess:
-                keycloak.hasResourceRole('chair-member', 'prompt-server') ||
-                keycloak.hasResourceRole('prompt-admin', 'prompt-server'),
+                keycloak.hasResourceRole('chair-member', 'thesis-track-server') ||
+                keycloak.hasResourceRole('thesis-track-admin', 'thesis-track-server'),
             })
 
-            if (keycloak.hasResourceRole('chair-member', 'prompt-server')) {
+            if (keycloak.hasResourceRole('chair-member', 'thesis-track-server')) {
               addThesisAdvisor.mutate({
                 firstName: decodedJwt.given_name,
                 lastName: decodedJwt.family_name,

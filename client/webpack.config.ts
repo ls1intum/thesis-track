@@ -74,7 +74,7 @@ const config: Configuration = {
     new EnvironmentPlugin({
       REACT_APP_SERVER_HOST: 'http://localhost:8080',
       REACT_APP_KEYCLOAK_HOST: 'http://localhost:8081',
-      REACT_APP_KEYCLOAK_REALM_NAME: 'prompt',
+      REACT_APP_KEYCLOAK_REALM_NAME: 'thesis-track',
     }),
   ],
 }
