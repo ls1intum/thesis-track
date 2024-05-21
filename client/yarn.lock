@@ -770,12 +770,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tiptap/extension-superscript@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "@tiptap/extension-superscript@npm:2.3.0"
+"@tiptap/extension-superscript@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@tiptap/extension-superscript@npm:2.4.0"
   peerDependencies:
     "@tiptap/core": ^2.0.0
-  checksum: 10c0/14bc4695aab4b327f6cdb88668c9816768da6935b9f2eda9ac9cdb3ff6bce462b9c61c4e75f02a4f929d9f0fb5fffb97c61b053c0421388ddc4508b514462258
+  checksum: 10c0/90dc0189475b69ea594b31ff12471ab02462b98ce2f9fadae95367067997910ea90cdf3c479b95c40cc434b8c494812e11a5d6e92e3ff6b00108a9b7dc45095e
   languageName: node
   linkType: hard
 
@@ -2512,7 +2512,7 @@ __metadata:
     "@tiptap/extension-highlight": "npm:^2.3.0"
     "@tiptap/extension-link": "npm:^2.3.2"
     "@tiptap/extension-subscript": "npm:^2.4.0"
-    "@tiptap/extension-superscript": "npm:^2.3.0"
+    "@tiptap/extension-superscript": "npm:^2.4.0"
     "@tiptap/extension-text-align": "npm:^2.4.0"
     "@tiptap/extension-underline": "npm:^2.3.2"
     "@tiptap/pm": "npm:^2.4.0"
