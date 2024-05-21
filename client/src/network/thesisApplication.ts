@@ -8,6 +8,7 @@ import { Pageable } from '../interface/pageable'
 export const getThesisApplications = async (
   page: number,
   limit: number,
+  searchQuery?: string,
   sortBy?: string,
   sortOrder?: 'asc' | 'desc',
 ): Promise<Pageable<ThesisApplication>> => {
@@ -17,6 +18,7 @@ export const getThesisApplications = async (
         params: {
           page,
           limit,
+          searchQuery,
           sortBy,
           sortOrder,
         },

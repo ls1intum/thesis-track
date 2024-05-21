@@ -50,6 +50,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
       Query.THESIS_APPLICATION,
       tablePage,
       tablePageSize,
+      searchQuery,
       sortStatus.columnAccessor,
       sortStatus.direction,
     ],
@@ -57,6 +58,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
       getThesisApplications(
         tablePage - 1,
         tablePageSize,
+        searchQuery,
         sortStatus.columnAccessor,
         sortStatus.direction,
       ),
@@ -74,13 +76,6 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
 
   useEffect(() => {
     const filteredSortedData = fetchedThesisApplications?.content
-      .filter(({ student }) => {
-        return `${student.firstName ?? ''} ${student.lastName ?? ''} ${student.tumId ?? ''} ${
-          student.matriculationNumber ?? ''
-        }`
-          .toLowerCase()
-          .includes(searchQuery.toLowerCase())
-      })
       .filter(
         (application) =>
           filters.status.length === 0 || filters.status.includes(application.applicationStatus),
