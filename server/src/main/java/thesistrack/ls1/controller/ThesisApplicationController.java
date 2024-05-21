@@ -4,9 +4,12 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.criteria.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,6 +25,7 @@ import thesistrack.ls1.service.ThesisApplicationService;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,8 +50,11 @@ public class ThesisApplicationController {
 
     @GetMapping
     @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
-    public ResponseEntity<List<ThesisApplication>> getAll() {
-        return ResponseEntity.ok(thesisApplicationService.getAll());
+    public ResponseEntity<Page<ThesisApplication>> getAll(@RequestParam Integer page,
+                                                          @RequestParam final Integer limit,
+                                                          @RequestParam(defaultValue = "createdAt", required = false) final String sortBy,
+                                                          @RequestParam(defaultValue = "desc", required = false) final String sortOrder) {
+        return ResponseEntity.ok(thesisApplicationService.getAll(page, limit, sortBy, sortOrder));
     }
 
     @GetMapping("/not-assessed")
@@ -140,5 +147,15 @@ public class ThesisApplicationController {
             @PathVariable final UUID thesisApplicationId,
             @RequestParam(required = false, defaultValue = "true") final boolean notifyStudent) {
         return ResponseEntity.ok(thesisApplicationService.reject(thesisApplicationId, notifyStudent));
+    }
+
+    private Sort.Direction getSortDirection(String direction) {
+        if (direction.equals("asc")) {
+            return Sort.Direction.ASC;
+        } else if (direction.equals("desc")) {
+            return Sort.Direction.DESC;
+        }
+
+        return Sort.Direction.ASC;
     }
 }
