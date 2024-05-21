@@ -35,9 +35,9 @@ import { ApplicationSuccessfulSubmission } from '../ApplicationSubmission/Applic
 import { useEffect, useState } from 'react'
 import { FormTextField } from './components/FormTextField'
 import { FormSelectField } from './components/FormSelectField'
-import { useThesisApplicationStore } from '../../state/zustand/useThesisApplicationStore'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  getThesisAdvisors,
   getThesisApplicationBachelorReportFile,
   getThesisApplicationCvFile,
   getThesisApplicationExaminationFile,
@@ -47,7 +47,12 @@ import {
   postThesisApplicationRejection,
   postThesisApplicationThesisAdvisorAssignment,
 } from '../../network/thesisApplication'
-import { FocusTopic, ResearchArea, ThesisApplication } from '../../interface/thesisApplication'
+import {
+  FocusTopic,
+  ResearchArea,
+  ThesisAdvisor,
+  ThesisApplication,
+} from '../../interface/thesisApplication'
 import { Query } from '../../state/query'
 
 countries.registerLocale(enLocale)
@@ -76,7 +81,6 @@ export const ThesisApplicationForm = ({
 }: ThesisApplicationFormProps): JSX.Element => {
   const theme = useMantineTheme()
   const queryClient = useQueryClient()
-  const { thesisAdvisors } = useThesisApplicationStore()
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
   const [applicationSuccessfullySubmitted, setApplicationSuccessfullySubmitted] = useState(false)
   const [notifyStudent, setNotifyStudent] = useState(true)
@@ -220,6 +224,11 @@ export const ThesisApplicationForm = ({
   const [thesisAdvisorId, setThesisAdvisorId] = useState<string | null>(
     application?.thesisAdvisor?.id ?? null,
   )
+
+  const { data: fetchedThesisAdvisors } = useQuery<ThesisAdvisor[]>({
+    queryKey: [Query.THESIS_ADVISOR],
+    queryFn: () => getThesisAdvisors(),
+  })
 
   const assessThesisApplication = useMutation({
     mutationFn: () =>
@@ -853,7 +862,7 @@ export const ThesisApplicationForm = ({
             <>
               <Select
                 label='Thesis Advisor'
-                data={thesisAdvisors.map((ta) => {
+                data={fetchedThesisAdvisors?.map((ta) => {
                   return {
                     value: ta.id ?? '',
                     label: `${ta.firstName} ${ta.lastName} (${ta.tumId})`,

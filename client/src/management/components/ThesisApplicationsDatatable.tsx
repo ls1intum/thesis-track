@@ -1,22 +1,21 @@
 import { useEffect, useState } from 'react'
-import sortBy from 'lodash/sortBy'
 import { ActionIcon, Badge, Group, Modal, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { IconExternalLink, IconEyeEdit, IconSearch } from '@tabler/icons-react'
 import moment from 'moment'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { useThesisApplicationStore } from '../../state/zustand/useThesisApplicationStore'
 import { useQuery } from '@tanstack/react-query'
 import { Query } from '../../state/query'
-import { getThesisAdvisors, getThesisApplications } from '../../network/thesisApplication'
-import { ThesisAdvisor, ThesisApplication } from '../../interface/thesisApplication'
+import { getThesisApplications } from '../../network/thesisApplication'
+import { ThesisApplication } from '../../interface/thesisApplication'
 import { ApplicationStatus } from '../../interface/application'
 import { Gender } from '../../interface/student'
 import {
   ApplicationFormAccessMode,
   ThesisApplicationForm,
 } from '../../student/form/ThesisApplicationForm'
+import { Pageable } from '../../interface/pageable'
 
 interface Filters {
   male: boolean
@@ -27,12 +26,9 @@ interface Filters {
 export const ThesisApplicationsDatatable = (): JSX.Element => {
   const { applicationId } = useParams()
   const navigate = useNavigate()
-  const { thesisApplications, setThesisApplications, setThesisAdvisors } =
-    useThesisApplicationStore()
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
   const [searchQuery, setSearchQuery] = useState('')
   const [tablePage, setTablePage] = useState(1)
-  const [totalDisplayedRecords, setTotalDisplayedRecords] = useState(thesisApplications.length)
   const [tablePageSize, setTablePageSize] = useState(20)
   const [tableRecords, setTableRecords] = useState<ThesisApplication[]>([])
   const [selectedTableRecords, setSelectedTableRecords] = useState<ThesisApplication[]>([])
@@ -49,87 +45,68 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
     status: [],
   })
 
-  const { data: fetchedThesisApplications, isLoading } = useQuery<ThesisApplication[]>({
-    queryKey: [Query.THESIS_APPLICATION],
-    queryFn: () => getThesisApplications(),
+  const { data: fetchedThesisApplications, isLoading } = useQuery<Pageable<ThesisApplication>>({
+    queryKey: [
+      Query.THESIS_APPLICATION,
+      tablePage,
+      tablePageSize,
+      sortStatus.columnAccessor,
+      sortStatus.direction,
+    ],
+    queryFn: () =>
+      getThesisApplications(
+        tablePage - 1,
+        tablePageSize,
+        sortStatus.columnAccessor,
+        sortStatus.direction,
+      ),
   })
-
-  useEffect(() => {
-    if (fetchedThesisApplications) {
-      setThesisApplications(fetchedThesisApplications)
-    }
-  }, [fetchedThesisApplications, setThesisApplications])
-
-  const { data: fetchedThesisAdvisors } = useQuery<ThesisAdvisor[]>({
-    queryKey: [Query.THESIS_ADVISOR],
-    queryFn: () => getThesisAdvisors(),
-  })
-
-  useEffect(() => {
-    if (fetchedThesisAdvisors) {
-      setThesisAdvisors(fetchedThesisAdvisors)
-    }
-  }, [fetchedThesisAdvisors, setThesisAdvisors])
 
   useEffect(() => {
     if (applicationId) {
-      setSelectedApplicationToView(thesisApplications.find((a) => a.id === applicationId))
+      setSelectedApplicationToView(
+        fetchedThesisApplications?.content.find((a) => a.id === applicationId),
+      )
     } else {
       setSelectedApplicationToView(undefined)
     }
-  }, [thesisApplications, applicationId])
+  }, [fetchedThesisApplications, applicationId])
 
   useEffect(() => {
-    const from = (tablePage - 1) * tablePageSize
-    const to = from + tablePageSize
+    const filteredSortedData = fetchedThesisApplications?.content
+      .filter(({ student }) => {
+        return `${student.firstName ?? ''} ${student.lastName ?? ''} ${student.tumId ?? ''} ${
+          student.matriculationNumber ?? ''
+        }`
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase())
+      })
+      .filter(
+        (application) =>
+          filters.status.length === 0 || filters.status.includes(application.applicationStatus),
+      )
+      .filter((application) =>
+        filters.female && application.student.gender
+          ? Gender[application.student.gender] === Gender.FEMALE
+          : true,
+      )
+      .filter((application) =>
+        filters.male && application.student.gender
+          ? Gender[application.student.gender] === Gender.MALE
+          : true,
+      )
 
-    const filteredSortedData = sortBy(
-      thesisApplications
-        .filter(({ student }) => {
-          return `${student.firstName ?? ''} ${student.lastName ?? ''} ${student.tumId ?? ''} ${
-            student.matriculationNumber ?? ''
-          }`
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        })
-        .filter(
-          (application) =>
-            filters.status.length === 0 || filters.status.includes(application.applicationStatus),
-        )
-        .filter((application) =>
-          filters.female && application.student.gender
-            ? Gender[application.student.gender] === Gender.FEMALE
-            : true,
-        )
-        .filter((application) =>
-          filters.male && application.student.gender
-            ? Gender[application.student.gender] === Gender.MALE
-            : true,
-        ),
-      sortStatus.columnAccessor === 'fullName'
-        ? ['student.firstName', 'student.lastName']
-        : sortStatus.columnAccessor,
-    )
-
-    setTotalDisplayedRecords(filteredSortedData.length)
-
-    setTableRecords(
-      (sortStatus.direction === 'desc' ? filteredSortedData.reverse() : filteredSortedData).slice(
-        from,
-        to,
-      ),
-    )
-    if (from > filteredSortedData.length) {
-      setTablePage(1)
-    }
+    setTableRecords(filteredSortedData ?? [])
 
     if (selectedApplicationToView) {
       setSelectedApplicationToView(
-        thesisApplications.filter((ca) => ca.id === selectedApplicationToView.id).at(0),
+        fetchedThesisApplications?.content
+          .filter((ca) => ca.id === selectedApplicationToView.id)
+          .at(0),
       )
     }
   }, [
-    thesisApplications,
+    fetchedThesisApplications,
     tablePageSize,
     tablePage,
     searchQuery,
@@ -174,7 +151,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
         verticalSpacing='md'
         striped
         highlightOnHover
-        totalRecords={totalDisplayedRecords}
+        totalRecords={fetchedThesisApplications?.totalElements ?? 0}
         recordsPerPage={tablePageSize}
         page={tablePage}
         onPageChange={(page) => {
@@ -185,7 +162,10 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
           setTablePageSize(pageSize)
         }}
         sortStatus={sortStatus}
-        onSortStatusChange={setSortStatus}
+        onSortStatusChange={(status) => {
+          setTablePage(1)
+          setSortStatus(status)
+        }}
         bodyRef={bodyRef}
         records={tableRecords}
         selectedRecords={selectedTableRecords}
@@ -254,7 +234,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
             sortable: true,
           },
           {
-            accessor: 'fullName',
+            accessor: 'student.firstName',
             title: 'Full name',
             sortable: true,
             render: (application) =>

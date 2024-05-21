@@ -3,10 +3,25 @@ import { axiosInstance, notAuthenticatedAxiosInstance } from './configService'
 import { ThesisAdvisor, ThesisApplication } from '../interface/thesisApplication'
 import { AxiosError } from 'axios'
 import { ApplicationStatus } from '../interface/application'
+import { Pageable } from '../interface/pageable'
 
-export const getThesisApplications = async (): Promise<ThesisApplication[]> => {
+export const getThesisApplications = async (
+  page: number,
+  limit: number,
+  sortBy?: string,
+  sortOrder?: 'asc' | 'desc',
+): Promise<Pageable<ThesisApplication>> => {
   try {
-    return (await axiosInstance.get(`/api/thesis-applications`)).data
+    return (
+      await axiosInstance.get(`/api/thesis-applications`, {
+        params: {
+          page,
+          limit,
+          sortBy,
+          sortOrder,
+        },
+      })
+    ).data
   } catch (err) {
     notifications.show({
       color: 'red',
@@ -14,7 +29,17 @@ export const getThesisApplications = async (): Promise<ThesisApplication[]> => {
       title: 'Error',
       message: `Could not fetch thesis applications.`,
     })
-    return []
+    return {
+      content: [],
+      totalPages: 0,
+      totalElements: 0,
+      number: 0,
+      size: 0,
+      empty: true,
+      first: true,
+      last: true,
+      numberOfElements: 0,
+    }
   }
 }
 
