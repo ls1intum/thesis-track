@@ -52,9 +52,10 @@ public class ThesisApplicationController {
     @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
     public ResponseEntity<Page<ThesisApplication>> getAll(@RequestParam Integer page,
                                                           @RequestParam final Integer limit,
+                                                          @RequestParam(required = false) final String searchQuery,
                                                           @RequestParam(defaultValue = "createdAt", required = false) final String sortBy,
                                                           @RequestParam(defaultValue = "desc", required = false) final String sortOrder) {
-        return ResponseEntity.ok(thesisApplicationService.getAll(page, limit, sortBy, sortOrder));
+        return ResponseEntity.ok(thesisApplicationService.getAll(page, limit, searchQuery, sortBy, sortOrder));
     }
 
     @GetMapping("/not-assessed")

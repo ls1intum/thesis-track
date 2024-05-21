@@ -51,9 +51,10 @@ public class ThesisApplicationService {
         this.rootLocation = Paths.get(thesesApplicationsUploadsLocation);
     }
 
-    public Page<ThesisApplication> getAll(final int page, final int limit, final String sortBy, final String sortOrder) {
+    public Page<ThesisApplication> getAll(final int page, final int limit, final String searchString, final String sortBy, final String sortOrder) {
         final Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
-        return thesisApplicationRepository.findAll(PageRequest.of(page, limit, Sort.by(order)));
+        return thesisApplicationRepository
+                .searchThesisApplications(searchString.toLowerCase(), PageRequest.of(page, limit, Sort.by(order)));
     }
 
     public List<ThesisApplication> getAllNotAssessed() {
