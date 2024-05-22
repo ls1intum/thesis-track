@@ -13,7 +13,7 @@
     "@formkit/auto-animate": "^0.8.2",
     "@mantine/core": "^7.9.2",
     "@mantine/dates": "^7.9.1",
-    "@mantine/dropzone": "^7.9.1",
+    "@mantine/dropzone": "^7.9.2",
     "@mantine/form": "^7.9.1",
     "@mantine/hooks": "^7.9.1",
     "@mantine/notifications": "^7.9.1",
