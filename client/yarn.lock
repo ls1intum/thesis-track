@@ -281,18 +281,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/dates@npm:^7.9.1":
-  version: 7.9.1
-  resolution: "@mantine/dates@npm:7.9.1"
+"@mantine/dates@npm:^7.9.2":
+  version: 7.9.2
+  resolution: "@mantine/dates@npm:7.9.2"
   dependencies:
     clsx: "npm:2.1.0"
   peerDependencies:
-    "@mantine/core": 7.9.1
-    "@mantine/hooks": 7.9.1
+    "@mantine/core": 7.9.2
+    "@mantine/hooks": 7.9.2
     dayjs: ">=1.0.0"
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/b84cc32ec79c21337f618a1888499cc33960917914bf69f2f114b506cb700fa54abe718127825f8e4c452e62abf6ee7d6f8d4b5e3687621b9e88bbb70d6b0cf4
+  checksum: 10c0/16c559d8643c4b3a1f1b98e7d722df84b4dabf42fb9a230fc25a5fbd10599348d3ced12e3bc11de6c916d95fe9b1119e42a13ed75f406c0d437beb2abc1bbe42
   languageName: node
   linkType: hard
 
@@ -2498,7 +2498,7 @@ __metadata:
   dependencies:
     "@formkit/auto-animate": "npm:^0.8.2"
     "@mantine/core": "npm:^7.9.2"
-    "@mantine/dates": "npm:^7.9.1"
+    "@mantine/dates": "npm:^7.9.2"
     "@mantine/dropzone": "npm:^7.9.1"
     "@mantine/form": "npm:^7.9.1"
     "@mantine/hooks": "npm:^7.9.1"
