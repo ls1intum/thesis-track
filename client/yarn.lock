@@ -322,12 +322,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/hooks@npm:^7.9.1":
-  version: 7.9.1
-  resolution: "@mantine/hooks@npm:7.9.1"
+"@mantine/hooks@npm:^7.9.2":
+  version: 7.9.2
+  resolution: "@mantine/hooks@npm:7.9.2"
   peerDependencies:
     react: ^18.2.0
-  checksum: 10c0/048614a18836163000eee23a5993be6ece236ec42ca644eeea3890137de62b9b4a50270abfd55619388fe92f191bece3fb549c13edc73bb43388eb84c0b6db1f
+  checksum: 10c0/e84e3ca8513c93f2759be7afec01d2e03295ddc665922d8c0972e6b39257e5d49815dfd0eab577e167534c599c8703ce3668c430fe94aed36f2f85474484d29d
   languageName: node
   linkType: hard
 
@@ -2501,7 +2501,7 @@ __metadata:
     "@mantine/dates": "npm:^7.9.1"
     "@mantine/dropzone": "npm:^7.9.1"
     "@mantine/form": "npm:^7.9.1"
-    "@mantine/hooks": "npm:^7.9.1"
+    "@mantine/hooks": "npm:^7.9.2"
     "@mantine/notifications": "npm:^7.9.1"
     "@mantine/tiptap": "npm:^7.9.2"
     "@tabler/icons-react": "npm:^3.3.0"
