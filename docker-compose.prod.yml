@@ -99,7 +99,7 @@ services:
     container_name: thesis-track-postfix
     restart: unless-stopped
     volumes:
-      - ./thesis-track-config:/config
+      - ./postfix-config:/config
     hostname: ${SERVER_HOST}
     networks:
       - thesis-track-network
