@@ -92,13 +92,6 @@ jobs:
           proxy_port: ${{ vars.DEPLOYMENT_GATEWAY_PORT }}
           script: |
             touch .env.prod 
-            echo "ENVIRONMENT=${{ vars.ENVIRONMENT }}" > .env.prod
-            echo "ATLASSIAN_USERNAME=${{ vars.ATLASSIAN_USERNAME }}" > .env.prod
-            echo "ATLASSIAN_PASSWORD=${{ secrets.ATLASSIAN_PASSWORD }}" >> .env.prod
-            echo "JIRA_URL=${{ vars.JIRA_URL }}" >> .env.prod
-            echo "BITBUCKET_URL=${{ vars.BITBUCKET_URL }}" >> .env.prod
-            echo "BAMBOO_URL=${{ vars.BAMBOO_URL }}" >> .env.prod
-            echo "CONFLUENCE_URL=${{ vars.CONFLUENCE_URL }}" >> .env.prod
 
             echo "SPRING_DATASOURCE_URL=${{ vars.SPRING_DATASOURCE_URL }}" >> .env.prod
             echo "SPRING_DATASOURCE_USERNAME=${{ vars.SPRING_DATASOURCE_USERNAME }}" >> .env.prod
