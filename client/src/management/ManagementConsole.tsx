@@ -3,15 +3,32 @@ import { axiosInstance, keycloakRealmName, keycloakUrl } from '../network/config
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import { ThesisApplicationsDatatable } from './components/ThesisApplicationsDatatable'
-import { Affix, Button, Center, Transition, rem } from '@mantine/core'
+import { Affix, Button, Card, Center, Loader, Text, Title, Transition, rem } from '@mantine/core'
 import { IconArrowUp } from '@tabler/icons-react'
 import { useWindowScroll } from '@mantine/hooks'
-import * as styles from './ThesisApplicationsManagementConsole.module.scss'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putThesisAdvisor } from '../network/thesisApplication'
 import { ThesisAdvisor } from '../interface/thesisApplication'
 import { Query } from '../state/query'
 import { useAuthenticationStore } from '../state/zustand/useAuthenticationStore'
+
+const AccessRestricted = (): JSX.Element => {
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+      }}
+    >
+      <Card withBorder p='xl'>
+        <Title order={5}>Restricted acccess!</Title>
+        <Text c='dimmed'>You do not have the necessary permissions to access this resource..</Text>
+      </Card>
+    </div>
+  )
+}
 
 export const ManagementConsole = (): JSX.Element => {
   const queryClient = useQueryClient()
@@ -77,7 +94,7 @@ export const ManagementConsole = (): JSX.Element => {
               username: decodedJwt.preferred_username,
               mgmtAccess:
                 keycloak.hasResourceRole('chair-member', 'thesis-track-server') ||
-                keycloak.hasResourceRole('thesis-track-admin', 'thesis-track-server'),
+                keycloak.hasResourceRole('admin', 'thesis-track-server'),
             })
 
             if (keycloak.hasResourceRole('chair-member', 'thesis-track-server')) {
@@ -108,7 +125,7 @@ export const ManagementConsole = (): JSX.Element => {
 
   return (
     <div style={{ padding: '0 0 5vh 0' }}>
-      {authenticated && user && user.mgmtAccess && (
+      {authenticated && user && user.mgmtAccess ? (
         <Center>
           <ThesisApplicationsDatatable />
           <Affix position={{ bottom: 20, right: 20 }}>
@@ -125,6 +142,19 @@ export const ManagementConsole = (): JSX.Element => {
             </Transition>
           </Affix>
         </Center>
+      ) : (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignContent: 'center',
+            height: '100vh',
+          }}
+        >
+          <Center>
+            {authenticated && user && !user.mgmtAccess ? <AccessRestricted /> : <Loader />}
+          </Center>
+        </div>
       )}
     </div>
   )

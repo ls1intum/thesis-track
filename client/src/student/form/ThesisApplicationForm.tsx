@@ -228,6 +228,7 @@ export const ThesisApplicationForm = ({
   const { data: fetchedThesisAdvisors } = useQuery<ThesisAdvisor[]>({
     queryKey: [Query.THESIS_ADVISOR],
     queryFn: () => getThesisAdvisors(),
+    enabled: accessMode === ApplicationFormAccessMode.INSTRUCTOR,
   })
 
   const assessThesisApplication = useMutation({
