@@ -50,6 +50,12 @@ For local development start a database container by executing the following comm
 docker compose up db -d
 ```
 
+### Liquibase
+
+Project employs liquibase technology for database migrations. Upon a database schema change, follow the steps:
+1. Create a new changeset by adding a new script in the [changelog folder](/src/main/resources/db/changelog/changes)
+2. Include the new changeset script into the [master changelog file](/src/main/resources/db/changelog/db.changelog-master.xml)
+
 ## Postfix
 
 Notice: local development currently does not support mailing functionality, i.e. mail send attempts will fail. However, in spite of the errors the initial requests are executed normally and completely, thus, not limiting local development of other features.
