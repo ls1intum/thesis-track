@@ -73,7 +73,7 @@
     "eslint-plugin-react-hooks": "^4.6.2",
     "html-webpack-plugin": "^5.6.0",
     "prettier": "^3.2.5",
-    "sass": "^1.75.0",
+    "sass": "^1.77.3",
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
