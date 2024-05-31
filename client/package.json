@@ -23,7 +23,7 @@
     "@tanstack/react-query-devtools": "^5.37.1",
     "@tiptap/core": "^2.4.0",
     "@tiptap/extension-highlight": "^2.3.0",
-    "@tiptap/extension-link": "^2.3.2",
+    "@tiptap/extension-link": "^2.4.0",
     "@tiptap/extension-subscript": "^2.4.0",
     "@tiptap/extension-superscript": "^2.4.0",
     "@tiptap/extension-text-align": "^2.4.0",
