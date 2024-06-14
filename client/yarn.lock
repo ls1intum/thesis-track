@@ -355,17 +355,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mantine/tiptap@npm:^7.10.0":
-  version: 7.10.0
-  resolution: "@mantine/tiptap@npm:7.10.0"
+"@mantine/tiptap@npm:^7.10.2":
+  version: 7.10.2
+  resolution: "@mantine/tiptap@npm:7.10.2"
   peerDependencies:
-    "@mantine/core": 7.10.0
-    "@mantine/hooks": 7.10.0
+    "@mantine/core": 7.10.2
+    "@mantine/hooks": 7.10.2
     "@tiptap/extension-link": ">=2.1.12"
     "@tiptap/react": ">=2.1.12"
     react: ^18.2.0
     react-dom: ^18.2.0
-  checksum: 10c0/eaac30a322712fd62216188c0380a96350cdbf61d3dfd9aea6f7bcdc4763568b7c468d5eaa42b599316a8d012c63fd6c213404cd485bc9b400a94ef172581fb0
+  checksum: 10c0/3b6de7045b446faa50db129ee1e1f1f796e07bc4fb08af4d7a2e2dc8ea2d72e272bdd61b894df0ed1de74adef9f3fdc91876096ded727a72eb8302746cc76708
   languageName: node
   linkType: hard
 
@@ -2503,7 +2503,7 @@ __metadata:
     "@mantine/form": "npm:^7.10.0"
     "@mantine/hooks": "npm:^7.10.0"
     "@mantine/notifications": "npm:^7.10.0"
-    "@mantine/tiptap": "npm:^7.10.0"
+    "@mantine/tiptap": "npm:^7.10.2"
     "@tabler/icons-react": "npm:^3.5.0"
     "@tanstack/eslint-plugin-query": "npm:^5.35.6"
     "@tanstack/react-query": "npm:^5.37.1"
