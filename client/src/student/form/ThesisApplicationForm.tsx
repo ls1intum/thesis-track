@@ -227,6 +227,7 @@ export const ThesisApplicationForm = ({
 
   const { data: fetchedThesisAdvisors } = useQuery<ThesisAdvisor[]>({
     queryKey: [Query.THESIS_ADVISOR],
+    enabled: accessMode === ApplicationFormAccessMode.INSTRUCTOR,
     queryFn: () => getThesisAdvisors(),
   })
 
