@@ -12,6 +12,8 @@ services:
       - SPRING_DATASOURCE_USERNAME=thesis-track-postgres
       - SPRING_DATASOURCE_PASSWORD=thesis-track-postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/thesis-track
+      - KEYCLOAK_JWK_SET_URI=http://keycloak:8080/realms/thesis-track/protocol/openid-connect/certs
     ports:
       - "8080:8080"
 
