@@ -1,4 +1,4 @@
-import { Student, StudyDegree, StudyProgram } from '../interface/student'
+import { Student, StudyDegree, StudyProgram } from './/student'
 import { ApplicationStatus } from './application'
 
 export enum ResearchArea {

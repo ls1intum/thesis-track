@@ -1,19 +1,18 @@
 import Keycloak from 'keycloak-js'
-import { axiosInstance, keycloakRealmName, keycloakUrl } from '../network/configService'
+import { axiosInstance, keycloakRealmName, keycloakUrl } from '../../network/configService'
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
-import { ThesisApplicationsDatatable } from './components/ThesisApplicationsDatatable'
+import ThesisApplicationsDatatable from './components/ThesisApplicationsDatatable/ThesisApplicationsDatatable'
 import { Affix, Button, Center, Transition, rem } from '@mantine/core'
 import { IconArrowUp } from '@tabler/icons-react'
 import { useWindowScroll } from '@mantine/hooks'
-import * as styles from './ThesisApplicationsManagementConsole.module.scss'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { putThesisAdvisor } from '../network/thesisApplication'
-import { ThesisAdvisor } from '../interface/thesisApplication'
-import { Query } from '../state/query'
-import { useAuthenticationStore } from '../state/zustand/useAuthenticationStore'
+import { putThesisAdvisor } from '../../network/thesisApplication'
+import { ThesisAdvisor } from '../../interfaces/thesisApplication'
+import { Query } from '../../hooks/query'
+import { useAuthenticationStore } from '../../hooks/authentication'
 
-export const ManagementConsole = (): JSX.Element => {
+const ThesisManagementConsole = (): JSX.Element => {
   const queryClient = useQueryClient()
   const [scroll, scrollTo] = useWindowScroll()
   const [authenticated, setAuthenticated] = useState(false)
@@ -26,7 +25,6 @@ export const ManagementConsole = (): JSX.Element => {
     },
   })
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const keycloak = new Keycloak({
     realm: keycloakRealmName,
     url: keycloakUrl,
@@ -129,3 +127,5 @@ export const ManagementConsole = (): JSX.Element => {
     </div>
   )
 }
+
+export default ThesisManagementConsole

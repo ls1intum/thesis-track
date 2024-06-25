@@ -1,8 +1,8 @@
 import { Center, Group, Text, ThemeIcon } from '@mantine/core'
 import { IconMoodSadDizzy } from '@tabler/icons-react'
-import * as styles from './Fallback.module.scss'
+import * as styles from './NotFound.module.scss'
 
-export const Fallback = (): JSX.Element => {
+const NotFound = (): JSX.Element => {
   return (
     <Center className={styles.root}>
       <Group>
@@ -16,3 +16,5 @@ export const Fallback = (): JSX.Element => {
     </Center>
   )
 }
+
+export default NotFound

@@ -6,16 +6,16 @@ import { IconExternalLink, IconEyeEdit, IconSearch } from '@tabler/icons-react'
 import moment from 'moment'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Query } from '../../state/query'
-import { getThesisApplications } from '../../network/thesisApplication'
-import { ThesisApplication } from '../../interface/thesisApplication'
-import { ApplicationStatus } from '../../interface/application'
-import { Gender } from '../../interface/student'
+import { Query } from '../../../../hooks/query'
+import { getThesisApplications } from '../../../../network/thesisApplication'
+import { ThesisApplication } from '../../../../interfaces/thesisApplication'
+import { ApplicationStatus } from '../../../../interfaces/application'
+import { Gender } from '../../../../interfaces/student'
 import {
   ApplicationFormAccessMode,
   ThesisApplicationForm,
-} from '../../student/form/ThesisApplicationForm'
-import { Pageable } from '../../interface/pageable'
+} from '../../../ThesisApplication/ThesisApplicationForm'
+import { Pageable } from '../../../../interfaces/pageable'
 
 interface Filters {
   male: boolean
@@ -23,7 +23,7 @@ interface Filters {
   status: string[]
 }
 
-export const ThesisApplicationsDatatable = (): JSX.Element => {
+const ThesisApplicationsDatatable = (): JSX.Element => {
   const { applicationId } = useParams()
   const navigate = useNavigate()
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -284,3 +284,5 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
     </Stack>
   )
 }
+
+export default ThesisApplicationsDatatable

@@ -1,9 +1,9 @@
 import { notifications } from '@mantine/notifications'
 import { axiosInstance, notAuthenticatedAxiosInstance } from './configService'
-import { ThesisAdvisor, ThesisApplication } from '../interface/thesisApplication'
+import { ThesisAdvisor, ThesisApplication } from '../interfaces/thesisApplication'
 import { AxiosError } from 'axios'
-import { ApplicationStatus } from '../interface/application'
-import { Pageable } from '../interface/pageable'
+import { ApplicationStatus } from '../interfaces/application'
+import { Pageable } from '../interfaces/pageable'
 
 export const getThesisApplications = async (
   page: number,

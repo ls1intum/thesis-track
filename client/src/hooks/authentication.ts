@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { User } from '../../interface/authentication'
+import { User } from '../interfaces/authentication'
 
 interface AuthenticationStoreState {
   user?: User
