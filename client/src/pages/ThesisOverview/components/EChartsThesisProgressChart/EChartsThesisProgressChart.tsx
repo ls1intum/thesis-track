@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import ReactEChartsCore from 'echarts-for-react'
 import * as echarts from 'echarts'
-import { IThesisProgressChartDataElement, ThesisStateColor } from '../../types/chart'
+import { ThesisStateColor } from '../../types/chart'
 import { EChartsOption, ERectangle } from 'echarts'
 import {
   CustomSeriesRenderItemAPI,
@@ -9,22 +9,28 @@ import {
   CustomSeriesRenderItemReturn,
 } from 'echarts/types/dist/echarts'
 import RenderItemParams = echarts.EChartOption.SeriesCustom.RenderItemParams
-
-const CHART_HEIGHT = 700
+import { useThesisOverviewChart } from '../ThesisOverviewChartProvider/hooks'
+import { Skeleton } from '@mantine/core'
 
 interface IEChartsThesisProgressChartProps {
-  data: IThesisProgressChartDataElement[]
-  advisors: string[]
+  width: string
+  height: number
 }
 
 const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => {
-  const { data: chartData } = props
+  const { width, height } = props
+
+  const { thesisData } = useThesisOverviewChart()
 
   const currentTime = useMemo(() => {
     return Date.now()
   }, [])
 
-  const options = useMemo<EChartsOption>(() => {
+  const options = useMemo<EChartsOption | undefined>(() => {
+    if (!thesisData) {
+      return undefined
+    }
+
     function clipRectByRect(params: RenderItemParams, rect: ERectangle) {
       if (!params.coordSys) {
         throw new Error('Rectangle does not exist on params')
@@ -38,10 +44,11 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
       })
     }
 
-    const chartPages = Math.ceil((chartData.length * 35) / CHART_HEIGHT)
+    const chartPages = Math.ceil((thesisData.length * 35) / height)
 
     return {
       tooltip: {},
+      backgroundColor: 'transparent',
       dataZoom: [
         {
           type: 'slider',
@@ -126,7 +133,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
             api: CustomSeriesRenderItemAPI,
           ): CustomSeriesRenderItemReturn => {
             const dataIndex = params.dataIndex
-            const item = chartData[dataIndex]
+            const item = thesisData[dataIndex]
 
             const startTime = item.started_at
             const endTime = item.ended_at || currentTime
@@ -171,7 +178,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
             'Topic',
             'State',
           ],
-          data: chartData.map((element, index) => [
+          data: thesisData.map((element, index) => [
             index,
             element.student,
             element.started_at - 3600 * 24 * 1000,
@@ -183,14 +190,18 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
         },
       ],
     }
-  }, [chartData, currentTime])
+  }, [thesisData, currentTime, height])
+
+  if (!options) {
+    return <Skeleton style={{ height: height + 'px', width }} />
+  }
 
   return (
     <ReactEChartsCore
       echarts={echarts}
       option={options}
       theme='dark'
-      style={{ height: CHART_HEIGHT + 'px', width: '100%' }}
+      style={{ height: height + 'px', width }}
     />
   )
 }

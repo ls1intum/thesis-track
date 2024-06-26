@@ -1,13 +1,20 @@
 import React from 'react'
-import { IThesisProgressChartDataElement } from '../../types/chart'
+import { Skeleton } from '@mantine/core'
+import { useThesisOverviewChart } from '../ThesisOverviewChartProvider/hooks'
 
 interface ICustomThesisProgressChartProps {
-  data: IThesisProgressChartDataElement[]
-  advisors: string[]
+  width: string
+  height: number
 }
 
 const CustomThesisProgressChart = (props: ICustomThesisProgressChartProps) => {
-  const {} = props
+  const { width, height } = props
+
+  const { thesisData } = useThesisOverviewChart()
+
+  if (!thesisData) {
+    return <Skeleton style={{ height: height + 'px', width }} />
+  }
 
   return <div></div>
 }

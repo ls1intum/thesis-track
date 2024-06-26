@@ -33,8 +33,8 @@ import { notifications } from '@mantine/notifications'
 import { useDisclosure } from '@mantine/hooks'
 import { ApplicationSuccessfulSubmission } from './components/ApplicationSubmission/ApplicationSuccessfulSubmission'
 import { useEffect, useState } from 'react'
-import FormTextField from '../../components/form/FormTextField'
-import FormSelectField from '../../components/form/FormSelectField'
+import FormTextField from './form/FormTextField'
+import FormSelectField from './form/FormSelectField'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getThesisAdvisors,
