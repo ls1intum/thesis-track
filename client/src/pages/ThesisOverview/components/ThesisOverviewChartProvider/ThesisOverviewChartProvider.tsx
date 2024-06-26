@@ -74,7 +74,7 @@ const ThesisOverviewChartProvider = (props: IThesisOverviewChartProviderProps) =
             bComparibleNumber = 0
           }
 
-          if (sort.direction === 'desc') {
+          if (sort.direction === 'asc') {
             return aComparibleNumber - bComparibleNumber
           } else {
             return bComparibleNumber - aComparibleNumber

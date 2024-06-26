@@ -31,6 +31,8 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
       return undefined
     }
 
+    const data = [...thesisData].reverse()
+
     function clipRectByRect(params: RenderItemParams, rect: ERectangle) {
       if (!params.coordSys) {
         throw new Error('Rectangle does not exist on params')
@@ -44,7 +46,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
       })
     }
 
-    const chartPages = Math.ceil((thesisData.length * 35) / height)
+    const chartPages = Math.ceil((data.length * 35) / height)
 
     return {
       tooltip: {},
@@ -133,7 +135,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
             api: CustomSeriesRenderItemAPI,
           ): CustomSeriesRenderItemReturn => {
             const dataIndex = params.dataIndex
-            const item = thesisData[dataIndex]
+            const item = data[dataIndex]
 
             const startTime = item.started_at
             const endTime = item.ended_at || currentTime
@@ -178,7 +180,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
             'Topic',
             'State',
           ],
-          data: thesisData.map((element, index) => [
+          data: data.map((element, index) => [
             index,
             element.student,
             element.started_at - 3600 * 24 * 1000,
