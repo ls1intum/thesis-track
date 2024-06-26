@@ -24,7 +24,7 @@ const FormTextField = ({
   numeric = false,
   textArea = false,
   readOnly = false,
-}: FormTextFieldProps): JSX.Element => {
+}: FormTextFieldProps) => {
   return readOnly ? (
     <Stack style={{ gap: '0' }}>
       <Text c='dimmed' fz='xs' fw={700}>

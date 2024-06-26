@@ -75,10 +75,7 @@ interface ThesisApplicationFormProps {
   application?: ThesisApplication
 }
 
-export const ThesisApplicationForm = ({
-  application,
-  accessMode,
-}: ThesisApplicationFormProps): JSX.Element => {
+export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplicationFormProps) => {
   const theme = useMantineTheme()
   const queryClient = useQueryClient()
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)

@@ -65,10 +65,6 @@ export default [...fixupConfigRules(compat.extends(
         "no-shadow": "off",
         "@typescript-eslint/no-shadow": ["error"],
 
-        "@typescript-eslint/explicit-function-return-type": ["error", {
-            allowExpressions: true,
-        }],
-
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/strict-boolean-expressions": "off",
         "@typescript-eslint/return-await": "off",

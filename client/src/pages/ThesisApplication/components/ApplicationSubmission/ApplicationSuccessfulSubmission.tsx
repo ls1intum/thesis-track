@@ -8,7 +8,7 @@ interface ApplicationSuccessfulSubmissionProps {
 export const ApplicationSuccessfulSubmission = ({
   title,
   text,
-}: ApplicationSuccessfulSubmissionProps): JSX.Element => {
+}: ApplicationSuccessfulSubmissionProps) => {
   return (
     <div
       style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}

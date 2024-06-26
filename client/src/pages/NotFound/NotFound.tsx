@@ -2,7 +2,7 @@ import { Center, Group, Text, ThemeIcon } from '@mantine/core'
 import { IconMoodSadDizzy } from '@tabler/icons-react'
 import * as styles from './NotFound.module.scss'
 
-const NotFound = (): JSX.Element => {
+const NotFound = () => {
   return (
     <Center className={styles.root}>
       <Group>

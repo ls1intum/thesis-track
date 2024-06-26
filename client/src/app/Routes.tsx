@@ -8,7 +8,7 @@ import {
 } from '../pages/ThesisApplication/ThesisApplicationForm'
 import ThesisOverview from '../pages/ThesisOverview/ThesisOverview'
 
-const AppRoutes = (): JSX.Element => {
+const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
@@ -16,7 +16,7 @@ const AppRoutes = (): JSX.Element => {
           path='/management/thesis-applications/:applicationId?'
           element={<ThesisManagementConsole />}
         />
-        <Route path='/management/thesis-overview' element={<ThesisOverview />} />
+        <Route path='/management/thesis-overview/:variant' element={<ThesisOverview />} />
         <Route
           path='/applications/thesis'
           element={<ThesisApplicationForm accessMode={ApplicationFormAccessMode.STUDENT} />}

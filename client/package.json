@@ -7,7 +7,8 @@
     "dev": "webpack serve --open --mode development",
     "lint": "eslint src/**/*.{js,jsx,ts,tsx}",
     "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx}",
-    "build": "webpack --mode production"
+    "build": "webpack --mode production",
+    "generate-thesis-graph-data": "ts-node scripts/generate-thesis-graph-data.ts"
   },
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
@@ -36,6 +37,8 @@
     "clsx": "^2.1.1",
     "css-loader": "^7.1.1",
     "dayjs": "^1.11.11",
+    "echarts": "^5.5.0",
+    "echarts-for-react": "^3.0.2",
     "file-loader": "^6.2.0",
     "i18n-iso-countries": "^7.11.2",
     "jwt-decode": "^4.0.0",
@@ -59,6 +62,7 @@
     "@tanstack/eslint-plugin-query": "^5.35.6",
     "@types/copy-webpack-plugin": "^10.1.0",
     "@types/dotenv-webpack": "^7.0.7",
+    "@types/echarts": "^4.9.22",
     "@types/eslint": "^8",
     "@types/node": "^20.12.12",
     "@types/react": "^18",
@@ -77,6 +81,7 @@
     "html-webpack-plugin": "^5.6.0",
     "prettier": "^3.2.5",
     "sass": "^1.75.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.4.5",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",

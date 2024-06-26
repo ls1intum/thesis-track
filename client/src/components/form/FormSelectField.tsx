@@ -32,7 +32,7 @@ const FormSelectField = ({
   disabled = false,
   multiselect = false,
   readOnly = false,
-}: FormSelectFieldProps): JSX.Element => {
+}: FormSelectFieldProps) => {
   return readOnly ? (
     <Stack style={{ gap: '0' }}>
       <Text c='dimmed' fz='xs' fw={700}>

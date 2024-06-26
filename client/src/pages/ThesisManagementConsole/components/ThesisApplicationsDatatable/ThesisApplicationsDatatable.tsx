@@ -23,7 +23,7 @@ interface Filters {
   status: string[]
 }
 
-const ThesisApplicationsDatatable = (): JSX.Element => {
+const ThesisApplicationsDatatable = () => {
   const { applicationId } = useParams()
   const navigate = useNavigate()
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()

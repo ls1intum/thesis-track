@@ -1,6 +1,6 @@
 import { Paper, Text } from '@mantine/core'
 
-export const DeclarationOfDataConsent = (): JSX.Element => {
+export const DeclarationOfDataConsent = () => {
   return (
     <Paper>
       <Text c='dimmed' fz='sm'>

@@ -12,7 +12,7 @@ import { ThesisAdvisor } from '../../interfaces/thesisApplication'
 import { Query } from '../../hooks/query'
 import { useAuthenticationStore } from '../../hooks/authentication'
 
-const ThesisManagementConsole = (): JSX.Element => {
+const ThesisManagementConsole = () => {
   const queryClient = useQueryClient()
   const [scroll, scrollTo] = useWindowScroll()
   const [authenticated, setAuthenticated] = useState(false)
