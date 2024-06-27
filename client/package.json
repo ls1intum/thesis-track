@@ -12,7 +12,7 @@
   "dependencies": {
     "@formkit/auto-animate": "^0.8.2",
     "@mantine/core": "^7.10.0",
-    "@mantine/dates": "^7.10.0",
+    "@mantine/dates": "^7.11.0",
     "@mantine/dropzone": "^7.10.0",
     "@mantine/form": "^7.10.0",
     "@mantine/hooks": "^7.10.0",
