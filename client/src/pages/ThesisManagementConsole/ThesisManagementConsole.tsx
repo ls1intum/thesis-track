@@ -3,7 +3,7 @@ import { axiosInstance, keycloakRealmName, keycloakUrl } from '../../network/con
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import ThesisApplicationsDatatable from './components/ThesisApplicationsDatatable/ThesisApplicationsDatatable'
-import { Affix, Button, Center, Transition, rem } from '@mantine/core'
+import { Affix, Button, Center, Transition, rem, Container } from '@mantine/core'
 import { IconArrowUp } from '@tabler/icons-react'
 import { useWindowScroll } from '@mantine/hooks'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
@@ -105,7 +105,7 @@ const ThesisManagementConsole = () => {
   }, [])
 
   return (
-    <div style={{ padding: '0 0 5vh 0' }}>
+    <Container>
       {authenticated && user && user.mgmtAccess && (
         <Center>
           <ThesisApplicationsDatatable />
@@ -124,7 +124,7 @@ const ThesisManagementConsole = () => {
           </Affix>
         </Center>
       )}
-    </div>
+    </Container>
   )
 }
 

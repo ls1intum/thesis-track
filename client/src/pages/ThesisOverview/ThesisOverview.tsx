@@ -1,6 +1,6 @@
 import React from 'react'
 import EChartsThesisProgressChart from './components/EChartsThesisProgressChart/EChartsThesisProgressChart'
-import { Box } from '@mantine/core'
+import { Container, Space } from '@mantine/core'
 import chartData from './mock/chart-data.json'
 import { useParams } from 'react-router-dom'
 import CustomThesisProgressChart from './components/CustomThesisProgressChart/CustomThesisProgressChart'
@@ -12,35 +12,28 @@ const ThesisOverview = () => {
   const { variant } = useParams<{ variant: string }>()
 
   return (
-    <div style={{ padding: '20px 0 5vh 0' }}>
-      <Box
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          maxWidth: '80vw',
-          gap: '2vh',
+    <Container size='xl'>
+      <ThesisOverviewChartProvider
+        mockData={{
+          thesisData: chartData.data as IThesisProgressChartDataElement[],
+          advisors: chartData.advisors,
         }}
-        mx='auto'
-        pos='relative'
       >
-        <ThesisOverviewChartProvider
-          mockData={{
-            thesisData: chartData.data as IThesisProgressChartDataElement[],
-            advisors: chartData.advisors,
-          }}
-        >
-          <center>
-            <h1>Thesis Overview Chart</h1>
-          </center>
-          <ThesisProgressFilter />
+        <center>
+          <h1>Thesis Overview Chart</h1>
+        </center>
+        <ThesisProgressFilter />
+        <Space h='md' />
+        <div>
           {variant === 'custom' ? (
             <CustomThesisProgressChart width='100%' height={700} />
           ) : (
             <EChartsThesisProgressChart width='100%' height={700} />
           )}
-        </ThesisOverviewChartProvider>
-      </Box>
-    </div>
+        </div>
+        <Space h='md' />
+      </ThesisOverviewChartProvider>
+    </Container>
   )
 }
 

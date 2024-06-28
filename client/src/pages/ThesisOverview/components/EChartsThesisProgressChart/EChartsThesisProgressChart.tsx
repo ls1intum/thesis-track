@@ -168,7 +168,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
           encode: {
             x: [2, 3],
             y: 1,
-            tooltip: [2, 6, 4, 5],
+            tooltip: [4, 5, 2, 6],
           },
           clip: true,
           dimensions: [
