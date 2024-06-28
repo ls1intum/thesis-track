@@ -1,9 +1,12 @@
 import path from 'path'
 import { Configuration, EnvironmentPlugin } from 'webpack'
-// eslint-disable-next-line import/default
+
 import CopyPlugin from 'copy-webpack-plugin'
 import 'webpack-dev-server'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin'
+import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer'
+import CompressionPlugin from 'compression-webpack-plugin'
 
 const config: Configuration = {
   mode: (process.env.NODE_ENV as 'production' | 'development' | undefined) ?? 'development',
@@ -21,7 +24,7 @@ const config: Configuration = {
     },
     open: false,
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -76,7 +79,28 @@ const config: Configuration = {
       REACT_APP_KEYCLOAK_HOST: 'http://localhost:8081',
       REACT_APP_KEYCLOAK_REALM_NAME: 'thesis-track',
     }),
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'static',
+      openAnalyzer: false,
+    }),
+    new CompressionPlugin({
+      filename: '[path][base].gz',
+      algorithm: 'gzip',
+      test: /\.(js|css|html|svg)$/,
+      threshold: 10240,
+      minRatio: 0.8,
+    }),
   ],
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+    minimize: true,
+    minimizer: [
+      `...`, // existing minimizers (e.g., TerserPlugin)
+      new CssMinimizerPlugin(),
+    ],
+  },
 }
 
 export default config
