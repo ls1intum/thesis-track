@@ -15,7 +15,7 @@ ENV REACT_APP_KEYCLOAK_REALM_NAME $KEYCLOAK_REALM_NAME
 
 COPY . ./
 RUN npm install
-RUN npm build
+RUN npm run build
 
 FROM nginx:stable-alpine
 COPY --from=build /app/build /usr/share/nginx/html
