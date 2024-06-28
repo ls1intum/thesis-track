@@ -4,7 +4,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
     "module": "CommonJS",
     "target": "es2020",
     "jsx": "react-jsx",
@@ -12,7 +11,12 @@
     "moduleResolution": "node",
     "strict": true,
     "skipLibCheck": true,
-    "noImplicitAny": false
+    "noImplicitAny": true,
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.jsx",
+    "src/**/*.js",
+  ]
 }
