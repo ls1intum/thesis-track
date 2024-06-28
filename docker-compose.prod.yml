@@ -87,6 +87,8 @@ services:
       - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"
       - "traefik.http.routers.client.entrypoints=websecure"
       - "traefik.http.routers.client.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.client-compress.compress=true"
+      - "traefik.http.routers.client.middlewares=client-compress"
     expose:
       - "80"
     depends_on:
