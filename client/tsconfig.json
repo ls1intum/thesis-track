@@ -18,5 +18,6 @@
     "src/**/*.tsx",
     "src/**/*.jsx",
     "src/**/*.js",
+    "webpack.config.ts"
   ]
 }
