@@ -1,11 +1,9 @@
 import { MantineProvider } from '@mantine/core'
-import { useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ApplicationSubmissionPage } from './student/ApplicationSubmission/ApplicationSubmissionPage'
 import { Notifications } from '@mantine/notifications'
 import { ApplicationFormAccessMode } from './student/form/ThesisApplicationForm'
 import { ThesisApplicationForm } from './student/form/ThesisApplicationForm'
-import type Keycloak from 'keycloak-js'
 import { ManagementConsole } from './management/ManagementConsole'
 import { ContextMenuProvider } from 'mantine-contextmenu'
 import '../public/favicon.svg'
@@ -30,8 +28,6 @@ const queryClient = new QueryClient({
 })
 
 export const App = (): JSX.Element => {
-  const [keycloakValue, setKeycloakValue] = useState<Keycloak>()
-
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={false} />

@@ -6,7 +6,6 @@ import { ThesisApplicationsDatatable } from './components/ThesisApplicationsData
 import { Affix, Button, Center, Transition, rem } from '@mantine/core'
 import { IconArrowUp } from '@tabler/icons-react'
 import { useWindowScroll } from '@mantine/hooks'
-import * as styles from './ThesisApplicationsManagementConsole.module.scss'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putThesisAdvisor } from '../network/thesisApplication'
 import { ThesisAdvisor } from '../interface/thesisApplication'

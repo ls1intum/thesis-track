@@ -1,5 +1,3 @@
-import { LanguageProficiency, Student, StudyDegree, StudyProgram } from './student'
-
 export enum ApplicationStatus {
   NOT_ASSESSED = 'Not assessed',
   PENDING_INTERVIEW = 'Pending interview',
