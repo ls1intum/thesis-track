@@ -106,7 +106,7 @@ const config: (env: Record<string, string>) => Configuration = (env) => {
       new CleanWebpackPlugin(),
       !IS_DEV &&
         new CompressionPlugin({
-          filename: '[path][base].gz',
+          filename: '[path][base].br',
           algorithm: 'brotliCompress',
           test: /\.(js|css|html|svg)$/,
           threshold: 10240,
