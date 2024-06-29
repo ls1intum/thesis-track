@@ -7,7 +7,8 @@
     "dev": "webpack serve --open --mode development",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
-    "build": "webpack --mode production"
+    "build": "webpack --mode=production --env NODE_ENV=production",
+    "check-performance": "webpack --mode=production --env NODE_ENV=production --env BUNDLE_SIZE=true"
   },
   "dependencies": {
     "@formkit/auto-animate": "0.8.2",
@@ -61,6 +62,7 @@
     "@types/webpack-bundle-analyzer": "4.7.0",
     "@typescript-eslint/eslint-plugin": "7.14.1",
     "@typescript-eslint/parser": "7.14.1",
+    "clean-webpack-plugin": "^4.0.0",
     "compression-webpack-plugin": "11.1.0",
     "css-minimizer-webpack-plugin": "7.0.0",
     "dotenv-webpack": "8.1.0",
