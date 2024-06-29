@@ -93,7 +93,6 @@ const config: (env: Record<string, string>) => Configuration = (env) => {
       new CopyPlugin({
         patterns: [{ from: 'public' }],
       }),
-      IS_PERF && new BundleAnalyzerPlugin(),
       new DefinePlugin({
         'process.env.REACT_APP_SERVER_HOST': JSON.stringify(getVariable('REACT_APP_SERVER_HOST')),
         'process.env.REACT_APP_KEYCLOAK_HOST': JSON.stringify(
@@ -103,6 +102,7 @@ const config: (env: Record<string, string>) => Configuration = (env) => {
           getVariable('REACT_APP_KEYCLOAK_REALM_NAME'),
         ),
       }),
+      IS_PERF && new BundleAnalyzerPlugin(),
       new CleanWebpackPlugin(),
       !IS_DEV &&
         new CompressionPlugin({
