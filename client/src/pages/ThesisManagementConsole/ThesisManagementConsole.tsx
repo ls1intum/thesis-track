@@ -2,7 +2,6 @@ import Keycloak from 'keycloak-js'
 import { axiosInstance, keycloakRealmName, keycloakUrl } from '../../network/configService'
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
-import ThesisApplicationsDatatable from './components/ThesisApplicationsDatatable/ThesisApplicationsDatatable'
 import { Affix, Button, Center, Transition, rem, Container } from '@mantine/core'
 import { IconArrowUp } from '@tabler/icons-react'
 import { useWindowScroll } from '@mantine/hooks'
@@ -11,6 +10,7 @@ import { putThesisAdvisor } from '../../network/thesisApplication'
 import { ThesisAdvisor } from '../../interfaces/thesisApplication'
 import { Query } from '../../hooks/query'
 import { useAuthenticationStore } from '../../hooks/authentication'
+import { ThesisApplicationsDatatable } from './components/ThesisApplicationsDatatable/ThesisApplicationsDatatable'
 
 const ThesisManagementConsole = () => {
   const queryClient = useQueryClient()

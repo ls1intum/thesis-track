@@ -6,15 +6,15 @@ import { IconExternalLink, IconEyeEdit, IconSearch } from '@tabler/icons-react'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { Query } from '../../state/query'
-import { getThesisApplications } from '../../network/thesisApplication'
-import { ThesisApplication } from '../../interface/thesisApplication'
-import { ApplicationStatus } from '../../interface/application'
 import {
   ApplicationFormAccessMode,
   ThesisApplicationForm,
-} from '../../student/form/ThesisApplicationForm'
-import { Pageable } from '../../interface/pageable'
+} from '../../../ThesisApplication/ThesisApplicationForm'
+import { Pageable } from '../../../../interfaces/pageable'
+import { ThesisApplication } from '../../../../interfaces/thesisApplication'
+import { ApplicationStatus } from '../../../../interfaces/application'
+import { getThesisApplications } from '../../../../network/thesisApplication'
+import { Query } from '../../../../hooks/query'
 
 export const ThesisApplicationsDatatable = (): JSX.Element => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
