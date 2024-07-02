@@ -106,8 +106,8 @@ const config: (env: Record<string, string>) => Configuration = (env) => {
       new CleanWebpackPlugin(),
       !IS_DEV &&
         new CompressionPlugin({
-          filename: '[path][base].br',
-          algorithm: 'brotliCompress',
+          filename: '[path][base].gz',
+          algorithm: 'gzip',
           test: /\.(js|css|html|svg)$/,
           threshold: 10240,
           minRatio: 0.8,
