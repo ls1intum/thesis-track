@@ -22,10 +22,7 @@ import thesistrack.ls1.repository.ThesisApplicationRepository;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ThesisApplicationService {
@@ -51,14 +48,10 @@ public class ThesisApplicationService {
         this.rootLocation = Paths.get(thesesApplicationsUploadsLocation);
     }
 
-    public Page<ThesisApplication> getAll(final int page, final int limit, final String searchString, final String sortBy, final String sortOrder) {
+    public Page<ThesisApplication> getAll(final int page, final int limit, final List<String> states, final String searchString, final String sortBy, final String sortOrder) {
         final Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
         return thesisApplicationRepository
-                .searchThesisApplications(searchString.toLowerCase(), PageRequest.of(page, limit, Sort.by(order)));
-    }
-
-    public List<ThesisApplication> getAllNotAssessed() {
-        return thesisApplicationRepository.findAllNotAssessed();
+                .searchThesisApplications(new HashSet<>(states), searchString.toLowerCase(), PageRequest.of(page, limit, Sort.by(order)));
     }
 
     public Resource getExaminationReport(final UUID thesisApplicationId) {

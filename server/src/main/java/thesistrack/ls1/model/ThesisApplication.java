@@ -21,13 +21,6 @@ import java.util.UUID;
 @Data
 @Entity
 @Table
-@org.hibernate.annotations.NamedQueries({
-        @org.hibernate.annotations.NamedQuery(
-                name = "ThesisApplication.findAllNotAssessed",
-                query = "SELECT ta FROM ThesisApplication ta " +
-                        "WHERE ta.applicationStatus = thesistrack.ls1.model.enums.ApplicationStatus.NOT_ASSESSED"
-        )
-})
 public class ThesisApplication implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

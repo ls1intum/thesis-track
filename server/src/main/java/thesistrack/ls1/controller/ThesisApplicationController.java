@@ -26,6 +26,7 @@ import thesistrack.ls1.service.ThesisApplicationService;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -52,16 +53,14 @@ public class ThesisApplicationController {
     @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
     public ResponseEntity<Page<ThesisApplication>> getAll(@RequestParam Integer page,
                                                           @RequestParam final Integer limit,
+                                                          @RequestParam(required = false) final String states,
                                                           @RequestParam(required = false) final String searchQuery,
                                                           @RequestParam(defaultValue = "createdAt", required = false) final String sortBy,
                                                           @RequestParam(defaultValue = "desc", required = false) final String sortOrder) {
-        return ResponseEntity.ok(thesisApplicationService.getAll(page, limit, searchQuery, sortBy, sortOrder));
-    }
+        List<String> filteredStates = Arrays.asList(states.split(","));
+        filteredStates.removeIf(String::isEmpty);
 
-    @GetMapping("/not-assessed")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
-    public ResponseEntity<List<ThesisApplication>> getAllNotAssessed() {
-        return ResponseEntity.ok(thesisApplicationService.getAllNotAssessed());
+        return ResponseEntity.ok(thesisApplicationService.getAll(page, limit, filteredStates, searchQuery, sortBy, sortOrder));
     }
 
     @GetMapping("/{thesisApplicationId}/examination-report")
