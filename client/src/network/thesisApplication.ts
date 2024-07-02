@@ -8,6 +8,7 @@ import { Pageable } from '../interfaces/pageable'
 export const getThesisApplications = async (
   page: number,
   limit: number,
+  states?: string[],
   searchQuery?: string,
   sortBy?: string,
   sortOrder?: 'asc' | 'desc',
@@ -18,6 +19,7 @@ export const getThesisApplications = async (
         params: {
           page,
           limit,
+          states: states?.join(',') ?? Object.keys(ApplicationStatus).join(','),
           searchQuery,
           sortBy,
           sortOrder,

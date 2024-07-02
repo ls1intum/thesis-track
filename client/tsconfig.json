@@ -5,7 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "module": "CommonJS",
-    "target": "es6",
+    "target": "es2020",
     "jsx": "react-jsx",
     "allowJs": true,
     "moduleResolution": "node",
@@ -13,5 +13,11 @@
     "skipLibCheck": true,
     "noImplicitAny": true,
   },
-  "include": ["**/*.ts", "**/*.tsx"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.jsx",
+    "src/**/*.js",
+    "webpack.config.ts"
+  ]
 }
