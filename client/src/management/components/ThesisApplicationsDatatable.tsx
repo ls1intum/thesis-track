@@ -1,129 +1,71 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { ActionIcon, Badge, Group, Modal, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { IconExternalLink, IconEyeEdit, IconSearch } from '@tabler/icons-react'
 import moment from 'moment'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { Query } from '../../state/query'
 import { getThesisApplications } from '../../network/thesisApplication'
 import { ThesisApplication } from '../../interface/thesisApplication'
 import { ApplicationStatus } from '../../interface/application'
-import { Gender } from '../../interface/student'
 import {
   ApplicationFormAccessMode,
   ThesisApplicationForm,
 } from '../../student/form/ThesisApplicationForm'
 import { Pageable } from '../../interface/pageable'
 
-interface Filters {
-  male: boolean
-  female: boolean
-  status: string[]
-}
-
 export const ThesisApplicationsDatatable = (): JSX.Element => {
-  const { applicationId } = useParams()
-  const navigate = useNavigate()
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
+
+  const [page, setPage] = useState(1)
+  const [limit, setLimit] = useState(20)
+
+  const [selectedApplications, setSelectedApplications] = useState<ThesisApplication[]>([])
+  const [openedApplication, setOpenedApplication] = useState<ThesisApplication>()
+
   const [searchQuery, setSearchQuery] = useState('')
-  const [tablePage, setTablePage] = useState(1)
-  const [tablePageSize, setTablePageSize] = useState(20)
-  const [tableRecords, setTableRecords] = useState<ThesisApplication[]>([])
-  const [selectedTableRecords, setSelectedTableRecords] = useState<ThesisApplication[]>([])
-  const [selectedApplicationToView, setSelectedApplicationToView] = useState<
-    ThesisApplication | undefined
-  >(undefined)
-  const [sortStatus, setSortStatus] = useState<DataTableSortStatus<ThesisApplication>>({
+  const [sort, setSort] = useState<DataTableSortStatus<ThesisApplication>>({
     columnAccessor: 'createdAt',
     direction: 'desc',
   })
-  const [filters, setFilters] = useState<Filters>({
-    male: false,
-    female: false,
-    status: [],
-  })
+  const [filteredStates, setFilteredStates] = useState<string[] | undefined>(['NOT_ASSESSED'])
 
-  const { data: fetchedThesisApplications, isLoading } = useQuery<Pageable<ThesisApplication>>({
+  const { data: applications, isLoading } = useQuery<Pageable<ThesisApplication>>({
     queryKey: [
       Query.THESIS_APPLICATION,
-      tablePage,
-      tablePageSize,
+      page,
+      limit,
       searchQuery,
-      sortStatus.columnAccessor,
-      sortStatus.direction,
+      filteredStates?.join(','),
+      sort.columnAccessor,
+      sort.direction,
     ],
     queryFn: () =>
       getThesisApplications(
-        tablePage - 1,
-        tablePageSize,
+        page - 1,
+        limit,
+        filteredStates,
         searchQuery,
-        sortStatus.columnAccessor,
-        sortStatus.direction,
+        sort.columnAccessor,
+        sort.direction,
       ),
   })
 
-  useEffect(() => {
-    if (applicationId) {
-      setSelectedApplicationToView(
-        fetchedThesisApplications?.content.find((a) => a.id === applicationId),
-      )
-    } else {
-      setSelectedApplicationToView(undefined)
-    }
-  }, [fetchedThesisApplications, applicationId])
-
-  useEffect(() => {
-    const filteredSortedData = fetchedThesisApplications?.content
-      .filter(
-        (application) =>
-          filters.status.length === 0 || filters.status.includes(application.applicationStatus),
-      )
-      .filter((application) =>
-        filters.female && application.student.gender
-          ? Gender[application.student.gender] === Gender.FEMALE
-          : true,
-      )
-      .filter((application) =>
-        filters.male && application.student.gender
-          ? Gender[application.student.gender] === Gender.MALE
-          : true,
-      )
-
-    setTableRecords(filteredSortedData ?? [])
-
-    if (selectedApplicationToView) {
-      setSelectedApplicationToView(
-        fetchedThesisApplications?.content
-          .filter((ca) => ca.id === selectedApplicationToView.id)
-          .at(0),
-      )
-    }
-  }, [
-    fetchedThesisApplications,
-    tablePageSize,
-    tablePage,
-    searchQuery,
-    filters,
-    sortStatus,
-    selectedApplicationToView,
-  ])
-
   return (
     <Stack>
-      {selectedApplicationToView && (
+      {openedApplication && (
         <Modal
           centered
           size='90%'
-          opened={!!selectedApplicationToView}
+          opened={!!openedApplication}
           onClose={() => {
-            navigate('/management/thesis-applications')
-            setSelectedApplicationToView(undefined)
+            setOpenedApplication(undefined)
           }}
         >
           <ThesisApplicationForm
-            application={selectedApplicationToView}
+            application={openedApplication}
             accessMode={ApplicationFormAccessMode.INSTRUCTOR}
           />
         </Modal>
@@ -146,25 +88,25 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
         verticalSpacing='md'
         striped
         highlightOnHover
-        totalRecords={fetchedThesisApplications?.totalElements ?? 0}
-        recordsPerPage={tablePageSize}
-        page={tablePage}
-        onPageChange={(page) => {
-          setTablePage(page)
+        totalRecords={applications?.totalElements ?? 0}
+        recordsPerPage={limit}
+        page={page}
+        onPageChange={(x) => {
+          setPage(x)
         }}
         recordsPerPageOptions={[5, 10, 15, 20, 25, 30, 35, 40, 50, 100, 200, 300]}
         onRecordsPerPageChange={(pageSize) => {
-          setTablePageSize(pageSize)
+          setLimit(pageSize)
         }}
-        sortStatus={sortStatus}
+        sortStatus={sort}
         onSortStatusChange={(status) => {
-          setTablePage(1)
-          setSortStatus(status)
+          setPage(1)
+          setSort(status)
         }}
         bodyRef={bodyRef}
-        records={tableRecords}
-        selectedRecords={selectedTableRecords}
-        onSelectedRecordsChange={setSelectedTableRecords}
+        records={applications?.content}
+        selectedRecords={selectedApplications}
+        onSelectedRecordsChange={setSelectedApplications}
         columns={[
           {
             accessor: 'application_status',
@@ -181,20 +123,17 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                     value: key,
                   }
                 })}
-                value={filters.status}
+                value={filteredStates}
                 placeholder='Search status...'
                 onChange={(value) => {
-                  setFilters({
-                    ...filters,
-                    status: value,
-                  })
+                  setFilteredStates(value.length > 0 ? value : undefined)
                 }}
                 leftSection={<IconSearch size={16} />}
                 clearable
                 searchable
               />
             ),
-            filtering: filters.status.length > 0,
+            filtering: (filteredStates?.length ?? 0) > 0,
             render: (application) => {
               let color: string = 'gray'
               switch (application.applicationStatus) {
@@ -251,24 +190,28 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                 <ActionIcon
                   variant='transparent'
                   color='blue'
-                  onClick={(e: React.MouseEvent) => {
+                  onClick={(e) => {
                     e.stopPropagation()
-                    navigate(`/management/thesis-applications/${application.id}`)
+
+                    setOpenedApplication(application)
                   }}
                 >
                   <IconEyeEdit size={16} />
                 </ActionIcon>
                 <Link
-                  to={`/management/thesis-applications/${application.id}`}
+                  to='/management/thesis-applications'
+                  onClick={(e) => {
+                    e.stopPropagation()
+
+                    setOpenedApplication(application)
+                  }}
                   target='_blank'
                   rel='noopener noreferrer'
                 >
                   <ActionIcon
                     variant='transparent'
                     color='blue'
-                    onClick={(e: React.MouseEvent) => {
-                      e.stopPropagation()
-                    }}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <IconExternalLink size={16} />
                   </ActionIcon>
@@ -277,9 +220,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
             ),
           },
         ]}
-        onRowClick={({ record: application }) => {
-          navigate(`/management/thesis-applications/${application.id}`)
-        }}
+        onRowClick={({ record: application }) => setOpenedApplication(application)}
       />
     </Stack>
   )
