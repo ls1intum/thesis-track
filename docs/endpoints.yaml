@@ -1,0 +1,722 @@
+openapi: 3.0.3
+info:
+  title: Thesis Track API
+  version: '1.0'
+  x-logo:
+    url: ''
+paths:
+  /applications:
+    get:
+      tags: []
+      parameters:
+        - name: status
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+          allowEmptyValue: false
+          x-last-modified: 1720731944648
+        - name: search
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+          allowEmptyValue: false
+          x-last-modified: 1720731964502
+        - name: topic_id
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          allowEmptyValue: false
+          x-last-modified: 1720732000166
+      summary: Gets all applications visible to authenticated user
+    post:
+      tags: []
+      summary: Creates a new application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic_id
+                - suggested_title
+                - motivation
+                - examination_report
+                - cv
+                - bachelor_report
+    x-last-modified: 1720731883148
+  /dashboard:
+    summary: ''
+    get:
+      tags: []
+      summary: Combined data shown on user dashboard
+    x-last-modified: 1720732650692
+  /user-information:
+    summary: ''
+    get:
+      tags: []
+      summary: Get information about authenticated user
+    put:
+      tags: []
+      requestBody:
+        required: true
+        description: User information to update
+      summary: Update information about authenticated user
+    x-last-modified: 1720732664586
+  /users/:group:
+    summary: ''
+    get:
+      tags: []
+      parameters:
+        - name: group
+          in: path
+          required: true
+          deprecated: false
+          x-last-modified: 1720731533026
+          schema:
+            type: string
+            enum:
+              - student
+              - ' instructor'
+              - ' grader'
+              - ' admin'
+        - in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+          allowEmptyValue: true
+          name: search
+          x-last-modified: 1720731520624
+      summary: Search users filtered by group
+    x-last-modified: 1720732688371
+  /applications/:application_id:
+    get:
+      tags: []
+      summary: Gets application by id
+      parameters:
+        - name: application_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720733396903
+    x-last-modified: 1720733363348
+  /applications/:application_id/reject:
+    put:
+      tags: []
+      parameters:
+        - name: application_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720733507278
+      summary: Reject application
+    x-last-modified: 1720733476330
+  /applications/:application_id/accept:
+    put:
+      tags: []
+      parameters:
+        - name: application_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720733569011
+      summary: Accept application
+    x-last-modified: 1720733542325
+  /applications/:application_id/cv:
+    get:
+      tags: []
+      summary: Get CV by application id
+      parameters:
+        - name: application_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720733754167
+    x-last-modified: 1720733699307
+  /applications/:application_id/examination-report:
+    get:
+      tags: []
+      summary: Get examination report by application id
+      parameters:
+        - name: application_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720733810992
+    x-last-modified: 1720733780012
+  /applications/:application_id/bachelor-report:
+    get:
+      tags: []
+      summary: Get bachelor report by application id
+      parameters:
+        - name: application_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720733868343
+    x-last-modified: 1720733840770
+  /topics:
+    get:
+      tags: []
+      summary: Get all topics
+      parameters:
+        - name: open
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: boolean
+          allowEmptyValue: false
+          x-last-modified: 1720733936863
+        - name: type
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - master
+              - bachelor
+          allowEmptyValue: false
+          x-last-modified: 1720733967057
+    post:
+      tags: []
+      summary: Creates new topic
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - problem_statement
+                - goals
+                - references
+                - reviewers
+                - notify_students
+    x-last-modified: 1720733893827
+  /topics/:topic_id:
+    get:
+      tags: []
+      summary: Get topic by id
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720734322967
+    put:
+      tags: []
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720734349068
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - problem_statement
+                - goals
+                - references
+                - reviewers
+      summary: Update topic by id
+    delete:
+      tags: []
+      summary: Close topic by id
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720734426135
+    x-last-modified: 1720734294973
+  /theses:
+    get:
+      tags: []
+      summary: Get all theses that you are allowed to see
+      parameters:
+        - name: instructor
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          allowEmptyValue: false
+          x-last-modified: 1720735529761
+        - name: state
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+          allowEmptyValue: false
+          x-last-modified: 1720735550570
+        - name: after
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: number
+          allowEmptyValue: false
+          x-last-modified: 1720735580633
+        - name: before
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: number
+          allowEmptyValue: false
+          x-last-modified: 1720735597166
+    post:
+      tags: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - topic_id
+                - application_id
+                - students
+                - instructors
+                - graders
+                - thesis_title
+                - close_topic
+    x-last-modified: 1720734457021
+  /theses/published:
+    get:
+      tags: []
+      summary: Get all published theses
+    x-last-modified: 1720735739213
+  /theses/:thesis_id:
+    delete:
+      tags: []
+      summary: Close thesis if student dropped out
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720735880308
+    put:
+      tags: []
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720735902938
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - thesis_title
+                - start_timestamp
+                - end_timestamp
+                - students
+                - instructors
+                - graders
+    get:
+      tags: []
+      summary: Get thesis by id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720735839675
+    x-last-modified: 1720735797255
+  /theses/:thesis_id/info:
+    put:
+      tags: []
+      summary: Updates abstract and info by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737237873
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - abstract
+                - info
+    x-last-modified: 1720737198857
+  /theses/:thesis_id/applications/cv:
+    get:
+      tags: []
+      summary: Get CV by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737325882
+    x-last-modified: 1720737298415
+  /theses/:thesis_id/applications/examination-report:
+    get:
+      tags: []
+      summary: Get examination report by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737368161
+    x-last-modified: 1720737340815
+  /theses/:thesis_id/applications/bachelor-report:
+    get:
+      tags: []
+      summary: Get bachelor report by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737411612
+    x-last-modified: 1720737381612
+  /theses/:thesis_id/presentations:
+    post:
+      tags: []
+      summary: Schedule a presentation for thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737545313
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - type
+                - date
+                - location
+                - is_test
+                - is_public
+    x-last-modified: 1720737507571
+  /theses/:thesis_id/presentation:
+    get:
+      tags: []
+      summary: Get last uploaded presentation by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: thesis_id
+          x-last-modified: 1720737668224
+    post:
+      tags: []
+      summary: Upload a presentation for thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737714433
+    x-last-modified: 1720737597788
+  /theses/:thesis_id/presentations/:presentation_id:
+    delete:
+      tags: []
+      summary: Deletes a scheduled presentation
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737774663
+        - name: presentation_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737795664
+    x-last-modified: 1720737742646
+  /theses/:thesis_id/comments:
+    get:
+      tags: []
+      summary: Get comments by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737856563
+    post:
+      tags: []
+      summary: Post new comment on thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720737915254
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - message
+                - thesis_file
+    x-last-modified: 1720737829176
+  /theses/:thesis_id/comments/:file_id:
+    get:
+      tags: []
+      summary: Get uploaded file for a message in a thesis
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738007467
+        - name: file_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738037065
+    x-last-modified: 1720737974953
+  /theses/:thesis_id/proposal:
+    post:
+      tags: []
+      summary: Add proposal to a thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738085766
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - proposal
+                - milestones
+    x-last-modified: 1720738054494
+    get:
+      description: ''
+      summary: Get last proposal document by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738422423
+  /theses/:thesis_id/assessment:
+    post:
+      tags: []
+      summary: Adds assessment to a thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738161467
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - summary
+                - positives
+                - negatives
+                - grade_suggestion
+    x-last-modified: 1720738126160
+  /theses/:thesis_id/grade:
+    post:
+      tags: []
+      summary: Add final grade and feedback to a thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738248443
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - grade
+                - feedback
+                - publish
+    x-last-modified: 1720738217623
+  /theses/:thesis_id/close:
+    post:
+      tags: []
+      summary: Close a thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738310827
+    x-last-modified: 1720738284957
+  /theses/:thesis_id/thesis:
+    get:
+      tags: []
+      summary: Gets last thesis document by thesis id
+      parameters:
+        - name: thesis_id
+          in: path
+          required: true
+          deprecated: false
+          schema:
+            type: string
+            format: uuid
+          x-last-modified: 1720738394173
+    x-last-modified: 1720738336407
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |-
+        Example: 
+        > Authorization: Bearer <token>
+      x-last-modified: 1720729705844
+  schemas: {}
+  headers: {}
+  responses: {}
+  parameters: {}
+tags: []
+servers:
+  - url: http://localhost:8080/api
+    description: ''
+    variables: {}
+    x-last-modified: 1720732781223
+  - url: https://thesis-track.ase.cit.tum.de/api
+    description: ''
+    variables: {}
+    x-last-modified: 1720732796292
+  - url: https://thesis-track-dev.ase.cit.tum.de/api
+    description: ''
+    variables: {}
+    x-last-modified: 1720732807668
+security:
+  - JWTAuth: []
