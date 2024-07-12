@@ -358,6 +358,7 @@ paths:
   /topics:
     get:
       tags: []
+      security: []
       parameters:
         - deprecated: false
           name: open
@@ -464,6 +465,7 @@ paths:
   /topics/{topic_id}:
     get:
       tags: []
+      security: []
       parameters:
         - deprecated: false
           name: topic_id
@@ -669,6 +671,7 @@ paths:
   /theses/published:
     get:
       tags: []
+      security: []
       summary: Get all published theses
     x-last-modified: 1720735739213
   /theses/{thesis_id}:
