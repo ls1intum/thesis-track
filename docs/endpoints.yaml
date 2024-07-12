@@ -23,7 +23,7 @@ paths:
           deprecated: false
           schema:
             type: string
-          allowEmptyValue: false
+          allowEmptyValue: true
           x-last-modified: 1720731964502
         - name: topic_id
           in: query
@@ -34,6 +34,44 @@ paths:
             format: uuid
           allowEmptyValue: false
           x-last-modified: 1720732000166
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781649335
+        - name: limit
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781642867
+        - name: sortBy
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - created
+              - reviewed
+          allowEmptyValue: false
+          x-last-modified: 1720785395735
+        - name: sortOrder
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          allowEmptyValue: false
+          x-last-modified: 1720785524129
       summary: Gets all applications visible to authenticated user
     post:
       tags: []
@@ -84,9 +122,9 @@ paths:
             type: string
             enum:
               - student
-              - ' instructor'
-              - ' grader'
-              - ' admin'
+              - instructor
+              - grader
+              - admin
         - in: query
           required: false
           deprecated: false
@@ -95,6 +133,44 @@ paths:
           allowEmptyValue: true
           name: search
           x-last-modified: 1720731520624
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781649335
+        - name: limit
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781642867
+        - name: sortBy
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - name
+              - joined
+          allowEmptyValue: false
+          x-last-modified: 1720785395735
+        - name: sortOrder
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          allowEmptyValue: false
+          x-last-modified: 1720785524129
       summary: Search users filtered by group
     x-last-modified: 1720732688371
   /applications/:application_id:
@@ -205,6 +281,45 @@ paths:
               - bachelor
           allowEmptyValue: false
           x-last-modified: 1720733967057
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781649335
+        - name: limit
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781642867
+        - name: sortBy
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - title
+              - created
+              - applications
+          allowEmptyValue: false
+          x-last-modified: 1720785395735
+        - name: sortOrder
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          allowEmptyValue: false
+          x-last-modified: 1720785524129
     post:
       tags: []
       summary: Creates new topic
@@ -310,6 +425,45 @@ paths:
             type: number
           allowEmptyValue: false
           x-last-modified: 1720735597166
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781649335
+        - name: limit
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781642867
+        - name: sortBy
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - start_date
+              - instructor
+              - student
+          allowEmptyValue: false
+          x-last-modified: 1720785395735
+        - name: sortOrder
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          allowEmptyValue: false
+          x-last-modified: 1720785524129
     post:
       tags: []
       requestBody:
@@ -345,6 +499,43 @@ paths:
             type: string
             format: uuid
           x-last-modified: 1720735880308
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781649335
+        - name: limit
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781642867
+        - name: sortBy
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - published
+          allowEmptyValue: false
+          x-last-modified: 1720785395735
+        - name: sortOrder
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          allowEmptyValue: false
+          x-last-modified: 1720785524129
     put:
       tags: []
       parameters:
@@ -534,6 +725,43 @@ paths:
             type: string
             format: uuid
           x-last-modified: 1720737856563
+        - name: page
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781649335
+        - name: limit
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: integer
+          allowEmptyValue: false
+          x-last-modified: 1720781642867
+        - name: sortBy
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - created
+          allowEmptyValue: false
+          x-last-modified: 1720785395735
+        - name: sortOrder
+          in: query
+          required: false
+          deprecated: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+          allowEmptyValue: false
+          x-last-modified: 1720785524129
     post:
       tags: []
       summary: Post new comment on thesis id
