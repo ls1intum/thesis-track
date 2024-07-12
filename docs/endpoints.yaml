@@ -85,36 +85,37 @@ paths:
       summary: Gets all applications visible to authenticated user
     post:
       requestBody:
+        description: ''
         content:
           application/json:
             schema:
+              description: ''
               required:
                 - motivation
                 - examination_report
                 - cv
               type: object
-              description: ''
-              example: ''
               properties:
                 topic_id:
-                  type: string
                   format: uuid
+                  type: string
                 suggested_title:
                   type: string
                 motivation:
                   type: string
                 cv:
-                  type: string
                   format: binary
+                  type: string
                 examination_report:
-                  type: string
                   format: binary
+                  type: string
                 bachelor_report:
-                  type: string
                   format: binary
+                  type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
+              example: ''
             example:
               topic_id: uuid (optional)
               suggested_title: string (optional)
@@ -123,7 +124,6 @@ paths:
               examination_report: pdf file
               bachelor_report: pdf file (optional)
         required: true
-        description: ''
       tags: []
       summary: Creates a new application
     x-last-modified: 1720731883148
@@ -140,9 +140,11 @@ paths:
       summary: Get information about authenticated user
     put:
       requestBody:
+        description: ''
         content:
           application/json:
             schema:
+              description: ''
               required:
                 - first_name
                 - last_name
@@ -156,8 +158,6 @@ paths:
                 - research_areas
                 - focus_topics
               type: object
-              description: ''
-              example: ''
               properties:
                 first_name:
                   type: string
@@ -186,8 +186,9 @@ paths:
                   items:
                     type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
+              example: ''
             example:
               first_name: string
               last_name: string
@@ -201,7 +202,6 @@ paths:
                 - string
               focus_topics:
                 - string
-        description: ''
         required: true
       tags: []
       summary: Update information about authenticated user
@@ -358,7 +358,6 @@ paths:
   /topics:
     get:
       tags: []
-      security: []
       parameters:
         - deprecated: false
           name: open
@@ -448,8 +447,8 @@ paths:
                 notify_students:
                   type: boolean
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               title: string
               problem_statement: string
@@ -465,7 +464,6 @@ paths:
   /topics/{topic_id}:
     get:
       tags: []
-      security: []
       parameters:
         - deprecated: false
           name: topic_id
@@ -502,8 +500,8 @@ paths:
                   items:
                     type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               title: string
               problem_statement: string
@@ -627,11 +625,11 @@ paths:
               type: object
               properties:
                 topic_id:
-                  type: string
                   format: uuid
+                  type: string
                 application_id:
-                  type: string
                   format: uuid
+                  type: string
                 thesis_title:
                   type: string
                 close_topic:
@@ -639,21 +637,21 @@ paths:
                 students:
                   type: array
                   items:
-                    type: string
                     format: uuid
+                    type: string
                 instructors:
                   type: array
                   items:
-                    type: string
                     format: uuid
+                    type: string
                 graders:
                   type: array
                   items:
-                    type: string
                     format: uuid
+                    type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               topic_id: uuid (optional)
               application_id: uuid (optional)
@@ -671,7 +669,6 @@ paths:
   /theses/published:
     get:
       tags: []
-      security: []
       summary: Get all published theses
     x-last-modified: 1720735739213
   /theses/{thesis_id}:
@@ -710,21 +707,21 @@ paths:
                 students:
                   type: array
                   items:
-                    type: string
                     format: uuid
+                    type: string
                 instructors:
                   type: array
                   items:
-                    type: string
                     format: uuid
+                    type: string
                 graders:
                   type: array
                   items:
-                    type: string
                     format: uuid
+                    type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               thesis_title: string
               start_timestamp: integer
@@ -812,8 +809,8 @@ paths:
                 info:
                   type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               abstract: string
               info: string
@@ -897,8 +894,8 @@ paths:
                 is_public:
                   type: boolean
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               type: string
               date: integer
@@ -991,11 +988,11 @@ paths:
                 message:
                   type: string
                 file:
-                  type: string
                   format: binary
+                  type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               message: string
               file: pdf file
@@ -1058,8 +1055,8 @@ paths:
               type: object
               properties:
                 proposal:
-                  type: string
                   format: binary
+                  type: string
                 milestones:
                   type: array
                   items:
@@ -1072,8 +1069,8 @@ paths:
                       description:
                         type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               proposal: pdf file
               milestones:
@@ -1115,8 +1112,8 @@ paths:
                 grade_suggestion:
                   type: string
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               summary: string
               positives: string
@@ -1154,8 +1151,8 @@ paths:
                 publish:
                   type: boolean
               externalDocs:
-                url: ''
                 description: ''
+                url: ''
             example:
               grade: string
               feedback: string
@@ -1211,7 +1208,101 @@ components:
         Example: 
         > Authorization: Bearer <token>
       x-last-modified: 1720729705844
-  schemas: {}
+  schemas:
+    Application:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/User'
+        topic:
+          $ref: '#/components/schemas/Topic'
+        thesis_title:
+          type: string
+        available_files:
+          type: array
+          items:
+            type: string
+        motivation:
+          type: string
+        state:
+          type: string
+        reviewer:
+          $ref: '#/components/schemas/User'
+        desired_start_date:
+          type: integer
+        comment:
+          type: string
+        created_at:
+          type: integer
+        reviewed_at:
+          type: integer
+      x-last-modified: 1720804192546
+    User:
+      type: object
+      properties:
+        university_id:
+          type: string
+        readable_university_id:
+          type: string
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        gender:
+          type: string
+        nationality:
+          type: string
+        is_exchange_student:
+          type: boolean
+        focus_topics:
+          type: array
+          items:
+            type: string
+        research_areas:
+          type: array
+          items:
+            type: string
+        study_degrees:
+          type: array
+          items:
+            type: string
+        study_program:
+          type: string
+        projects:
+          type: string
+        special_skills:
+          type: string
+        interests:
+          type: string
+        joined_at:
+          type: integer
+      x-last-modified: 1720804466270
+    Topic:
+      type: object
+      properties:
+        title:
+          type: string
+        problem_statement:
+          type: string
+        goals:
+          type: string
+        references:
+          type: string
+        required_degrees:
+          type: array
+          items:
+            type: string
+        closed_at:
+          type: integer
+        created_at:
+          type: integer
+        reviewers:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+      x-last-modified: 1720804590419
   headers: {}
   responses: {}
   parameters: {}
