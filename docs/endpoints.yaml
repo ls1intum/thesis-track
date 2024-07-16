@@ -1093,6 +1093,34 @@ paths:
           x-last-modified: 1720738085766
       summary: Add proposal to a thesis id
     x-last-modified: 1720738054494
+  /theses/{thesis_id}/proposal/accept:
+    post:
+      tags: []
+      parameters:
+        - deprecated: false
+          name: thesis_id
+          schema:
+            format: uuid
+            type: string
+          in: path
+          required: true
+          x-last-modified: 1720738310827
+      summary: Accepts uploaded proposal
+    x-last-modified: 1720738284957
+  /theses/{thesis_id}/proposal/reject:
+    post:
+      tags: []
+      parameters:
+        - deprecated: false
+          name: thesis_id
+          schema:
+            format: uuid
+            type: string
+          in: path
+          required: true
+          x-last-modified: 1720738310827
+      summary: Rejects uploaded proposal
+    x-last-modified: 1720738284957
   /theses/{thesis_id}/assessment:
     post:
       requestBody:
