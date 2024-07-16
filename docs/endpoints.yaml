@@ -15,118 +15,6 @@ servers:
     description: ''
     x-last-modified: 1720732807668
 paths:
-  /applications:
-    get:
-      tags: []
-      parameters:
-        - deprecated: false
-          name: status
-          schema:
-            type: string
-          in: query
-          required: false
-          allowEmptyValue: false
-          x-last-modified: 1720731944648
-        - deprecated: false
-          name: search
-          schema:
-            type: string
-          in: query
-          required: false
-          allowEmptyValue: true
-          x-last-modified: 1720731964502
-        - deprecated: false
-          name: topic_id
-          schema:
-            format: uuid
-            type: string
-          in: query
-          required: false
-          allowEmptyValue: false
-          x-last-modified: 1720732000166
-        - deprecated: false
-          name: page
-          schema:
-            type: integer
-          in: query
-          required: false
-          allowEmptyValue: false
-          x-last-modified: 1720781649335
-        - deprecated: false
-          name: limit
-          schema:
-            type: integer
-          in: query
-          required: false
-          allowEmptyValue: false
-          x-last-modified: 1720781642867
-        - deprecated: false
-          name: sortBy
-          schema:
-            enum:
-              - created
-              - reviewed
-            type: string
-          in: query
-          required: false
-          allowEmptyValue: false
-          x-last-modified: 1720785395735
-        - deprecated: false
-          name: sortOrder
-          schema:
-            enum:
-              - asc
-              - desc
-            type: string
-          in: query
-          required: false
-          allowEmptyValue: false
-          x-last-modified: 1720785524129
-      summary: Gets all applications visible to authenticated user
-    post:
-      requestBody:
-        description: ''
-        content:
-          application/json:
-            schema:
-              description: ''
-              required:
-                - motivation
-                - examination_report
-                - cv
-              type: object
-              properties:
-                topic_id:
-                  format: uuid
-                  type: string
-                suggested_title:
-                  type: string
-                motivation:
-                  type: string
-                cv:
-                  format: binary
-                  type: string
-                examination_report:
-                  format: binary
-                  type: string
-                bachelor_report:
-                  format: binary
-                  type: string
-              externalDocs:
-                description: ''
-                url: ''
-              example: ''
-            example:
-              topic_id: uuid (optional)
-              suggested_title: string (optional)
-              motivation: string
-              cv: pdf file
-              examination_report: pdf file
-              bachelor_report: pdf file (optional)
-        required: true
-      tags: []
-      summary: Creates a new application
-    x-last-modified: 1720731883148
   /dashboard:
     summary: ''
     get:
@@ -271,6 +159,118 @@ paths:
           x-last-modified: 1720785524129
       summary: Search users filtered by group
     x-last-modified: 1720732688371
+  /applications:
+    get:
+      tags: []
+      parameters:
+        - deprecated: false
+          name: status
+          schema:
+            type: string
+          in: query
+          required: false
+          allowEmptyValue: false
+          x-last-modified: 1720731944648
+        - deprecated: false
+          name: search
+          schema:
+            type: string
+          in: query
+          required: false
+          allowEmptyValue: true
+          x-last-modified: 1720731964502
+        - deprecated: false
+          name: topic_id
+          schema:
+            format: uuid
+            type: string
+          in: query
+          required: false
+          allowEmptyValue: false
+          x-last-modified: 1720732000166
+        - deprecated: false
+          name: page
+          schema:
+            type: integer
+          in: query
+          required: false
+          allowEmptyValue: false
+          x-last-modified: 1720781649335
+        - deprecated: false
+          name: limit
+          schema:
+            type: integer
+          in: query
+          required: false
+          allowEmptyValue: false
+          x-last-modified: 1720781642867
+        - deprecated: false
+          name: sortBy
+          schema:
+            enum:
+              - created
+              - reviewed
+            type: string
+          in: query
+          required: false
+          allowEmptyValue: false
+          x-last-modified: 1720785395735
+        - deprecated: false
+          name: sortOrder
+          schema:
+            enum:
+              - asc
+              - desc
+            type: string
+          in: query
+          required: false
+          allowEmptyValue: false
+          x-last-modified: 1720785524129
+      summary: Gets all applications visible to authenticated user
+    post:
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              description: ''
+              required:
+                - motivation
+                - examination_report
+                - cv
+              type: object
+              properties:
+                topic_id:
+                  format: uuid
+                  type: string
+                suggested_title:
+                  type: string
+                motivation:
+                  type: string
+                cv:
+                  format: binary
+                  type: string
+                examination_report:
+                  format: binary
+                  type: string
+                bachelor_report:
+                  format: binary
+                  type: string
+              externalDocs:
+                description: ''
+                url: ''
+              example: ''
+            example:
+              topic_id: uuid (optional)
+              suggested_title: string (optional)
+              motivation: string
+              cv: pdf file
+              examination_report: pdf file
+              bachelor_report: pdf file (optional)
+        required: true
+      tags: []
+      summary: Creates a new application
+    x-last-modified: 1720731883148
   /applications/{application_id}:
     get:
       tags: []
