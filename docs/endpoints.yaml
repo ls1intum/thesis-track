@@ -1054,23 +1054,19 @@ paths:
             schema:
               required:
                 - proposal
-                - milestones
+                - completed_changes
               type: object
               properties:
+                abstract:
+                  type: string
                 proposal:
                   format: binary
                   type: string
-                milestones:
+                completed_changes:
                   type: array
                   items:
-                    type: object
-                    properties:
-                      start_date:
-                        type: integer
-                      end_date:
-                        type: integer
-                      description:
-                        type: string
+                    type: string
+                    format: uuid
               externalDocs:
                 description: ''
                 url: ''
@@ -1109,6 +1105,25 @@ paths:
     x-last-modified: 1720738284957
   /theses/{thesis_id}/proposal/reject:
     post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - requested_changes
+              type: object
+              properties:
+                requested_changes:
+                  type: array
+                  items:
+                    type: string
+              externalDocs:
+                description: ''
+                url: ''
+            example:
+              requested_changes:
+                - string
+        required: true
       tags: []
       parameters:
         - deprecated: false
