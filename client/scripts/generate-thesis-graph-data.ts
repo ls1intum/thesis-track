@@ -4,7 +4,7 @@ import internationalNames from './data/international-names.json'
 import {
   IThesisProgressChartDataElement,
   ThesisState,
-} from '../src/pages/ThesisOverview/types/chart'
+} from '../src/pages/ThesisOverviewPage/types/chart'
 import { randomArrayElement } from '../src/utils/array'
 
 const states: ThesisState[] = [

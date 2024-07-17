@@ -3,7 +3,6 @@ import { axiosInstance, keycloakRealmName, keycloakUrl } from '../../network/con
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import { Affix, Button, Center, Transition, rem, Container } from '@mantine/core'
-import { IconArrowUp } from '@tabler/icons-react'
 import { useWindowScroll } from '@mantine/hooks'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { putThesisAdvisor } from '../../network/thesisApplication'
@@ -11,8 +10,9 @@ import { ThesisAdvisor } from '../../interfaces/thesisApplication'
 import { Query } from '../../hooks/query'
 import { useAuthenticationStore } from '../../hooks/authentication'
 import { ThesisApplicationsDatatable } from './components/ThesisApplicationsDatatable/ThesisApplicationsDatatable'
+import { ArrowUp } from 'phosphor-react'
 
-const ThesisManagementConsole = () => {
+const LegacyApplicationReviewPage = () => {
   const queryClient = useQueryClient()
   const [scroll, scrollTo] = useWindowScroll()
   const [authenticated, setAuthenticated] = useState(false)
@@ -113,7 +113,7 @@ const ThesisManagementConsole = () => {
             <Transition transition='slide-up' mounted={scroll.y > 0}>
               {(transitionStyles) => (
                 <Button
-                  leftSection={<IconArrowUp style={{ width: rem(16), height: rem(16) }} />}
+                  leftSection={<ArrowUp style={{ width: rem(16), height: rem(16) }} />}
                   style={transitionStyles}
                   onClick={() => scrollTo({ y: 0 })}
                 >
@@ -128,4 +128,4 @@ const ThesisManagementConsole = () => {
   )
 }
 
-export default ThesisManagementConsole
+export default LegacyApplicationReviewPage

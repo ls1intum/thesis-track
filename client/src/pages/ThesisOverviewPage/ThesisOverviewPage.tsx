@@ -8,7 +8,7 @@ import ThesisProgressFilter from './components/ThesisProgressFilter/ThesisProgre
 import ThesisOverviewChartProvider from './components/ThesisOverviewChartProvider/ThesisOverviewChartProvider'
 import { IThesisProgressChartDataElement } from './types/chart'
 
-const ThesisOverview = () => {
+const ThesisOverviewPage = () => {
   const { variant } = useParams<{ variant: string }>()
 
   return (
@@ -37,4 +37,4 @@ const ThesisOverview = () => {
   )
 }
 
-export default ThesisOverview
+export default ThesisOverviewPage

@@ -2,19 +2,19 @@ import { useState } from 'react'
 import { ActionIcon, Badge, Group, Modal, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { IconExternalLink, IconEyeEdit, IconSearch } from '@tabler/icons-react'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import {
   ApplicationFormAccessMode,
-  ThesisApplicationForm,
-} from '../../../ThesisApplication/ThesisApplicationForm'
+  LegacyThesisApplicationForm,
+} from '../../../LegacySubmitApplicationPage/LegacyThesisApplicationForm'
 import { Pageable } from '../../../../interfaces/pageable'
 import { ThesisApplication } from '../../../../interfaces/thesisApplication'
 import { ApplicationStatus } from '../../../../interfaces/application'
 import { getThesisApplications } from '../../../../network/thesisApplication'
 import { Query } from '../../../../hooks/query'
+import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
 
 export const ThesisApplicationsDatatable = (): JSX.Element => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -64,7 +64,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
             setOpenedApplication(undefined)
           }}
         >
-          <ThesisApplicationForm
+          <LegacyThesisApplicationForm
             application={openedApplication}
             accessMode={ApplicationFormAccessMode.INSTRUCTOR}
           />
@@ -73,7 +73,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
       <TextInput
         style={{ margin: '1vh 0', width: '30vw' }}
         placeholder='Search applications...'
-        leftSection={<IconSearch size={16} />}
+        leftSection={<MagnifyingGlass size={16} />}
         value={searchQuery}
         onChange={(e) => {
           setSearchQuery(e.currentTarget.value)
@@ -128,7 +128,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                 onChange={(value) => {
                   setFilteredStates(value.length > 0 ? value : undefined)
                 }}
-                leftSection={<IconSearch size={16} />}
+                leftSection={<MagnifyingGlass size={16} />}
                 clearable
                 searchable
               />
@@ -196,7 +196,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                     setOpenedApplication(application)
                   }}
                 >
-                  <IconEyeEdit size={16} />
+                  <Eye size={16} />
                 </ActionIcon>
                 <Link
                   to='/management/thesis-applications'
@@ -213,7 +213,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                     color='blue'
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <IconExternalLink size={16} />
+                    <ArrowSquareOut size={16} />
                   </ActionIcon>
                 </Link>
               </Group>

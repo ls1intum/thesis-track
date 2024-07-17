@@ -26,7 +26,6 @@ import {
 } from '@mantine/core'
 import { Gender, StudyDegree, StudyProgram } from '../../interfaces/student'
 import { DeclarationOfDataConsent } from './components/DeclarationOfDataConsent/DeclarationOfDataConsent'
-import { IconCalendar, IconPhoto, IconUpload, IconX } from '@tabler/icons-react'
 import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
 import { notifications } from '@mantine/notifications'
@@ -54,6 +53,7 @@ import {
   ThesisApplication,
 } from '../../interfaces/thesisApplication'
 import { Query } from '../../hooks/query'
+import { Calendar, ImageSquare, UploadSimple, X } from 'phosphor-react'
 
 countries.registerLocale(enLocale)
 const countriesArr = Object.entries(countries.getNames('en', { select: 'alias' })).map(
@@ -75,7 +75,10 @@ interface ThesisApplicationFormProps {
   application?: ThesisApplication
 }
 
-export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplicationFormProps) => {
+export const LegacyThesisApplicationForm = ({
+  application,
+  accessMode,
+}: ThesisApplicationFormProps) => {
   const theme = useMantineTheme()
   const queryClient = useQueryClient()
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -522,7 +525,7 @@ export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplica
                 </Stack>
               ) : (
                 <DatePickerInput
-                  leftSection={<IconCalendar />}
+                  leftSection={<Calendar />}
                   label='Desired Thesis Start Date'
                   {...form.getInputProps('desiredThesisStart')}
                 />
@@ -582,7 +585,7 @@ export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplica
                             uploads.setValues({ examinationReport: undefined })
                           }}
                         >
-                          <IconX />
+                          <X />
                         </ActionIcon>
                       </Group>
                     </Card>
@@ -615,17 +618,13 @@ export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplica
                         style={{ minHeight: rem(220), pointerEvents: 'none' }}
                       >
                         <Dropzone.Accept>
-                          <IconUpload
-                            size='3.2rem'
-                            stroke={1.5}
-                            color={theme.colors[theme.primaryColor][4]}
-                          />
+                          <UploadSimple size='3.2rem' color={theme.colors[theme.primaryColor][4]} />
                         </Dropzone.Accept>
                         <Dropzone.Reject>
-                          <IconX size='3.2rem' stroke={1.5} color={theme.colors.red[4]} />
+                          <X size='3.2rem' color={theme.colors.red[4]} />
                         </Dropzone.Reject>
                         <Dropzone.Idle>
-                          <IconPhoto size='3.2rem' stroke={1.5} />
+                          <ImageSquare size='3.2rem' />
                         </Dropzone.Idle>
 
                         <div>
@@ -656,7 +655,7 @@ export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplica
                             uploads.setValues({ cv: undefined })
                           }}
                         >
-                          <IconX />
+                          <X />
                         </ActionIcon>
                       </Group>
                     </Card>
@@ -689,17 +688,13 @@ export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplica
                         style={{ minHeight: rem(220), pointerEvents: 'none' }}
                       >
                         <Dropzone.Accept>
-                          <IconUpload
-                            size='3.2rem'
-                            stroke={1.5}
-                            color={theme.colors[theme.primaryColor][4]}
-                          />
+                          <UploadSimple size='3.2rem' color={theme.colors[theme.primaryColor][4]} />
                         </Dropzone.Accept>
                         <Dropzone.Reject>
-                          <IconX size='3.2rem' stroke={1.5} color={theme.colors.red[4]} />
+                          <X size='3.2rem' color={theme.colors.red[4]} />
                         </Dropzone.Reject>
                         <Dropzone.Idle>
-                          <IconPhoto size='3.2rem' stroke={1.5} />
+                          <ImageSquare size='3.2rem' />
                         </Dropzone.Idle>
 
                         <div>
@@ -727,7 +722,7 @@ export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplica
                             uploads.setValues({ bachelorReport: undefined })
                           }}
                         >
-                          <IconX />
+                          <X />
                         </ActionIcon>
                       </Group>
                     </Card>
@@ -760,17 +755,13 @@ export const ThesisApplicationForm = ({ application, accessMode }: ThesisApplica
                         style={{ minHeight: rem(220), pointerEvents: 'none' }}
                       >
                         <Dropzone.Accept>
-                          <IconUpload
-                            size='3.2rem'
-                            stroke={1.5}
-                            color={theme.colors[theme.primaryColor][4]}
-                          />
+                          <UploadSimple size='3.2rem' color={theme.colors[theme.primaryColor][4]} />
                         </Dropzone.Accept>
                         <Dropzone.Reject>
-                          <IconX size='3.2rem' stroke={1.5} color={theme.colors.red[4]} />
+                          <X size='3.2rem' color={theme.colors.red[4]} />
                         </Dropzone.Reject>
                         <Dropzone.Idle>
-                          <IconPhoto size='3.2rem' stroke={1.5} />
+                          <ImageSquare size='3.2rem' />
                         </Dropzone.Idle>
 
                         <div>
