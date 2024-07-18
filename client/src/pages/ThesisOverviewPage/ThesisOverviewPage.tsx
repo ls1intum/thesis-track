@@ -7,8 +7,11 @@ import CustomThesisProgressChart from './components/CustomThesisProgressChart/Cu
 import ThesisProgressFilter from './components/ThesisProgressFilter/ThesisProgressFilter'
 import ThesisOverviewChartProvider from './components/ThesisOverviewChartProvider/ThesisOverviewChartProvider'
 import { IThesisProgressChartDataElement } from './types/chart'
+import { usePageTitle } from '../../hooks/theme'
 
 const ThesisOverviewPage = () => {
+  usePageTitle('Theses Overview')
+
   const { variant } = useParams<{ variant: string }>()
 
   return (

@@ -1,5 +1,5 @@
 import { ReactNode } from 'react'
-import { AppShell, Burger } from '@mantine/core'
+import { AppShell, Burger, Group } from '@mantine/core'
 import * as styles from './AuthenticatedArea.module.scss'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
@@ -12,9 +12,12 @@ import {
   SignOut,
   User,
 } from 'phosphor-react'
+import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 
 interface IAuthenticatedAreaProps {
   children: ReactNode
+  requireAuthentication?: boolean
+  collapseNavigation?: boolean
 }
 
 const links = [
@@ -26,23 +29,35 @@ const links = [
 ]
 
 const AuthenticatedArea = (props: IAuthenticatedAreaProps) => {
-  const { children } = props
+  const { children, requireAuthentication = true, collapseNavigation = false } = props
 
   const [opened, { toggle }] = useDisclosure()
   const location = useLocation()
+  const showHeader = useIsSmallerBreakpoint('md') || collapseNavigation
+
+  if (!requireAuthentication) {
+    return <>{children}</>
+  }
 
   return (
     <AppShell
-      header={{ height: { sm: 60, md: 0 } }}
+      header={{ collapsed: !showHeader, height: 60 }}
       navbar={{
         width: 300,
         breakpoint: 'md',
-        collapsed: { mobile: !opened },
+        collapsed: { mobile: !opened, desktop: !opened && collapseNavigation },
       }}
       padding='md'
     >
       <AppShell.Header>
-        <Burger opened={opened} onClick={toggle} hiddenFrom='md' size='md' />
+        <Group h='100%' px='md'>
+          <Burger
+            opened={opened}
+            onClick={toggle}
+            hiddenFrom={collapseNavigation ? undefined : 'md'}
+            size='md'
+          />
+        </Group>
       </AppShell.Header>
 
       <AppShell.Navbar p='md'>
@@ -60,7 +75,11 @@ const AuthenticatedArea = (props: IAuthenticatedAreaProps) => {
           ))}
         </AppShell.Section>
         <AppShell.Section>
-          <Link to='/settings/my-information' className={styles.link}>
+          <Link
+            to='/settings/my-information'
+            className={styles.link}
+            data-active={location.pathname.startsWith('/settings/my-information') || undefined}
+          >
             <User className={styles.linkIcon} size={32} />
             <span>My Information</span>
           </Link>

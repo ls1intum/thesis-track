@@ -11,6 +11,7 @@ import {
 import RenderItemParams = echarts.EChartOption.SeriesCustom.RenderItemParams
 import { useThesisOverviewChart } from '../ThesisOverviewChartProvider/hooks'
 import { Skeleton } from '@mantine/core'
+import { useColorScheme } from '@mantine/hooks'
 
 interface IEChartsThesisProgressChartProps {
   width: string
@@ -21,6 +22,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
   const { width, height } = props
 
   const { thesisData } = useThesisOverviewChart()
+  const colorScheme = useColorScheme()
 
   const currentTime = useMemo(() => {
     return Date.now()
@@ -202,7 +204,7 @@ const EChartsThesisProgressChart = (props: IEChartsThesisProgressChartProps) => 
     <ReactEChartsCore
       echarts={echarts}
       option={options}
-      theme='dark'
+      theme={colorScheme}
       style={{ height: height + 'px', width }}
     />
   )

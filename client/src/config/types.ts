@@ -1,1 +1,3 @@
-export interface IGlobalConfig { }
+export interface IGlobalConfig {
+  title: string
+}
