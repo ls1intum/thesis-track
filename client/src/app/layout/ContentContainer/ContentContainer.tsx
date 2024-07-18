@@ -10,11 +10,7 @@ interface IContentContainerProps {
 const ContentContainer = (props: IContentContainerProps) => {
   const { children } = props
 
-  return (
-    <Container className={styles.contentContainer}>
-      {children}
-    </Container>
-  )
+  return <Container className={styles.contentContainer}>{children}</Container>
 }
 
 export default ContentContainer

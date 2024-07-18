@@ -1,3 +1,1 @@
-export function useRequests() {
-
-}
+export function useRequests() {}
