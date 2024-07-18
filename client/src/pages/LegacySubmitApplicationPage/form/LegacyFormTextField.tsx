@@ -13,7 +13,7 @@ interface FormTextFieldProps {
   textAreaProps?: TextareaProps
 }
 
-const FormTextField = ({
+const LegacyFormTextField = ({
   label,
   placeholder,
   value,
@@ -63,4 +63,4 @@ const FormTextField = ({
   )
 }
 
-export default FormTextField
+export default LegacyFormTextField

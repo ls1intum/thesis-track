@@ -25,15 +25,15 @@ import {
   useMantineTheme,
 } from '@mantine/core'
 import { LegacyGender, LegacyStudyDegree, LegacyStudyProgram } from '../../legacy/interfaces/student'
-import { DeclarationOfDataConsent } from './components/DeclarationOfDataConsent/DeclarationOfDataConsent'
+import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
 import { notifications } from '@mantine/notifications'
 import { useDisclosure } from '@mantine/hooks'
-import { ApplicationSuccessfulSubmission } from './components/ApplicationSubmission/ApplicationSuccessfulSubmission'
+import { LegacyApplicationSuccessfulSubmission } from './components/LegacyApplicationSubmission/LegacyApplicationSuccessfulSubmission'
 import { useEffect, useState } from 'react'
-import FormTextField from './form/FormTextField'
-import FormSelectField from './form/FormSelectField'
+import LegacyFormTextField from './form/LegacyFormTextField'
+import LegacyFormSelectField from './form/LegacyFormSelectField'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getThesisAdvisors,
@@ -282,7 +282,7 @@ export const LegacyThesisApplicationForm = ({
       >
         <LoadingOverlay visible={loadingOverlayVisible} overlayProps={{ blur: 2 }} />
         {applicationSuccessfullySubmitted ? (
-          <ApplicationSuccessfulSubmission
+          <LegacyApplicationSuccessfulSubmission
             title='Your application was successfully submitted!'
             text='We will contact you as soon as we have reviewed your application.'
           />
@@ -311,7 +311,7 @@ export const LegacyThesisApplicationForm = ({
             )}
             <form style={{ display: 'flex', flexDirection: 'column', gap: '2vh' }}>
               <Group grow align='flex-start'>
-                <FormTextField
+                <LegacyFormTextField
                   required={!form.values.student?.isExchangeStudent}
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='TUM ID'
@@ -319,7 +319,7 @@ export const LegacyThesisApplicationForm = ({
                   value={form.values.student?.tumId ?? ''}
                   textInputProps={form.getInputProps('student.tumId')}
                 />
-                <FormTextField
+                <LegacyFormTextField
                   required={!form.values.student?.isExchangeStudent}
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Matriculation Number'
@@ -329,7 +329,7 @@ export const LegacyThesisApplicationForm = ({
                 />
               </Group>
               <Group grow align='flex-start'>
-                <FormTextField
+                <LegacyFormTextField
                   required
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='First name'
@@ -337,7 +337,7 @@ export const LegacyThesisApplicationForm = ({
                   value={form.values.student?.firstName ?? ''}
                   textInputProps={form.getInputProps('student.firstName')}
                 />
-                <FormTextField
+                <LegacyFormTextField
                   required
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Last name'
@@ -347,7 +347,7 @@ export const LegacyThesisApplicationForm = ({
                 />
               </Group>
               <Group grow align='flex-start'>
-                <FormSelectField
+                <LegacyFormSelectField
                   required
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Gender'
@@ -361,7 +361,7 @@ export const LegacyThesisApplicationForm = ({
                   })}
                   selectProps={form.getInputProps('student.gender')}
                 />
-                <FormSelectField
+                <LegacyFormSelectField
                   required
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Nationality'
@@ -374,7 +374,7 @@ export const LegacyThesisApplicationForm = ({
                   selectProps={form.getInputProps('student.nationality')}
                 />
               </Group>
-              <FormTextField
+              <LegacyFormTextField
                 required
                 readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                 label='Email (preferrably a TUM email address)'
@@ -383,7 +383,7 @@ export const LegacyThesisApplicationForm = ({
                 textInputProps={form.getInputProps('student.email')}
               />
               <Group grow align='flex-start'>
-                <FormSelectField
+                <LegacyFormSelectField
                   required
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Study Degree'
@@ -399,7 +399,7 @@ export const LegacyThesisApplicationForm = ({
                   })}
                   selectProps={form.getInputProps('studyDegree')}
                 />
-                <FormSelectField
+                <LegacyFormSelectField
                   required
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Study Program'
@@ -415,7 +415,7 @@ export const LegacyThesisApplicationForm = ({
                   })}
                   selectProps={form.getInputProps('studyProgram')}
                 />
-                <FormTextField
+                <LegacyFormTextField
                   required
                   numeric
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
@@ -427,7 +427,7 @@ export const LegacyThesisApplicationForm = ({
               </Group>
               <Group grow align='flex-start'>
                 <div>
-                  <FormTextField
+                  <LegacyFormTextField
                     required
                     textArea
                     readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
@@ -444,7 +444,7 @@ export const LegacyThesisApplicationForm = ({
                     )}
                 </div>
                 <div>
-                  <FormTextField
+                  <LegacyFormTextField
                     required
                     textArea
                     readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
@@ -464,7 +464,7 @@ export const LegacyThesisApplicationForm = ({
               </Group>
               <Group grow align='flex-start'>
                 <div>
-                  <FormTextField
+                  <LegacyFormTextField
                     required
                     textArea
                     readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
@@ -482,7 +482,7 @@ export const LegacyThesisApplicationForm = ({
                     )}
                 </div>
                 <div>
-                  <FormTextField
+                  <LegacyFormTextField
                     required
                     textArea
                     readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
@@ -497,7 +497,7 @@ export const LegacyThesisApplicationForm = ({
                 </div>
               </Group>
               <div>
-                <FormTextField
+                <LegacyFormTextField
                   required
                   textArea
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
@@ -531,7 +531,7 @@ export const LegacyThesisApplicationForm = ({
                 />
               )}
               <Group grow>
-                <FormSelectField
+                <LegacyFormSelectField
                   required
                   multiselect
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
@@ -548,7 +548,7 @@ export const LegacyThesisApplicationForm = ({
                     .join(', ')}
                   multiselectProps={form.getInputProps('researchAreas')}
                 />
-                <FormSelectField
+                <LegacyFormSelectField
                   required
                   multiselect
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}

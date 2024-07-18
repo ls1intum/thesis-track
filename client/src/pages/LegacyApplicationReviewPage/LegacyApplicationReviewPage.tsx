@@ -9,7 +9,7 @@ import { putThesisAdvisor } from '../../legacy/network/thesisApplication'
 import { LegacyThesisAdvisor } from '../../legacy/interfaces/thesisApplication'
 import { Query } from '../../legacy/query'
 import { useAuthenticationStore } from '../../hooks/authentication'
-import { ThesisApplicationsDatatable } from './components/ThesisApplicationsDatatable/ThesisApplicationsDatatable'
+import { LegacyThesisApplicationsDatatable } from './components/LegacyThesisApplicationsDatatable/LegacyThesisApplicationsDatatable'
 import { ArrowUp } from 'phosphor-react'
 
 const LegacyApplicationReviewPage = () => {
@@ -108,7 +108,7 @@ const LegacyApplicationReviewPage = () => {
     <Container>
       {authenticated && user && user.mgmtAccess && (
         <Center>
-          <ThesisApplicationsDatatable />
+          <LegacyThesisApplicationsDatatable />
           <Affix position={{ bottom: 20, right: 20 }}>
             <Transition transition='slide-up' mounted={scroll.y > 0}>
               {(transitionStyles) => (

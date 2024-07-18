@@ -16,7 +16,7 @@ import { getThesisApplications } from '../../../../legacy/network/thesisApplicat
 import { Query } from '../../../../legacy/query'
 import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
 
-export const ThesisApplicationsDatatable = (): JSX.Element => {
+export const LegacyThesisApplicationsDatatable = (): JSX.Element => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
   const [page, setPage] = useState(1)

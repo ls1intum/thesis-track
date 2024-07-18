@@ -21,7 +21,7 @@ interface FormSelectFieldProps {
   multiselectProps?: MultiSelectProps
 }
 
-const FormSelectField = ({
+const LegacyFormSelectField = ({
   label,
   placeholder,
   readValue,
@@ -67,4 +67,4 @@ const FormSelectField = ({
   )
 }
 
-export default FormSelectField
+export default LegacyFormSelectField
