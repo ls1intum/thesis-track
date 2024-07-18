@@ -1,14 +1,14 @@
-import { Student, StudyDegree, StudyProgram } from './/student'
-import { ApplicationStatus } from './application'
+import { LegacyStudent, LegacyStudyDegree, LegacyStudyProgram } from './student'
+import { LegacyApplicationStatus } from './application'
 
-export enum ResearchArea {
+export enum LegacyResearchArea {
   EDUCATION_TECHNOLOGIES = 'Education Technologies',
   HUMAN_COMPUTER_INTERACTION = 'Human Computer Interaction',
   ROBOTIC = 'Robotic',
   SOFTWARE_ENGINEERING = 'Software Engineering',
 }
 
-export enum FocusTopic {
+export enum LegacyFocusTopic {
   COMPETENCIES = 'Competencies',
   TEAM_BASED_LEARNING = 'Team-based Learning',
   AUTOMATIC_ASSESSMENT = 'Automatic Assessment',
@@ -46,7 +46,7 @@ export enum FocusTopic {
   HW_SW_CO_DESIGN = 'HW/SW Co-Design',
 }
 
-export interface ThesisAdvisor {
+export interface LegacyThesisAdvisor {
   id?: string
   firstName: string
   lastName: string
@@ -54,16 +54,16 @@ export interface ThesisAdvisor {
   tumId: string
 }
 
-export interface ThesisApplication {
+export interface LegacyThesisApplication {
   id: string
-  student: Student
-  studyProgram?: StudyProgram
-  studyDegree?: StudyDegree
+  student: LegacyStudent
+  studyProgram?: LegacyStudyProgram
+  studyDegree?: LegacyStudyDegree
   currentSemester?: string
   start: string
   specialSkills: string
-  researchAreas: ResearchArea[]
-  focusTopics: FocusTopic[]
+  researchAreas: LegacyResearchArea[]
+  focusTopics: LegacyFocusTopic[]
   motivation: string
   interests: string
   projects: string
@@ -72,8 +72,8 @@ export interface ThesisApplication {
   examinationReportFilename?: string
   cvFilename?: string
   bachelorReportFilename?: string
-  applicationStatus: keyof typeof ApplicationStatus
+  applicationStatus: keyof typeof LegacyApplicationStatus
   assessmentComment?: string
   createdAt?: Date
-  thesisAdvisor?: ThesisAdvisor
+  thesisAdvisor?: LegacyThesisAdvisor
 }

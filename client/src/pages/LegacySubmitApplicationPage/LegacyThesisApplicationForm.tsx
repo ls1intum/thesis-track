@@ -24,7 +24,7 @@ import {
   rem,
   useMantineTheme,
 } from '@mantine/core'
-import { Gender, StudyDegree, StudyProgram } from '../../interfaces/student'
+import { LegacyGender, LegacyStudyDegree, LegacyStudyProgram } from '../../legacy/interfaces/student'
 import { DeclarationOfDataConsent } from './components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
@@ -45,14 +45,14 @@ import {
   postThesisApplicationAssessment,
   postThesisApplicationRejection,
   postThesisApplicationThesisAdvisorAssignment,
-} from '../../network/thesisApplication'
+} from '../../legacy/network/thesisApplication'
 import {
-  FocusTopic,
-  ResearchArea,
-  ThesisAdvisor,
-  ThesisApplication,
-} from '../../interfaces/thesisApplication'
-import { Query } from '../../hooks/query'
+  LegacyFocusTopic,
+  LegacyResearchArea,
+  LegacyThesisAdvisor,
+  LegacyThesisApplication,
+} from '../../legacy/interfaces/thesisApplication'
+import { Query } from '../../legacy/query'
 import { Calendar, ImageSquare, UploadSimple, X } from 'phosphor-react'
 
 countries.registerLocale(enLocale)
@@ -72,7 +72,7 @@ export enum ApplicationFormAccessMode {
 
 interface ThesisApplicationFormProps {
   accessMode: ApplicationFormAccessMode
-  application?: ThesisApplication
+  application?: LegacyThesisApplication
 }
 
 export const LegacyThesisApplicationForm = ({
@@ -111,7 +111,7 @@ export const LegacyThesisApplicationForm = ({
       },
     },
   })
-  const form = useForm<ThesisApplication>({
+  const form = useForm<LegacyThesisApplication>({
     initialValues: application
       ? {
           ...application,
@@ -225,7 +225,7 @@ export const LegacyThesisApplicationForm = ({
     application?.thesisAdvisor?.id ?? null,
   )
 
-  const { data: fetchedThesisAdvisors } = useQuery<ThesisAdvisor[]>({
+  const { data: fetchedThesisAdvisors } = useQuery<LegacyThesisAdvisor[]>({
     queryKey: [Query.THESIS_ADVISOR],
     enabled: accessMode === ApplicationFormAccessMode.INSTRUCTOR,
     queryFn: () => getThesisAdvisors(),
@@ -352,10 +352,10 @@ export const LegacyThesisApplicationForm = ({
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Gender'
                   placeholder='Gender'
-                  readValue={Gender[form.values.student.gender as unknown as keyof typeof Gender]}
-                  data={Object.keys(Gender).map((key) => {
+                  readValue={LegacyGender[form.values.student.gender as unknown as keyof typeof LegacyGender]}
+                  data={Object.keys(LegacyGender).map((key) => {
                     return {
-                      label: Gender[key as keyof typeof Gender],
+                      label: LegacyGender[key as keyof typeof LegacyGender],
                       value: key,
                     }
                   })}
@@ -389,11 +389,11 @@ export const LegacyThesisApplicationForm = ({
                   label='Study Degree'
                   placeholder='Study Degree'
                   readValue={
-                    StudyDegree[form.values.studyDegree as unknown as keyof typeof StudyDegree]
+                    LegacyStudyDegree[form.values.studyDegree as unknown as keyof typeof LegacyStudyDegree]
                   }
-                  data={Object.keys(StudyDegree).map((key) => {
+                  data={Object.keys(LegacyStudyDegree).map((key) => {
                     return {
-                      label: StudyDegree[key as keyof typeof StudyDegree],
+                      label: LegacyStudyDegree[key as keyof typeof LegacyStudyDegree],
                       value: key,
                     }
                   })}
@@ -405,11 +405,11 @@ export const LegacyThesisApplicationForm = ({
                   label='Study Program'
                   placeholder='Study Program'
                   readValue={
-                    StudyProgram[form.values.studyProgram as unknown as keyof typeof StudyProgram]
+                    LegacyStudyProgram[form.values.studyProgram as unknown as keyof typeof LegacyStudyProgram]
                   }
-                  data={Object.keys(StudyProgram).map((key) => {
+                  data={Object.keys(LegacyStudyProgram).map((key) => {
                     return {
-                      label: StudyProgram[key as keyof typeof StudyProgram],
+                      label: LegacyStudyProgram[key as keyof typeof LegacyStudyProgram],
                       value: key,
                     }
                   })}
@@ -535,16 +535,16 @@ export const LegacyThesisApplicationForm = ({
                   required
                   multiselect
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
-                  data={Object.keys(ResearchArea).map((key) => {
+                  data={Object.keys(LegacyResearchArea).map((key) => {
                     return {
-                      label: ResearchArea[key as keyof typeof ResearchArea],
+                      label: LegacyResearchArea[key as keyof typeof LegacyResearchArea],
                       value: key,
                     }
                   })}
                   label='Research Areas'
                   placeholder='Research areas'
                   readValue={form.values.researchAreas
-                    .map((ra) => ResearchArea[ra as unknown as keyof typeof ResearchArea])
+                    .map((ra) => LegacyResearchArea[ra as unknown as keyof typeof LegacyResearchArea])
                     .join(', ')}
                   multiselectProps={form.getInputProps('researchAreas')}
                 />
@@ -552,16 +552,16 @@ export const LegacyThesisApplicationForm = ({
                   required
                   multiselect
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
-                  data={Object.keys(FocusTopic).map((key) => {
+                  data={Object.keys(LegacyFocusTopic).map((key) => {
                     return {
-                      label: FocusTopic[key as keyof typeof FocusTopic],
+                      label: LegacyFocusTopic[key as keyof typeof LegacyFocusTopic],
                       value: key,
                     }
                   })}
                   label='Focus Topics'
                   placeholder='Focus topics'
                   readValue={form.values.focusTopics
-                    .map((ft) => FocusTopic[ft as unknown as keyof typeof FocusTopic])
+                    .map((ft) => LegacyFocusTopic[ft as unknown as keyof typeof LegacyFocusTopic])
                     .join(', ')}
                   multiselectProps={form.getInputProps('focusTopics')}
                 />

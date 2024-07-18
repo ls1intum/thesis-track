@@ -1,9 +1,9 @@
 import { notifications } from '@mantine/notifications'
 import { axiosInstance, notAuthenticatedAxiosInstance } from './configService'
-import { ThesisAdvisor, ThesisApplication } from '../interfaces/thesisApplication'
+import { LegacyThesisAdvisor, LegacyThesisApplication } from '../interfaces/thesisApplication'
 import { AxiosError } from 'axios'
-import { ApplicationStatus } from '../interfaces/application'
-import { Pageable } from '../interfaces/pageable'
+import { LegacyApplicationStatus } from '../interfaces/application'
+import { Pageable } from '../../requests/types/pageable'
 
 export const getThesisApplications = async (
   page: number,
@@ -12,14 +12,14 @@ export const getThesisApplications = async (
   searchQuery?: string,
   sortBy?: string,
   sortOrder?: 'asc' | 'desc',
-): Promise<Pageable<ThesisApplication>> => {
+): Promise<Pageable<LegacyThesisApplication>> => {
   try {
     return (
       await axiosInstance.get(`/api/thesis-applications`, {
         params: {
           page,
           limit,
-          states: states?.join(',') ?? Object.keys(ApplicationStatus).join(','),
+          states: states?.join(',') ?? Object.keys(LegacyApplicationStatus).join(','),
           searchQuery,
           sortBy,
           sortOrder,
@@ -53,11 +53,11 @@ export const postThesisApplication = async ({
   cv,
   bachelorReport,
 }: {
-  application: ThesisApplication
+  application: LegacyThesisApplication
   examinationReport: File
   cv: File
   bachelorReport?: File
-}): Promise<ThesisApplication | undefined> => {
+}): Promise<LegacyThesisApplication | undefined> => {
   try {
     const formData = new FormData()
     formData.append(
@@ -110,8 +110,8 @@ export const postThesisApplication = async ({
 
 export const postThesisApplicationAssessment = async (
   thesisApplicationId: string,
-  assessment: { status: keyof typeof ApplicationStatus; assessmentComment: string },
-): Promise<ThesisApplication | undefined> => {
+  assessment: { status: keyof typeof LegacyApplicationStatus; assessmentComment: string },
+): Promise<LegacyThesisApplication | undefined> => {
   try {
     return (
       await axiosInstance.post(`/api/thesis-applications/${thesisApplicationId}/assessment`, {
@@ -132,7 +132,7 @@ export const postThesisApplicationAssessment = async (
 export const postThesisApplicatioAcceptance = async (
   thesisApplicationId: string,
   notifyStudent: boolean,
-): Promise<ThesisApplication | undefined> => {
+): Promise<LegacyThesisApplication | undefined> => {
   try {
     const response = await axiosInstance.post(
       `/api/thesis-applications/${thesisApplicationId}/accept`,
@@ -172,7 +172,7 @@ export const postThesisApplicatioAcceptance = async (
 export const postThesisApplicationRejection = async (
   thesisApplicationId: string,
   notifyStudent: boolean,
-): Promise<ThesisApplication | undefined> => {
+): Promise<LegacyThesisApplication | undefined> => {
   try {
     const response = await axiosInstance.post(
       `/api/thesis-applications/${thesisApplicationId}/reject`,
@@ -209,7 +209,7 @@ export const postThesisApplicationRejection = async (
   }
 }
 
-export const getThesisAdvisors = async (): Promise<ThesisAdvisor[]> => {
+export const getThesisAdvisors = async (): Promise<LegacyThesisAdvisor[]> => {
   try {
     return (await axiosInstance.get(`/api/thesis-applications/thesis-advisors`)).data
   } catch (err) {
@@ -224,8 +224,8 @@ export const getThesisAdvisors = async (): Promise<ThesisAdvisor[]> => {
 }
 
 export const putThesisAdvisor = async (
-  thesisAdvisor: ThesisAdvisor,
-): Promise<ThesisAdvisor | undefined> => {
+  thesisAdvisor: LegacyThesisAdvisor,
+): Promise<LegacyThesisAdvisor | undefined> => {
   try {
     return (await axiosInstance.put(`/api/thesis-applications/thesis-advisors`, thesisAdvisor)).data
   } catch (err) {
@@ -242,7 +242,7 @@ export const putThesisAdvisor = async (
 export const postThesisApplicationThesisAdvisorAssignment = async (
   thesisApplicationId: string,
   thesisAdvisorId: string,
-): Promise<ThesisApplication | undefined> => {
+): Promise<LegacyThesisApplication | undefined> => {
   try {
     return (
       await axiosInstance.post(

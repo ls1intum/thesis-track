@@ -1,4 +1,4 @@
-export enum ApplicationStatus {
+export enum LegacyApplicationStatus {
   NOT_ASSESSED = 'Not assessed',
   PENDING_INTERVIEW = 'Pending interview',
   ACCEPTED = 'Accepted',

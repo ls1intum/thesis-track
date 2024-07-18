@@ -1,13 +1,13 @@
 import Keycloak from 'keycloak-js'
-import { axiosInstance, keycloakRealmName, keycloakUrl } from '../../network/configService'
+import { axiosInstance, keycloakRealmName, keycloakUrl } from '../../legacy/network/configService'
 import { useEffect, useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import { Affix, Button, Center, Transition, rem, Container } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { putThesisAdvisor } from '../../network/thesisApplication'
-import { ThesisAdvisor } from '../../interfaces/thesisApplication'
-import { Query } from '../../hooks/query'
+import { putThesisAdvisor } from '../../legacy/network/thesisApplication'
+import { LegacyThesisAdvisor } from '../../legacy/interfaces/thesisApplication'
+import { Query } from '../../legacy/query'
 import { useAuthenticationStore } from '../../hooks/authentication'
 import { ThesisApplicationsDatatable } from './components/ThesisApplicationsDatatable/ThesisApplicationsDatatable'
 import { ArrowUp } from 'phosphor-react'
@@ -19,7 +19,7 @@ const LegacyApplicationReviewPage = () => {
   const { user, setUser } = useAuthenticationStore()
 
   const addThesisAdvisor = useMutation({
-    mutationFn: (thesisAdvisor: ThesisAdvisor) => putThesisAdvisor(thesisAdvisor),
+    mutationFn: (thesisAdvisor: LegacyThesisAdvisor) => putThesisAdvisor(thesisAdvisor),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [Query.THESIS_APPLICATION] })
     },

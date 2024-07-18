@@ -1,8 +1,4 @@
-export enum Permission {
-  CHAIR_MEMBER = 'chair-member',
-}
-
-export interface User {
+export interface LegacyUser {
   firstName: string
   lastName: string
   email: string

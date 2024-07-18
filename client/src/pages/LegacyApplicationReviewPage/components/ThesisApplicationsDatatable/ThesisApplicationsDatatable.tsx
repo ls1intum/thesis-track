@@ -9,11 +9,11 @@ import {
   ApplicationFormAccessMode,
   LegacyThesisApplicationForm,
 } from '../../../LegacySubmitApplicationPage/LegacyThesisApplicationForm'
-import { Pageable } from '../../../../interfaces/pageable'
-import { ThesisApplication } from '../../../../interfaces/thesisApplication'
-import { ApplicationStatus } from '../../../../interfaces/application'
-import { getThesisApplications } from '../../../../network/thesisApplication'
-import { Query } from '../../../../hooks/query'
+import { Pageable } from '../../../../requests/types/pageable'
+import { LegacyThesisApplication } from '../../../../legacy/interfaces/thesisApplication'
+import { LegacyApplicationStatus } from '../../../../legacy/interfaces/application'
+import { getThesisApplications } from '../../../../legacy/network/thesisApplication'
+import { Query } from '../../../../legacy/query'
 import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
 
 export const ThesisApplicationsDatatable = (): JSX.Element => {
@@ -22,17 +22,17 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
 
-  const [selectedApplications, setSelectedApplications] = useState<ThesisApplication[]>([])
-  const [openedApplication, setOpenedApplication] = useState<ThesisApplication>()
+  const [selectedApplications, setSelectedApplications] = useState<LegacyThesisApplication[]>([])
+  const [openedApplication, setOpenedApplication] = useState<LegacyThesisApplication>()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [sort, setSort] = useState<DataTableSortStatus<ThesisApplication>>({
+  const [sort, setSort] = useState<DataTableSortStatus<LegacyThesisApplication>>({
     columnAccessor: 'createdAt',
     direction: 'desc',
   })
   const [filteredStates, setFilteredStates] = useState<string[] | undefined>(['NOT_ASSESSED'])
 
-  const { data: applications, isLoading } = useQuery<Pageable<ThesisApplication>>({
+  const { data: applications, isLoading } = useQuery<Pageable<LegacyThesisApplication>>({
     queryKey: [
       Query.THESIS_APPLICATION,
       page,
@@ -117,9 +117,9 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                 hidePickedOptions
                 label='Status'
                 description='Show all applications having status in'
-                data={Object.keys(ApplicationStatus).map((key) => {
+                data={Object.keys(LegacyApplicationStatus).map((key) => {
                   return {
-                    label: ApplicationStatus[key as keyof typeof ApplicationStatus],
+                    label: LegacyApplicationStatus[key as keyof typeof LegacyApplicationStatus],
                     value: key,
                   }
                 })}
@@ -149,7 +149,7 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                 default:
                   break
               }
-              return <Badge color={color}>{ApplicationStatus[application.applicationStatus]}</Badge>
+              return <Badge color={color}>{LegacyApplicationStatus[application.applicationStatus]}</Badge>
             },
           },
           {

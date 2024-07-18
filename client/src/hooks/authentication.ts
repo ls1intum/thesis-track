@@ -1,15 +1,15 @@
 import { create } from 'zustand'
-import { User } from '../interfaces/authentication'
+import { LegacyUser } from '../legacy/interfaces/authentication'
 import { useContext } from 'react'
 import { AuthenticationContext } from '../contexts/AuthenticationContext/context'
 
 interface AuthenticationStoreState {
-  user?: User
+  user?: LegacyUser
   permissions: string[]
 }
 
 interface AuthenticationStoreAction {
-  setUser: (user: User) => void
+  setUser: (user: LegacyUser) => void
   setPermissions: (permissions: string[]) => void
 }
 
