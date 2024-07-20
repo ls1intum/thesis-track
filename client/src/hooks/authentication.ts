@@ -1,25 +1,6 @@
-import { create } from 'zustand'
-import { LegacyUser } from '../legacy/interfaces/authentication'
 import { useContext } from 'react'
 import { AuthenticationContext } from '../contexts/AuthenticationContext/context'
-
-interface AuthenticationStoreState {
-  user?: LegacyUser
-  permissions: string[]
-}
-
-interface AuthenticationStoreAction {
-  setUser: (user: LegacyUser) => void
-  setPermissions: (permissions: string[]) => void
-}
-
-export const useAuthenticationStore = create<AuthenticationStoreState & AuthenticationStoreAction>(
-  (set) => ({
-    permissions: [],
-    setUser: (user) => set({ user: user }),
-    setPermissions: (permissions) => set({ permissions: permissions }),
-  }),
-)
+import { useLocalStorage } from './local-storage'
 
 export function useAuthenticationContext() {
   const context = useContext(AuthenticationContext)
@@ -31,8 +12,30 @@ export function useAuthenticationContext() {
   return context
 }
 
-export function useAuthenticatedUser() {
+export function useUser() {
   const context = useAuthenticationContext()
 
   return context.user
+}
+
+export function useLoggedInUser() {
+  const user = useUser();
+  const auth = useAuthenticationContext();
+
+  if (!user) {
+    auth.login()
+
+    throw new Error('Authentication required')
+  }
+
+  return user;
+}
+
+export interface IAuthenticationTokens {
+  jwt_token: string,
+  refresh_token: string
+}
+
+export function useAuthenticationTokens() {
+  return useLocalStorage<IAuthenticationTokens>('authentication_tokens', {usingJson: true})
 }

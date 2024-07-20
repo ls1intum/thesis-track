@@ -24,7 +24,6 @@ import {
   rem,
   useMantineTheme,
 } from '@mantine/core'
-import { LegacyGender, LegacyStudyDegree, LegacyStudyProgram } from '../../legacy/interfaces/student'
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
@@ -34,26 +33,23 @@ import { LegacyApplicationSuccessfulSubmission } from './components/LegacyApplic
 import { useEffect, useState } from 'react'
 import LegacyFormTextField from './form/LegacyFormTextField'
 import LegacyFormSelectField from './form/LegacyFormSelectField'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
-  getThesisAdvisors,
   getThesisApplicationBachelorReportFile,
   getThesisApplicationCvFile,
   getThesisApplicationExaminationFile,
   postThesisApplicatioAcceptance,
-  postThesisApplication,
   postThesisApplicationAssessment,
   postThesisApplicationRejection,
   postThesisApplicationThesisAdvisorAssignment,
 } from '../../legacy/network/thesisApplication'
 import {
-  LegacyFocusTopic,
-  LegacyResearchArea,
   LegacyThesisAdvisor,
   LegacyThesisApplication,
 } from '../../legacy/interfaces/thesisApplication'
 import { Query } from '../../legacy/query'
 import { Calendar, ImageSquare, UploadSimple, X } from 'phosphor-react'
+import { GLOBAL_CONFIG } from '../../config/global'
+import { usePromiseLoader, useRequest } from '../../requests/hooks'
 
 countries.registerLocale(enLocale)
 const countriesArr = Object.entries(countries.getNames('en', { select: 'alias' })).map(
@@ -80,7 +76,8 @@ export const LegacyThesisApplicationForm = ({
   accessMode,
 }: ThesisApplicationFormProps) => {
   const theme = useMantineTheme()
-  const queryClient = useQueryClient()
+  const {doRequest} = useRequest()
+
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
   const [applicationSuccessfullySubmitted, setApplicationSuccessfullySubmitted] = useState(false)
   const [notifyStudent, setNotifyStudent] = useState(true)
@@ -221,48 +218,51 @@ export const LegacyThesisApplicationForm = ({
       declarationOfConsentAccepted: (value) => !value,
     },
   })
-  const [thesisAdvisorId, setThesisAdvisorId] = useState<string | null>(
-    application?.thesisAdvisor?.id ?? null,
+
+  const [fetchedThesisAdvisors, setFetchedThesisAdvisors] = useState<LegacyThesisAdvisor[]>()
+
+  useEffect(() => {
+    if (accessMode === ApplicationFormAccessMode.INSTRUCTOR) {
+      return doRequest<LegacyThesisAdvisor[]>(`/api/thesis-applications/thesis-advisors`, {
+        method: 'GET',
+        requiresAuth: true
+      }, (err, res) => {
+        if (err || !res || !res.ok) {
+          notifications.show({
+            color: 'red',
+            autoClose: 10000,
+            title: 'Error',
+            message: `Could not fetch thesis advisors.`,
+          })
+
+          setFetchedThesisAdvisors([])
+        } else {
+          setFetchedThesisAdvisors(res.data)
+        }
+      })
+    }
+  }, [accessMode])
+
+  const assessThesisApplication =  usePromiseLoader(
+() => postThesisApplicationAssessment(doRequest, application?.id ?? '', {
+      status: form.values.applicationStatus,
+      assessmentComment: form.values.assessmentComment ?? '',
+    })
   )
 
-  const { data: fetchedThesisAdvisors } = useQuery<LegacyThesisAdvisor[]>({
-    queryKey: [Query.THESIS_ADVISOR],
-    enabled: accessMode === ApplicationFormAccessMode.INSTRUCTOR,
-    queryFn: () => getThesisAdvisors(),
-  })
+  const assignThesisApplicationToThesisAdvisor = usePromiseLoader(
+    () => postThesisApplicationThesisAdvisorAssignment(doRequest, application?.id ?? '', thesisAdvisorId ?? '')
+  )
 
-  const assessThesisApplication = useMutation({
-    mutationFn: () =>
-      postThesisApplicationAssessment(application?.id ?? '', {
-        status: form.values.applicationStatus,
-        assessmentComment: form.values.assessmentComment ?? '',
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [Query.THESIS_APPLICATION] })
-    },
-  })
+  const acceptThesisApplication = usePromiseLoader(
+    () => postThesisApplicatioAcceptance(doRequest, application?.id ?? '', notifyStudent)
+  )
 
-  const assignThesisApplicationToThesisAdvisor = useMutation({
-    mutationFn: () =>
-      postThesisApplicationThesisAdvisorAssignment(application?.id ?? '', thesisAdvisorId ?? ''),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [Query.THESIS_APPLICATION] })
-    },
-  })
+  const rejectThesisApplication = usePromiseLoader(
+    () => postThesisApplicationRejection(doRequest, application?.id ?? '', notifyStudent)
+  )
 
-  const acceptThesisApplication = useMutation({
-    mutationFn: () => postThesisApplicatioAcceptance(application?.id ?? '', notifyStudent),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [Query.THESIS_APPLICATION] })
-    },
-  })
-
-  const rejectThesisApplication = useMutation({
-    mutationFn: () => postThesisApplicationRejection(application?.id ?? '', notifyStudent),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [Query.THESIS_APPLICATION] })
-    },
-  })
+  const [thesisAdvisorId, setThesisAdvisorId] = useState<string | null>(application?.thesisAdvisor?.id ?? null)
 
   useEffect(() => {
     setThesisAdvisorId(application?.thesisAdvisor?.id ?? null)
@@ -352,10 +352,10 @@ export const LegacyThesisApplicationForm = ({
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
                   label='Gender'
                   placeholder='Gender'
-                  readValue={LegacyGender[form.values.student.gender as unknown as keyof typeof LegacyGender]}
-                  data={Object.keys(LegacyGender).map((key) => {
+                  readValue={GLOBAL_CONFIG.genders[form.values.student.gender ?? ''] ?? form.values.student.gender}
+                  data={Object.keys(GLOBAL_CONFIG.genders).map((key) => {
                     return {
-                      label: LegacyGender[key as keyof typeof LegacyGender],
+                      label: GLOBAL_CONFIG.genders[key],
                       value: key,
                     }
                   })}
@@ -389,11 +389,11 @@ export const LegacyThesisApplicationForm = ({
                   label='Study Degree'
                   placeholder='Study Degree'
                   readValue={
-                    LegacyStudyDegree[form.values.studyDegree as unknown as keyof typeof LegacyStudyDegree]
+                    GLOBAL_CONFIG.study_degrees[form.values.studyDegree ?? ''] ?? form.values.studyDegree
                   }
-                  data={Object.keys(LegacyStudyDegree).map((key) => {
+                  data={Object.keys(GLOBAL_CONFIG.study_degrees).map((key) => {
                     return {
-                      label: LegacyStudyDegree[key as keyof typeof LegacyStudyDegree],
+                      label: GLOBAL_CONFIG.study_degrees[key],
                       value: key,
                     }
                   })}
@@ -405,11 +405,11 @@ export const LegacyThesisApplicationForm = ({
                   label='Study Program'
                   placeholder='Study Program'
                   readValue={
-                    LegacyStudyProgram[form.values.studyProgram as unknown as keyof typeof LegacyStudyProgram]
+                    GLOBAL_CONFIG.study_programs[form.values.studyProgram ?? ''] ?? form.values.studyProgram
                   }
-                  data={Object.keys(LegacyStudyProgram).map((key) => {
+                  data={Object.keys(GLOBAL_CONFIG.study_programs).map((key) => {
                     return {
-                      label: LegacyStudyProgram[key as keyof typeof LegacyStudyProgram],
+                      label: GLOBAL_CONFIG.study_programs[key],
                       value: key,
                     }
                   })}
@@ -535,16 +535,16 @@ export const LegacyThesisApplicationForm = ({
                   required
                   multiselect
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
-                  data={Object.keys(LegacyResearchArea).map((key) => {
+                  data={Object.keys(GLOBAL_CONFIG.research_areas).map((key) => {
                     return {
-                      label: LegacyResearchArea[key as keyof typeof LegacyResearchArea],
+                      label: GLOBAL_CONFIG.research_areas[key] ?? key,
                       value: key,
                     }
                   })}
                   label='Research Areas'
                   placeholder='Research areas'
                   readValue={form.values.researchAreas
-                    .map((ra) => LegacyResearchArea[ra as unknown as keyof typeof LegacyResearchArea])
+                    .map((ra) => GLOBAL_CONFIG.research_areas[ra] ?? ra)
                     .join(', ')}
                   multiselectProps={form.getInputProps('researchAreas')}
                 />
@@ -552,16 +552,16 @@ export const LegacyThesisApplicationForm = ({
                   required
                   multiselect
                   readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
-                  data={Object.keys(LegacyFocusTopic).map((key) => {
+                  data={Object.keys(GLOBAL_CONFIG.focus_topics).map((key) => {
                     return {
-                      label: LegacyFocusTopic[key as keyof typeof LegacyFocusTopic],
+                      label: GLOBAL_CONFIG.focus_topics[key] ?? key,
                       value: key,
                     }
                   })}
                   label='Focus Topics'
                   placeholder='Focus topics'
                   readValue={form.values.focusTopics
-                    .map((ft) => LegacyFocusTopic[ft as unknown as keyof typeof LegacyFocusTopic])
+                    .map((ft) => GLOBAL_CONFIG.focus_topics[ft] ?? ft)
                     .join(', ')}
                   multiselectProps={form.getInputProps('focusTopics')}
                 />
@@ -793,7 +793,7 @@ export const LegacyThesisApplicationForm = ({
                     <Button
                       onClick={() => {
                         void (async () => {
-                          const response = await getThesisApplicationExaminationFile(application.id)
+                          const response = await getThesisApplicationExaminationFile(doRequest, application.id)
                           if (response) {
                             const url = window.URL.createObjectURL(response)
                             const a = document.createElement('a')
@@ -816,7 +816,7 @@ export const LegacyThesisApplicationForm = ({
                     <Button
                       onClick={() => {
                         void (async () => {
-                          const response = await getThesisApplicationCvFile(application.id)
+                          const response = await getThesisApplicationCvFile(doRequest, application.id)
                           if (response) {
                             const url = window.URL.createObjectURL(response)
                             const a = document.createElement('a')
@@ -837,6 +837,7 @@ export const LegacyThesisApplicationForm = ({
                       onClick={() => {
                         void (async () => {
                           const response = await getThesisApplicationBachelorReportFile(
+                            doRequest,
                             application.id,
                           )
                           if (response) {
@@ -875,7 +876,7 @@ export const LegacyThesisApplicationForm = ({
                   onChange={(value) => {
                     setThesisAdvisorId(value)
                     if (application && value) {
-                      assignThesisApplicationToThesisAdvisor.mutate()
+                      void assignThesisApplicationToThesisAdvisor.execute()
                     }
                   }}
                 />
@@ -890,7 +891,7 @@ export const LegacyThesisApplicationForm = ({
                   <Button
                     onClick={() => {
                       if (application) {
-                        assessThesisApplication.mutate()
+                        void assessThesisApplication.execute()
                       }
                     }}
                   >
@@ -902,26 +903,26 @@ export const LegacyThesisApplicationForm = ({
                     style={{ width: '20vw' }}
                     variant='outline'
                     color='red'
-                    disabled={rejectThesisApplication.isPending}
+                    disabled={rejectThesisApplication.isLoading}
                     onClick={() => {
                       if (application) {
-                        rejectThesisApplication.mutate()
+                        void rejectThesisApplication.execute()
                       }
                     }}
                   >
-                    {rejectThesisApplication.isPending ? <Loader /> : 'Reject'}
+                    {rejectThesisApplication.isLoading ? <Loader /> : 'Reject'}
                   </Button>
                   <Button
                     style={{ width: '20vw' }}
                     color='green'
-                    disabled={!application?.thesisAdvisor || acceptThesisApplication.isPending}
+                    disabled={!application?.thesisAdvisor || acceptThesisApplication.isLoading}
                     onClick={() => {
                       if (application) {
-                        acceptThesisApplication.mutate()
+                        void acceptThesisApplication.execute()
                       }
                     }}
                   >
-                    {acceptThesisApplication.isPending ? <Loader /> : 'Accept'}
+                    {acceptThesisApplication.isLoading ? <Loader /> : 'Accept'}
                   </Button>
                 </Group>
                 <Group align='right'>
@@ -958,13 +959,32 @@ export const LegacyThesisApplicationForm = ({
                       void (async () => {
                         loadingOverlayHandlers.open()
                         if (uploads.values.examinationReport && uploads.values.cv) {
-                          const response = await postThesisApplication({
-                            application: form.values,
-                            examinationReport: uploads.values.examinationReport,
-                            cv: uploads.values.cv,
-                            bachelorReport: uploads.values.bachelorReport,
+                          const formData = new FormData()
+
+                          formData.append(
+                            'thesisApplication',
+                            new Blob([JSON.stringify(application)], { type: 'application/json' }),
+                          )
+                          formData.append('examinationReport', uploads.values.examinationReport)
+                          formData.append('cv', uploads.values.cv)
+                          if (uploads.values.bachelorReport) {
+                            formData.append('bachelorReport', uploads.values.bachelorReport)
+                          }
+
+                          const response = await doRequest('/api/thesis-applications', {
+                            method: 'POST',
+                            requiresAuth: false,
+                            formData,
                           })
-                          if (response) {
+
+                          if (response.ok) {
+                            notifications.show({
+                              color: 'green',
+                              autoClose: 5000,
+                              title: 'Success',
+                              message: `Your application was successfully submitted!`,
+                            })
+
                             setApplicationSuccessfullySubmitted(true)
                           }
                         }

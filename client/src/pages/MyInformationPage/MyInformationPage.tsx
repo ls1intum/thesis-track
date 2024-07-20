@@ -8,11 +8,9 @@ const MyInformationPage = () => {
   usePageTitle('My Information')
 
   return (
-    <AuthenticatedArea>
-      <ContentContainer>
-        <h1>My Information</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>My Information</h1>
+    </ContentContainer>
   )
 }
 

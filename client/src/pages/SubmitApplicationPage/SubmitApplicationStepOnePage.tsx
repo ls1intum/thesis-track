@@ -8,11 +8,9 @@ const SubmitApplicationStepOnePage = () => {
   usePageTitle('Pick Topic')
 
   return (
-    <AuthenticatedArea>
-      <ContentContainer>
-        <h1>Select Topic</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Select Topic</h1>
+    </ContentContainer>
   )
 }
 

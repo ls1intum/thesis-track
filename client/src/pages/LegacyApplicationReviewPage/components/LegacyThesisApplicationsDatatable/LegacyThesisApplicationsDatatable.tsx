@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ActionIcon, Badge, Group, Modal, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import moment from 'moment'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import {
   ApplicationFormAccessMode,
   LegacyThesisApplicationForm,
@@ -12,12 +11,13 @@ import {
 import { Pageable } from '../../../../requests/types/pageable'
 import { LegacyThesisApplication } from '../../../../legacy/interfaces/thesisApplication'
 import { LegacyApplicationStatus } from '../../../../legacy/interfaces/application'
-import { getThesisApplications } from '../../../../legacy/network/thesisApplication'
-import { Query } from '../../../../legacy/query'
 import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
+import { useRequest } from '../../../../requests/hooks'
+import { notifications } from '@mantine/notifications'
 
-export const LegacyThesisApplicationsDatatable = (): JSX.Element => {
+export const LegacyThesisApplicationsDatatable = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
+  const {authenticated, doRequest} = useRequest()
 
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
@@ -32,26 +32,55 @@ export const LegacyThesisApplicationsDatatable = (): JSX.Element => {
   })
   const [filteredStates, setFilteredStates] = useState<string[] | undefined>(['NOT_ASSESSED'])
 
-  const { data: applications, isLoading } = useQuery<Pageable<LegacyThesisApplication>>({
-    queryKey: [
-      Query.THESIS_APPLICATION,
-      page,
-      limit,
-      searchQuery,
-      filteredStates?.join(','),
-      sort.columnAccessor,
-      sort.direction,
-    ],
-    queryFn: () =>
-      getThesisApplications(
-        page - 1,
+  const [applications, setApplications] = useState<Pageable<LegacyThesisApplication>>()
+
+  useEffect(() => {
+    setApplications(undefined)
+
+    return doRequest<Pageable<LegacyThesisApplication>>(`/api/thesis-applications`, {
+      method: 'GET',
+      params: {
+        page: page - 1,
         limit,
-        filteredStates,
+        states: filteredStates?.join(',') ?? Object.keys(LegacyApplicationStatus).join(','),
         searchQuery,
-        sort.columnAccessor,
-        sort.direction,
-      ),
-  })
+        sortBy: sort.columnAccessor,
+        sortOrder: sort.direction,
+      },
+      requiresAuth: true
+    }, (error, res) => {
+      if (error || !res) {
+        notifications.show({
+          color: 'red',
+          autoClose: 10000,
+          title: 'Error',
+          message: `Could not fetch thesis applications. ${error}`,
+        })
+
+        return setApplications({
+          content: [],
+          totalPages: 0,
+          totalElements: 0,
+          number: 0,
+          size: 0,
+          empty: true,
+          first: true,
+          last: true,
+          numberOfElements: 0,
+        })
+      }
+
+      setApplications(res.data)
+    })
+  }, [
+    authenticated,
+    page,
+    limit,
+    searchQuery,
+    filteredStates?.join(','),
+    sort.columnAccessor,
+    sort.direction,
+  ])
 
   return (
     <Stack>
@@ -71,7 +100,7 @@ export const LegacyThesisApplicationsDatatable = (): JSX.Element => {
         </Modal>
       )}
       <TextInput
-        style={{ margin: '1vh 0', width: '30vw' }}
+        style={{ margin: '1vh 0', width: '100%' }}
         placeholder='Search applications...'
         leftSection={<MagnifyingGlass size={16} />}
         value={searchQuery}
@@ -80,7 +109,7 @@ export const LegacyThesisApplicationsDatatable = (): JSX.Element => {
         }}
       />
       <DataTable
-        fetching={isLoading}
+        fetching={!applications}
         withTableBorder
         minHeight={200}
         noRecordsText='No records to show'
@@ -138,9 +167,6 @@ export const LegacyThesisApplicationsDatatable = (): JSX.Element => {
               let color: string = 'gray'
               switch (application.applicationStatus) {
                 case 'ACCEPTED':
-                  color = 'green'
-                  break
-                case 'ENROLLED':
                   color = 'green'
                   break
                 case 'REJECTED':

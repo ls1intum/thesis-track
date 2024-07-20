@@ -8,11 +8,9 @@ const TopicPage = () => {
   usePageTitle('Topic')
 
   return (
-    <AuthenticatedArea requireAuthentication={false}>
-      <ContentContainer>
-        <h1>Topic</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Topic</h1>
+    </ContentContainer>
   )
 }
 

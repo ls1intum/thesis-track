@@ -8,11 +8,9 @@ const SubmitAssessmentPage = () => {
   usePageTitle('Submit Assessment')
 
   return (
-    <AuthenticatedArea>
-      <ContentContainer>
-        <h1>Submit Assessment</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Submit Assessment</h1>
+    </ContentContainer>
   )
 }
 

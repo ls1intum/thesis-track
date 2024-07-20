@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useAuthenticationContext } from '../../hooks/authentication'
 
 const LogoutPage = () => {
-  // TODO: implement component
-  const navigate = useNavigate()
+  const auth = useAuthenticationContext()
 
   useEffect(() => {
-    navigate('/', { replace: true })
+    auth.logout('/')
   })
 
   return <></>

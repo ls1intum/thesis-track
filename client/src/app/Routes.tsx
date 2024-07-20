@@ -19,36 +19,87 @@ import ThesisPage from '../pages/ThesisPage/ThesisPage'
 import SubmitProposalPage from '../pages/SubmitProposalPage/SubmitProposalPage'
 import SubmitAssessmentPage from '../pages/SubmitAssessmentPage/SubmitAssessmentPage'
 import LandingPage from '../pages/LandingPage/LandingPage'
+import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 
 const AppRoutes = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/dashboard' element={<DashboardPage />} />
-        <Route path='/logout' element={<LogoutPage />} />
-        <Route path='/settings/my-information' element={<MyInformationPage />} />
-        <Route path='/submit-application/pick-topic' element={<SubmitApplicationStepOnePage />} />
-        <Route
-          path='/submit-application/apply/:topic_id?'
-          element={<SubmitApplicationStepTwoPage />}
-        />
-        <Route path='/topics/create' element={<CreateTopicPage />} />
-        <Route path='/topics/edit/:topic_id' element={<CreateTopicPage />} />
-        <Route path='/topics/:topic_id' element={<TopicPage />} />
-        <Route path='/applications/:application_id?' element={<ReviewApplicationPage />} />
-        <Route path='/theses' element={<ThesisOverviewPage />} />
-        <Route path='/theses/:thesis_id' element={<ThesisPage />} />
-        <Route path='/theses/:thesis_id/submit-proposal' element={<SubmitProposalPage />} />
-        <Route path='/theses/:thesis_id/submit-assessment' element={<SubmitAssessmentPage />} />
-        <Route
-          path='/management/thesis-applications/:applicationId?'
-          element={<LegacyApplicationReviewPage />}
-        />
-        <Route path='/management/thesis-overview/:variant' element={<ThesisOverviewPage />} />
+        <Route path='/dashboard' element={
+          <AuthenticatedArea>
+            <DashboardPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/settings/my-information' element={
+          <AuthenticatedArea>
+            <MyInformationPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/submit-application/pick-topic' element={
+          <AuthenticatedArea>
+            <SubmitApplicationStepOnePage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/submit-application/apply/:topic_id?' element={
+          <AuthenticatedArea>
+            <SubmitApplicationStepTwoPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/topics/create' element={
+          <AuthenticatedArea>
+            <CreateTopicPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/topics/edit/:topic_id' element={
+          <AuthenticatedArea>
+            <CreateTopicPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/topics/:topic_id' element={
+          <AuthenticatedArea requireAuthentication={false}>
+            <TopicPage />
+          </AuthenticatedArea>
+        } />
         <Route
           path='/applications/thesis'
           element={<LegacyThesisApplicationForm accessMode={ApplicationFormAccessMode.STUDENT} />}
         />
+        <Route path='/applications/:application_id?' element={
+          <AuthenticatedArea collapseNavigation={true}>
+            <ReviewApplicationPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/theses' element={
+          <AuthenticatedArea>
+            <ThesisOverviewPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/theses/:thesis_id' element={
+          <AuthenticatedArea>
+            <ThesisPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/theses/:thesis_id/submit-proposal' element={
+          <AuthenticatedArea>
+            <SubmitProposalPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/theses/:thesis_id/submit-assessment' element={
+          <AuthenticatedArea>
+            <SubmitAssessmentPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/management/thesis-applications' element={
+          <AuthenticatedArea>
+            <LegacyApplicationReviewPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/management/thesis-overview/:variant' element={
+          <AuthenticatedArea>
+            <ThesisOverviewPage />
+          </AuthenticatedArea>
+        } />
+        <Route path='/logout' element={<LogoutPage />} />
         <Route path='/' element={<LandingPage />} />
         <Route path='*' element={<NotFoundPage />} />
       </Routes>

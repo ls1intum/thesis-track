@@ -13,14 +13,14 @@ const ThesisPage = () => {
   usePageTitle('Topic')
 
   return (
-    <AuthenticatedArea>
+    <>
       <ThesisConfigSection />
       <ThesisInfoSection />
       <ThesisProposalSection />
       <ThesisWritingSection />
       <ThesisAssessmentSection />
       <ThesisFinalGradeSection />
-    </AuthenticatedArea>
+    </>
   )
 }
 

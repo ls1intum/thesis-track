@@ -8,11 +8,9 @@ const SubmitProposalPage = () => {
   usePageTitle('Submit Proposal')
 
   return (
-    <AuthenticatedArea>
-      <ContentContainer>
-        <h1>Submit Proposal</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Submit Proposal</h1>
+    </ContentContainer>
   )
 }
 

@@ -8,11 +8,9 @@ const DashboardPage = () => {
   usePageTitle('Dashboard')
 
   return (
-    <AuthenticatedArea>
-      <ContentContainer>
-        <h1>Dashboard</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Dashboard</h1>
+    </ContentContainer>
   )
 }
 

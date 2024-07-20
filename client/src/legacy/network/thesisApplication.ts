@@ -1,121 +1,19 @@
 import { notifications } from '@mantine/notifications'
-import { axiosInstance, notAuthenticatedAxiosInstance } from './configService'
 import { LegacyThesisAdvisor, LegacyThesisApplication } from '../interfaces/thesisApplication'
-import { AxiosError } from 'axios'
 import { LegacyApplicationStatus } from '../interfaces/application'
-import { Pageable } from '../../requests/types/pageable'
-
-export const getThesisApplications = async (
-  page: number,
-  limit: number,
-  states?: string[],
-  searchQuery?: string,
-  sortBy?: string,
-  sortOrder?: 'asc' | 'desc',
-): Promise<Pageable<LegacyThesisApplication>> => {
-  try {
-    return (
-      await axiosInstance.get(`/api/thesis-applications`, {
-        params: {
-          page,
-          limit,
-          states: states?.join(',') ?? Object.keys(LegacyApplicationStatus).join(','),
-          searchQuery,
-          sortBy,
-          sortOrder,
-        },
-      })
-    ).data
-  } catch (err) {
-    notifications.show({
-      color: 'red',
-      autoClose: 10000,
-      title: 'Error',
-      message: `Could not fetch thesis applications.`,
-    })
-    return {
-      content: [],
-      totalPages: 0,
-      totalElements: 0,
-      number: 0,
-      size: 0,
-      empty: true,
-      first: true,
-      last: true,
-      numberOfElements: 0,
-    }
-  }
-}
-
-export const postThesisApplication = async ({
-  application,
-  examinationReport,
-  cv,
-  bachelorReport,
-}: {
-  application: LegacyThesisApplication
-  examinationReport: File
-  cv: File
-  bachelorReport?: File
-}): Promise<LegacyThesisApplication | undefined> => {
-  try {
-    const formData = new FormData()
-    formData.append(
-      'thesisApplication',
-      new Blob([JSON.stringify(application)], { type: 'application/json' }),
-    )
-    formData.append('examinationReport', examinationReport)
-    formData.append('cv', cv)
-    if (bachelorReport) {
-      formData.append('bachelorReport', bachelorReport)
-    }
-    const response = await notAuthenticatedAxiosInstance.post(
-      `/api/thesis-applications`,
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      },
-    )
-    if (response.status >= 200 && response.status < 300) {
-      notifications.show({
-        color: 'green',
-        autoClose: 5000,
-        title: 'Success',
-        message: `Your application was successfully submitted!`,
-      })
-    }
-    return response.data
-  } catch (err) {
-    if ((err as AxiosError)?.response?.status === 400) {
-      notifications.show({
-        color: 'red',
-        autoClose: 10000,
-        title: 'Error',
-        message: `${((err as AxiosError)?.response?.data as string) ?? ''}`,
-      })
-    } else {
-      notifications.show({
-        color: 'red',
-        autoClose: 10000,
-        title: 'Error',
-        message: `Failed to submit the application. Server responded with ${err as string}`,
-      })
-    }
-
-    return undefined
-  }
-}
+import { IRequestFunctions } from '../../requests/hooks'
 
 export const postThesisApplicationAssessment = async (
+  doRequest: IRequestFunctions['doRequest'],
   thesisApplicationId: string,
   assessment: { status: keyof typeof LegacyApplicationStatus; assessmentComment: string },
 ): Promise<LegacyThesisApplication | undefined> => {
   try {
     return (
-      await axiosInstance.post(`/api/thesis-applications/${thesisApplicationId}/assessment`, {
-        ...assessment,
+      await doRequest<LegacyThesisApplication>(`/api/thesis-applications/${thesisApplicationId}/assessment`, {
+        method: 'POST',
+        requiresAuth: true,
+        data: {...assessment},
       })
     ).data
   } catch (err) {
@@ -130,18 +28,20 @@ export const postThesisApplicationAssessment = async (
 }
 
 export const postThesisApplicatioAcceptance = async (
+  doRequest: IRequestFunctions['doRequest'],
   thesisApplicationId: string,
   notifyStudent: boolean,
 ): Promise<LegacyThesisApplication | undefined> => {
   try {
-    const response = await axiosInstance.post(
+    const response = await doRequest<LegacyThesisApplication>(
       `/api/thesis-applications/${thesisApplicationId}/accept`,
-      {},
       {
+        method: 'POST',
+        requiresAuth: true,
         params: {
-          notifyStudent,
-        },
-      },
+          notifyStudent
+        }
+      }
     )
 
     if (response) {
@@ -165,22 +65,25 @@ export const postThesisApplicatioAcceptance = async (
         ? `Failed to send an acceptance mail.`
         : 'Failed to update application status',
     })
+
     return undefined
   }
 }
 
 export const postThesisApplicationRejection = async (
+  doRequest: IRequestFunctions['doRequest'],
   thesisApplicationId: string,
   notifyStudent: boolean,
 ): Promise<LegacyThesisApplication | undefined> => {
   try {
-    const response = await axiosInstance.post(
+    const response = await doRequest<LegacyThesisApplication>(
       `/api/thesis-applications/${thesisApplicationId}/reject`,
-      {},
       {
+        method: 'POST',
+        requiresAuth: true,
         params: {
           notifyStudent,
-        },
+        }
       },
     )
 
@@ -209,45 +112,19 @@ export const postThesisApplicationRejection = async (
   }
 }
 
-export const getThesisAdvisors = async (): Promise<LegacyThesisAdvisor[]> => {
-  try {
-    return (await axiosInstance.get(`/api/thesis-applications/thesis-advisors`)).data
-  } catch (err) {
-    notifications.show({
-      color: 'red',
-      autoClose: 10000,
-      title: 'Error',
-      message: `Could not fetch thesis advisors.`,
-    })
-    return []
-  }
-}
-
-export const putThesisAdvisor = async (
-  thesisAdvisor: LegacyThesisAdvisor,
-): Promise<LegacyThesisAdvisor | undefined> => {
-  try {
-    return (await axiosInstance.put(`/api/thesis-applications/thesis-advisors`, thesisAdvisor)).data
-  } catch (err) {
-    notifications.show({
-      color: 'red',
-      autoClose: 10000,
-      title: 'Error',
-      message: `Could not add thesis advisor.`,
-    })
-    return undefined
-  }
-}
-
 export const postThesisApplicationThesisAdvisorAssignment = async (
+  doRequest: IRequestFunctions['doRequest'],
   thesisApplicationId: string,
   thesisAdvisorId: string,
 ): Promise<LegacyThesisApplication | undefined> => {
   try {
     return (
-      await axiosInstance.post(
+      await doRequest<LegacyThesisApplication>(
         `/api/thesis-applications/${thesisApplicationId}/thesis-advisor/${thesisAdvisorId}`,
-        {},
+        {
+          method: 'POST',
+          requiresAuth: true
+        },
       )
     ).data
   } catch (err) {
@@ -262,12 +139,15 @@ export const postThesisApplicationThesisAdvisorAssignment = async (
 }
 
 export const getThesisApplicationExaminationFile = async (
+  doRequest: IRequestFunctions['doRequest'],
   thesisApplicationId: string,
 ): Promise<Blob | undefined> => {
   try {
-    const response = await axiosInstance.get(
+    const response = await doRequest<Blob>(
       `/api/thesis-applications/${thesisApplicationId}/examination-report`,
       {
+        method: 'GET',
+        requiresAuth: true,
         responseType: 'blob',
       },
     )
@@ -287,10 +167,13 @@ export const getThesisApplicationExaminationFile = async (
 }
 
 export const getThesisApplicationCvFile = async (
+  doRequest: IRequestFunctions['doRequest'],
   thesisApplicationId: string,
 ): Promise<Blob | undefined> => {
   try {
-    const response = await axiosInstance.get(`/api/thesis-applications/${thesisApplicationId}/cv`, {
+    const response = await doRequest<Blob>(`/api/thesis-applications/${thesisApplicationId}/cv`, {
+      method: 'GET',
+      requiresAuth: true,
       responseType: 'blob',
     })
     if (response) {
@@ -309,12 +192,15 @@ export const getThesisApplicationCvFile = async (
 }
 
 export const getThesisApplicationBachelorReportFile = async (
+  doRequest: IRequestFunctions['doRequest'],
   thesisApplicationId: string,
 ): Promise<Blob | undefined> => {
   try {
-    const response = await axiosInstance.get(
+    const response = await doRequest<Blob>(
       `/api/thesis-applications/${thesisApplicationId}/bachelor-report`,
       {
+        method: 'GET',
+        requiresAuth: true,
         responseType: 'blob',
       },
     )

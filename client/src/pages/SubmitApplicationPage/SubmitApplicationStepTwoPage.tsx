@@ -8,11 +8,9 @@ const SubmitApplicationStepTwoPage = () => {
   usePageTitle('Submit Application')
 
   return (
-    <AuthenticatedArea>
-      <ContentContainer>
-        <h1>Submit Application</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Submit Application</h1>
+    </ContentContainer>
   )
 }
 

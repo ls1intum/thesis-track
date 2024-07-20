@@ -1,13 +1,11 @@
-import { ReactNode } from 'react'
+import { PropsWithChildren, ReactNode } from 'react'
 import { Container } from '@mantine/core'
 
 import * as styles from './ContentContainer.module.scss'
 
-interface IContentContainerProps {
-  children: ReactNode
-}
+interface IContentContainerProps {}
 
-const ContentContainer = (props: IContentContainerProps) => {
+const ContentContainer = (props: PropsWithChildren<IContentContainerProps>) => {
   const { children } = props
 
   return <Container className={styles.contentContainer}>{children}</Container>

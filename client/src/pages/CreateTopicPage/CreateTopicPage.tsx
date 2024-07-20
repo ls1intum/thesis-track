@@ -8,11 +8,9 @@ const CreateTopicPage = () => {
   usePageTitle('Create Topic')
 
   return (
-    <AuthenticatedArea>
-      <ContentContainer>
-        <h1>Create Topic</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Create Topic</h1>
+    </ContentContainer>
   )
 }
 

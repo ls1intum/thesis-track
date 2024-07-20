@@ -5,11 +5,9 @@ import React from 'react'
 const ReviewApplicationPage = () => {
   // TODO: implement component
   return (
-    <AuthenticatedArea collapseNavigation={true}>
-      <ContentContainer>
-        <h1>Applications</h1>
-      </ContentContainer>
-    </AuthenticatedArea>
+    <ContentContainer>
+      <h1>Review Applications</h1>
+    </ContentContainer>
   )
 }
 
