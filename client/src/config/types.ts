@@ -1,3 +1,5 @@
+import { IDecodedAccessToken } from '../contexts/AuthenticationContext/context'
+
 export interface IGlobalConfig {
   title: string
 
@@ -13,6 +15,6 @@ export interface IGlobalConfig {
     client_id: string
     realm: string
     host: string
-    get_unique_id: (decodedJwt: any) => string
+    get_unique_id: (decodedJwt: IDecodedAccessToken) => string
   }
 }

@@ -21,7 +21,7 @@ const config = (env) => {
   return {
     target: 'web',
     mode: IS_DEV ? 'development' : 'production',
-    devtool: IS_DEV ? 'source-map' : undefined,
+    devtool: IS_DEV ? 'eval-source-map' : undefined,
     entry: './src/index.tsx',
     devServer: {
       static: {

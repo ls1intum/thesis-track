@@ -247,8 +247,8 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
     }),
   )
 
-  const assignThesisApplicationToThesisAdvisor = usePromiseLoader(() =>
-    postThesisApplicationThesisAdvisorAssignment(application?.id ?? '', thesisAdvisorId ?? ''),
+  const assignThesisApplicationToThesisAdvisor = usePromiseLoader((advisorId: string) =>
+    postThesisApplicationThesisAdvisorAssignment(application?.id ?? '', advisorId),
   )
 
   const acceptThesisApplication = usePromiseLoader(() =>
@@ -863,7 +863,7 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
                   onChange={(value) => {
                     setThesisAdvisorId(value)
                     if (application && value) {
-                      void assignThesisApplicationToThesisAdvisor.execute()
+                      void assignThesisApplicationToThesisAdvisor.execute(value)
                     }
                   }}
                 />
@@ -902,7 +902,7 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
                   <Button
                     style={{ width: '20vw' }}
                     color='green'
-                    disabled={!application?.thesisAdvisor || acceptThesisApplication.isLoading}
+                    disabled={acceptThesisApplication.isLoading}
                     onClick={() => {
                       if (application) {
                         void acceptThesisApplication.execute()

@@ -32,7 +32,7 @@ export function doRequest<T>(
 
   const executeRequest = async (): Promise<ApiResponse<T>> => {
     const authenticationTokens = getAuthenticationTokens()
-    const jwtToken = authenticationTokens?.jwt_token
+    const jwtToken = authenticationTokens?.access_token
 
     if (options.requiresAuth && !jwtToken) {
       throw new Error('User not authenticated')

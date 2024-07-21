@@ -73,7 +73,7 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
   keycloak: {
     host: process.env.KEYCLOAK_HOST || 'http://localhost:8081',
     realm: process.env.KEYCLOAK_REALM_NAME || 'thesis-track',
-    client_id: process.env.KEYCLOAK_CLIENT_ID || 'thesis-track-client',
+    client_id: process.env.KEYCLOAK_CLIENT_ID || 'thesis-track-app',
     get_unique_id: (decodedJwt) => decodedJwt.preferred_username,
   },
 }

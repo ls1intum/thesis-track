@@ -79,7 +79,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/create'
             element={
-              <AuthenticatedArea>
+              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -87,7 +87,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/edit/:topic_id'
             element={
-              <AuthenticatedArea>
+              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -109,7 +109,7 @@ const AppRoutes = () => {
           <Route
             path='/applications/:application_id?'
             element={
-              <AuthenticatedArea collapseNavigation={true}>
+              <AuthenticatedArea collapseNavigation={true} requiredRoles={['admin', 'advisor']}>
                 <ReviewApplicationPage />
               </AuthenticatedArea>
             }
@@ -117,7 +117,7 @@ const AppRoutes = () => {
           <Route
             path='/theses'
             element={
-              <AuthenticatedArea>
+              <AuthenticatedArea requiredRoles={['admin']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }
@@ -149,15 +149,15 @@ const AppRoutes = () => {
           <Route
             path='/management/thesis-applications'
             element={
-              <AuthenticatedArea>
+              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
                 <LegacyApplicationReviewPage />
               </AuthenticatedArea>
             }
           />
           <Route
-            path='/management/thesis-overview/:variant'
+            path='/management/thesis-overview'
             element={
-              <AuthenticatedArea>
+              <AuthenticatedArea requiredRoles={['admin']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }

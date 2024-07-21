@@ -32,7 +32,7 @@ export function useLoggedInUser() {
 }
 
 export interface IAuthenticationTokens {
-  jwt_token: string
+  access_token: string
   refresh_token: string
 }
 
