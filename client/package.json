@@ -4,6 +4,7 @@
   "main": "src/index.tsx",
   "license": "MIT",
   "sideEffects": false,
+  "packageManager": "npm@7.24.0",
   "scripts": {
     "dev": "webpack serve --open --mode development",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
@@ -66,6 +67,5 @@
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4",
     "webpackbar": "^6.0.1"
-  },
-  "packageManager": "npm@7.24.0"
+  }
 }

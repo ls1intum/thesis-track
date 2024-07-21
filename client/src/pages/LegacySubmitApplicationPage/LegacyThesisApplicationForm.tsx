@@ -950,7 +950,7 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
 
                           formData.append(
                             'thesisApplication',
-                            new Blob([JSON.stringify(application)], { type: 'application/json' }),
+                            new Blob([JSON.stringify(form.values)], { type: 'application/json' }),
                           )
 
                           // TODO: one of this is undefined. Why?
@@ -965,6 +965,10 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
                             method: 'POST',
                             requiresAuth: false,
                             formData,
+                          }).catch((err) => {
+                            console.error(err)
+
+                            return {ok: false, status: 500, data: undefined}
                           })
 
                           if (response.ok) {
@@ -976,6 +980,13 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
                             })
 
                             setApplicationSuccessfullySubmitted(true)
+                          } else {
+                            notifications.show({
+                              color: 'red',
+                              autoClose: 10000,
+                              title: 'Error',
+                              message: `Failed to submit the application. Server responded with ${response.status}`,
+                            })
                           }
                         }
                       })().then(() => {

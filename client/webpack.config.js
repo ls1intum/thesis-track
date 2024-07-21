@@ -32,7 +32,7 @@ const config = (env) => {
       historyApiFallback: true,
       port: 3000,
       client: {
-        progress: true,
+        progress: false,
       },
       open: false,
     },
@@ -113,9 +113,9 @@ const config = (env) => {
     },
     plugins: [
       new WebpackBar({
-        profile: true,
-        reporters: ['basic', 'fancy', 'profile', 'stats'],
-      }), IS_PERF && new BundleAnalyzerPlugin(), new HtmlWebpackPlugin({
+        reporter: 'fancy',
+      }),
+      IS_PERF && new BundleAnalyzerPlugin(), new HtmlWebpackPlugin({
         template: 'src/index.html',
         minify: IS_DEV ? undefined : {
           removeComments: true,
@@ -129,22 +129,27 @@ const config = (env) => {
           minifyCSS: true,
           minifyURLs: true,
         },
-      }), new MiniCssExtractPlugin({
+      }),
+      new MiniCssExtractPlugin({
         filename: IS_DEV ? 'static/css/[name].css' : 'static/css/[name].[contenthash].css',
         chunkFilename: IS_DEV ? 'static/css/[id].css' : 'static/css/[id].[contenthash].css',
-      }), new CopyPlugin({
+      }),
+      new CopyPlugin({
         patterns: [{ from: 'public' }],
-      }), new DefinePlugin({
+      }),
+      new DefinePlugin({
         'process.env.API_SERVER_HOST': JSON.stringify(getVariable('API_SERVER_HOST')),
         'process.env.KEYCLOAK_HOST': JSON.stringify(getVariable('KEYCLOAK_HOST')),
         'process.env.KEYCLOAK_REALM_NAME': JSON.stringify(getVariable('KEYCLOAK_REALM_NAME')),
         'process.env.KEYCLOAK_CLIENT_ID': JSON.stringify(getVariable('KEYCLOAK_CLIENT_ID')),
-      }), new ForkTsCheckerWebpackPlugin({
+      }),
+      new ForkTsCheckerWebpackPlugin({
         async: IS_DEV,
         typescript: {
           configFile: path.resolve(__dirname, 'tsconfig.json'),
         },
-      }), new CleanWebpackPlugin(), !IS_DEV && new CompressionPlugin({
+      }),
+      new CleanWebpackPlugin(), !IS_DEV && new CompressionPlugin({
         filename: '[path][base].gz',
         algorithm: 'gzip',
         test: /\.(js|css|html|svg)$/,
@@ -167,7 +172,8 @@ const config = (env) => {
           },
           parallel: true,
           extractComments: false,
-        }), new CssMinimizerPlugin(),
+        }),
+        new CssMinimizerPlugin(),
       ],
       splitChunks: {
         chunks: 'all',

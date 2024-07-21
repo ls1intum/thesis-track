@@ -46,7 +46,7 @@ export function doRequest<T>(
       }
     }
 
-    const result = await fetch(`${GLOBAL_CONFIG.api_server}${url}${params.toString()}`, {
+    const result = await fetch(`${GLOBAL_CONFIG.api_server}${url}?${params.toString()}`, {
       method: options.method,
       headers: {
         ...(options.requiresAuth ? { Authorization: `Bearer ${jwtToken}` } : {}),

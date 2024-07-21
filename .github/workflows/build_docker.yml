@@ -85,9 +85,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
-            "SERVER_HOST=${{ vars.SERVER_HOST }}"
+            "API_SERVER_HOST=${{ vars.API_SERVER_HOST }}"
             "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}"
             "KEYCLOAK_REALM_NAME=${{ vars.KEYCLOAK_REALM_NAME }}"
+            "KEYCLOAK_CLIENT_ID=${{ vars.KEYCLOAK_CLIENT_ID }}"
 
       - id: output-tag-client
         run: |
