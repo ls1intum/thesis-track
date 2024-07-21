@@ -46,12 +46,15 @@ export function doRequest<T>(
       }
     }
 
+    if (options.data && options.formData) {
+      throw new Error('Cannot send both data and formData')
+    }
+
     const result = await fetch(`${GLOBAL_CONFIG.api_server}${url}?${params.toString()}`, {
       method: options.method,
       headers: {
         ...(options.requiresAuth ? { Authorization: `Bearer ${jwtToken}` } : {}),
         ...(options.data ? { 'Content-Type': 'application/json' } : {}),
-        ...(options.formData ? { 'Content-Type': 'multipart/form-data' } : {}),
       },
       body: options.formData ?? (options.data ? JSON.stringify(options.data) : undefined),
       signal: controller.signal,
