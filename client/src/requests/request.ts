@@ -1,7 +1,9 @@
 import { GLOBAL_CONFIG } from '../config/global'
 import { getAuthenticationTokens } from '../hooks/authentication'
 
-export type ApiResponse<T> = { ok: true, status: number; data: T } | { ok: false, status: number; data: undefined }
+export type ApiResponse<T> =
+  | { ok: true; status: number; data: T }
+  | { ok: false; status: number; data: undefined }
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 export type ResponseType = 'json' | 'blob'
 
@@ -54,12 +56,6 @@ export function doRequest<T>(
       body: options.formData ?? (options.data ? JSON.stringify(options.data) : undefined),
       signal: controller.signal,
     })
-
-    const formattedResponse = {
-      ok: result.status >= 200 && result.status < 300,
-      status: result.status,
-      data: undefined,
-    }
 
     if (result.status >= 200 && result.status < 300) {
       return {

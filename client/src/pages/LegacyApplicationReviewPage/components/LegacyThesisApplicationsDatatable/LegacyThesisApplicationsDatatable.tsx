@@ -6,7 +6,10 @@ import { Link } from 'react-router-dom'
 import LegacyThesisApplicationForm from '../../../LegacySubmitApplicationPage/LegacyThesisApplicationForm'
 import { Pageable } from '../../../../requests/types/pageable'
 import { LegacyThesisApplication } from '../../../../legacy/interfaces/thesisApplication'
-import { LegacyApplicationFormAccessMode, LegacyApplicationStatus } from '../../../../legacy/interfaces/application'
+import {
+  LegacyApplicationFormAccessMode,
+  LegacyApplicationStatus,
+} from '../../../../legacy/interfaces/application'
 import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
 import { notifications } from '@mantine/notifications'
 import { doRequest } from '../../../../requests/request'
@@ -211,10 +214,7 @@ export const LegacyThesisApplicationsDatatable = () => {
             accessor: 'createdAt',
             title: 'Created At',
             sortable: true,
-            render: (application) =>
-              `${formatDate(application.createdAt, {
-                
-              })}`,
+            render: (application) => `${formatDate(application.createdAt, {})}`,
           },
           {
             accessor: 'actions',

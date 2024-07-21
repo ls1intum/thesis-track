@@ -1,7 +1,6 @@
 import React from 'react'
 import { Container, Space } from '@mantine/core'
 import chartData from './mock/chart-data.json'
-import { useParams } from 'react-router-dom'
 import CustomThesisProgressChart from './components/CustomThesisProgressChart/CustomThesisProgressChart'
 import ThesisProgressFilter from './components/ThesisProgressFilter/ThesisProgressFilter'
 import ThesisOverviewChartProvider from './components/ThesisOverviewChartProvider/ThesisOverviewChartProvider'
@@ -10,8 +9,6 @@ import { usePageTitle } from '../../hooks/theme'
 
 const ThesisOverviewPage = () => {
   usePageTitle('Theses Overview')
-
-  const { variant } = useParams<{ variant: string }>()
 
   return (
     <Container size='xl'>

@@ -101,11 +101,13 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
       <AppShell.Main>
         {auth.user ? (
-          <Suspense fallback={
-            <Center className={styles.fullHeight}>
-              <Loader />
-            </Center>
-          }>
+          <Suspense
+            fallback={
+              <Center className={styles.fullHeight}>
+                <Loader />
+              </Center>
+            }
+          >
             {children}
           </Suspense>
         ) : (

@@ -8,15 +8,15 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin')
-const SpeedMeasurePlugin = require("speed-measure-webpack-plugin")
-const WebpackBar = require("webpackbar");
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
+const WebpackBar = require('webpackbar')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const config = (env) => {
-  const getVariable = (name) => env[name] ?? process.env[name];
+  const getVariable = (name) => env[name] ?? process.env[name]
 
-  const IS_DEV = getVariable('NODE_ENV') === 'development';
-  const IS_PERF = getVariable('BUNDLE_SIZE') === 'true';
+  const IS_DEV = getVariable('NODE_ENV') === 'development'
+  const IS_PERF = getVariable('BUNDLE_SIZE') === 'true'
 
   return {
     target: 'web',
@@ -50,14 +50,12 @@ const config = (env) => {
               },
             },
           },
-          exclude: /node_modules/
-        },
-        {
+          exclude: /node_modules/,
+        }, {
           test: /\.(s[ac]ss|css)$/,
           sideEffects: true,
           use: [
-            MiniCssExtractPlugin.loader,
-            {
+            MiniCssExtractPlugin.loader, {
               loader: 'css-loader',
               options: {
                 importLoaders: 3,
@@ -67,8 +65,7 @@ const config = (env) => {
                   localIdentName: IS_DEV ? '[name]__[local]___[hash:base64:5]' : '[hash:base64:5]',
                 },
               },
-            },
-            {
+            }, {
               loader: 'sass-loader',
               options: {
                 implementation: require('sass'),
@@ -77,27 +74,26 @@ const config = (env) => {
                 sassOptions: {
                   quietDeps: true,
                   indentWidth: 2,
-                  includePaths: ['public']
-                }
-              }
+                  includePaths: ['public'],
+                },
+              },
             },
           ],
-        },
-        {
+        }, {
           test: /\.(?:ico|gif|png|jpg|jpeg|svg)$/i,
           type: 'asset/resource',
           generator: {
-            filename: 'static/assets/images/[name][hash][ext]'
-          }
+            filename: 'static/assets/images/[name][hash][ext]',
+          },
         },
 
         {
           test: /\.(ttf|eot|woff2?|otf)$/,
           type: 'asset/resource',
           generator: {
-            filename: 'static/assets/fonts/[name][hash][ext]'
-          }
-        }
+            filename: 'static/assets/fonts/[name][hash][ext]',
+          },
+        },
       ],
     },
     output: {
@@ -107,7 +103,7 @@ const config = (env) => {
       chunkFilename: 'static/js/[name].[contenthash].js',
       assetModuleFilename: 'static/assets/[name].[hash][ext]',
       publicPath: '/',
-      crossOriginLoading: 'anonymous'
+      crossOriginLoading: 'anonymous',
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -118,12 +114,10 @@ const config = (env) => {
     plugins: [
       new WebpackBar({
         profile: true,
-        reporters: ['basic', 'fancy', 'profile', 'stats']
-      }),
-      IS_PERF && new BundleAnalyzerPlugin(),
-      new HtmlWebpackPlugin({
+        reporters: ['basic', 'fancy', 'profile', 'stats'],
+      }), IS_PERF && new BundleAnalyzerPlugin(), new HtmlWebpackPlugin({
         template: 'src/index.html',
-        minify: IS_DEV ? undefined :{
+        minify: IS_DEV ? undefined : {
           removeComments: true,
           collapseWhitespace: true,
           removeRedundantAttributes: true,
@@ -135,35 +129,28 @@ const config = (env) => {
           minifyCSS: true,
           minifyURLs: true,
         },
-      }),
-      new MiniCssExtractPlugin({
+      }), new MiniCssExtractPlugin({
         filename: IS_DEV ? 'static/css/[name].css' : 'static/css/[name].[contenthash].css',
-        chunkFilename: IS_DEV ? 'static/css/[id].css' : 'static/css/[id].[contenthash].css'
-      }),
-      new CopyPlugin({
+        chunkFilename: IS_DEV ? 'static/css/[id].css' : 'static/css/[id].[contenthash].css',
+      }), new CopyPlugin({
         patterns: [{ from: 'public' }],
-      }),
-      new DefinePlugin({
+      }), new DefinePlugin({
         'process.env.API_SERVER_HOST': JSON.stringify(getVariable('API_SERVER_HOST')),
         'process.env.KEYCLOAK_HOST': JSON.stringify(getVariable('KEYCLOAK_HOST')),
         'process.env.KEYCLOAK_REALM_NAME': JSON.stringify(getVariable('KEYCLOAK_REALM_NAME')),
         'process.env.KEYCLOAK_CLIENT_ID': JSON.stringify(getVariable('KEYCLOAK_CLIENT_ID')),
-      }),
-      new ForkTsCheckerWebpackPlugin({
+      }), new ForkTsCheckerWebpackPlugin({
         async: IS_DEV,
         typescript: {
           configFile: path.resolve(__dirname, 'tsconfig.json'),
         },
+      }), new CleanWebpackPlugin(), !IS_DEV && new CompressionPlugin({
+        filename: '[path][base].gz',
+        algorithm: 'gzip',
+        test: /\.(js|css|html|svg)$/,
+        threshold: 10240,
+        minRatio: 0.8,
       }),
-      new CleanWebpackPlugin(),
-      !IS_DEV &&
-        new CompressionPlugin({
-          filename: '[path][base].gz',
-          algorithm: 'gzip',
-          test: /\.(js|css|html|svg)$/,
-          threshold: 10240,
-          minRatio: 0.8,
-        }),
     ].filter(Boolean),
     optimization: {
       minimize: !IS_DEV,
@@ -180,8 +167,7 @@ const config = (env) => {
           },
           parallel: true,
           extractComments: false,
-        }),
-        new CssMinimizerPlugin(),
+        }), new CssMinimizerPlugin(),
       ],
       splitChunks: {
         chunks: 'all',
@@ -213,16 +199,15 @@ const config = (env) => {
       type: 'filesystem',
       buildDependencies: {
         config: [__filename],
-      }
-    }
+      },
+    },
   }
 }
 
-if (process.env.BUILD_SPEED === 'true') {
-  const smp = new SpeedMeasurePlugin();
+if(process.env.BUILD_SPEED === 'true') {
+  const smp = new SpeedMeasurePlugin()
 
   module.exports = smp.wrap(config)
 } else {
   module.exports = config
 }
-

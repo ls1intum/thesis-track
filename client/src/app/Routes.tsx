@@ -4,30 +4,44 @@ import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 import { LegacyApplicationFormAccessMode } from '../legacy/interfaces/application'
 import { Center, Loader } from '@mantine/core'
 
-const LegacyThesisApplicationForm = lazy(() => import('../pages/LegacySubmitApplicationPage/LegacyThesisApplicationForm'))
-const LegacyApplicationReviewPage = lazy(() => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'))
+const LegacyThesisApplicationForm = lazy(
+  () => import('../pages/LegacySubmitApplicationPage/LegacyThesisApplicationForm'),
+)
+const LegacyApplicationReviewPage = lazy(
+  () => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'),
+)
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage/NotFoundPage'))
 const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/ThesisOverviewPage'))
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
 const LogoutPage = lazy(() => import('../pages/LogoutPage/LogoutPage'))
 const MyInformationPage = lazy(() => import('../pages/MyInformationPage/MyInformationPage'))
-const SubmitApplicationStepOnePage = lazy(() => import('../pages/SubmitApplicationPage/SubmitApplicationStepOnePage'))
-const SubmitApplicationStepTwoPage = lazy(() => import('../pages/SubmitApplicationPage/SubmitApplicationStepTwoPage'))
+const SubmitApplicationStepOnePage = lazy(
+  () => import('../pages/SubmitApplicationPage/SubmitApplicationStepOnePage'),
+)
+const SubmitApplicationStepTwoPage = lazy(
+  () => import('../pages/SubmitApplicationPage/SubmitApplicationStepTwoPage'),
+)
 const CreateTopicPage = lazy(() => import('../pages/CreateTopicPage/CreateTopicPage'))
 const TopicPage = lazy(() => import('../pages/TopicPage/TopicPage'))
-const ReviewApplicationPage = lazy(() => import('../pages/ReviewApplicationPage/ReviewApplicationPage'))
+const ReviewApplicationPage = lazy(
+  () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
+)
 const ThesisPage = lazy(() => import('../pages/ThesisPage/ThesisPage'))
 const SubmitProposalPage = lazy(() => import('../pages/SubmitProposalPage/SubmitProposalPage'))
-const SubmitAssessmentPage = lazy(() => import('../pages/SubmitAssessmentPage/SubmitAssessmentPage'))
+const SubmitAssessmentPage = lazy(
+  () => import('../pages/SubmitAssessmentPage/SubmitAssessmentPage'),
+)
 const LandingPage = lazy(() => import('../pages/LandingPage/LandingPage'))
 
 const AppRoutes = () => {
   return (
-    <Suspense fallback={
-      <Center styles={{root: {height: '100vh'}}}>
-        <Loader />
-      </Center>
-    }>
+    <Suspense
+      fallback={
+        <Center styles={{ root: { height: '100vh' } }}>
+          <Loader />
+        </Center>
+      }
+    >
       <BrowserRouter>
         <Routes>
           <Route
@@ -88,7 +102,9 @@ const AppRoutes = () => {
           />
           <Route
             path='/applications/thesis'
-            element={<LegacyThesisApplicationForm accessMode={LegacyApplicationFormAccessMode.STUDENT} />}
+            element={
+              <LegacyThesisApplicationForm accessMode={LegacyApplicationFormAccessMode.STUDENT} />
+            }
           />
           <Route
             path='/applications/:application_id?'

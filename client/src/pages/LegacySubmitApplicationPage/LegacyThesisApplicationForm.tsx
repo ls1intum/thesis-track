@@ -68,10 +68,7 @@ interface ThesisApplicationFormProps {
   application?: LegacyThesisApplication
 }
 
-const LegacyThesisApplicationForm = ({
-  application,
-  accessMode,
-}: ThesisApplicationFormProps) => {
+const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicationFormProps) => {
   const theme = useMantineTheme()
 
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -498,9 +495,10 @@ const LegacyThesisApplicationForm = ({
                     value={form.values.projects ?? ''}
                     textAreaProps={form.getInputProps('projects')}
                   />
-                  {!form.errors.projects && accessMode !== LegacyApplicationFormAccessMode.INSTRUCTOR && (
-                    <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
-                  )}
+                  {!form.errors.projects &&
+                    accessMode !== LegacyApplicationFormAccessMode.INSTRUCTOR && (
+                      <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
+                    )}
                 </div>
               </Group>
               <div>
@@ -527,7 +525,7 @@ const LegacyThesisApplicationForm = ({
                     Desired Thesis Start Date
                   </Text>
                   <Text fz='sm' lineClamp={20}>
-                    {formatDate(form.values.desiredThesisStart, {includeHours: false})}
+                    {formatDate(form.values.desiredThesisStart, { includeHours: false })}
                   </Text>
                 </Stack>
               ) : (
@@ -802,7 +800,10 @@ const LegacyThesisApplicationForm = ({
                         void (async () => {
                           const response = await getThesisApplicationExaminationFile(application.id)
                           if (response) {
-                            downloadPdf(response, application.examinationReportFilename ?? 'examination-report')
+                            downloadPdf(
+                              response,
+                              application.examinationReportFilename ?? 'examination-report',
+                            )
                           }
                         })()
                       }}
@@ -833,7 +834,10 @@ const LegacyThesisApplicationForm = ({
                             application.id,
                           )
                           if (response) {
-                            downloadPdf(response, application.bachelorReportFilename ?? 'bachelor-report')
+                            downloadPdf(
+                              response,
+                              application.bachelorReportFilename ?? 'bachelor-report',
+                            )
                           }
                         })()
                       }}
@@ -992,4 +996,3 @@ const LegacyThesisApplicationForm = ({
 }
 
 export default LegacyThesisApplicationForm
-
