@@ -1,13 +1,13 @@
 import { useMemo, useState } from 'react'
 
 interface IUseSignalReturnType {
-  signal: Promise<unknown>,
-  ref: { isTriggerred: boolean },
+  signal: Promise<unknown>
+  ref: { isTriggerred: boolean }
   triggerSignal: () => unknown
 }
 
 export function useSignal(): IUseSignalReturnType {
-  const [,setVersion] = useState(0);
+  const [, setVersion] = useState(0)
 
   return useMemo(() => {
     let externalResolve: (x: boolean) => unknown
@@ -26,13 +26,15 @@ export function useSignal(): IUseSignalReturnType {
         externalResolve(true)
         ref.isTriggerred = true
 
-        setVersion(prev => prev + 1)
+        setVersion((prev) => prev + 1)
       },
     }
   }, [])
 }
 
-export function usePromiseLoader<T extends any[]>(fn: (...args: T) => Promise<unknown>): {
+export function usePromiseLoader<T extends any[]>(
+  fn: (...args: T) => Promise<unknown>,
+): {
   execute: (...args: T) => unknown
   isLoading: boolean
 } {

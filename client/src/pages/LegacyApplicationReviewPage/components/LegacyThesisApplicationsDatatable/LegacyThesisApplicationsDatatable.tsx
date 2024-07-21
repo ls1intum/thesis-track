@@ -21,6 +21,7 @@ export const LegacyThesisApplicationsDatatable = () => {
 
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
+  const [version, setVersion] = useState(0)
 
   const [selectedApplications, setSelectedApplications] = useState<LegacyThesisApplication[]>([])
   const [openedApplication, setOpenedApplication] = useState<LegacyThesisApplication>()
@@ -79,6 +80,7 @@ export const LegacyThesisApplicationsDatatable = () => {
       },
     )
   }, [
+    version,
     user.user_id,
     page,
     limit,
@@ -102,6 +104,10 @@ export const LegacyThesisApplicationsDatatable = () => {
           <LegacyThesisApplicationForm
             application={openedApplication}
             accessMode={LegacyApplicationFormAccessMode.INSTRUCTOR}
+            onUpdate={() => {
+              setVersion((prev) => prev + 1)
+              setOpenedApplication(undefined)
+            }}
           />
         </Modal>
       )}

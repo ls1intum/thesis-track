@@ -1,5 +1,10 @@
-import React, { PropsWithChildren, ReactNode, useEffect, useMemo, useState } from 'react'
-import { AuthenticationContext, IAuthenticationContext, IDecodedAccessToken, IDecodedRefreshToken } from './context'
+import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import {
+  AuthenticationContext,
+  IAuthenticationContext,
+  IDecodedAccessToken,
+  IDecodedRefreshToken,
+} from './context'
 import Keycloak from 'keycloak-js'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { jwtDecode } from 'jwt-decode'
@@ -20,16 +25,21 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
 
   const [user, setUser] = useState<IUserInfo>()
   const [authenticationTokens, setAuthenticationTokens] = useAuthenticationTokens()
-  const {signal: readySignal, triggerSignal: triggerReadySignal, ref: {isTriggerred: isReady}} = useSignal()
+  const {
+    signal: readySignal,
+    triggerSignal: triggerReadySignal,
+    ref: { isTriggerred: isReady },
+  } = useSignal()
 
   useEffect(() => {
     setUser(undefined)
 
-    let refreshTokenTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
+    let refreshTokenTimeout: ReturnType<typeof setTimeout> | undefined = undefined
 
     const refreshAccessToken = () => {
-      keycloak.updateToken(60 * 5)
-        .then(isSuccess => !isSuccess && setAuthenticationTokens(undefined))
+      keycloak
+        .updateToken(60 * 5)
+        .then((isSuccess) => !isSuccess && setAuthenticationTokens(undefined))
     }
 
     const storeTokens = () => {
@@ -46,7 +56,10 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
       console.log('decoded keycloak tokens', decodedAccessToken, decodedRefreshToken)
 
       if (decodedRefreshToken?.exp) {
-        console.log('refresh token expires in seconds', decodedRefreshToken?.exp - Date.now() / 1000)
+        console.log(
+          'refresh token expires in seconds',
+          decodedRefreshToken?.exp - Date.now() / 1000,
+        )
       }
 
       // refresh if already expired
@@ -57,9 +70,12 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
       }
 
       if (decodedRefreshToken?.exp) {
-        refreshTokenTimeout = setTimeout(() => {
-          setAuthenticationTokens(undefined)
-        }, Math.max(decodedRefreshToken.exp * 1000 - Date.now(), 0))
+        refreshTokenTimeout = setTimeout(
+          () => {
+            setAuthenticationTokens(undefined)
+          },
+          Math.max(decodedRefreshToken.exp * 1000 - Date.now(), 0),
+        )
       }
 
       if (accessToken && refreshToken && decodedAccessToken) {

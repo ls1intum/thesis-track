@@ -1,4 +1,4 @@
-import { FunctionComponent, PropsWithChildren, ReactElement, Suspense, useEffect } from 'react'
+import { PropsWithChildren, Suspense, useEffect } from 'react'
 import { AppShell, Burger, Center, Group, Loader } from '@mantine/core'
 import * as styles from './AuthenticatedArea.module.scss'
 import { Link, useLocation } from 'react-router-dom'
@@ -22,16 +22,36 @@ export interface IAuthenticatedAreaProps {
 }
 
 const links: Array<{
-  link: string,
-  label: string,
-  icon: any,
+  link: string
+  label: string
+  icon: any
   roles: string[] | undefined
 }> = [
   { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, roles: undefined },
-  { link: '/submit-application/pick-topic', label: 'Submit Application', icon: PaperPlaneTilt, roles: undefined },
-  { link: '/management/thesis-applications', label: 'Review Applications v1', icon: Scroll, roles: ['admin', 'advisor'] },
-  { link: '/applications', label: 'Review Applications v2', icon: Scroll, roles: ['admin', 'advisor'] },
-  { link: '/topics/create', label: 'Create Topic', icon: FolderSimplePlus, roles: ['admin', 'advisor'] },
+  {
+    link: '/submit-application/pick-topic',
+    label: 'Submit Application',
+    icon: PaperPlaneTilt,
+    roles: undefined,
+  },
+  {
+    link: '/management/thesis-applications',
+    label: 'Review Applications v1',
+    icon: Scroll,
+    roles: ['admin', 'advisor'],
+  },
+  {
+    link: '/applications',
+    label: 'Review Applications v2',
+    icon: Scroll,
+    roles: ['admin', 'advisor'],
+  },
+  {
+    link: '/topics/create',
+    label: 'Create Topic',
+    icon: FolderSimplePlus,
+    roles: ['admin', 'advisor'],
+  },
   { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin'] },
 ]
 
@@ -42,7 +62,12 @@ const SpinningLoader = () => (
 )
 
 const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) => {
-  const { children, requireAuthentication = true, collapseNavigation = false, requiredRoles } = props
+  const {
+    children,
+    requireAuthentication = true,
+    collapseNavigation = false,
+    requiredRoles,
+  } = props
 
   const [opened, { toggle }] = useDisclosure()
   const location = useLocation()
@@ -83,18 +108,20 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       <AppShell.Navbar p='md'>
         <AppShell.Section grow my='md'>
           {links
-            .filter(item => !item.roles || item.roles.some(role => auth.user?.roles.includes(role)))
+            .filter(
+              (item) => !item.roles || item.roles.some((role) => auth.user?.roles.includes(role)),
+            )
             .map((item) => (
-            <Link
-              className={styles.link}
-              data-active={location.pathname.startsWith(item.link) || undefined}
-              key={item.label}
-              to={item.link}
-            >
-              <item.icon className={styles.linkIcon} size={32} />
-              <span>{item.label}</span>
-            </Link>
-          ))}
+              <Link
+                className={styles.link}
+                data-active={location.pathname.startsWith(item.link) || undefined}
+                key={item.label}
+                to={item.link}
+              >
+                <item.icon className={styles.linkIcon} size={32} />
+                <span>{item.label}</span>
+              </Link>
+            ))}
         </AppShell.Section>
         <AppShell.Section>
           <Link
@@ -116,14 +143,13 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       <AppShell.Main>
         {auth.user ? (
           <Suspense fallback={<SpinningLoader />}>
-            {!requiredRoles || requiredRoles.some(role => auth.user?.roles.includes(role))
-              ? children :
-              (
-                <Center className={styles.fullHeight}>
-                  <h1>403 - Unauthorized</h1>
-                </Center>
-              )
-            }
+            {!requiredRoles || requiredRoles.some((role) => auth.user?.roles.includes(role)) ? (
+              children
+            ) : (
+              <Center className={styles.fullHeight}>
+                <h1>403 - Unauthorized</h1>
+              </Center>
+            )}
           </Suspense>
         ) : (
           <SpinningLoader />

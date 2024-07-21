@@ -66,9 +66,14 @@ const countriesArr = Object.entries(countries.getNames('en', { select: 'alias' }
 interface ThesisApplicationFormProps {
   accessMode: LegacyApplicationFormAccessMode
   application?: LegacyThesisApplication
+  onUpdate?: () => unknown
 }
 
-const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicationFormProps) => {
+const LegacyThesisApplicationForm = ({
+  application,
+  accessMode,
+  onUpdate,
+}: ThesisApplicationFormProps) => {
   const theme = useMantineTheme()
 
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -240,24 +245,28 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
     }
   }, [accessMode])
 
-  const assessThesisApplication = usePromiseLoader(() =>
-    postThesisApplicationAssessment(application?.id ?? '', {
+  const assessThesisApplication = usePromiseLoader(async () => {
+    await postThesisApplicationAssessment(application?.id ?? '', {
       status: form.values.applicationStatus,
       assessmentComment: form.values.assessmentComment ?? '',
-    }),
-  )
+    })
+  })
 
   const assignThesisApplicationToThesisAdvisor = usePromiseLoader((advisorId: string) =>
     postThesisApplicationThesisAdvisorAssignment(application?.id ?? '', advisorId),
   )
 
-  const acceptThesisApplication = usePromiseLoader(() =>
-    postThesisApplicatioAcceptance(application?.id ?? '', notifyStudent),
-  )
+  const acceptThesisApplication = usePromiseLoader(async () => {
+    await postThesisApplicatioAcceptance(application?.id ?? '', notifyStudent)
 
-  const rejectThesisApplication = usePromiseLoader(() =>
-    postThesisApplicationRejection(application?.id ?? '', notifyStudent),
-  )
+    onUpdate?.()
+  })
+
+  const rejectThesisApplication = usePromiseLoader(async () => {
+    await postThesisApplicationRejection(application?.id ?? '', notifyStudent)
+
+    onUpdate?.()
+  })
 
   const [thesisAdvisorId, setThesisAdvisorId] = useState<string | null>(
     application?.thesisAdvisor?.id ?? null,
@@ -953,7 +962,6 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
                             new Blob([JSON.stringify(form.values)], { type: 'application/json' }),
                           )
 
-                          // TODO: one of this is undefined. Why?
                           formData.append('examinationReport', uploads.values.examinationReport)
                           formData.append('cv', uploads.values.cv)
 
@@ -968,7 +976,7 @@ const LegacyThesisApplicationForm = ({ application, accessMode }: ThesisApplicat
                           }).catch((err) => {
                             console.error(err)
 
-                            return {ok: false, status: 500, data: undefined}
+                            return { ok: false, status: 500, data: undefined }
                           })
 
                           if (response.ok) {
