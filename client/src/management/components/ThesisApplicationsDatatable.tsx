@@ -140,9 +140,6 @@ export const ThesisApplicationsDatatable = (): JSX.Element => {
                 case 'ACCEPTED':
                   color = 'green'
                   break
-                case 'ENROLLED':
-                  color = 'green'
-                  break
                 case 'REJECTED':
                   color = 'red'
                   break
