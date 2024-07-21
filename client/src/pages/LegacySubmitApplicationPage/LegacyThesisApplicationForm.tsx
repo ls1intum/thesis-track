@@ -1,6 +1,5 @@
 import { isEmail, isNotEmpty, useForm } from '@mantine/form'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
-import moment from 'moment'
 import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json'
 import {
@@ -46,10 +45,13 @@ import {
   LegacyThesisAdvisor,
   LegacyThesisApplication,
 } from '../../legacy/interfaces/thesisApplication'
-import { Query } from '../../legacy/query'
 import { Calendar, ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { GLOBAL_CONFIG } from '../../config/global'
-import { usePromiseLoader, useRequest } from '../../requests/hooks'
+import { doRequest } from '../../requests/request'
+import { formatDate } from '../../utils/format'
+import { usePromiseLoader } from '../../hooks/utility'
+import { downloadPdf } from '../../utils/blob'
+import { LegacyApplicationFormAccessMode } from '../../legacy/interfaces/application'
 
 countries.registerLocale(enLocale)
 const countriesArr = Object.entries(countries.getNames('en', { select: 'alias' })).map(
@@ -61,22 +63,16 @@ const countriesArr = Object.entries(countries.getNames('en', { select: 'alias' }
   },
 )
 
-export enum ApplicationFormAccessMode {
-  INSTRUCTOR,
-  STUDENT,
-}
-
 interface ThesisApplicationFormProps {
-  accessMode: ApplicationFormAccessMode
+  accessMode: LegacyApplicationFormAccessMode
   application?: LegacyThesisApplication
 }
 
-export const LegacyThesisApplicationForm = ({
+const LegacyThesisApplicationForm = ({
   application,
   accessMode,
 }: ThesisApplicationFormProps) => {
   const theme = useMantineTheme()
-  const {doRequest} = useRequest()
 
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
   const [applicationSuccessfullySubmitted, setApplicationSuccessfullySubmitted] = useState(false)
@@ -222,47 +218,53 @@ export const LegacyThesisApplicationForm = ({
   const [fetchedThesisAdvisors, setFetchedThesisAdvisors] = useState<LegacyThesisAdvisor[]>()
 
   useEffect(() => {
-    if (accessMode === ApplicationFormAccessMode.INSTRUCTOR) {
-      return doRequest<LegacyThesisAdvisor[]>(`/api/thesis-applications/thesis-advisors`, {
-        method: 'GET',
-        requiresAuth: true
-      }, (err, res) => {
-        if (err || !res || !res.ok) {
-          notifications.show({
-            color: 'red',
-            autoClose: 10000,
-            title: 'Error',
-            message: `Could not fetch thesis advisors.`,
-          })
+    if (accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR) {
+      return doRequest<LegacyThesisAdvisor[]>(
+        `/api/thesis-applications/thesis-advisors`,
+        {
+          method: 'GET',
+          requiresAuth: true,
+        },
+        (err, res) => {
+          if (!res?.ok) {
+            notifications.show({
+              color: 'red',
+              autoClose: 10000,
+              title: 'Error',
+              message: `Could not fetch thesis advisors.`,
+            })
 
-          setFetchedThesisAdvisors([])
-        } else {
-          setFetchedThesisAdvisors(res.data)
-        }
-      })
+            setFetchedThesisAdvisors([])
+          } else {
+            setFetchedThesisAdvisors(res.data)
+          }
+        },
+      )
     }
   }, [accessMode])
 
-  const assessThesisApplication =  usePromiseLoader(
-() => postThesisApplicationAssessment(doRequest, application?.id ?? '', {
+  const assessThesisApplication = usePromiseLoader(() =>
+    postThesisApplicationAssessment(application?.id ?? '', {
       status: form.values.applicationStatus,
       assessmentComment: form.values.assessmentComment ?? '',
-    })
+    }),
   )
 
-  const assignThesisApplicationToThesisAdvisor = usePromiseLoader(
-    () => postThesisApplicationThesisAdvisorAssignment(doRequest, application?.id ?? '', thesisAdvisorId ?? '')
+  const assignThesisApplicationToThesisAdvisor = usePromiseLoader(() =>
+    postThesisApplicationThesisAdvisorAssignment(application?.id ?? '', thesisAdvisorId ?? ''),
   )
 
-  const acceptThesisApplication = usePromiseLoader(
-    () => postThesisApplicatioAcceptance(doRequest, application?.id ?? '', notifyStudent)
+  const acceptThesisApplication = usePromiseLoader(() =>
+    postThesisApplicatioAcceptance(application?.id ?? '', notifyStudent),
   )
 
-  const rejectThesisApplication = usePromiseLoader(
-    () => postThesisApplicationRejection(doRequest, application?.id ?? '', notifyStudent)
+  const rejectThesisApplication = usePromiseLoader(() =>
+    postThesisApplicationRejection(application?.id ?? '', notifyStudent),
   )
 
-  const [thesisAdvisorId, setThesisAdvisorId] = useState<string | null>(application?.thesisAdvisor?.id ?? null)
+  const [thesisAdvisorId, setThesisAdvisorId] = useState<string | null>(
+    application?.thesisAdvisor?.id ?? null,
+  )
 
   useEffect(() => {
     setThesisAdvisorId(application?.thesisAdvisor?.id ?? null)
@@ -288,7 +290,7 @@ export const LegacyThesisApplicationForm = ({
           />
         ) : (
           <Stack>
-            {accessMode === ApplicationFormAccessMode.STUDENT && (
+            {accessMode === LegacyApplicationFormAccessMode.STUDENT && (
               <Group
                 style={{
                   display: 'flex',
@@ -313,7 +315,7 @@ export const LegacyThesisApplicationForm = ({
               <Group grow align='flex-start'>
                 <LegacyFormTextField
                   required={!form.values.student?.isExchangeStudent}
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='TUM ID'
                   placeholder='TUM ID'
                   value={form.values.student?.tumId ?? ''}
@@ -321,7 +323,7 @@ export const LegacyThesisApplicationForm = ({
                 />
                 <LegacyFormTextField
                   required={!form.values.student?.isExchangeStudent}
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='Matriculation Number'
                   placeholder='Matriculation number'
                   value={form.values.student?.matriculationNumber ?? ''}
@@ -331,7 +333,7 @@ export const LegacyThesisApplicationForm = ({
               <Group grow align='flex-start'>
                 <LegacyFormTextField
                   required
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='First name'
                   placeholder='First Name'
                   value={form.values.student?.firstName ?? ''}
@@ -339,7 +341,7 @@ export const LegacyThesisApplicationForm = ({
                 />
                 <LegacyFormTextField
                   required
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='Last name'
                   placeholder='Last Name'
                   value={form.values.student?.lastName ?? ''}
@@ -349,10 +351,13 @@ export const LegacyThesisApplicationForm = ({
               <Group grow align='flex-start'>
                 <LegacyFormSelectField
                   required
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='Gender'
                   placeholder='Gender'
-                  readValue={GLOBAL_CONFIG.genders[form.values.student.gender ?? ''] ?? form.values.student.gender}
+                  readValue={
+                    GLOBAL_CONFIG.genders[form.values.student.gender ?? ''] ??
+                    form.values.student.gender
+                  }
                   data={Object.keys(GLOBAL_CONFIG.genders).map((key) => {
                     return {
                       label: GLOBAL_CONFIG.genders[key],
@@ -363,7 +368,7 @@ export const LegacyThesisApplicationForm = ({
                 />
                 <LegacyFormSelectField
                   required
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='Nationality'
                   placeholder='Nationality'
                   readValue={
@@ -376,7 +381,7 @@ export const LegacyThesisApplicationForm = ({
               </Group>
               <LegacyFormTextField
                 required
-                readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                 label='Email (preferrably a TUM email address)'
                 placeholder='your@email.com'
                 value={form.values.student?.email ?? ''}
@@ -385,11 +390,12 @@ export const LegacyThesisApplicationForm = ({
               <Group grow align='flex-start'>
                 <LegacyFormSelectField
                   required
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='Study Degree'
                   placeholder='Study Degree'
                   readValue={
-                    GLOBAL_CONFIG.study_degrees[form.values.studyDegree ?? ''] ?? form.values.studyDegree
+                    GLOBAL_CONFIG.study_degrees[form.values.studyDegree ?? ''] ??
+                    form.values.studyDegree
                   }
                   data={Object.keys(GLOBAL_CONFIG.study_degrees).map((key) => {
                     return {
@@ -401,11 +407,12 @@ export const LegacyThesisApplicationForm = ({
                 />
                 <LegacyFormSelectField
                   required
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='Study Program'
                   placeholder='Study Program'
                   readValue={
-                    GLOBAL_CONFIG.study_programs[form.values.studyProgram ?? ''] ?? form.values.studyProgram
+                    GLOBAL_CONFIG.study_programs[form.values.studyProgram ?? ''] ??
+                    form.values.studyProgram
                   }
                   data={Object.keys(GLOBAL_CONFIG.study_programs).map((key) => {
                     return {
@@ -418,7 +425,7 @@ export const LegacyThesisApplicationForm = ({
                 <LegacyFormTextField
                   required
                   numeric
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   placeholder='Current semester'
                   label='Current Semester'
                   value={form.values.currentSemester ?? ''}
@@ -430,14 +437,14 @@ export const LegacyThesisApplicationForm = ({
                   <LegacyFormTextField
                     required
                     textArea
-                    readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                    readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                     label='Special Skills'
                     placeholder='Programming languages, certificates, etc.'
                     value={form.values.specialSkills ?? ''}
                     textAreaProps={form.getInputProps('specialSkills')}
                   />
                   {!form.errors.specialSkills &&
-                    accessMode !== ApplicationFormAccessMode.INSTRUCTOR && (
+                    accessMode !== LegacyApplicationFormAccessMode.INSTRUCTOR && (
                       <Text fz='xs' ta='right'>{`${
                         form.values.specialSkills?.length ?? 0
                       } / 500`}</Text>
@@ -447,14 +454,14 @@ export const LegacyThesisApplicationForm = ({
                   <LegacyFormTextField
                     required
                     textArea
-                    readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                    readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                     label='Motivation'
                     placeholder='What are you looking for?'
                     value={form.values.motivation ?? ''}
                     textAreaProps={form.getInputProps('motivation')}
                   />
                   {!form.errors.motivation &&
-                    accessMode !== ApplicationFormAccessMode.INSTRUCTOR && (
+                    accessMode !== LegacyApplicationFormAccessMode.INSTRUCTOR && (
                       <Text
                         fz='xs'
                         ta='right'
@@ -467,14 +474,14 @@ export const LegacyThesisApplicationForm = ({
                   <LegacyFormTextField
                     required
                     textArea
-                    readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                    readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                     label='Interests'
                     placeholder='What are you interested in?'
                     value={form.values.interests ?? ''}
                     textAreaProps={form.getInputProps('interests')}
                   />
                   {!form.errors.interests &&
-                    accessMode !== ApplicationFormAccessMode.INSTRUCTOR && (
+                    accessMode !== LegacyApplicationFormAccessMode.INSTRUCTOR && (
                       <Text
                         fz='xs'
                         ta='right'
@@ -485,13 +492,13 @@ export const LegacyThesisApplicationForm = ({
                   <LegacyFormTextField
                     required
                     textArea
-                    readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                    readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                     label='Projects'
                     placeholder='What projects have you worked on?'
                     value={form.values.projects ?? ''}
                     textAreaProps={form.getInputProps('projects')}
                   />
-                  {!form.errors.projects && accessMode !== ApplicationFormAccessMode.INSTRUCTOR && (
+                  {!form.errors.projects && accessMode !== LegacyApplicationFormAccessMode.INSTRUCTOR && (
                     <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
                   )}
                 </div>
@@ -500,27 +507,27 @@ export const LegacyThesisApplicationForm = ({
                 <LegacyFormTextField
                   required
                   textArea
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   label='Thesis Title Suggestion'
                   placeholder='Thesis title suggestion'
                   value={form.values.thesisTitle ?? ''}
                   textAreaProps={form.getInputProps('thesisTitle')}
                 />
                 {!form.errors.thesisTitle &&
-                  accessMode !== ApplicationFormAccessMode.INSTRUCTOR && (
+                  accessMode !== LegacyApplicationFormAccessMode.INSTRUCTOR && (
                     <Text
                       fz='xs'
                       ta='right'
                     >{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
                   )}
               </div>
-              {accessMode === ApplicationFormAccessMode.INSTRUCTOR ? (
+              {accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR ? (
                 <Stack style={{ gap: '0' }}>
                   <Text c='dimmed' fz='xs' fw={700}>
                     Desired Thesis Start Date
                   </Text>
                   <Text fz='sm' lineClamp={20}>
-                    {moment(form.values.desiredThesisStart).format('DD. MMMM YYYY')}
+                    {formatDate(form.values.desiredThesisStart, {includeHours: false})}
                   </Text>
                 </Stack>
               ) : (
@@ -534,7 +541,7 @@ export const LegacyThesisApplicationForm = ({
                 <LegacyFormSelectField
                   required
                   multiselect
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   data={Object.keys(GLOBAL_CONFIG.research_areas).map((key) => {
                     return {
                       label: GLOBAL_CONFIG.research_areas[key] ?? key,
@@ -551,7 +558,7 @@ export const LegacyThesisApplicationForm = ({
                 <LegacyFormSelectField
                   required
                   multiselect
-                  readOnly={accessMode === ApplicationFormAccessMode.INSTRUCTOR}
+                  readOnly={accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR}
                   data={Object.keys(GLOBAL_CONFIG.focus_topics).map((key) => {
                     return {
                       label: GLOBAL_CONFIG.focus_topics[key] ?? key,
@@ -566,7 +573,7 @@ export const LegacyThesisApplicationForm = ({
                   multiselectProps={form.getInputProps('focusTopics')}
                 />
               </Group>
-              {accessMode === ApplicationFormAccessMode.STUDENT && (
+              {accessMode === LegacyApplicationFormAccessMode.STUDENT && (
                 <Stack>
                   <Group align='left'>
                     <Text fw={500} fz='sm'>
@@ -778,7 +785,7 @@ export const LegacyThesisApplicationForm = ({
                 </Stack>
               )}
             </form>
-            {accessMode === ApplicationFormAccessMode.INSTRUCTOR && (
+            {accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR && (
               <>
                 <Divider
                   label={
@@ -793,18 +800,9 @@ export const LegacyThesisApplicationForm = ({
                     <Button
                       onClick={() => {
                         void (async () => {
-                          const response = await getThesisApplicationExaminationFile(doRequest, application.id)
+                          const response = await getThesisApplicationExaminationFile(application.id)
                           if (response) {
-                            const url = window.URL.createObjectURL(response)
-                            const a = document.createElement('a')
-                            a.href = url
-                            a.setAttribute(
-                              'download',
-                              `${application.examinationReportFilename ?? ''}.pdf`,
-                            )
-                            document.body.appendChild(a)
-                            a.click()
-                            window.URL.revokeObjectURL(url)
+                            downloadPdf(response, application.examinationReportFilename ?? 'examination-report')
                           }
                         })()
                       }}
@@ -816,15 +814,10 @@ export const LegacyThesisApplicationForm = ({
                     <Button
                       onClick={() => {
                         void (async () => {
-                          const response = await getThesisApplicationCvFile(doRequest, application.id)
+                          const response = await getThesisApplicationCvFile(application.id)
+
                           if (response) {
-                            const url = window.URL.createObjectURL(response)
-                            const a = document.createElement('a')
-                            a.href = url
-                            a.setAttribute('download', `${application.cvFilename ?? ''}.pdf`)
-                            document.body.appendChild(a)
-                            a.click()
-                            window.URL.revokeObjectURL(url)
+                            downloadPdf(response, application.cvFilename ?? 'cv')
                           }
                         })()
                       }}
@@ -837,20 +830,10 @@ export const LegacyThesisApplicationForm = ({
                       onClick={() => {
                         void (async () => {
                           const response = await getThesisApplicationBachelorReportFile(
-                            doRequest,
                             application.id,
                           )
                           if (response) {
-                            const url = window.URL.createObjectURL(response)
-                            const a = document.createElement('a')
-                            a.href = url
-                            a.setAttribute(
-                              'download',
-                              `${application.bachelorReportFilename ?? ''}.pdf`,
-                            )
-                            document.body.appendChild(a)
-                            a.click()
-                            window.URL.revokeObjectURL(url)
+                            downloadPdf(response, application.bachelorReportFilename ?? 'bachelor-report')
                           }
                         })()
                       }}
@@ -862,7 +845,7 @@ export const LegacyThesisApplicationForm = ({
                 <Divider />
               </>
             )}
-            {accessMode === ApplicationFormAccessMode.INSTRUCTOR && (
+            {accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR && (
               <>
                 <Select
                   label='Thesis Advisor'
@@ -887,7 +870,7 @@ export const LegacyThesisApplicationForm = ({
                   placeholder='Comment'
                   {...form.getInputProps('assessmentComment')}
                 />
-                {accessMode === ApplicationFormAccessMode.INSTRUCTOR && (
+                {accessMode === LegacyApplicationFormAccessMode.INSTRUCTOR && (
                   <Button
                     onClick={() => {
                       if (application) {
@@ -934,7 +917,7 @@ export const LegacyThesisApplicationForm = ({
                 </Group>
               </>
             )}
-            {accessMode === ApplicationFormAccessMode.STUDENT && (
+            {accessMode === LegacyApplicationFormAccessMode.STUDENT && (
               <>
                 <Stack>
                   <Checkbox
@@ -965,8 +948,11 @@ export const LegacyThesisApplicationForm = ({
                             'thesisApplication',
                             new Blob([JSON.stringify(application)], { type: 'application/json' }),
                           )
+
+                          // TODO: one of this is undefined. Why?
                           formData.append('examinationReport', uploads.values.examinationReport)
                           formData.append('cv', uploads.values.cv)
+
                           if (uploads.values.bachelorReport) {
                             formData.append('bachelorReport', uploads.values.bachelorReport)
                           }
@@ -1004,3 +990,6 @@ export const LegacyThesisApplicationForm = ({
     </div>
   )
 }
+
+export default LegacyThesisApplicationForm
+

@@ -2,22 +2,19 @@ import { useEffect, useState } from 'react'
 import { ActionIcon, Badge, Group, Modal, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import moment from 'moment'
 import { Link } from 'react-router-dom'
-import {
-  ApplicationFormAccessMode,
-  LegacyThesisApplicationForm,
-} from '../../../LegacySubmitApplicationPage/LegacyThesisApplicationForm'
+import LegacyThesisApplicationForm from '../../../LegacySubmitApplicationPage/LegacyThesisApplicationForm'
 import { Pageable } from '../../../../requests/types/pageable'
 import { LegacyThesisApplication } from '../../../../legacy/interfaces/thesisApplication'
-import { LegacyApplicationStatus } from '../../../../legacy/interfaces/application'
+import { LegacyApplicationFormAccessMode, LegacyApplicationStatus } from '../../../../legacy/interfaces/application'
 import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
-import { useRequest } from '../../../../requests/hooks'
 import { notifications } from '@mantine/notifications'
+import { doRequest } from '../../../../requests/request'
+import { useLoggedInUser } from '../../../../hooks/authentication'
+import { formatDate } from '../../../../utils/format'
 
 export const LegacyThesisApplicationsDatatable = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
-  const {authenticated, doRequest} = useRequest()
 
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
@@ -34,46 +31,52 @@ export const LegacyThesisApplicationsDatatable = () => {
 
   const [applications, setApplications] = useState<Pageable<LegacyThesisApplication>>()
 
+  const user = useLoggedInUser()
+
   useEffect(() => {
     setApplications(undefined)
 
-    return doRequest<Pageable<LegacyThesisApplication>>(`/api/thesis-applications`, {
-      method: 'GET',
-      params: {
-        page: page - 1,
-        limit,
-        states: filteredStates?.join(',') ?? Object.keys(LegacyApplicationStatus).join(','),
-        searchQuery,
-        sortBy: sort.columnAccessor,
-        sortOrder: sort.direction,
+    return doRequest<Pageable<LegacyThesisApplication>>(
+      `/api/thesis-applications`,
+      {
+        method: 'GET',
+        params: {
+          page: page - 1,
+          limit,
+          states: filteredStates?.join(',') ?? Object.keys(LegacyApplicationStatus).join(','),
+          searchQuery,
+          sortBy: sort.columnAccessor,
+          sortOrder: sort.direction,
+        },
+        requiresAuth: true,
       },
-      requiresAuth: true
-    }, (error, res) => {
-      if (error || !res) {
-        notifications.show({
-          color: 'red',
-          autoClose: 10000,
-          title: 'Error',
-          message: `Could not fetch thesis applications. ${error}`,
-        })
+      (error, res) => {
+        if (!res?.ok) {
+          notifications.show({
+            color: 'red',
+            autoClose: 10000,
+            title: 'Error',
+            message: `Could not fetch thesis applications. ${error || ''}`,
+          })
 
-        return setApplications({
-          content: [],
-          totalPages: 0,
-          totalElements: 0,
-          number: 0,
-          size: 0,
-          empty: true,
-          first: true,
-          last: true,
-          numberOfElements: 0,
-        })
-      }
+          return setApplications({
+            content: [],
+            totalPages: 0,
+            totalElements: 0,
+            number: 0,
+            size: 0,
+            empty: true,
+            first: true,
+            last: true,
+            numberOfElements: 0,
+          })
+        }
 
-      setApplications(res.data)
-    })
+        setApplications(res.data)
+      },
+    )
   }, [
-    authenticated,
+    user.user_id,
     page,
     limit,
     searchQuery,
@@ -95,7 +98,7 @@ export const LegacyThesisApplicationsDatatable = () => {
         >
           <LegacyThesisApplicationForm
             application={openedApplication}
-            accessMode={ApplicationFormAccessMode.INSTRUCTOR}
+            accessMode={LegacyApplicationFormAccessMode.INSTRUCTOR}
           />
         </Modal>
       )}
@@ -175,7 +178,11 @@ export const LegacyThesisApplicationsDatatable = () => {
                 default:
                   break
               }
-              return <Badge color={color}>{LegacyApplicationStatus[application.applicationStatus]}</Badge>
+              return (
+                <Badge color={color}>
+                  {LegacyApplicationStatus[application.applicationStatus]}
+                </Badge>
+              )
             },
           },
           {
@@ -205,7 +212,9 @@ export const LegacyThesisApplicationsDatatable = () => {
             title: 'Created At',
             sortable: true,
             render: (application) =>
-              `${moment(application.createdAt).format('DD. MMMM YYYY HH:mm')}`,
+              `${formatDate(application.createdAt, {
+                
+              })}`,
           },
           {
             accessor: 'actions',

@@ -1,5 +1,4 @@
 import React from 'react'
-import EChartsThesisProgressChart from './components/EChartsThesisProgressChart/EChartsThesisProgressChart'
 import { Container, Space } from '@mantine/core'
 import chartData from './mock/chart-data.json'
 import { useParams } from 'react-router-dom'
@@ -28,11 +27,7 @@ const ThesisOverviewPage = () => {
         <ThesisProgressFilter />
         <Space h='md' />
         <div>
-          {variant === 'custom' ? (
-            <CustomThesisProgressChart width='100%' height={700} />
-          ) : (
-            <EChartsThesisProgressChart width='100%' height={700} />
-          )}
+          <CustomThesisProgressChart width='100%' height={700} />
         </div>
         <Space h='md' />
       </ThesisOverviewChartProvider>

@@ -5,7 +5,7 @@ export interface IAuthenticationContext {
   isAuthenticated: boolean
   user: IUserInfo | undefined
   groups: string[]
-  login: () => unknown,
+  login: () => unknown
   logout: (redirectUrl: string) => unknown
 }
 

@@ -3,8 +3,6 @@ import { IGlobalConfig } from './types'
 export const GLOBAL_CONFIG: IGlobalConfig = {
   title: 'Thesis Track',
 
-  api_server: 'http://localhost:8080',
-
   focus_topics: {
     COMPETENCIES: 'Competencies',
     TEAM_BASED_LEARNING: 'Team-based Learning',
@@ -70,10 +68,12 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     OTHER: 'Other',
   },
 
+  api_server: process.env.API_SERVER_HOST || 'http://localhost:8080',
+
   keycloak: {
-    client_id: 'thesis-track-client',
-    realm: 'thesis-track',
-    url: 'http://localhost:8081',
-    get_unique_id: (decodedJwt) => decodedJwt.preferred_username
-  }
+    host: process.env.KEYCLOAK_HOST || 'http://localhost:8081',
+    realm: process.env.KEYCLOAK_REALM_NAME || 'thesis-track',
+    client_id: process.env.KEYCLOAK_CLIENT_ID || 'thesis-track-client',
+    get_unique_id: (decodedJwt) => decodedJwt.preferred_username,
+  },
 }

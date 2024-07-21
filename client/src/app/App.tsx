@@ -1,7 +1,6 @@
 import React from 'react'
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
-import { ContextMenuProvider } from 'mantine-contextmenu'
 import '../../public/favicon.svg'
 import AppRoutes from './Routes'
 import AuthenticationProvider from '../contexts/AuthenticationContext/AuthenticationProvider'
@@ -17,12 +16,12 @@ import './styles.scss'
 
 const App = () => {
   return (
-      <MantineProvider defaultColorScheme='auto'>
-        <AuthenticationProvider>
-          <Notifications limit={5} />
-          <AppRoutes />
-        </AuthenticationProvider>
-      </MantineProvider>
+    <MantineProvider defaultColorScheme='auto'>
+      <AuthenticationProvider>
+        <AppRoutes />
+        <Notifications limit={5} />
+      </AuthenticationProvider>
+    </MantineProvider>
   )
 }
 

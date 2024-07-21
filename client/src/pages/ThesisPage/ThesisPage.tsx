@@ -1,4 +1,3 @@
-import AuthenticatedArea from '../../app/layout/AuthenticatedArea/AuthenticatedArea'
 import React from 'react'
 import { usePageTitle } from '../../hooks/theme'
 import ThesisConfigSection from './components/ThesisConfigSection/ThesisConfigSection'

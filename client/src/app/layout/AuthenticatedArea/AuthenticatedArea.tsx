@@ -1,5 +1,5 @@
-import { PropsWithChildren, ReactNode, useEffect } from 'react'
-import { AppShell, Burger, Center, Group, Loader, Text, ThemeIcon } from '@mantine/core'
+import { PropsWithChildren, Suspense, useEffect } from 'react'
+import { AppShell, Burger, Center, Group, Loader } from '@mantine/core'
 import * as styles from './AuthenticatedArea.module.scss'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
@@ -9,7 +9,7 @@ import {
   NewspaperClipping,
   PaperPlaneTilt,
   Scroll,
-  SignOut, SmileySad,
+  SignOut,
   User,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
@@ -99,11 +99,21 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         </AppShell.Section>
       </AppShell.Navbar>
 
-      <AppShell.Main>{auth.user ? children : (
-        <Center className={styles.fullHeight}>
-          <Loader />
-        </Center>
-      )}</AppShell.Main>
+      <AppShell.Main>
+        {auth.user ? (
+          <Suspense fallback={
+            <Center className={styles.fullHeight}>
+              <Loader />
+            </Center>
+          }>
+            {children}
+          </Suspense>
+        ) : (
+          <Center className={styles.fullHeight}>
+            <Loader />
+          </Center>
+        )}
+      </AppShell.Main>
     </AppShell>
   )
 }

@@ -3,3 +3,8 @@ export enum LegacyApplicationStatus {
   ACCEPTED = 'Accepted',
   REJECTED = 'Rejected',
 }
+
+export enum LegacyApplicationFormAccessMode {
+  INSTRUCTOR,
+  STUDENT,
+}

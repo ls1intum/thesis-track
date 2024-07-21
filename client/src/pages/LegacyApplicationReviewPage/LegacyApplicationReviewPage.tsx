@@ -4,28 +4,29 @@ import { useWindowScroll } from '@mantine/hooks'
 import { LegacyThesisApplicationsDatatable } from './components/LegacyThesisApplicationsDatatable/LegacyThesisApplicationsDatatable'
 import { ArrowUp } from 'phosphor-react'
 import { useLoggedInUser } from '../../hooks/authentication'
-import { useRequest } from '../../requests/hooks'
+import { doRequest } from '../../requests/request'
 
 const LegacyApplicationReviewPage = () => {
   const [scroll, scrollTo] = useWindowScroll()
 
   const user = useLoggedInUser()
-  const {authenticated, doRequest} = useRequest()
 
   useEffect(() => {
-    if (authenticated) {
-      return doRequest('/api/thesis-applications/thesis-advisors', {
+    return doRequest(
+      '/api/thesis-applications/thesis-advisors',
+      {
         method: 'PUT',
         requiresAuth: true,
         data: {
           firstName: user.first_name,
           lastName: user.last_name,
           email: user.email,
-          tumId: user.university_id
-        }
-      }, () => {})
-    }
-  }, [authenticated])
+          tumId: user.university_id,
+        },
+      },
+      () => {},
+    )
+  }, [user.user_id])
 
   return (
     <Container>

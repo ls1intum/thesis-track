@@ -19,8 +19,8 @@ export function useUser() {
 }
 
 export function useLoggedInUser() {
-  const user = useUser();
-  const auth = useAuthenticationContext();
+  const user = useUser()
+  const auth = useAuthenticationContext()
 
   if (!user) {
     auth.login()
@@ -28,14 +28,28 @@ export function useLoggedInUser() {
     throw new Error('Authentication required')
   }
 
-  return user;
+  return user
 }
 
 export interface IAuthenticationTokens {
-  jwt_token: string,
+  jwt_token: string
   refresh_token: string
 }
 
 export function useAuthenticationTokens() {
-  return useLocalStorage<IAuthenticationTokens>('authentication_tokens', {usingJson: true})
+  return useLocalStorage<IAuthenticationTokens>('authentication_tokens', { usingJson: true })
+}
+
+export function getAuthenticationTokens(): IAuthenticationTokens | undefined {
+  try {
+    const data = localStorage.getItem('authentication_tokens')
+
+    if (data) {
+      return JSON.parse(data)
+    }
+
+    return undefined
+  } catch {
+    return undefined
+  }
 }

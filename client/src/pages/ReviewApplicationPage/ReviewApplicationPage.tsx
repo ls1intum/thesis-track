@@ -1,4 +1,3 @@
-import AuthenticatedArea from '../../app/layout/AuthenticatedArea/AuthenticatedArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React from 'react'
 

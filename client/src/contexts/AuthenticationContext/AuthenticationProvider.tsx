@@ -4,7 +4,7 @@ import Keycloak from 'keycloak-js'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { jwtDecode } from 'jwt-decode'
 import { IUserInfo } from '../../requests/types/user'
-import { useAuthenticationTokens } from '../../hooks/authentication'
+import { getAuthenticationTokens, useAuthenticationTokens } from '../../hooks/authentication'
 import { useSignal } from '../../hooks/utility'
 
 interface IAuthenticationProviderProps {
@@ -13,7 +13,7 @@ interface IAuthenticationProviderProps {
 
 const keycloak = new Keycloak({
   realm: GLOBAL_CONFIG.keycloak.realm,
-  url: GLOBAL_CONFIG.keycloak.url,
+  url: GLOBAL_CONFIG.keycloak.host,
   clientId: GLOBAL_CONFIG.keycloak.client_id,
 })
 
@@ -25,7 +25,7 @@ const AuthenticationProvider = (props: IAuthenticationProviderProps) => {
   const { children } = props
 
   const [user, setUser] = useState<IUserInfo>()
-  const [authenticationTokens, setAuthenticationTokens] = useAuthenticationTokens();
+  const [authenticationTokens, setAuthenticationTokens] = useAuthenticationTokens()
   const [readySignal, triggerReadySignal] = useSignal()
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const AuthenticationProvider = (props: IAuthenticationProviderProps) => {
       if (keycloak.authenticated && keycloak.token && keycloak.refreshToken) {
         setAuthenticationTokens({
           jwt_token: keycloak.token,
-          refresh_token: keycloak.refreshToken
+          refresh_token: keycloak.refreshToken,
         })
 
         const decodedJwt = jwtDecode<{
@@ -59,10 +59,12 @@ const AuthenticationProvider = (props: IAuthenticationProviderProps) => {
       }
     }
 
+    const tokens = getAuthenticationTokens()
+
     void keycloak
       .init({
-        refreshToken: authenticationTokens?.refresh_token,
-        token: authenticationTokens?.jwt_token,
+        refreshToken: tokens?.refresh_token,
+        token: tokens?.jwt_token,
       })
       .then(() => {
         updateToken()
@@ -84,16 +86,19 @@ const AuthenticationProvider = (props: IAuthenticationProviderProps) => {
       isAuthenticated: !!authenticationTokens?.jwt_token,
       user: authenticationTokens?.jwt_token ? user : undefined,
       groups: [],
-      login: () => readySignal.then(() => {
-        !keycloak.authenticated && keycloak.login()
-      }),
-      logout: (redirectUri: string) => readySignal.then(() => {
-        setAuthenticationTokens(undefined)
+      login: () =>
+        readySignal.then(() => {
+          !keycloak.authenticated && keycloak.login()
+        }),
+      logout: (redirectUri: string) =>
+        readySignal.then(() => {
+          setAuthenticationTokens(undefined)
 
-        keycloak.authenticated && keycloak.logout({
-          redirectUri: `${location.origin}${redirectUri}`
-        })
-      }),
+          keycloak.authenticated &&
+            keycloak.logout({
+              redirectUri: `${location.origin}${redirectUri}`,
+            })
+        }),
     }
   }, [user, !!authenticationTokens?.jwt_token, location.origin])
 

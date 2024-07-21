@@ -82,7 +82,7 @@ export default [...fixupConfigRules(compat.extends(
         }],
 
         "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "warn",
+        "react-hooks/exhaustive-deps": "off",
 
         "prettier/prettier": ["error", {
             endOfLine: "auto",

@@ -1,3 +1,3 @@
 interface WindowEventMap {
-  'local-storage': StorageEvent;
+  'local-storage': StorageEvent
 }

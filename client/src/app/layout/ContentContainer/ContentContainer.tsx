@@ -1,4 +1,4 @@
-import { PropsWithChildren, ReactNode } from 'react'
+import { PropsWithChildren } from 'react'
 import { Container } from '@mantine/core'
 
 import * as styles from './ContentContainer.module.scss'
