@@ -112,7 +112,7 @@ jobs:
             echo "CLIENT_IMAGE_TAG=${{ inputs.client_image_tag }}" >> .env.prod
             
             echo "API_SERVER_HOST=${{ vars.API_SERVER_HOST }}" >> .env.prod
-            echo "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}" >> .env.prod
+            echo "KEYCLOAK_REALM_NAME=${{ vars.KEYCLOAK_REALM_NAME }}" >> .env.prod
             echo "KEYCLOAK_CLIENT_ID=${{ vars.KEYCLOAK_CLIENT_ID }}" >> .env.prod
 
       - name: SSH to VM and Execute Docker-Compose Up
