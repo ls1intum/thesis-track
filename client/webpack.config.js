@@ -17,6 +17,7 @@ const config = (env) => {
 
   const IS_DEV = getVariable('NODE_ENV') === 'development'
   const IS_PERF = getVariable('BUNDLE_SIZE') === 'true'
+  const IS_CI = getVariable('CI') === '1'
 
   return {
     target: 'web',
@@ -112,7 +113,7 @@ const config = (env) => {
       },
     },
     plugins: [
-      new WebpackBar({
+      !IS_CI && !IS_DEV && new WebpackBar({
         reporter: 'fancy',
       }),
       IS_PERF && new BundleAnalyzerPlugin(), new HtmlWebpackPlugin({
