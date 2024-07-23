@@ -126,4 +126,4 @@ jobs:
           proxy_key: ${{ secrets.DEPLOYMENT_GATEWAY_SSH_KEY }}
           proxy_port: ${{ vars.DEPLOYMENT_GATEWAY_PORT }}
           script: |
-            docker compose -f docker-compose.prod.yml --env-file=.env-server.prod up --pull=always -d
+            docker compose -f docker-compose.prod.yml --env-file=.env.prod up --pull=always -d
