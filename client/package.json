@@ -6,7 +6,7 @@
   "sideEffects": false,
   "packageManager": "npm@7.24.0",
   "scripts": {
-    "dev": "webpack serve --open --mode development",
+    "dev": "webpack serve --open --env NODE_ENV=development",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix",
     "build": "webpack --env NODE_ENV=production",
