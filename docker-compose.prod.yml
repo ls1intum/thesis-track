@@ -28,7 +28,6 @@ services:
   server:
     image: "ghcr.io/ls1intum/thesis-track/thesis-track-server:${SERVER_IMAGE_TAG}"
     container_name: thesis-track-server
-    env_file: .env-server.prod
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.server.rule=Host(`${SERVER_HOST}`) && PathPrefix(`/api`)"
