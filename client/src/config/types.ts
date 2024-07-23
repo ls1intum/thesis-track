@@ -15,6 +15,6 @@ export interface IGlobalConfig {
     client_id: string
     realm: string
     host: string
-    get_unique_id: (decodedJwt: IDecodedAccessToken) => string
+    university_id_jwt_field: string
   }
 }

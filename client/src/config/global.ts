@@ -1,9 +1,23 @@
 import { IGlobalConfig } from './types'
 
-export const GLOBAL_CONFIG: IGlobalConfig = {
-  title: 'Thesis Track',
+const getEnvironmentVariable = <T = string>(key: string, useJson = false): T | undefined => {
+  const value = process.env[key] || window.RUNTIME_ENVIRONMENT_VARIABLES?.[key];
 
-  focus_topics: {
+  if (!value) {
+    return undefined
+  }
+
+  try {
+    return useJson ? JSON.parse(value) as T : value as T
+  } catch {
+    return undefined
+  }
+}
+
+export const GLOBAL_CONFIG: IGlobalConfig = {
+  title: getEnvironmentVariable('APPLICATION_TITLE') || 'Thesis Track',
+
+  focus_topics: getEnvironmentVariable('FOCUS_TOPICS', true) || {
     COMPETENCIES: 'Competencies',
     TEAM_BASED_LEARNING: 'Team-based Learning',
     AUTOMATIC_ASSESSMENT: 'Automatic Assessment',
@@ -41,26 +55,26 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     HW_SW_CO_DESIGN: 'HW/SW Co-Design',
   },
 
-  research_areas: {
+  research_areas: getEnvironmentVariable('RESEARCH_AREAS', true) || {
     EDUCATION_TECHNOLOGIES: 'Education Technologies',
     HUMAN_COMPUTER_INTERACTION: 'Human Computer Interaction',
     ROBOTIC: 'Robotic',
     SOFTWARE_ENGINEERING: 'Software Engineering',
   },
 
-  genders: {
+  genders: getEnvironmentVariable('GENDERS', true) || {
     MALE: 'Male',
     FEMALE: 'Female',
     OTHER: 'Other',
     PREFER_NOT_TO_SAY: 'Prefer not to say',
   },
 
-  study_degrees: {
+  study_degrees: getEnvironmentVariable('STUDY_DEGREES', true) || {
     BACHELOR: 'Bachelor',
     MASTER: 'Master',
   },
 
-  study_programs: {
+  study_programs: getEnvironmentVariable('STUDY_PROGRAMS', true) || {
     COMPUTER_SCIENCE: 'Computer Science',
     INFORMATION_SYSTEMS: 'Information Systems',
     GAMES_ENGINEERING: 'Games Engineering',
@@ -68,12 +82,12 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     OTHER: 'Other',
   },
 
-  api_server: process.env.API_SERVER_HOST || 'http://localhost:8080',
+  api_server: getEnvironmentVariable('API_SERVER_HOST') || 'http://localhost:8080',
 
   keycloak: {
-    host: process.env.KEYCLOAK_HOST || 'http://localhost:8081',
-    realm: process.env.KEYCLOAK_REALM_NAME || 'thesis-track',
-    client_id: process.env.KEYCLOAK_CLIENT_ID || 'thesis-track-app',
-    get_unique_id: (decodedJwt) => decodedJwt.preferred_username,
+    host: getEnvironmentVariable('KEYCLOAK_HOST') || 'http://localhost:8081',
+    realm: getEnvironmentVariable('KEYCLOAK_REALM_NAME') || 'thesis-track',
+    client_id: getEnvironmentVariable('KEYCLOAK_CLIENT_ID') || 'thesis-track-app',
+    university_id_jwt_field: getEnvironmentVariable('UNIVERSITY_ID_JWT_FIELD') || 'preferred_username',
   },
 }
