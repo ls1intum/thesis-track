@@ -31,7 +31,7 @@ jobs:
           proxy_key: ${{ secrets.DEPLOYMENT_GATEWAY_SSH_KEY }}
           proxy_port: ${{ vars.DEPLOYMENT_GATEWAY_PORT }}
           script: |
-            docker compose -f docker-compose.prod.yml --env-file=.env-server.prod down --remove-orphans --rmi all
+            docker compose -f docker-compose.prod.yml --env-file=.env.prod down --remove-orphans --rmi all
 
       - name: checkout
         uses: actions/checkout@v4
@@ -80,7 +80,7 @@ jobs:
           source: "master.cf"
           target: /home/${{ vars.VM_USERNAME }}/postfix-config/
 
-      - name: SSH to VM and create .env.prod file
+      - name: SSH to VM and create .env.prod
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ vars.VM_HOST }}
@@ -91,7 +91,7 @@ jobs:
           proxy_key: ${{ secrets.DEPLOYMENT_GATEWAY_SSH_KEY }}
           proxy_port: ${{ vars.DEPLOYMENT_GATEWAY_PORT }}
           script: |
-            touch .env.prod 
+            touch .env.prod
 
             echo "SPRING_DATASOURCE_URL=${{ vars.SPRING_DATASOURCE_URL }}" > .env.prod
             echo "SPRING_DATASOURCE_USERNAME=${{ vars.SPRING_DATASOURCE_USERNAME }}" >> .env.prod
@@ -110,6 +110,10 @@ jobs:
 
             echo "SERVER_IMAGE_TAG=${{ inputs.server_image_tag }}" >> .env.prod
             echo "CLIENT_IMAGE_TAG=${{ inputs.client_image_tag }}" >> .env.prod
+            
+            echo "API_SERVER_HOST=${{ vars.API_SERVER_HOST }}" >> .env.prod
+            echo "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}" >> .env.prod
+            echo "KEYCLOAK_CLIENT_ID=${{ secrets.KEYCLOAK_CLIENT_ID }}" >> .env.prod
 
       - name: SSH to VM and Execute Docker-Compose Up
         uses: appleboy/ssh-action@v1.0.3

@@ -28,6 +28,7 @@ services:
   server:
     image: "ghcr.io/ls1intum/thesis-track/thesis-track-server:${SERVER_IMAGE_TAG}"
     container_name: thesis-track-server
+    env_file: .env-server.prod
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.server.rule=Host(`${SERVER_HOST}`) && PathPrefix(`/api`)"
@@ -83,6 +84,10 @@ services:
     container_name: thesis-track-client
     environment:
       - TZ=Europe/Berlin
+      - API_SERVER_HOST
+      - KEYCLOAK_HOST
+      - KEYCLOAK_REALM_NAME
+      - KEYCLOAK_CLIENT_ID
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"
