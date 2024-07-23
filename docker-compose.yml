@@ -37,9 +37,6 @@ services:
     build:
       context: ./client
     container_name: thesis-track-client
-    environment:
-      - API_SERVER_HOST=test2
-      - UNIVERSITY_ID_JWT_FIELD=test1
     depends_on:
       - server
     ports:

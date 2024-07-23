@@ -35,4 +35,4 @@ WORKDIR /usr/share/nginx/html
 
 EXPOSE 80
 
-CMD ["/bin/sh", "-c", "node generate-runtime-config.js && nginx -g \"daemon off;\""]
+CMD ["/bin/sh", "-c", "node generate-runtime-env.js && nginx -g \"daemon off;\""]
