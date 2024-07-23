@@ -139,10 +139,14 @@ const config = (env) => {
         patterns: [{ from: 'public' }],
       }),
       new DefinePlugin({
-        'process.env.API_SERVER_HOST': JSON.stringify(getVariable('API_SERVER_HOST')),
-        'process.env.KEYCLOAK_HOST': JSON.stringify(getVariable('KEYCLOAK_HOST')),
-        'process.env.KEYCLOAK_REALM_NAME': JSON.stringify(getVariable('KEYCLOAK_REALM_NAME')),
-        'process.env.KEYCLOAK_CLIENT_ID': JSON.stringify(getVariable('KEYCLOAK_CLIENT_ID')),
+        process: {
+          env: {
+            API_SERVER_HOST: getVariable('API_SERVER_HOST'),
+            KEYCLOAK_HOST: getVariable('KEYCLOAK_HOST'),
+            KEYCLOAK_REALM_NAME: getVariable('KEYCLOAK_REALM_NAME'),
+            KEYCLOAK_CLIENT_ID: getVariable('KEYCLOAK_CLIENT_ID')
+          }
+        },
       }),
       new ForkTsCheckerWebpackPlugin({
         async: IS_DEV,
