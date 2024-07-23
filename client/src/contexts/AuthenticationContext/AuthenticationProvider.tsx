@@ -93,12 +93,16 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     keycloak.onTokenExpired = () => refreshAccessToken()
     keycloak.onAuthRefreshSuccess = () => storeTokens()
 
+    console.log('Initializing keycloak...', storedTokens, keycloak)
+
     void keycloak
       .init({
         refreshToken: storedTokens?.refresh_token,
         token: storedTokens?.access_token,
       })
       .then(() => {
+        console.log('Keycloak initialized', keycloak)
+
         storeTokens()
         triggerReadySignal()
       })
