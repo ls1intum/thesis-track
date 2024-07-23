@@ -1,5 +1,6 @@
-.env
+.env*
 db_backups
+uploads
 
 # User-specific stuff
 .idea
