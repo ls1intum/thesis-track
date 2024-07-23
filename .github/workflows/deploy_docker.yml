@@ -113,7 +113,7 @@ jobs:
             
             echo "API_SERVER_HOST=${{ vars.API_SERVER_HOST }}" >> .env.prod
             echo "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}" >> .env.prod
-            echo "KEYCLOAK_CLIENT_ID=${{ secrets.KEYCLOAK_CLIENT_ID }}" >> .env.prod
+            echo "KEYCLOAK_CLIENT_ID=${{ vars.KEYCLOAK_CLIENT_ID }}" >> .env.prod
 
       - name: SSH to VM and Execute Docker-Compose Up
         uses: appleboy/ssh-action@v1.0.3
