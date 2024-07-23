@@ -22,7 +22,7 @@ const config = (env) => {
   return {
     target: 'web',
     mode: IS_DEV ? 'development' : 'production',
-    devtool: IS_DEV ? 'eval-source-map' : undefined,
+    devtool: IS_DEV ? 'source-map' : undefined,
     entry: './src/index.tsx',
     devServer: {
       static: {
@@ -56,7 +56,8 @@ const config = (env) => {
           test: /\.(s[ac]ss|css)$/,
           sideEffects: true,
           use: [
-            MiniCssExtractPlugin.loader, {
+            MiniCssExtractPlugin.loader,
+            {
               loader: 'css-loader',
               options: {
                 importLoaders: 3,
@@ -66,7 +67,8 @@ const config = (env) => {
                   localIdentName: IS_DEV ? '[name]__[local]___[hash:base64:5]' : '[hash:base64:5]',
                 },
               },
-            }, {
+            },
+            {
               loader: 'sass-loader',
               options: {
                 implementation: require('sass'),
@@ -80,14 +82,14 @@ const config = (env) => {
               },
             },
           ],
-        }, {
+        },
+        {
           test: /\.(?:ico|gif|png|jpg|jpeg|svg)$/i,
           type: 'asset/resource',
           generator: {
             filename: 'static/assets/images/[name][hash][ext]',
           },
         },
-
         {
           test: /\.(ttf|eot|woff2?|otf)$/,
           type: 'asset/resource',
@@ -116,7 +118,8 @@ const config = (env) => {
       !IS_CI && !IS_DEV && new WebpackBar({
         reporter: 'fancy',
       }),
-      IS_PERF && new BundleAnalyzerPlugin(), new HtmlWebpackPlugin({
+      IS_PERF && new BundleAnalyzerPlugin(),
+      new HtmlWebpackPlugin({
         template: 'src/index.html',
         minify: IS_DEV ? undefined : {
           removeComments: true,
@@ -154,7 +157,8 @@ const config = (env) => {
           configFile: path.resolve(__dirname, 'tsconfig.json'),
         },
       }),
-      new CleanWebpackPlugin(), !IS_DEV && new CompressionPlugin({
+      new CleanWebpackPlugin(),
+      !IS_DEV && new CompressionPlugin({
         filename: '[path][base].gz',
         algorithm: 'gzip',
         test: /\.(js|css|html|svg)$/,
@@ -168,9 +172,6 @@ const config = (env) => {
         new TerserPlugin({
           terserOptions: {
             ecma: 2016,
-            compress: {
-              drop_console: !IS_DEV,
-            },
             output: {
               comments: false,
             },

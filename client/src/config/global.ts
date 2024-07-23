@@ -17,7 +17,7 @@ const getEnvironmentVariable = <T = string>(key: string, useJson = false): T | u
 export const GLOBAL_CONFIG: IGlobalConfig = {
   title: getEnvironmentVariable('APPLICATION_TITLE') || 'Thesis Track',
 
-  focus_topics: getEnvironmentVariable('FOCUS_TOPICS', true) || {
+  focus_topics: getEnvironmentVariable<Record<string, string>>('FOCUS_TOPICS', true) || {
     COMPETENCIES: 'Competencies',
     TEAM_BASED_LEARNING: 'Team-based Learning',
     AUTOMATIC_ASSESSMENT: 'Automatic Assessment',
@@ -55,26 +55,26 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     HW_SW_CO_DESIGN: 'HW/SW Co-Design',
   },
 
-  research_areas: getEnvironmentVariable('RESEARCH_AREAS', true) || {
+  research_areas: getEnvironmentVariable<Record<string, string>>('RESEARCH_AREAS', true) || {
     EDUCATION_TECHNOLOGIES: 'Education Technologies',
     HUMAN_COMPUTER_INTERACTION: 'Human Computer Interaction',
     ROBOTIC: 'Robotic',
     SOFTWARE_ENGINEERING: 'Software Engineering',
   },
 
-  genders: getEnvironmentVariable('GENDERS', true) || {
+  genders: getEnvironmentVariable<Record<string, string>>('GENDERS', true) || {
     MALE: 'Male',
     FEMALE: 'Female',
     OTHER: 'Other',
     PREFER_NOT_TO_SAY: 'Prefer not to say',
   },
 
-  study_degrees: getEnvironmentVariable('STUDY_DEGREES', true) || {
+  study_degrees: getEnvironmentVariable<Record<string, string>>('STUDY_DEGREES', true) || {
     BACHELOR: 'Bachelor',
     MASTER: 'Master',
   },
 
-  study_programs: getEnvironmentVariable('STUDY_PROGRAMS', true) || {
+  study_programs: getEnvironmentVariable<Record<string, string>>('STUDY_PROGRAMS', true) || {
     COMPUTER_SCIENCE: 'Computer Science',
     INFORMATION_SYSTEMS: 'Information Systems',
     GAMES_ENGINEERING: 'Games Engineering',
