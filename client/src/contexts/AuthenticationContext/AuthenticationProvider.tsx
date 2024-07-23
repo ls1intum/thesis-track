@@ -40,8 +40,6 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
       keycloak
         .updateToken(60 * 5)
         .then((isSuccess) => {
-          console.log('setAuthenticationTokens 1')
-
           if (!isSuccess) {
             setAuthenticationTokens(undefined)
           }
@@ -70,7 +68,6 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
 
       // refresh if already expired
       if (decodedRefreshToken?.exp && decodedRefreshToken.exp <= Date.now() / 1000) {
-        console.log('setAuthenticationTokens 2')
         return setAuthenticationTokens(undefined)
       } else if (decodedAccessToken?.exp && decodedAccessToken.exp <= Date.now() / 1000) {
         return refreshAccessToken()
@@ -79,21 +76,18 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
       if (decodedRefreshToken?.exp) {
         refreshTokenTimeout = setTimeout(
           () => {
-            console.log('setAuthenticationTokens 3')
             setAuthenticationTokens(undefined)
           },
-          Math.max(decodedRefreshToken.exp * 1000 - Date.now(), 0),
+          Math.min(Math.max(decodedRefreshToken.exp * 1000 - Date.now(), 0), 3600 * 24 * 1000),
         )
       }
 
       if (accessToken && refreshToken) {
-        console.log('setAuthenticationTokens 4')
         setAuthenticationTokens({
           access_token: accessToken,
           refresh_token: refreshToken,
         })
       } else {
-        console.log('setAuthenticationTokens 5')
         setAuthenticationTokens(undefined)
       }
     }
