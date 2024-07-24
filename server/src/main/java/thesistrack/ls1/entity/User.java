@@ -76,6 +76,9 @@ public class User {
     @Column(name = "special_skills", length = 2000)
     private String specialSkills;
 
+    @Column(name = "enrolled_at", nullable = false)
+    private Instant enrolledAt;
+
     @UpdateTimestamp
     @NotNull
     @Column(name = "updated_at", nullable = false)

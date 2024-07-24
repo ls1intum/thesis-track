@@ -6,14 +6,15 @@ INSERT INTO users (
     first_name, last_name, gender, nationality, is_exchange_student,
     cv_filename, degree_filename, examination_filename, focus_topics,
     research_areas, study_degree, study_program, projects, special_skills,
-    interests, updated_at, joined_at
+    interests, enrolled_at, updated_at, joined_at
 )
 SELECT DISTINCT ON (t1.id)
     t1.id, t1.tum_id, t1.matriculation_number, t1.email,
     t1.first_name, t1.last_name, t1.gender, t1.nationality, t1.is_exchange_student,
     t2.cv_filename, t2.bachelor_report_filename, t2.examination_report_filename, t2.focus_topics,
     t2.research_areas, t2.study_degree, t2.study_program, t2.projects, t2.special_skills,
-    t2.interests, COALESCE(t2.created_at, NOW()::TIMESTAMP), COALESCE(t2.created_at, NOW()::TIMESTAMP)
+    t2.interests, COALESCE(t2.created_at, NOW()::TIMESTAMP) - COALESCE(t2.current_semester, 0) * INTERVAL '182 DAY',
+    COALESCE(t2.created_at, NOW()::TIMESTAMP), COALESCE(t2.created_at, NOW()::TIMESTAMP)
 FROM student t1
          LEFT JOIN thesis_application t2 ON (t1.id = t2.student_id)
 ORDER BY t1.id ASC, t2.created_at DESC NULLS LAST;

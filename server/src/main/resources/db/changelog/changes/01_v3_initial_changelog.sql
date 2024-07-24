@@ -22,6 +22,7 @@ CREATE TABLE users
     projects             TEXT,
     interests            TEXT,
     special_skills       TEXT,
+    enrolled_at          TIMESTAMP,
     updated_at           TIMESTAMP NOT NULL,
     joined_at            TIMESTAMP NOT NULL
 );
