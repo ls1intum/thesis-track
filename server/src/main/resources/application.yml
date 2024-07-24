@@ -60,7 +60,7 @@ thesis-track:
     sender: ${IOS_SENDER_MAIL:test@ios.ase.cit.tum.de}
     chair-member-recipients: ${CHAIR_MEMBER_RECIPIENTS:}
   storage:
-    theses-application-uploads-location: thesis_application_uploads
+    theses-application-uploads-location: uploads
     mailing-templates-location: mailing_templates
 
 

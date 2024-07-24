@@ -1,4 +1,4 @@
-package thesistrack.ls1.service;
+package thesistrack.ls1.controller.service;
 
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,19 +6,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import thesistrack.ls1.exception.FailedMailSend;
+import thesistrack.ls1.exception.MailSendException;
 import thesistrack.ls1.exception.ResourceInvalidParametersException;
-import thesistrack.ls1.model.Student;
-import thesistrack.ls1.model.ThesisAdvisor;
-import thesistrack.ls1.model.ThesisApplication;
-import thesistrack.ls1.model.enums.ApplicationStatus;
+import thesistrack.ls1.entity.legacy.Student;
+import thesistrack.ls1.entity.legacy.ThesisAdvisor;
+import thesistrack.ls1.entity.legacy.ThesisApplication;
+import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.repository.StudentRepository;
 import thesistrack.ls1.repository.ThesisAdvisorRepository;
 import thesistrack.ls1.repository.ThesisApplicationRepository;
+import thesistrack.ls1.service.FileSystemStorageService;
+import thesistrack.ls1.service.MailingService;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -96,15 +97,15 @@ public class ThesisApplicationService {
             thesisApplication.setBachelorReportFilename(bachelorReportFilename);
         }
 
-        thesisApplication.setApplicationStatus(ApplicationStatus.NOT_ASSESSED);
+        thesisApplication.setApplicationState(ApplicationState.NOT_ASSESSED);
         return thesisApplicationRepository.save(thesisApplication);
     }
 
     public ThesisApplication assess(final UUID thesisApplicationId,
-                                    final ApplicationStatus status,
+                                    final ApplicationState status,
                                     final String assessmentComment) {
         final ThesisApplication thesisApplication = findById(thesisApplicationId);
-        thesisApplication.setApplicationStatus(status);
+        thesisApplication.setApplicationState(status);
         thesisApplication.setAssessmentComment(assessmentComment);
         return thesisApplicationRepository.save(thesisApplication);
     }
@@ -124,14 +125,14 @@ public class ThesisApplicationService {
             throw new ResourceInvalidParametersException("Thesis advisor must be assigned before accepting a thesis application.");
         }
 
-        thesisApplication.setApplicationStatus(ApplicationStatus.ACCEPTED);
+        thesisApplication.setApplicationState(ApplicationState.ACCEPTED);
 
         if (notifyStudent) {
             try {
                 mailingService.sendThesisAcceptanceEmail(
                         thesisApplication.getStudent(), thesisApplication, thesisApplication.getThesisAdvisor());
             } catch (MessagingException e) {
-                throw new FailedMailSend("Failed to send thesis acceptance email.");
+                throw new MailSendException("Failed to send thesis acceptance email.");
             }
         }
 
@@ -140,13 +141,13 @@ public class ThesisApplicationService {
 
     public ThesisApplication reject(final UUID thesisApplicationId, final boolean notifyStudent) {
         final ThesisApplication thesisApplication = findById(thesisApplicationId);
-        thesisApplication.setApplicationStatus(ApplicationStatus.REJECTED);
+        thesisApplication.setApplicationState(ApplicationState.REJECTED);
 
         if (notifyStudent) {
             try {
                 mailingService.sendThesisRejectionEmail(thesisApplication.getStudent(), thesisApplication);
             } catch (MessagingException e) {
-                throw new FailedMailSend("Failed to send thesis rejection email.");
+                throw new MailSendException("Failed to send thesis rejection email.");
             }
         }
 

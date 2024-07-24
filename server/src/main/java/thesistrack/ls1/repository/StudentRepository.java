@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import thesistrack.ls1.model.Student;
+import thesistrack.ls1.entity.legacy.Student;
 
 import java.util.Optional;
 import java.util.UUID;

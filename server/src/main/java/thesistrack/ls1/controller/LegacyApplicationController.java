@@ -4,12 +4,10 @@ import io.github.bucket4j.Bandwidth;
 import io.github.bucket4j.Bucket;
 import io.github.bucket4j.Refill;
 import jakarta.mail.MessagingException;
-import jakarta.persistence.criteria.Order;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,14 +16,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.controller.payload.ThesisApplicationAssessment;
-import thesistrack.ls1.model.ThesisAdvisor;
-import thesistrack.ls1.model.ThesisApplication;
+import thesistrack.ls1.entity.legacy.ThesisAdvisor;
+import thesistrack.ls1.entity.legacy.ThesisApplication;
 import thesistrack.ls1.service.MailingService;
-import thesistrack.ls1.service.ThesisApplicationService;
+import thesistrack.ls1.controller.service.ThesisApplicationService;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -33,13 +30,13 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping("/thesis-applications")
-public class ThesisApplicationController {
+public class LegacyApplicationController {
     private final Bucket bucket;
     private final ThesisApplicationService thesisApplicationService;
     private final MailingService mailingService;
 
     @Autowired
-    public ThesisApplicationController(final ThesisApplicationService thesisApplicationService,
+    public LegacyApplicationController(final ThesisApplicationService thesisApplicationService,
                                        final MailingService mailingService) {
         Bandwidth limit = Bandwidth.classic(100, Refill.greedy(100, Duration.ofMinutes(1)));
         this.bucket = Bucket.builder()

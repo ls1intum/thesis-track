@@ -1,4 +1,4 @@
-package thesistrack.ls1.security;
+package thesistrack.ls1.config;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;

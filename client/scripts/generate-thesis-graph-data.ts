@@ -9,14 +9,14 @@ import { randomArrayElement } from '../src/utils/array'
 
 const states: ThesisState[] = [
   ThesisState.proposal,
-  ThesisState.active,
+  ThesisState.writing,
   ThesisState.submitted,
   ThesisState.graded,
   ThesisState.finished,
 ]
 const duration: Record<ThesisState, number> = {
   [ThesisState.proposal]: 1000 * 3600 * 24 * 30,
-  [ThesisState.active]: 1000 * 3600 * 24 * 30 * 4,
+  [ThesisState.writing]: 1000 * 3600 * 24 * 30 * 4,
   [ThesisState.submitted]: 1000 * 3600 * 24 * 30,
   [ThesisState.graded]: 1000 * 3600 * 24 * 15,
   [ThesisState.finished]: 1000 * 3600 * 24 * 15,

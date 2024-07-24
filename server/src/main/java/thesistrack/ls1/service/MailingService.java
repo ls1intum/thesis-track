@@ -10,11 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import thesistrack.ls1.model.Student;
-import thesistrack.ls1.model.ThesisAdvisor;
-import thesistrack.ls1.model.ThesisApplication;
-import thesistrack.ls1.model.enums.FocusTopic;
-import thesistrack.ls1.model.enums.ResearchArea;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,14 +33,13 @@ public class MailingService {
                           final FileSystemStorageService storageService,
                           @Value("${thesis-track.environment}") String environment,
                           @Value("${thesis-track.mail.sender}") String sender,
-                          @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList,
-                          @Value("${thesis-track.storage.mailing-templates-location}") String mailingTemplatesLocation) {
+                          @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList) {
         this.javaMailSender = javaMailSender;
         this.storageService = storageService;
         this.environment = environment;
         this.sender = sender;
         this.chairMemberRecipientsList = chairMemberRecipientsList;
-        this.rootLocation = Paths.get(mailingTemplatesLocation);
+        this.rootLocation = Paths.get("mails");
     }
 
     public String getMailTemplate(final String filename) {

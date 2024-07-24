@@ -1,15 +1,17 @@
 export enum ThesisState {
   proposal = 'PROPOSAL',
-  active = 'ACTIVE',
+  writing = 'WRITING',
   submitted = 'SUBMITTED',
+  assessed = 'ASSESSED',
   graded = 'GRADED',
   finished = 'FINISHED',
 }
 
 export const ThesisStateColor: Record<ThesisState, string> = {
   [ThesisState.proposal]: '#45aaf2',
-  [ThesisState.active]: '#26de81',
+  [ThesisState.writing]: '#26de81',
   [ThesisState.submitted]: '#fc5c65',
+  [ThesisState.assessed]: '#fed330',
   [ThesisState.graded]: '#fed330',
   [ThesisState.finished]: '#a55eea',
 }

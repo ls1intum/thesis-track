@@ -6,10 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import thesistrack.ls1.model.ThesisApplication;
+import thesistrack.ls1.entity.legacy.ThesisApplication;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 

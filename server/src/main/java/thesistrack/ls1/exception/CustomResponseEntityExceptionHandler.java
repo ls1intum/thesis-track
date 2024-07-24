@@ -26,7 +26,7 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     @ExceptionHandler(value
             = { ParseException.class, ResourceInvalidParametersException.class,
             JsonParseException.class, JsonProcessingException.class, RuntimeException.class,
-            FailedMailSend.class })
+            MailSendException.class })
     protected ResponseEntity<Object> handleBadRequest(
             RuntimeException ex, WebRequest request) {
         return handleExceptionInternal(ex, ex.getMessage(),

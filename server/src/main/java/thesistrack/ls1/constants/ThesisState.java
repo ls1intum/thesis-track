@@ -1,12 +1,12 @@
-package thesistrack.ls1.model.enums;
+package thesistrack.ls1.constants;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public enum ApplicationStatus {
-    NOT_ASSESSED("Not assessed"),
+public enum ThesisState {
+    PROPOSAL("Proposal"),
     ACCEPTED("Accepted"),
     REJECTED("Rejected");
 

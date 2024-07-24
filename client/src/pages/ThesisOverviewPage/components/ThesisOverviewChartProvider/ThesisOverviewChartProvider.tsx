@@ -20,7 +20,7 @@ const ThesisOverviewChartProvider = (props: IThesisOverviewChartProviderProps) =
   const [thesisData] = useState<IThesisProgressChartDataElement[] | undefined>(mockData?.thesisData)
   const [advisors, setAdvisors] = useState<string[] | undefined>(mockData?.advisors)
   const [filters, setFilters] = useState<IThesisOverviewChartContextFilters>({
-    states: [ThesisState.proposal, ThesisState.active, ThesisState.submitted, ThesisState.graded],
+    states: [ThesisState.proposal, ThesisState.writing, ThesisState.submitted, ThesisState.graded],
   })
   const [sort, setSort] = useState<IThesisOverviewChartContextSort>({
     column: 'start_date',
