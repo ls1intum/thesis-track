@@ -83,6 +83,10 @@ services:
     container_name: thesis-track-client
     environment:
       - TZ=Europe/Berlin
+      - API_SERVER_HOST
+      - KEYCLOAK_HOST
+      - KEYCLOAK_REALM_NAME
+      - KEYCLOAK_CLIENT_ID
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"

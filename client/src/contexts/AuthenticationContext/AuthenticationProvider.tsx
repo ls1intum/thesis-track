@@ -39,7 +39,11 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     const refreshAccessToken = () => {
       keycloak
         .updateToken(60 * 5)
-        .then((isSuccess) => !isSuccess && setAuthenticationTokens(undefined))
+        .then((isSuccess) => {
+          if (!isSuccess) {
+            setAuthenticationTokens(undefined)
+          }
+        })
     }
 
     const storeTokens = () => {
@@ -58,12 +62,12 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
       if (decodedRefreshToken?.exp) {
         console.log(
           'refresh token expires in seconds',
-          decodedRefreshToken?.exp - Date.now() / 1000,
+          Math.floor(decodedRefreshToken?.exp - Date.now() / 1000),
         )
       }
 
       // refresh if already expired
-      if (decodedRefreshToken?.exp && decodedRefreshToken?.exp <= Date.now() / 1000 - 60 * 5) {
+      if (decodedRefreshToken?.exp && decodedRefreshToken.exp <= Date.now() / 1000) {
         return setAuthenticationTokens(undefined)
       } else if (decodedAccessToken?.exp && decodedAccessToken.exp <= Date.now() / 1000) {
         return refreshAccessToken()
@@ -74,11 +78,11 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
           () => {
             setAuthenticationTokens(undefined)
           },
-          Math.max(decodedRefreshToken.exp * 1000 - Date.now(), 0),
+          Math.min(Math.max(decodedRefreshToken.exp * 1000 - Date.now(), 0), 3600 * 24 * 1000),
         )
       }
 
-      if (accessToken && refreshToken && decodedAccessToken) {
+      if (accessToken && refreshToken) {
         setAuthenticationTokens({
           access_token: accessToken,
           refresh_token: refreshToken,
@@ -93,12 +97,16 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     keycloak.onTokenExpired = () => refreshAccessToken()
     keycloak.onAuthRefreshSuccess = () => storeTokens()
 
+    console.log('Initializing keycloak...')
+
     void keycloak
       .init({
         refreshToken: storedTokens?.refresh_token,
         token: storedTokens?.access_token,
       })
       .then(() => {
+        console.log('Keycloak initialized')
+
         storeTokens()
         triggerReadySignal()
       })
@@ -128,8 +136,8 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         first_name: decodedAccessToken.given_name,
         last_name: decodedAccessToken.family_name,
         email: decodedAccessToken.email,
-        university_id: GLOBAL_CONFIG.keycloak.get_unique_id(decodedAccessToken),
-        user_id: GLOBAL_CONFIG.keycloak.get_unique_id(decodedAccessToken),
+        university_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_field] || '',
+        user_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_field] || '',
         roles: decodedAccessToken.resource_access[GLOBAL_CONFIG.keycloak.client_id]?.roles ?? [],
       })
     } else {

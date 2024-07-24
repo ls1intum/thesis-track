@@ -18,6 +18,7 @@ export interface IDecodedAccessToken extends JwtPayload {
   email: string
   preferred_username: string
   resource_access: Partial<Record<string, { roles: string[] }>>
+  [key: string]: any
 }
 
 export interface IDecodedRefreshToken extends JwtPayload {}
