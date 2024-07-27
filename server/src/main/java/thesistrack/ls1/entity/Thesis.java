@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ThesisState;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -32,8 +33,9 @@ public class Thesis {
     private String abstractField;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false, length = 100)
-    private String state;
+    private ThesisState state;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")

@@ -15,6 +15,6 @@ export interface IGlobalConfig {
     client_id: string
     realm: string
     host: string
-    university_id_jwt_field: string
+    university_id_jwt_attribute: string
   }
 }

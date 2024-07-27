@@ -1,6 +1,13 @@
 --liquibase formatted sql
 
 --changeset emilius:01-v3-initial-changelog-1
+CREATE TYPE application_state AS ENUM ('NOT_ASSESSED', 'ACCEPTED', 'REJECTED');
+CREATE CAST (varchar AS application_state) WITH INOUT AS IMPLICIT;
+
+CREATE TYPE thesis_state AS ENUM ('PROPOSAL', 'WRITING', 'SUBMITTED', 'ASSESSED', 'GRADED', 'FINISHED', 'DROPPED_OUT');
+CREATE CAST (varchar AS thesis_state) WITH INOUT AS IMPLICIT;
+
+--changeset emilius:01-v3-initial-changelog-2
 CREATE TABLE users
 (
     user_id              UUID PRIMARY KEY,
@@ -27,7 +34,22 @@ CREATE TABLE users
     joined_at            TIMESTAMP NOT NULL
 );
 
---changeset emilius:01-v3-initial-changelog-2
+CREATE TABLE user_groups
+(
+    user_id UUID NOT NULL,
+    "group" TEXT NOT NULL,
+    PRIMARY KEY (user_id, "group"),
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+);
+
+--changeset emilius:01-v3-initial-changelog-3
+CREATE TABLE schedules
+(
+    schedule_name TEXT PRIMARY KEY,
+    last_received TIMESTAMP NOT NULL
+);
+
+--changeset emilius:01-v3-initial-changelog-4
 CREATE TABLE topics
 (
     topic_id          UUID PRIMARY KEY,
@@ -43,7 +65,6 @@ CREATE TABLE topics
     FOREIGN KEY (created_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-3
 CREATE TABLE topic_reviewers
 (
     topic_id    UUID      NOT NULL,
@@ -56,18 +77,18 @@ CREATE TABLE topic_reviewers
     FOREIGN KEY (assigned_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-4
+--changeset emilius:01-v3-initial-changelog-5
 CREATE TABLE applications
 (
     application_id     UUID PRIMARY KEY,
-    user_id            UUID      NOT NULL,
+    user_id            UUID                   NOT NULL,
     topic_id           UUID,
     thesis_title       TEXT,
-    motivation         TEXT      NOT NULL,
-    state              TEXT      NOT NULL,
-    desired_start_date TIMESTAMP NOT NULL,
+    motivation         TEXT                   NOT NULL,
+    state              application_state      NOT NULL,
+    desired_start_date TIMESTAMP              NOT NULL,
     comment            TEXT,
-    created_at         TIMESTAMP NOT NULL,
+    created_at         TIMESTAMP              NOT NULL,
     reviewed_by        UUID,
     reviewed_at        TIMESTAMP,
     FOREIGN KEY (topic_id) REFERENCES topics (topic_id),
@@ -75,14 +96,14 @@ CREATE TABLE applications
     FOREIGN KEY (reviewed_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-5
+--changeset emilius:01-v3-initial-changelog-6
 CREATE TABLE theses
 (
     thesis_id                   UUID PRIMARY KEY,
-    title                       TEXT      NOT NULL,
-    info                        TEXT      NOT NULL,
-    abstract                    TEXT      NOT NULL,
-    state                       TEXT      NOT NULL,
+    title                       TEXT              NOT NULL,
+    info                        TEXT              NOT NULL,
+    abstract                    TEXT              NOT NULL,
+    state                       thesis_state      NOT NULL,
     application_id              UUID,
     final_thesis_filename       TEXT,
     final_presentation_filename TEXT,
@@ -90,18 +111,10 @@ CREATE TABLE theses
     published_at                TIMESTAMP,
     start_date                  TIMESTAMP,
     end_date                    TIMESTAMP,
-    created_at                  TIMESTAMP NOT NULL,
+    created_at                  TIMESTAMP         NOT NULL,
     FOREIGN KEY (application_id) REFERENCES applications (application_id)
 );
 
---changeset emilius:01-v3-initial-changelog-6
-CREATE TABLE schedules
-(
-    schedule_name TEXT PRIMARY KEY,
-    last_received TIMESTAMP NOT NULL
-);
-
---changeset emilius:01-v3-initial-changelog-7
 CREATE TABLE thesis_roles
 (
     thesis_id   UUID      NOT NULL,
@@ -115,7 +128,6 @@ CREATE TABLE thesis_roles
     FOREIGN KEY (assigned_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-8
 CREATE TABLE thesis_state_changes
 (
     thesis_id  UUID      NOT NULL,
@@ -125,7 +137,6 @@ CREATE TABLE thesis_state_changes
     FOREIGN KEY (thesis_id) REFERENCES theses (thesis_id)
 );
 
---changeset emilius:01-v3-initial-changelog-9
 CREATE TABLE thesis_presentations
 (
     presentation_id UUID PRIMARY KEY,
@@ -140,7 +151,6 @@ CREATE TABLE thesis_presentations
     FOREIGN KEY (created_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-10
 CREATE TABLE thesis_comments
 (
     comment_id UUID PRIMARY KEY,
@@ -153,7 +163,6 @@ CREATE TABLE thesis_comments
     FOREIGN KEY (created_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-11
 CREATE TABLE thesis_proposals
 (
     proposal_id       UUID PRIMARY KEY,
@@ -168,7 +177,6 @@ CREATE TABLE thesis_proposals
     FOREIGN KEY (created_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-12
 CREATE TABLE thesis_proposal_feedback
 (
     proposal_feedback_id UUID PRIMARY KEY,
@@ -181,7 +189,6 @@ CREATE TABLE thesis_proposal_feedback
     FOREIGN KEY (requested_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-13
 CREATE TABLE thesis_assessments
 (
     assessment_id    UUID PRIMARY KEY,
@@ -196,8 +203,6 @@ CREATE TABLE thesis_assessments
     FOREIGN KEY (created_by) REFERENCES users (user_id)
 );
 
---changeset emilius:01-v3-initial-changelog-14
-CREATE UNIQUE INDEX idx_users_matriculation_number ON users (matriculation_number);
-CREATE UNIQUE INDEX idx_users_email ON users (email);
+--changeset emilius:01-v3-initial-changelog-7
 CREATE UNIQUE INDEX idx_users_university_id ON users (university_id);
 CREATE INDEX idx_applications_created_at ON applications (created_at);

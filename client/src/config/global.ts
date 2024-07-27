@@ -82,12 +82,12 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     OTHER: 'Other',
   },
 
-  api_server: getEnvironmentVariable('API_SERVER_HOST') || 'http://localhost:8080',
+  api_server: `${window.location.protocol}//${getEnvironmentVariable('SERVER_HOST') || 'localhost:8080'}`,
 
   keycloak: {
     host: getEnvironmentVariable('KEYCLOAK_HOST') || 'http://localhost:8081',
     realm: getEnvironmentVariable('KEYCLOAK_REALM_NAME') || 'thesis-track',
     client_id: getEnvironmentVariable('KEYCLOAK_CLIENT_ID') || 'thesis-track-app',
-    university_id_jwt_field: getEnvironmentVariable('UNIVERSITY_ID_JWT_FIELD') || 'preferred_username',
+    university_id_jwt_attribute: getEnvironmentVariable('UNIVERSITY_ID_JWT_ATTRIBUTE') || 'preferred_username',
   },
 }

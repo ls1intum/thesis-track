@@ -13,18 +13,17 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    # show-sql: true
+    show-sql: ${DEBUG_MODE:false}
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    #   format_sql: true
+        format_sql: ${DEBUG_MODE:false}
   security:
     oauth2:
       client:
         registration:
           keycloak:
             client-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET:}
             scope: openid
         provider:
           keycloak:
@@ -35,9 +34,10 @@ spring:
           jwk-set-uri: ${KEYCLOAK_JWK_SET_URI:http://localhost:8081/realms/thesis-track/protocol/openid-connect/certs}
           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8081/realms/thesis-track}
   mail:
-    host: postfix
-    # username:
-    # password:
+    host: ${POSTFIX_HOST:localhost}
+    port: ${POSTFIX_HOST:25}
+    username: ${POSTFIX_USERNAME:}
+    password: ${POSTFIX_PASSWORD:}
     properties:
       mail:
         transport:
@@ -50,19 +50,19 @@ jwt:
   auth:
     converter:
       resource-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
-      principal-attribute: preferred_username
+      principal-attribute: ${UNIVERSITY_ID_JWT_ATTRIBUTE:preferred_username}
 
 thesis-track:
-  environment: ${ENVIRONMENT:dev}
   client:
     host: ${CLIENT_HOST:localhost}
   mail:
-    sender: ${IOS_SENDER_MAIL:test@ios.ase.cit.tum.de}
-    chair-member-recipients: ${CHAIR_MEMBER_RECIPIENTS:}
+    enabled: ${MAIL_ENABLED:false}
+    sender: ${MAIL_SENDER:test@ios.ase.cit.tum.de}
+    footer: ${MAIL_FOOTER:}
+    workspace-url: ${MAIL_WORKSPACE_URL:https://slack.com}
+    chair-member-recipients: ${MAIL_CHAIR_RECIPIENTS:}
   storage:
-    theses-application-uploads-location: uploads
-    mailing-templates-location: mailing_templates
-
+    upload-location: ${UPLOAD_FOLDER:uploads}
 
 server:
   servlet:

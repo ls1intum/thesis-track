@@ -144,7 +144,7 @@ const config = (env) => {
       new DefinePlugin({
         process: {
           env: {
-            API_SERVER_HOST: JSON.stringify(getVariable('API_SERVER_HOST')),
+            SERVER_HOST: JSON.stringify(getVariable('SERVER_HOST')),
             KEYCLOAK_HOST: JSON.stringify(getVariable('KEYCLOAK_HOST')),
             KEYCLOAK_REALM_NAME: JSON.stringify(getVariable('KEYCLOAK_REALM_NAME')),
             KEYCLOAK_CLIENT_ID: JSON.stringify(getVariable('KEYCLOAK_CLIENT_ID'))

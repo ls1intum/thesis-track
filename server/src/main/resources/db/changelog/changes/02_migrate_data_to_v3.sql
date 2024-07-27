@@ -24,30 +24,37 @@ INSERT INTO users (
     user_id, university_id, email,
     first_name, last_name, updated_at, joined_at
 )
-SELECT DISTINCT ON (t1.id)
+SELECT
     t1.id, t1.tum_id, t1.email,
     t1.first_name, t1.last_name,
     NOW()::TIMESTAMP, NOW()::TIMESTAMP
 FROM thesis_advisor t1
 WHERE NOT EXISTS(
-    SELECT * FROM users t2 WHERE t1.tum_id = t2.university_id OR t1.email = t2.email
+    SELECT * FROM users t2 WHERE t1.tum_id = t2.university_id
 );
 
 --changeset emilius:02-migrate-data-to-v3-3
+INSERT INTO user_groups (user_id, "group")
+SELECT DISTINCT ON(t2.user_id)
+    t2.user_id, 'advisor'
+FROM thesis_advisor t1, users t2
+WHERE t1.tum_id = t2.university_id;
+
+--changeset emilius:02-migrate-data-to-v3-4
 INSERT INTO applications (
     application_id, user_id, topic_id, thesis_title, motivation,
     state, reviewed_by, desired_start_date, comment,
     created_at, reviewed_at
 )
 SELECT
-    t1.id, t1.student_id, NULL, t1.thesis_title, t1.motivation, t1.application_status,
+    t1.id, t1.student_id, NULL, t1.thesis_title, t1.motivation, t1.application_status::text::application_state,
     t3.user_id, t1.desired_thesis_start, t1.assessment_comment,
     t1.created_at, CASE WHEN t1.application_status = 'NOT_ASSESSED' THEN NULL ELSE t1.updated_at END
 FROM thesis_application t1
     LEFT JOIN thesis_advisor t2 ON (t1.thesis_advisor_id = t2.id)
-    LEFT JOIN users t3 ON (t2.tum_id = t3.university_id OR t2.email = t3.email);
+    LEFT JOIN users t3 ON (t2.tum_id = t3.university_id);
 
---changeset emilius:02-migrate-data-to-v3-4
+--changeset emilius:02-migrate-data-to-v3-5
 DROP TABLE thesis_application CASCADE;
 DROP TABLE thesis_advisor CASCADE;
 DROP TABLE student CASCADE;

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import thesistrack.ls1.constants.ApplicationState;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -21,7 +21,7 @@ public class Application {
     private UUID id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -37,8 +37,9 @@ public class Application {
     private String motivation;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false, length = 100)
-    private String state;
+    private ApplicationState state;
 
     @NotNull
     @Column(name = "desired_start_date", nullable = false)
@@ -58,5 +59,4 @@ public class Application {
 
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
-
 }

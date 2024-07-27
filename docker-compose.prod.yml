@@ -41,24 +41,51 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./thesis_uploads:/thesis_application_uploads
-      - ./mailing_templates:/mailing_templates
+      - ./thesis_uploads:/uploads
     expose:
       - "8080"
     environment:
       - TZ=Europe/Berlin
-      - ENVIRONMENT
-      - SPRING_DATASOURCE_URL
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${SPRING_DATASOURCE_USERNAME}
+      - SEND_MAILS=true
+      - POSTFIX_HOST=postfix
+      - POSTFIX_PORT=25
+      - UPLOAD_FOLDER=/uploads
+      # take from docker environment
       - SPRING_DATASOURCE_USERNAME
       - SPRING_DATASOURCE_PASSWORD
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - POSTFIX_USERNAME
+      - POSTFIX_PASSWORD
       - CLIENT_HOST
+      - KEYCLOAK_HOST
+      - KEYCLOAK_REALM_NAME
       - KEYCLOAK_CLIENT_ID
-      - KEYCLOAK_CLIENT_SECRET
-      - KEYCLOAK_ISSUER_URI
-      - KEYCLOAK_JWK_SET_URI
-      - IOS_SENDER_MAIL
+      - SENDER_MAIL
       - CHAIR_MEMBER_RECIPIENTS
+    networks:
+      - thesis-track-network
+
+  client:
+    image: "ghcr.io/ls1intum/thesis-track/thesis-track-client:${CLIENT_IMAGE_TAG}"
+    container_name: thesis-track-client
+    environment:
+      - TZ=Europe/Berlin
+      - SERVER_HOST
+      - KEYCLOAK_HOST
+      - KEYCLOAK_REALM_NAME
+      - KEYCLOAK_CLIENT_ID
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"
+      - "traefik.http.routers.client.entrypoints=websecure"
+      - "traefik.http.routers.client.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.client-compress.compress=true"
+      - "traefik.http.routers.client.middlewares=client-compress"
+    expose:
+      - "80"
+    depends_on:
+      - server
     networks:
       - thesis-track-network
 
@@ -75,29 +102,6 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - thesis-track-network
-
-  client:
-    image: "ghcr.io/ls1intum/thesis-track/thesis-track-client:${CLIENT_IMAGE_TAG}"
-    container_name: thesis-track-client
-    environment:
-      - TZ=Europe/Berlin
-      - API_SERVER_HOST
-      - KEYCLOAK_HOST
-      - KEYCLOAK_REALM_NAME
-      - KEYCLOAK_CLIENT_ID
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"
-      - "traefik.http.routers.client.entrypoints=websecure"
-      - "traefik.http.routers.client.tls.certresolver=letsencrypt"
-      - "traefik.http.middlewares.client-compress.compress=true"
-      - "traefik.http.routers.client.middlewares=client-compress"
-    expose:
-      - "80"
-    depends_on:
-      - server
     networks:
       - thesis-track-network
 

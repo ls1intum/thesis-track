@@ -136,8 +136,8 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         first_name: decodedAccessToken.given_name,
         last_name: decodedAccessToken.family_name,
         email: decodedAccessToken.email,
-        university_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_field] || '',
-        user_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_field] || '',
+        university_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || '',
+        user_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || '',
         roles: decodedAccessToken.resource_access[GLOBAL_CONFIG.keycloak.client_id]?.roles ?? [],
       })
     } else {
@@ -160,7 +160,7 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
 
           keycloak.authenticated &&
             keycloak.logout({
-              redirectUri: `${location.origin}${redirectUri}`,
+              redirectUri: `${window.location.origin}${redirectUri}`,
             })
         }),
     }

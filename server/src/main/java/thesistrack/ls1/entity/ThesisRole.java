@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import thesistrack.ls1.entity.keys.ThesisRoleId;
+import thesistrack.ls1.entity.key.ThesisRoleId;
 
 import java.time.Instant;
 

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import thesistrack.ls1.entity.keys.ThesisStateChangeId;
+import thesistrack.ls1.entity.key.ThesisStateChangeId;
 
 import java.time.Instant;
 

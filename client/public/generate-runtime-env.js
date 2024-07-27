@@ -1,7 +1,7 @@
 const { promises: fsp } = require('fs');
 
 const ALLOWED_ENVIRONMENT_VARIABLES = [
-  'API_SERVER_HOST',
+  'SERVER_HOST',
   'KEYCLOAK_HOST',
   'KEYCLOAK_REALM_NAME',
   'KEYCLOAK_CLIENT_ID',
@@ -12,7 +12,7 @@ const ALLOWED_ENVIRONMENT_VARIABLES = [
   'GENDERS',
   'STUDY_DEGREES',
   'STUDY_PROGRAMS',
-  'UNIVERSITY_ID_JWT_FIELD'
+  'UNIVERSITY_ID_JWT_ATTRIBUTE'
 ];
 
 async function generateConfig() {
@@ -24,7 +24,7 @@ async function generateConfig() {
     }
   }
 
-  await fsp.writeFile('runtime-env.js', `window.RUNTIME_ENVIRONMENT_VARIABLES=${JSON.stringify(runtimeEnvironment)};`, 'utf-8');
+  await fsp.writeFile('runtime-env.js', `window.RUNTIME_ENVIRONMENT_VARIABLES=${JSON.stringify(runtimeEnvironment)};\n`, 'utf-8');
 }
 
 void generateConfig();

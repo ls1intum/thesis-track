@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.List;
@@ -27,6 +29,9 @@ public class User {
 
     @Column(name = "matriculation_number", length = 100)
     private String matriculationNumber;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<UserGroup> groups;
 
     @Column(name = "email", length = 100)
     private String email;
@@ -55,10 +60,12 @@ public class User {
     @Column(name = "examination_filename", length = 200)
     private String examinationFilename;
 
-    @Column(name = "focus_topics")
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "focus_topics", columnDefinition = "text[]")
     private List<String> focusTopics;
 
-    @Column(name = "research_areas")
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "research_areas", columnDefinition = "text[]")
     private List<String> researchAreas;
 
     @Column(name = "study_degree", length = 100)
@@ -76,7 +83,7 @@ public class User {
     @Column(name = "special_skills", length = 2000)
     private String specialSkills;
 
-    @Column(name = "enrolled_at", nullable = false)
+    @Column(name = "enrolled_at")
     private Instant enrolledAt;
 
     @UpdateTimestamp

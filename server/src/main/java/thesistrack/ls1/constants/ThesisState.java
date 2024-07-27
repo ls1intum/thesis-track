@@ -7,8 +7,12 @@ import lombok.Getter;
 @Getter
 public enum ThesisState {
     PROPOSAL("Proposal"),
-    ACCEPTED("Accepted"),
-    REJECTED("Rejected");
+    WRITING("Writing"),
+    SUBMITTED("Submitted"),
+    ASSESSED("Assessed"),
+    GRADED("Graded"),
+    FINISHED("Finished"),
+    DROPPED_OUT("Dropped out");
 
     private final String value;
 }
