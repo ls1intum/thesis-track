@@ -16,9 +16,6 @@ import java.util.UUID;
 @Setter
 @Embeddable
 public class ThesisStateChangeId implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 6850016269035279870L;
-
     @NotNull
     @Column(name = "thesis_id", nullable = false)
     private UUID thesisId;
@@ -38,7 +35,7 @@ public class ThesisStateChangeId implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(thesisId, state);
+        return Objects.hash("thesis-state-changes", thesisId, state);
     }
 
 }

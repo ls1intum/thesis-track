@@ -3,7 +3,7 @@ import { IDecodedAccessToken } from '../contexts/AuthenticationContext/context'
 export interface IGlobalConfig {
   title: string
 
-  api_server: string
+  server_host: string
 
   focus_topics: Record<string, string>
   research_areas: Record<string, string>

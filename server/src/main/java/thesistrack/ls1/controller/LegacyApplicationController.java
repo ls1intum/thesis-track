@@ -52,7 +52,7 @@ public class LegacyApplicationController {
     }
 
     @PutMapping("/{applicationId}/accept")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<ApplicationDto> acceptApplication(
             @PathVariable UUID applicationId,
             @RequestPart("advisorId") UUID advisorId,

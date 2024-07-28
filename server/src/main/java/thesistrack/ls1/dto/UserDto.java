@@ -21,7 +21,7 @@ public class UserDto implements Serializable {
     private String lastName;
     private String gender;
     private String nationality;
-    private boolean isExchangeStudent;
+    private Boolean isExchangeStudent;
     private List<String> focusTopics;
     private List<String> researchAreas;
     private String studyDegree;

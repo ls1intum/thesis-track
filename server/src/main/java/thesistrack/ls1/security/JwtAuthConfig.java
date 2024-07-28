@@ -9,9 +9,11 @@ import org.springframework.validation.annotation.Validated;
 @Data
 @Validated
 @Configuration
-@ConfigurationProperties(prefix = "jwt.auth.converter")
-public class JwtAuthConverterProperties {
+@ConfigurationProperties(prefix = "thesis-track.jwt")
+public class JwtAuthConfig {
     @NotBlank
-    private String resourceId;
-    private String principalAttribute;
+    private String clientId;
+
+    @NotBlank
+    private String universityIdJwtAttribute;
 }

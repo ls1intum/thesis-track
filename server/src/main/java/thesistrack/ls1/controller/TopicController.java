@@ -30,19 +30,19 @@ public class TopicController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<TopicDto> createTopic() {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
     @PutMapping("/{topicId}")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<TopicDto> updateTopic(@PathVariable UUID topicId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
     @DeleteMapping("/{topicId}")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<TopicDto> deleteTopic(@PathVariable UUID topicId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }

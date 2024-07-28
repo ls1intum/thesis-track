@@ -34,7 +34,7 @@ public class ApplicationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<Page<ApplicationDto>> getApplications(
             @RequestParam(required = false) String[] states,
             @RequestParam(required = false) String searchQuery,
@@ -49,7 +49,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/{applicationId}/examination-report")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<Resource> getExaminationReport(@PathVariable UUID applicationId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -58,7 +58,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/{applicationId}/cv")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<Resource> getCV(@PathVariable UUID applicationId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -67,7 +67,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/{applicationId}/bachelor-report")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<Resource> getBachelorReport(@PathVariable UUID applicationId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -76,13 +76,13 @@ public class ApplicationController {
     }
 
     @PutMapping("/{applicationId}/accept")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<ApplicationDto> acceptApplication(@PathVariable String applicationId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
     @PutMapping("/{applicationId}/reject")
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<ApplicationDto> rejectApplication(
             @PathVariable UUID applicationId,
             @RequestPart("comment") String comment,

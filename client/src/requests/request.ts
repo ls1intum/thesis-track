@@ -50,7 +50,7 @@ export function doRequest<T>(
       throw new Error('Cannot send both data and formData')
     }
 
-    const result = await fetch(`${GLOBAL_CONFIG.api_server}${url}?${params.toString()}`, {
+    const result = await fetch(`${GLOBAL_CONFIG.server_host}/api${url}?${params.toString()}`, {
       method: options.method,
       headers: {
         ...(options.requiresAuth ? { Authorization: `Bearer ${jwtToken}` } : {}),

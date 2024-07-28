@@ -4,28 +4,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.dto.UserDto;
-import thesistrack.ls1.service.UserService;
+import thesistrack.ls1.service.AuthenticationService;
 
 @Slf4j
 @RestController
 @RequestMapping("/v1/user-info")
 public class UserInfoController {
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserInfoController(UserService userService) {
-        this.userService = userService;
+    public UserInfoController(AuthenticationService authenticationService) {
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> getInfo() {
-        // TODO assign roles to user
-        // TODO create user if not exists
-
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<UserDto> getInfo(JwtAuthenticationToken jwt) {
+        return ResponseEntity.ok(UserDto.fromUserEntity(this.authenticationService.getAuthenticatedUser(jwt)));
     }
 
     @PutMapping

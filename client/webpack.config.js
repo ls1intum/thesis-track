@@ -102,7 +102,7 @@ const config = (env) => {
     output: {
       path: path.resolve(__dirname, 'build'),
       filename: 'static/js/[name].[contenthash].js',
-      sourceMapFilename: '[name].js.map',
+      sourceMapFilename: 'static/js/[name].[contenthash].js.map',
       chunkFilename: 'static/js/[name].[contenthash].js',
       assetModuleFilename: 'static/assets/[name].[hash][ext]',
       publicPath: '/',

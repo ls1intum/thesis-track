@@ -25,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor')")
     public ResponseEntity<Page<LightUserDto>> getUsers(
             @RequestParam(required = false) String searchQuery,
             @RequestParam(required = false) String[] groups,

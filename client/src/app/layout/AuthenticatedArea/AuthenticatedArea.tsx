@@ -18,7 +18,7 @@ import { useAuthenticationContext } from '../../../hooks/authentication'
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
   collapseNavigation?: boolean
-  requiredRoles?: string[]
+  requiredGroups?: string[]
 }
 
 const links: Array<{
@@ -66,7 +66,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     children,
     requireAuthentication = true,
     collapseNavigation = false,
-    requiredRoles,
+    requiredGroups,
   } = props
 
   const [opened, { toggle }] = useDisclosure()
@@ -109,7 +109,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         <AppShell.Section grow my='md'>
           {links
             .filter(
-              (item) => !item.roles || item.roles.some((role) => auth.user?.roles.includes(role)),
+              (item) => !item.roles || item.roles.some((role) => auth.user?.groups.includes(role)),
             )
             .map((item) => (
               <Link
@@ -143,7 +143,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       <AppShell.Main>
         {auth.user ? (
           <Suspense fallback={<SpinningLoader />}>
-            {!requiredRoles || requiredRoles.some((role) => auth.user?.roles.includes(role)) ? (
+            {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
               children
             ) : (
               <Center className={styles.fullHeight}>

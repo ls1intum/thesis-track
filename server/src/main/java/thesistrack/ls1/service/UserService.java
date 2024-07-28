@@ -9,8 +9,6 @@ import thesistrack.ls1.entity.User;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.UserRepository;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.UUID;
 
 @Service

@@ -7,10 +7,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNullApi;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
@@ -21,10 +24,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(
-        // securedEnabled = true,
-        // jsr250Enabled = true,
-        prePostEnabled = true)
+@EnableMethodSecurity
 public class WebSecurityConfig {
     private final JwtAuthConverter jwtAuthConverter;
 
@@ -38,12 +38,20 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .authorizeHttpRequests().requestMatchers(HttpMethod.POST, "/thesis-applications").permitAll()
-                .anyRequest().authenticated().and().oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-        http.oauth2ResourceServer()
-                .jwt()
-                .jwtAuthenticationConverter(jwtAuthConverter);
+        http
+                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                                .requestMatchers(HttpMethod.POST, "/v1/applications").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/v1/topics/**").permitAll()
+                                .anyRequest().authenticated()
+                );
+
+        http.oauth2ResourceServer(server -> {
+            server.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter));
+        });
+
         return http.build();
     }
 
@@ -51,10 +59,11 @@ public class WebSecurityConfig {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings( CorsRegistry registry) {
+            public void addCorsMappings(CorsRegistry registry) {
                 registry
                         .addMapping("/**")
-                        .allowedOrigins(String.format("https://%s", clientHost), String.format("http://%s", clientHost)).allowedMethods("*");
+                        .allowedOrigins(clientHost)
+                        .allowedMethods("*");
             }
         };
     }

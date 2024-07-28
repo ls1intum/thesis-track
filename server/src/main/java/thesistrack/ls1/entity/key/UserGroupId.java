@@ -14,7 +14,6 @@ import java.util.UUID;
 @Setter
 @Embeddable
 public class UserGroupId implements java.io.Serializable {
-    private static final long serialVersionUID = 6648838720345092910L;
     @NotNull
     @Column(name = "user_id", nullable = false)
     private UUID userId;
@@ -34,7 +33,6 @@ public class UserGroupId implements java.io.Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, group);
+        return Objects.hash("user-groups", userId, group);
     }
-
 }

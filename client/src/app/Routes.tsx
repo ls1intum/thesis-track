@@ -79,7 +79,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/create'
             element={
-              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -87,7 +87,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/edit/:topic_id'
             element={
-              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -109,7 +109,7 @@ const AppRoutes = () => {
           <Route
             path='/applications/:application_id?'
             element={
-              <AuthenticatedArea collapseNavigation={true} requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea collapseNavigation={true} requiredGroups={['admin', 'advisor']}>
                 <ReviewApplicationPage />
               </AuthenticatedArea>
             }
@@ -117,7 +117,7 @@ const AppRoutes = () => {
           <Route
             path='/theses'
             element={
-              <AuthenticatedArea requiredRoles={['admin']}>
+              <AuthenticatedArea requiredGroups={['admin']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }
@@ -149,7 +149,7 @@ const AppRoutes = () => {
           <Route
             path='/management/thesis-applications'
             element={
-              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor']}>
                 <LegacyApplicationReviewPage />
               </AuthenticatedArea>
             }
@@ -157,7 +157,7 @@ const AppRoutes = () => {
           <Route
             path='/management/thesis-overview'
             element={
-              <AuthenticatedArea requiredRoles={['admin']}>
+              <AuthenticatedArea requiredGroups={['admin']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }

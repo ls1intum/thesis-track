@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.UUID;
@@ -16,9 +15,6 @@ import java.util.UUID;
 @Setter
 @Embeddable
 public class ThesisRoleId implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 5049781780615072922L;
-
     @NotNull
     @Column(name = "thesis_id", nullable = false)
     private UUID thesisId;
@@ -38,7 +34,7 @@ public class ThesisRoleId implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(thesisId, userId);
+        return Objects.hash("thesis-roles", thesisId, userId);
     }
 
 }

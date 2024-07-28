@@ -8,9 +8,10 @@ import {
 import Keycloak from 'keycloak-js'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { jwtDecode } from 'jwt-decode'
-import { IUserInfo } from '../../requests/types/user'
 import { getAuthenticationTokens, useAuthenticationTokens } from '../../hooks/authentication'
 import { useSignal } from '../../hooks/utility'
+import { IUser } from '../../requests/responses/user'
+import { doRequest } from '../../requests/request'
 
 interface IAuthenticationProviderProps {}
 
@@ -23,7 +24,8 @@ const keycloak = new Keycloak({
 const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProviderProps>) => {
   const { children } = props
 
-  const [user, setUser] = useState<IUserInfo>()
+  const [universityId, setUniversityId] = useState<string>();
+  const [user, setUser] = useState<IUser>()
   const [authenticationTokens, setAuthenticationTokens] = useAuthenticationTokens()
   const {
     signal: readySignal,
@@ -132,18 +134,30 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     if (authenticationTokens?.access_token) {
       const decodedAccessToken = jwtDecode<IDecodedAccessToken>(authenticationTokens.access_token)
 
-      setUser({
-        first_name: decodedAccessToken.given_name,
-        last_name: decodedAccessToken.family_name,
-        email: decodedAccessToken.email,
-        university_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || '',
-        user_id: decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || '',
-        roles: decodedAccessToken.resource_access[GLOBAL_CONFIG.keycloak.client_id]?.roles ?? [],
-      })
+      setUniversityId(decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || undefined)
     } else {
-      setUser(undefined)
+      setUniversityId(undefined)
     }
   }, [authenticationTokens?.access_token, isReady])
+
+  useEffect(() => {
+    setUser(undefined)
+
+    if (isReady && universityId) {
+      return doRequest<IUser>('/v1/user-info', {
+        method: 'POST',
+        requiresAuth: true
+      }, (err, res) => {
+        if (res?.ok) {
+          setUser(res.data)
+        }
+
+        if (err) {
+          console.error(err)
+        }
+      })
+    }
+  }, [universityId, isReady])
 
   const contextValue = useMemo<IAuthenticationContext>(() => {
     return {

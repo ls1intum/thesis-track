@@ -82,7 +82,7 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     OTHER: 'Other',
   },
 
-  api_server: `${window.location.protocol}//${getEnvironmentVariable('SERVER_HOST') || 'localhost:8080'}`,
+  server_host: getEnvironmentVariable('SERVER_HOST') || 'http://localhost:8080',
 
   keycloak: {
     host: getEnvironmentVariable('KEYCLOAK_HOST') || 'http://localhost:8081',

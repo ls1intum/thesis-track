@@ -18,15 +18,15 @@ const LegacyApplicationReviewPage = () => {
         method: 'PUT',
         requiresAuth: true,
         data: {
-          firstName: user.first_name,
-          lastName: user.last_name,
+          firstName: user.firstName,
+          lastName: user.lastName,
           email: user.email,
-          tumId: user.university_id,
+          tumId: user.universityId,
         },
       },
       () => {},
     )
-  }, [user.user_id])
+  }, [user.userId])
 
   return (
     <Container>

@@ -16,9 +16,6 @@ import java.util.UUID;
 @Setter
 @Embeddable
 public class TopicReviewerId implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 2792466625447855280L;
-
     @NotNull
     @Column(name = "topic_id", nullable = false)
     private UUID topicId;
@@ -38,7 +35,7 @@ public class TopicReviewerId implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(topicId, userId);
+        return Objects.hash("topic-reviewers", topicId, userId);
     }
 
 }

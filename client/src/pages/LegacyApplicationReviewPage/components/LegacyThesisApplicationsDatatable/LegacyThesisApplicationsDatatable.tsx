@@ -4,7 +4,7 @@ import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Link } from 'react-router-dom'
 import LegacyThesisApplicationForm from '../../../LegacySubmitApplicationPage/LegacyThesisApplicationForm'
-import { Pageable } from '../../../../requests/types/pageable'
+import { Pageable } from '../../../../requests/responses/pageable'
 import { LegacyThesisApplication } from '../../../../legacy/interfaces/thesisApplication'
 import {
   LegacyApplicationFormAccessMode,
@@ -81,7 +81,7 @@ export const LegacyThesisApplicationsDatatable = () => {
     )
   }, [
     version,
-    user.user_id,
+    user.userId,
     page,
     limit,
     searchQuery,

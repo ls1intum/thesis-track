@@ -1,10 +1,10 @@
 import { createContext } from 'react'
-import { IUserInfo } from '../../requests/types/user'
 import { JwtPayload } from 'jwt-decode'
+import { IUser } from '../../requests/responses/user'
 
 export interface IAuthenticationContext {
   isAuthenticated: boolean
-  user: IUserInfo | undefined
+  user: IUser | undefined
   groups: string[]
   login: () => unknown
   logout: (redirectUrl: string) => unknown
