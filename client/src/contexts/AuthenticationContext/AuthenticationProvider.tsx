@@ -36,8 +36,6 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
   useEffect(() => {
     setUser(undefined)
 
-    let refreshTokenTimeout: ReturnType<typeof setTimeout> | undefined = undefined
-
     const refreshAccessToken = () => {
       keycloak
         .updateToken(60 * 5)
@@ -59,13 +57,11 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         ? jwtDecode<IDecodedRefreshToken>(refreshToken)
         : undefined
 
-      console.log('decoded keycloak tokens', decodedAccessToken, decodedRefreshToken)
+      console.log('decoded keycloak refresh token', decodedRefreshToken)
+      console.log('decoded keycloak access token', decodedAccessToken)
 
       if (decodedRefreshToken?.exp) {
-        console.log(
-          'refresh token expires in seconds',
-          Math.floor(decodedRefreshToken?.exp - Date.now() / 1000),
-        )
+        console.log(`refresh token expires in ${Math.floor(decodedRefreshToken.exp - Date.now() / 1000)} seconds`)
       }
 
       // refresh if already expired
@@ -73,15 +69,6 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         return setAuthenticationTokens(undefined)
       } else if (decodedAccessToken?.exp && decodedAccessToken.exp <= Date.now() / 1000) {
         return refreshAccessToken()
-      }
-
-      if (decodedRefreshToken?.exp) {
-        refreshTokenTimeout = setTimeout(
-          () => {
-            setAuthenticationTokens(undefined)
-          },
-          Math.min(Math.max(decodedRefreshToken.exp * 1000 - Date.now(), 0), 3600 * 24 * 1000),
-        )
       }
 
       if (accessToken && refreshToken) {
@@ -116,10 +103,29 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         console.log('Keycloak init error', error)
       })
 
-    return () => {
-      if (refreshTokenTimeout) {
-        clearTimeout(refreshTokenTimeout)
+    const refreshTokenFrequency = 60 * 1000;
+    const refreshTokenInterval = setInterval(() => {
+      const refreshToken = keycloak.refreshToken
+      const accessToken = keycloak.token
+
+      const decodedAccessToken = accessToken
+        ? jwtDecode<IDecodedAccessToken>(accessToken)
+        : undefined
+      const decodedRefreshToken = refreshToken
+        ? jwtDecode<IDecodedRefreshToken>(refreshToken)
+        : undefined
+
+      if (decodedRefreshToken?.exp && decodedRefreshToken.exp <= Date.now() / 1000) {
+        keycloak.clearToken()
+
+        return setAuthenticationTokens(undefined)
+      } else if (decodedAccessToken?.exp && decodedAccessToken.exp <= Date.now() / 1000 + refreshTokenFrequency) {
+        return refreshAccessToken()
       }
+    }, refreshTokenFrequency)
+
+    return () => {
+      clearInterval(refreshTokenInterval)
 
       keycloak.onAuthRefreshSuccess = undefined
       keycloak.onTokenExpired = undefined
