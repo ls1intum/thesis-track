@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.UserRepository;
@@ -50,7 +49,7 @@ public class UserService {
         return uploadService.load(user.getCvFilename());
     }
 
-    public Resource getBachelorReport(UUID userId) {
+    public Resource getDegreeReport(UUID userId) {
         User user = findById(userId);
 
         return uploadService.load(user.getDegreeFilename());

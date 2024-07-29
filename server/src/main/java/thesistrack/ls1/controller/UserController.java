@@ -62,10 +62,10 @@ public class UserController {
 
     @GetMapping("/{userId}/degree-report")
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<Resource> getBachelorReport(@PathVariable UUID userId) {
+    public ResponseEntity<Resource> getDegreeReport(@PathVariable UUID userId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=degree_report_%s.pdf", userId))
-                .body(userService.getBachelorReport(userId));
+                .body(userService.getDegreeReport(userId));
     }
 }

@@ -238,12 +238,12 @@ public class MailingService {
         cvAttachment.attachFile(uploadService.load(application.getUser().getCvFilename()).getFile());
         multipart.addBodyPart(cvAttachment);
 
-        String bachelorReportFilename = application.getUser().getDegreeFilename();
+        String degreeReportFilename = application.getUser().getDegreeFilename();
 
-        if (bachelorReportFilename != null && !bachelorReportFilename.isBlank()) {
-            MimeBodyPart bachelorReportAttachment = new MimeBodyPart();
-            bachelorReportAttachment.attachFile(uploadService.load(bachelorReportFilename).getFile());
-            multipart.addBodyPart(bachelorReportAttachment);
+        if (degreeReportFilename != null && !degreeReportFilename.isBlank()) {
+            MimeBodyPart degreeReportAttachment = new MimeBodyPart();
+            degreeReportAttachment.attachFile(uploadService.load(degreeReportFilename).getFile());
+            multipart.addBodyPart(degreeReportAttachment);
         }
 
         return multipart;
