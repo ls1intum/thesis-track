@@ -224,7 +224,7 @@ const LegacyThesisApplicationForm = () => {
                   formData.append('cv', values.cv!)
 
                   if (values.degreeReport) {
-                    formData.append('bachelorReport', values.degreeReport)
+                    formData.append('degreeReport', values.degreeReport)
                   }
 
                   const response = await doRequest('/v1/applications', {
