@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset airelawaleria:1
+--changeset airelawaleria:1 failOnError:false
 
 CREATE TYPE gender AS ENUM ('FEMALE', 'MALE', 'OTHER', 'PREFER_NOT_TO_SAY');
 CREATE CAST (varchar AS gender) WITH INOUT AS IMPLICIT;
@@ -56,7 +56,7 @@ CREATE TYPE application_status AS ENUM ('NOT_ASSESSED', 'ACCEPTED', 'REJECTED');
 CREATE CAST (varchar AS application_status) WITH INOUT AS IMPLICIT;
 
 --changeset airelawaleria:2
-CREATE TABLE student
+CREATE TABLE IF NOT EXISTS student
 (
     id                   uuid PRIMARY KEY,
     first_name           VARCHAR(100),
@@ -70,7 +70,7 @@ CREATE TABLE student
 );
 
 --changeset airelawaleria:3
-CREATE TABLE thesis_advisor
+CREATE TABLE IF NOT EXISTS thesis_advisor
 (
     id         uuid NOT NULL,
     first_name varchar(255),
@@ -80,7 +80,7 @@ CREATE TABLE thesis_advisor
 );
 
 --changeset airelawaleria:4
-CREATE TABLE thesis_application
+CREATE TABLE IF NOT EXISTS thesis_application
 (
     id                          uuid PRIMARY KEY,
     created_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
