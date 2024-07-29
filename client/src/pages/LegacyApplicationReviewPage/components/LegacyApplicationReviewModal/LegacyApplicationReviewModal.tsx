@@ -170,7 +170,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
             />
             <UserMultiSelect
               label='Advisor'
-              groups={['advisor']}
+              groups={['advisor', 'supervisor']}
               multiSelect={true}
               {...form.getInputProps('advisors')}
             />

@@ -159,7 +159,7 @@ public class ApplicationService {
         thesis = thesisRepository.save(thesis);
 
         for (User advisor : advisors) {
-            if (!advisor.hasGroup("advisor")) {
+            if (!advisor.hasGroup("advisor") && !advisor.hasGroup("supervisor")) {
                 throw new ResourceInvalidParametersException("User is not an advisor.");
             }
 
