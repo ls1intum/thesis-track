@@ -30,7 +30,7 @@ services:
     container_name: thesis-track-server
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.server.rule=Host(`${SERVER_HOST}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.server.rule=Host(`${APP_HOSTNAME}`) && PathPrefix(`/api`)"
       - "traefik.http.services.server.loadbalancer.server.port=8080"
       - "traefik.http.routers.server.entrypoints=websecure"
       - "traefik.http.routers.server.tls.certresolver=letsencrypt"
@@ -80,7 +80,7 @@ services:
       - KEYCLOAK_CLIENT_ID
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"
+      - "traefik.http.routers.client.rule=Host(`${APP_HOSTNAME}`)"
       - "traefik.http.routers.client.entrypoints=websecure"
       - "traefik.http.routers.client.tls.certresolver=letsencrypt"
       - "traefik.http.middlewares.client-compress.compress=true"
@@ -114,7 +114,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./postfix-config:/config
-    hostname: ${SERVER_HOST}
+    hostname: ${APP_HOSTNAME}
     networks:
       - thesis-track-network
 

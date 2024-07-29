@@ -98,6 +98,7 @@ jobs:
             echo "SPRING_DATASOURCE_USERNAME=${{ vars.SPRING_DATASOURCE_USERNAME }}" >> .env.prod
             echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env.prod
 
+            echo "APP_HOSTNAME=${{ vars.APP_HOSTNAME }}" >> .env.prod
             echo "SERVER_HOST=${{ vars.SERVER_HOST }}" >> .env.prod
             echo "CLIENT_HOST=${{ vars.CLIENT_HOST }}" >> .env.prod
 
