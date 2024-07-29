@@ -93,27 +93,23 @@ jobs:
           script: |
             touch .env.prod
 
-            echo "SPRING_DATASOURCE_URL=${{ vars.SPRING_DATASOURCE_URL }}" > .env.prod
             echo "SPRING_DATASOURCE_USERNAME=${{ vars.SPRING_DATASOURCE_USERNAME }}" >> .env.prod
             echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env.prod
 
             echo "SERVER_HOST=${{ vars.SERVER_HOST }}" >> .env.prod
             echo "CLIENT_HOST=${{ vars.CLIENT_HOST }}" >> .env.prod
 
-            echo "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}" >> .env.prod
-            echo "KEYCLOAK_ISSUER_URI=${{ vars.KEYCLOAK_HOST }}/realms/${{ vars.KEYCLOAK_REALM_NAME }}" >> .env.prod
-            echo "KEYCLOAK_JWK_SET_URI=${{ vars.KEYCLOAK_HOST }}/realms/${{ vars.KEYCLOAK_REALM_NAME }}/protocol/openid-connect/certs" >> .env.prod
-            echo "KEYCLOAK_CLIENT_SECRET=${{ secrets.KEYCLOAK_CLIENT_SECRET }}" >> .env.prod
-            echo "IOS_SENDER_MAIL=${{ vars.IOS_SENDER_MAIL }}" >> .env.prod
-            echo "CHAIR_MEMBER_RECIPIENTS=${{ vars.CHAIR_MEMBER_RECIPIENTS }}" >> .env.prod
-            echo "ENVIRONMENT=${{ vars.ENVIRONMENT }}" >> .env.prod
-
-            echo "SERVER_IMAGE_TAG=${{ inputs.server_image_tag }}" >> .env.prod
-            echo "CLIENT_IMAGE_TAG=${{ inputs.client_image_tag }}" >> .env.prod
+            echo "MAIL_SENDER=${{ vars.MAIL_SENDER }}" >> .env.prod
+            echo "MAIL_FOOTER=${{ vars.MAIL_FOOTER }}" >> .env.prod
+            echo "MAIL_CHAIR_RECIPIENTS=${{ vars.MAIL_CHAIR_RECIPIENTS }}" >> .env.prod
+            echo "MAIL_WORKSPACE_URL=${{ vars.MAIL_WORKSPACE_URL }}" >> .env.prod
             
-            echo "API_SERVER_HOST=${{ vars.API_SERVER_HOST }}" >> .env.prod
+            echo "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}" >> .env.prod
             echo "KEYCLOAK_REALM_NAME=${{ vars.KEYCLOAK_REALM_NAME }}" >> .env.prod
             echo "KEYCLOAK_CLIENT_ID=${{ vars.KEYCLOAK_CLIENT_ID }}" >> .env.prod
+            
+            echo "SERVER_IMAGE_TAG=${{ inputs.server_image_tag }}" >> .env.prod
+            echo "CLIENT_IMAGE_TAG=${{ inputs.client_image_tag }}" >> .env.prod
 
       - name: SSH to VM and Execute Docker-Compose Up
         uses: appleboy/ssh-action@v1.0.3

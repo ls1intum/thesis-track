@@ -52,6 +52,7 @@ services:
       - POSTFIX_HOST=postfix
       - POSTFIX_PORT=25
       - UPLOAD_FOLDER=/uploads
+      - DEBUG_MODE=false
       # take from docker environment
       - SPRING_DATASOURCE_USERNAME
       - SPRING_DATASOURCE_PASSWORD
@@ -61,8 +62,10 @@ services:
       - KEYCLOAK_HOST
       - KEYCLOAK_REALM_NAME
       - KEYCLOAK_CLIENT_ID
-      - SENDER_MAIL
-      - CHAIR_MEMBER_RECIPIENTS
+      - MAIL_WORKSPACE_URL
+      - MAIL_SENDER
+      - MAIL_FOOTER
+      - MAIL_CHAIR_RECIPIENTS
     networks:
       - thesis-track-network
 

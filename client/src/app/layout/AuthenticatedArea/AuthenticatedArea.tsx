@@ -38,19 +38,19 @@ const links: Array<{
     link: '/management/thesis-applications',
     label: 'Review Applications v1',
     icon: Scroll,
-    roles: ['admin', 'advisor'],
+    roles: ['admin', 'advisor', 'supervisor'],
   },
   {
     link: '/applications',
     label: 'Review Applications v2',
     icon: Scroll,
-    roles: ['admin', 'advisor'],
+    roles: ['admin', 'advisor', 'supervisor'],
   },
   {
     link: '/topics/create',
     label: 'Create Topic',
     icon: FolderSimplePlus,
-    roles: ['admin', 'advisor'],
+    roles: ['admin', 'advisor', 'supervisor'],
   },
   { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin'] },
 ]
