@@ -18,6 +18,7 @@ import AuthenticatedIframe from '../../../../components/AuthenticatedIframe/Auth
 import { ApiResponse, doRequest } from '../../../../requests/request'
 import { notifications } from '@mantine/notifications'
 import React, { ReactElement, useState } from 'react'
+import { GLOBAL_CONFIG } from '../../../../config/global'
 
 interface ILegacyApplicationReviewModalProps {
   application: IApplication | undefined
@@ -152,9 +153,9 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               <LabeledItem label='Desired Start Date' value={application.desiredStartDate} />
               <LabeledItem
                 label='Research Areas'
-                value={application.user.researchAreas?.join(', ')}
+                value={application.user.researchAreas?.map(key => GLOBAL_CONFIG.research_areas[key] ?? key).join(', ')}
               />
-              <LabeledItem label='Focus Topics' value={application.user.focusTopics?.join(', ')} />
+              <LabeledItem label='Focus Topics' value={application.user.focusTopics?.map(key => GLOBAL_CONFIG.focus_topics[key] ?? key).join(', ')} />
             </Group>
           </Stack>
         )}
