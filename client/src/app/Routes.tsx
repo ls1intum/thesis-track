@@ -78,7 +78,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/create'
             element={
-              <AuthenticatedArea requiredGroups={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -86,7 +86,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/edit/:topic_id'
             element={
-              <AuthenticatedArea requiredGroups={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -103,7 +103,10 @@ const AppRoutes = () => {
           <Route
             path='/applications/:application_id?'
             element={
-              <AuthenticatedArea collapseNavigation={true} requiredGroups={['admin', 'advisor']}>
+              <AuthenticatedArea
+                collapseNavigation={true}
+                requiredGroups={['admin', 'advisor', 'supervisor']}
+              >
                 <ReviewApplicationPage />
               </AuthenticatedArea>
             }
@@ -111,7 +114,7 @@ const AppRoutes = () => {
           <Route
             path='/theses'
             element={
-              <AuthenticatedArea requiredGroups={['admin']}>
+              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }
@@ -141,9 +144,9 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path='/management/thesis-applications'
+            path='/management/thesis-applications/:applicationId?'
             element={
-              <AuthenticatedArea requiredGroups={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <LegacyApplicationReviewPage />
               </AuthenticatedArea>
             }
@@ -151,7 +154,7 @@ const AppRoutes = () => {
           <Route
             path='/management/thesis-overview'
             element={
-              <AuthenticatedArea requiredGroups={['admin']}>
+              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }

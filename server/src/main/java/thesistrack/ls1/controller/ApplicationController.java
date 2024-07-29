@@ -56,6 +56,14 @@ public class ApplicationController {
         return ResponseEntity.ok(new PageResponse<>(applications.map(ApplicationDto::fromApplicationEntity)));
     }
 
+    @GetMapping("/{applicationId}")
+    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
+    public ResponseEntity<ApplicationDto> getApplication(@PathVariable UUID applicationId) {
+        Application application = applicationService.findById(applicationId);
+
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
+    }
+
     @PutMapping("/{applicationId}/accept")
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> acceptApplication(@PathVariable String applicationId) {

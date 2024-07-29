@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { ActionIcon, Badge, Group, MultiSelect, Stack, TextInput } from '@mantine/core'
+import { ActionIcon, Badge, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Pageable } from '../../../../requests/responses/pageable'
-import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
+import { Eye, MagnifyingGlass } from 'phosphor-react'
 import { notifications } from '@mantine/notifications'
 import { doRequest } from '../../../../requests/request'
 import { useLoggedInUser } from '../../../../hooks/authentication'
@@ -15,6 +15,9 @@ import LegacyApplicationReviewModal from '../LegacyApplicationReviewModal/Legacy
 
 export const LegacyApplicationsDatatable = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
+
+  const navigate = useNavigate()
+  const { applicationId } = useParams<{ applicationId: string }>()
 
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
@@ -82,11 +85,29 @@ export const LegacyApplicationsDatatable = () => {
     sort.direction,
   ])
 
+  useEffect(() => {
+    if (applicationId && applicationId !== openedApplication?.applicationId) {
+      return doRequest<IApplication>(
+        `/v2/applications/${applicationId}`,
+        {
+          method: 'GET',
+          requiresAuth: true,
+        },
+        (err, res) => {
+          if (res?.ok) {
+            setOpenedApplication(res.data)
+          }
+        },
+      )
+    }
+  }, [applicationId, openedApplication])
+
   return (
     <Stack>
       <LegacyApplicationReviewModal
         application={openedApplication}
         onClose={() => {
+          navigate('/management/thesis-applications')
           setOpenedApplication(undefined)
         }}
         onUpdate={(newApplication) => {
@@ -214,41 +235,24 @@ export const LegacyApplicationsDatatable = () => {
             title: 'Actions',
             textAlign: 'right',
             render: (application) => (
-              <Group justify='flex-end' wrap='nowrap'>
-                <ActionIcon
-                  variant='transparent'
-                  color='blue'
-                  onClick={(e) => {
-                    e.stopPropagation()
-
-                    setOpenedApplication(application)
-                  }}
-                >
+              <Link
+                to={`/management/thesis-applications/${application.applicationId}`}
+                onClick={() => {
+                  setOpenedApplication(application)
+                }}
+              >
+                <ActionIcon variant='transparent' color='blue'>
                   <Eye size={16} />
                 </ActionIcon>
-                <Link
-                  to='/management/thesis-applications'
-                  onClick={(e) => {
-                    e.stopPropagation()
-
-                    setOpenedApplication(application)
-                  }}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  <ActionIcon
-                    variant='transparent'
-                    color='blue'
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <ArrowSquareOut size={16} />
-                  </ActionIcon>
-                </Link>
-              </Group>
+              </Link>
             ),
           },
         ]}
-        onRowClick={({ record: application }) => setOpenedApplication(application)}
+        onRowClick={({ record: application }) => {
+          setOpenedApplication(application)
+
+          navigate(`/management/thesis-applications/${application.applicationId}`)
+        }}
       />
     </Stack>
   )
