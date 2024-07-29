@@ -35,7 +35,7 @@ spring:
           issuer-uri: ${KEYCLOAK_HOST:http://localhost:8081}/realms/${KEYCLOAK_REALM_NAME:thesis-track}
   mail:
     host: ${POSTFIX_HOST:localhost}
-    port: ${POSTFIX_HOST:25}
+    port: ${POSTFIX_PORT:25}
     username: ${POSTFIX_USERNAME:}
     password: ${POSTFIX_PASSWORD:}
     properties:
