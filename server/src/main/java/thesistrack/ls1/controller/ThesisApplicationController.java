@@ -50,7 +50,7 @@ public class ThesisApplicationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<Page<ThesisApplication>> getAll(@RequestParam Integer page,
                                                           @RequestParam final Integer limit,
                                                           @RequestParam(required = false) final String states,
@@ -64,7 +64,7 @@ public class ThesisApplicationController {
     }
 
     @GetMapping("/{thesisApplicationId}/examination-report")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<Resource> getExaminationReport(@PathVariable final UUID thesisApplicationId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -73,7 +73,7 @@ public class ThesisApplicationController {
     }
 
     @GetMapping("/{thesisApplicationId}/cv")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<Resource> getCV(@PathVariable final UUID thesisApplicationId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -82,7 +82,7 @@ public class ThesisApplicationController {
     }
 
     @GetMapping("/{thesisApplicationId}/bachelor-report")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<Resource> getBachelorReport(@PathVariable final UUID thesisApplicationId) {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
@@ -108,33 +108,33 @@ public class ThesisApplicationController {
     }
 
     @PostMapping("/{thesisApplicationId}/assessment")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<ThesisApplication> assess(@PathVariable final UUID thesisApplicationId,
                                            @RequestBody final ThesisApplicationAssessment assessment) {
         return ResponseEntity.ok(thesisApplicationService.assess(thesisApplicationId, assessment.getStatus(), assessment.getAssessmentComment()));
     }
 
     @GetMapping("/thesis-advisors")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<List<ThesisAdvisor>> getAllThesisAdvisors() {
         return ResponseEntity.ok(thesisApplicationService.getAllThesisAdvisors());
     }
 
     @PutMapping("/thesis-advisors")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<List<ThesisAdvisor>> updateThesisAdvisorList(@RequestBody final ThesisAdvisor thesisAdvisor) {
         return ResponseEntity.ok(thesisApplicationService.updateThesisAdvisorList(thesisAdvisor));
     }
 
     @PostMapping("/{thesisApplicationId}/thesis-advisor/{thesisAdvisorId}")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<ThesisApplication> assignThesisAdvisor(@PathVariable final UUID thesisApplicationId,
                                                                   @PathVariable final UUID thesisAdvisorId) {
         return ResponseEntity.ok(thesisApplicationService.assignThesisAdvisor(thesisApplicationId, thesisAdvisorId));
     }
 
     @PostMapping("/{thesisApplicationId}/accept")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<ThesisApplication> acceptThesisApplication(
             @PathVariable final UUID thesisApplicationId,
             @RequestParam(required = false, defaultValue = "true") final boolean notifyStudent) {
@@ -142,20 +142,10 @@ public class ThesisApplicationController {
     }
 
     @PostMapping("/{thesisApplicationId}/reject")
-    @PreAuthorize("hasRole('chair-member') || hasRole('thesis-track-admin')")
+    @PreAuthorize("hasRole('admin') || hasRole('advisor')")
     public ResponseEntity<ThesisApplication> rejectThesisApplication(
             @PathVariable final UUID thesisApplicationId,
             @RequestParam(required = false, defaultValue = "true") final boolean notifyStudent) {
         return ResponseEntity.ok(thesisApplicationService.reject(thesisApplicationId, notifyStudent));
-    }
-
-    private Sort.Direction getSortDirection(String direction) {
-        if (direction.equals("asc")) {
-            return Sort.Direction.ASC;
-        } else if (direction.equals("desc")) {
-            return Sort.Direction.DESC;
-        }
-
-        return Sort.Direction.ASC;
     }
 }

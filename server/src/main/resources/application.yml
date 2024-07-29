@@ -23,7 +23,7 @@ spring:
       client:
         registration:
           keycloak:
-            client-id: thesis-track
+            client-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
             client-secret: ${KEYCLOAK_CLIENT_SECRET:}
             scope: openid
         provider:
@@ -49,7 +49,7 @@ spring:
 jwt:
   auth:
     converter:
-      resource-id: thesis-track-server
+      resource-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
       principal-attribute: preferred_username
 
 thesis-track:

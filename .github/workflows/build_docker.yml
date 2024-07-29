@@ -84,10 +84,6 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-          build-args: |
-            "SERVER_HOST=${{ vars.SERVER_HOST }}"
-            "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}"
-            "KEYCLOAK_REALM_NAME=${{ vars.KEYCLOAK_REALM_NAME }}"
 
       - id: output-tag-client
         run: |

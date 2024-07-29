@@ -53,6 +53,7 @@ services:
       - SPRING_DATASOURCE_PASSWORD
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - CLIENT_HOST
+      - KEYCLOAK_CLIENT_ID
       - KEYCLOAK_CLIENT_SECRET
       - KEYCLOAK_ISSUER_URI
       - KEYCLOAK_JWK_SET_URI
@@ -82,6 +83,10 @@ services:
     container_name: thesis-track-client
     environment:
       - TZ=Europe/Berlin
+      - API_SERVER_HOST
+      - KEYCLOAK_HOST
+      - KEYCLOAK_REALM_NAME
+      - KEYCLOAK_CLIENT_ID
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.client.rule=Host(`${SERVER_HOST}`)"
