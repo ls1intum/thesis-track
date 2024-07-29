@@ -8,44 +8,39 @@ import { notifications } from '@mantine/notifications'
 import { useState } from 'react'
 
 interface ILegacyApplicationReviewModalProps {
-  application: IApplication | undefined;
-  onClose: () => unknown;
-  onUpdate: (application: IApplication) => unknown;
+  application: IApplication | undefined
+  onClose: () => unknown
+  onUpdate: (application: IApplication) => unknown
 }
 
 const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps) => {
-  const {application, onClose, onUpdate} = props;
+  const { application, onClose, onUpdate } = props
 
   const form = useForm<{
-    comment: string,
-    advisors: string[],
+    comment: string
+    advisors: string[]
     notifyUser: boolean
   }>({
     mode: 'controlled',
     initialValues: {
       comment: '',
       advisors: [],
-      notifyUser: true
+      notifyUser: true,
     },
     validateInputOnBlur: true,
     validate: {
-      advisors: value => {
+      advisors: (value) => {
         if (value.length === 0) {
-          return 'Advisor is required';
+          return 'Advisor is required'
         }
-      }
-    }
+      },
+    },
   })
 
   const [loading, setLoading] = useState(false)
 
   return (
-    <Modal
-      centered
-      size='90%'
-      opened={!!application}
-      onClose={onClose}
-    >
+    <Modal centered size='90%' opened={!!application} onClose={onClose}>
       <form>
         {application && (
           <>
@@ -53,7 +48,9 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               <AuthenticatedIframe url={`/v1/users/${application.user.userId}/cv`} />
             )}
             {application.user.hasExaminationReport && (
-              <AuthenticatedIframe url={`/v1/users/${application.user.userId}/examination-report`} />
+              <AuthenticatedIframe
+                url={`/v1/users/${application.user.userId}/examination-report`}
+              />
             )}
             {application.user.hasDegreeReport && (
               <AuthenticatedIframe url={`/v1/users/${application.user.userId}/degree-report`} />
@@ -64,7 +61,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
         {application?.state === ApplicationState.NOT_ASSESSED && (
           <>
             <UserMultiSelect
-              label="Advisor"
+              label='Advisor'
               groups={['advisor']}
               multiSelect={false}
               {...form.getInputProps('advisors')}
@@ -77,87 +74,100 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               {...form.getInputProps('comment')}
             />
 
-            <Checkbox
-              mt='md'
-              label='Notify Student'
-              {...form.getInputProps('notifyUser')}
-            />
+            <Checkbox mt='md' label='Notify Student' {...form.getInputProps('notifyUser')} />
 
-            <Button variant="default" loading={loading} onClick={async () => {
-              setLoading(true)
+            <Button
+              variant='default'
+              loading={loading}
+              onClick={async () => {
+                setLoading(true)
 
-              const response = await doRequest<IApplication>(
-                `/v2/applications/${application.applicationId}/reject`,
-                {
-                  method: 'PUT',
-                  requiresAuth: true,
-                  data: {
-                    comment: form.values.comment,
-                    notifyUser: form.values.notifyUser,
+                const response = await doRequest<IApplication>(
+                  `/v2/applications/${application.applicationId}/reject`,
+                  {
+                    method: 'PUT',
+                    requiresAuth: true,
+                    data: {
+                      comment: form.values.comment,
+                      notifyUser: form.values.notifyUser,
+                    },
                   },
-                },
-              ).catch<ApiResponse<IApplication>>(() => ({ok: false, data: undefined, status: 500}))
+                ).catch<ApiResponse<IApplication>>(() => ({
+                  ok: false,
+                  data: undefined,
+                  status: 500,
+                }))
 
-              setLoading(false)
+                setLoading(false)
 
-              if (response.ok) {
-                notifications.show({
-                  color: 'green',
-                  autoClose: 5000,
-                  title: 'Success',
-                  message: 'Application rejected successfully',
-                })
+                if (response.ok) {
+                  notifications.show({
+                    color: 'green',
+                    autoClose: 5000,
+                    title: 'Success',
+                    message: 'Application rejected successfully',
+                  })
 
-                onUpdate(response.data)
-                onClose()
-              } else {
-                notifications.show({
-                  color: 'red',
-                  autoClose: 5000,
-                  title: 'Error',
-                  message: 'Failed to reject application',
-                })
-              }
-            }}>
+                  onUpdate(response.data)
+                  onClose()
+                } else {
+                  notifications.show({
+                    color: 'red',
+                    autoClose: 5000,
+                    title: 'Error',
+                    message: 'Failed to reject application',
+                  })
+                }
+              }}
+            >
               Reject
             </Button>
-            <Button variant="default" loading={loading} disabled={!form.isValid()} onClick={async () => {
-              setLoading(true)
+            <Button
+              variant='default'
+              loading={loading}
+              disabled={!form.isValid()}
+              onClick={async () => {
+                setLoading(true)
 
-              const response = await doRequest<IApplication>(
-                `/v1/applications/${application.applicationId}/accept`,
-                {
-                  method: 'PUT',
-                  requiresAuth: true,
-                  data: {
-                    notifyUser: form.values.notifyUser,
-                    comment: form.values.comment,
-                    advisorId: form.values.advisors?.[0]
+                const response = await doRequest<IApplication>(
+                  `/v1/applications/${application.applicationId}/accept`,
+                  {
+                    method: 'PUT',
+                    requiresAuth: true,
+                    data: {
+                      notifyUser: form.values.notifyUser,
+                      comment: form.values.comment,
+                      advisorId: form.values.advisors?.[0],
+                    },
                   },
-                },
-              ).catch<ApiResponse<IApplication>>(() => ({ok: false, data: undefined, status: 500}))
+                ).catch<ApiResponse<IApplication>>(() => ({
+                  ok: false,
+                  data: undefined,
+                  status: 500,
+                }))
 
-              setLoading(false)
+                setLoading(false)
 
-              if (response.ok) {
-                notifications.show({
-                  color: 'green',
-                  autoClose: 5000,
-                  title: 'Success',
-                  message: 'Application accepted successfully',
-                })
+                if (response.ok) {
+                  notifications.show({
+                    color: 'green',
+                    autoClose: 5000,
+                    title: 'Success',
+                    message: 'Application accepted successfully',
+                  })
 
-                onUpdate(response.data)
-                onClose()
-              } else {
-                notifications.show({
-                  color: 'red',
-                  autoClose: 5000,
-                  title: 'Error',
-                  message: 'Failed to accept application',
-                })
-              }
-            }}>
+                  onUpdate(response.data)
+                  onClose()
+                } else {
+                  notifications.show({
+                    color: 'red',
+                    autoClose: 5000,
+                    title: 'Error',
+                    message: 'Failed to accept application',
+                  })
+                }
+              }}
+            >
               Accept
             </Button>
           </>
@@ -167,4 +177,4 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
   )
 }
 
-export default LegacyApplicationReviewModal;
+export default LegacyApplicationReviewModal

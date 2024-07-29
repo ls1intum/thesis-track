@@ -1,5 +1,3 @@
-import { IDecodedAccessToken } from '../contexts/AuthenticationContext/context'
-
 export interface IGlobalConfig {
   title: string
 

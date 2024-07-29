@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ActionIcon, Badge, Group, Modal, MultiSelect, Stack, TextInput } from '@mantine/core'
+import { ActionIcon, Badge, Group, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Link } from 'react-router-dom'
@@ -10,7 +10,7 @@ import { doRequest } from '../../../../requests/request'
 import { useLoggedInUser } from '../../../../hooks/authentication'
 import { formatDate } from '../../../../utils/format'
 import { ApplicationState, IApplication } from '../../../../requests/responses/application'
-import { useDebouncedState, useDebouncedValue } from '@mantine/hooks'
+import { useDebouncedValue } from '@mantine/hooks'
 import LegacyApplicationReviewModal from '../LegacyApplicationReviewModal/LegacyApplicationReviewModal'
 
 export const LegacyApplicationsDatatable = () => {
@@ -65,7 +65,7 @@ export const LegacyApplicationsDatatable = () => {
             totalElements: 0,
             last: true,
             pageNumber: 0,
-            pageSize: limit
+            pageSize: limit,
           })
         }
 
@@ -89,19 +89,21 @@ export const LegacyApplicationsDatatable = () => {
         onClose={() => {
           setOpenedApplication(undefined)
         }}
-        onUpdate={newApplication => {
-          setApplications(prev => {
+        onUpdate={(newApplication) => {
+          setApplications((prev) => {
             if (!prev) {
               return undefined
             }
 
-            const index = prev.content.findIndex(x => x.applicationId === newApplication.applicationId)
+            const index = prev.content.findIndex(
+              (x) => x.applicationId === newApplication.applicationId,
+            )
 
             if (index >= 0) {
               prev.content[index] = newApplication
             }
 
-            return {...prev}
+            return { ...prev }
           })
         }}
       />
@@ -176,11 +178,7 @@ export const LegacyApplicationsDatatable = () => {
                 default:
                   break
               }
-              return (
-                <Badge color={color}>
-                  {application.state}
-                </Badge>
-              )
+              return <Badge color={color}>{application.state}</Badge>
             },
           },
           {

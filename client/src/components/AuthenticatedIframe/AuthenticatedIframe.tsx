@@ -6,32 +6,33 @@ interface IAuthenticatedIframeProps extends IframeHTMLAttributes<HTMLIFrameEleme
 }
 
 const AuthenticatedIframe = (props: IAuthenticatedIframeProps) => {
-  const {url, ...iframeProps} = props;
+  const { url, ...iframeProps } = props
 
-  const [file, setFile] = useState<Blob>();
+  const [file, setFile] = useState<Blob>()
 
   useEffect(() => {
-    setFile(undefined);
+    setFile(undefined)
 
-    return doRequest<Blob>(url, {
-      method: 'GET',
-      requiresAuth: true,
-      responseType: 'blob'
-    }, (err, res) => {
-      if (res?.ok) {
-        setFile(res.data);
-      }
-    })
+    return doRequest<Blob>(
+      url,
+      {
+        method: 'GET',
+        requiresAuth: true,
+        responseType: 'blob',
+      },
+      (err, res) => {
+        if (res?.ok) {
+          setFile(res.data)
+        }
+      },
+    )
   }, [url])
 
   const iframeUrl = useMemo(() => {
-    return file ? URL.createObjectURL(file) : undefined;
-  }, [file]);
+    return file ? URL.createObjectURL(file) : undefined
+  }, [file])
 
-  return <iframe
-    {...iframeProps}
-    src={iframeUrl}
-  />
+  return <iframe {...iframeProps} src={iframeUrl} />
 }
 
 export default AuthenticatedIframe

@@ -1,14 +1,14 @@
 import { IGlobalConfig } from './types'
 
 const getEnvironmentVariable = <T = string>(key: string, useJson = false): T | undefined => {
-  const value = process.env[key] || window.RUNTIME_ENVIRONMENT_VARIABLES?.[key];
+  const value = process.env[key] || window.RUNTIME_ENVIRONMENT_VARIABLES?.[key]
 
   if (!value) {
     return undefined
   }
 
   try {
-    return useJson ? JSON.parse(value) as T : value as T
+    return useJson ? (JSON.parse(value) as T) : (value as T)
   } catch {
     return undefined
   }
@@ -88,6 +88,7 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     host: getEnvironmentVariable('KEYCLOAK_HOST') || 'http://localhost:8081',
     realm: getEnvironmentVariable('KEYCLOAK_REALM_NAME') || 'thesis-track',
     client_id: getEnvironmentVariable('KEYCLOAK_CLIENT_ID') || 'thesis-track-app',
-    university_id_jwt_attribute: getEnvironmentVariable('UNIVERSITY_ID_JWT_ATTRIBUTE') || 'preferred_username',
+    university_id_jwt_attribute:
+      getEnvironmentVariable('UNIVERSITY_ID_JWT_ATTRIBUTE') || 'preferred_username',
   },
 }

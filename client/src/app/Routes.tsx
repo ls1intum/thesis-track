@@ -99,12 +99,7 @@ const AppRoutes = () => {
               </AuthenticatedArea>
             }
           />
-          <Route
-            path='/applications/thesis'
-            element={
-              <LegacyThesisApplicationForm />
-            }
-          />
+          <Route path='/applications/thesis' element={<LegacyThesisApplicationForm />} />
           <Route
             path='/applications/:application_id?'
             element={

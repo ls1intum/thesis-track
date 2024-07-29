@@ -24,7 +24,7 @@ const keycloak = new Keycloak({
 const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProviderProps>) => {
   const { children } = props
 
-  const [universityId, setUniversityId] = useState<string>();
+  const [universityId, setUniversityId] = useState<string>()
   const [user, setUser] = useState<IUser>()
   const [authenticationTokens, setAuthenticationTokens] = useAuthenticationTokens()
   const {
@@ -37,13 +37,11 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     setUser(undefined)
 
     const refreshAccessToken = () => {
-      keycloak
-        .updateToken(60 * 5)
-        .then((isSuccess) => {
-          if (!isSuccess) {
-            setAuthenticationTokens(undefined)
-          }
-        })
+      keycloak.updateToken(60 * 5).then((isSuccess) => {
+        if (!isSuccess) {
+          setAuthenticationTokens(undefined)
+        }
+      })
     }
 
     const storeTokens = () => {
@@ -61,7 +59,9 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
       console.log('decoded keycloak access token', decodedAccessToken)
 
       if (decodedRefreshToken?.exp) {
-        console.log(`refresh token expires in ${Math.floor(decodedRefreshToken.exp - Date.now() / 1000)} seconds`)
+        console.log(
+          `refresh token expires in ${Math.floor(decodedRefreshToken.exp - Date.now() / 1000)} seconds`,
+        )
       }
 
       // refresh if already expired
@@ -103,7 +103,7 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         console.log('Keycloak init error', error)
       })
 
-    const refreshTokenFrequency = 60 * 1000;
+    const refreshTokenFrequency = 60 * 1000
     const refreshTokenInterval = setInterval(() => {
       const refreshToken = keycloak.refreshToken
       const accessToken = keycloak.token
@@ -119,7 +119,10 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         keycloak.clearToken()
 
         return setAuthenticationTokens(undefined)
-      } else if (decodedAccessToken?.exp && decodedAccessToken.exp <= Date.now() / 1000 + refreshTokenFrequency) {
+      } else if (
+        decodedAccessToken?.exp &&
+        decodedAccessToken.exp <= Date.now() / 1000 + refreshTokenFrequency
+      ) {
         return refreshAccessToken()
       }
     }, refreshTokenFrequency)
@@ -140,7 +143,9 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     if (authenticationTokens?.access_token) {
       const decodedAccessToken = jwtDecode<IDecodedAccessToken>(authenticationTokens.access_token)
 
-      setUniversityId(decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || undefined)
+      setUniversityId(
+        decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || undefined,
+      )
     } else {
       setUniversityId(undefined)
     }
@@ -150,18 +155,22 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     setUser(undefined)
 
     if (isReady && universityId) {
-      return doRequest<IUser>('/v1/user-info', {
-        method: 'POST',
-        requiresAuth: true
-      }, (err, res) => {
-        if (res?.ok) {
-          setUser(res.data)
-        }
+      return doRequest<IUser>(
+        '/v1/user-info',
+        {
+          method: 'POST',
+          requiresAuth: true,
+        },
+        (err, res) => {
+          if (res?.ok) {
+            setUser(res.data)
+          }
 
-        if (err) {
-          console.error(err)
-        }
-      })
+          if (err) {
+            console.error(err)
+          }
+        },
+      )
     }
   }, [universityId, isReady])
 

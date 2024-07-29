@@ -1,12 +1,9 @@
 import { isEmail, isNotEmpty, useForm } from '@mantine/form'
-import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
 import countries from 'i18n-iso-countries'
 import enLocale from 'i18n-iso-countries/langs/en.json'
 import {
-  ActionIcon,
   Box,
   Button,
-  Card,
   Center,
   Checkbox,
   Group,
@@ -18,8 +15,8 @@ import {
   Text,
   Textarea,
   Title,
-  rem,
-  useMantineTheme, TextInput, MultiSelect,
+  TextInput,
+  MultiSelect,
 } from '@mantine/core'
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
@@ -28,7 +25,7 @@ import { notifications } from '@mantine/notifications'
 import { useDisclosure } from '@mantine/hooks'
 import { LegacyApplicationSuccessfulSubmission } from './components/LegacyApplicationSubmission/LegacyApplicationSuccessfulSubmission'
 import { useState } from 'react'
-import { Calendar, ImageSquare, UploadSimple, X } from 'phosphor-react'
+import { Calendar } from 'phosphor-react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { ApiResponse, doRequest } from '../../requests/request'
 import { ILegacyCreateApplicationPayload } from '../../requests/payloads/application'
@@ -46,17 +43,17 @@ const countriesArr = Object.entries(countries.getNames('en', { select: 'alias' }
 )
 
 const LegacyThesisApplicationForm = () => {
-  const theme = useMantineTheme()
-
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
   const [applicationSuccessfullySubmitted, setApplicationSuccessfullySubmitted] = useState(false)
 
-  const form = useForm<Partial<ILegacyCreateApplicationPayload> & {
-    declarationOfConsentAccepted: boolean,
-    examinationReport: File | undefined
-    cv: File | undefined
-    degreeReport: File | undefined
-  }>({
+  const form = useForm<
+    Partial<ILegacyCreateApplicationPayload> & {
+      declarationOfConsentAccepted: boolean
+      examinationReport: File | undefined
+      cv: File | undefined
+      degreeReport: File | undefined
+    }
+  >({
     mode: 'controlled',
     initialValues: {
       universityId: '',
@@ -137,12 +134,12 @@ const LegacyThesisApplicationForm = () => {
       studyProgram: isNotEmpty('Please state your study program.'),
       enrolledAt: isNotEmpty('Please state your enrollment date.'),
       desiredStartDate: isNotEmpty('Please state your desired start date.'),
-      focusTopics: value => {
+      focusTopics: (value) => {
         if (!value || value.length === 0) {
           return 'Please specify at least one focus topic.'
         }
       },
-      researchAreas: value => {
+      researchAreas: (value) => {
         if (!value || value.length === 0) {
           return 'Please specify at least one research area.'
         }
@@ -209,77 +206,80 @@ const LegacyThesisApplicationForm = () => {
                 <Title order={3}>Thesis Application at LS1 Chair</Title>
               </Center>
             </Group>
-            <form style={{ display: 'flex', flexDirection: 'column', gap: '2vh' }} onSubmit={form.onSubmit(async (values) => {
-              loadingOverlayHandlers.open()
+            <form
+              style={{ display: 'flex', flexDirection: 'column', gap: '2vh' }}
+              onSubmit={form.onSubmit(async (values) => {
+                loadingOverlayHandlers.open()
 
-              try {
-                const applicationPayload: ILegacyCreateApplicationPayload = {
-                  universityId: values.universityId!,
-                  matriculationNumber: values.matriculationNumber!,
-                  isExchangeStudent: values.isExchangeStudent!,
-                  firstName: values.firstName!,
-                  lastName: values.lastName!,
-                  gender: values.gender!,
-                  nationality: values.nationality!,
-                  email: values.email!,
-                  studyDegree: values.studyDegree!,
-                  studyProgram: values.studyProgram!,
-                  enrolledAt: values.enrolledAt!,
-                  specialSkills: values.specialSkills!,
-                  motivation: values.motivation!,
-                  interests: values.interests!,
-                  projects: values.projects!,
-                  thesisTitle: values.thesisTitle!,
-                  desiredStartDate: values.desiredStartDate!,
-                  researchAreas: values.researchAreas!,
-                  focusTopics: values.focusTopics!,
-                }
+                try {
+                  const applicationPayload: ILegacyCreateApplicationPayload = {
+                    universityId: values.universityId!,
+                    matriculationNumber: values.matriculationNumber!,
+                    isExchangeStudent: values.isExchangeStudent!,
+                    firstName: values.firstName!,
+                    lastName: values.lastName!,
+                    gender: values.gender!,
+                    nationality: values.nationality!,
+                    email: values.email!,
+                    studyDegree: values.studyDegree!,
+                    studyProgram: values.studyProgram!,
+                    enrolledAt: values.enrolledAt!,
+                    specialSkills: values.specialSkills!,
+                    motivation: values.motivation!,
+                    interests: values.interests!,
+                    projects: values.projects!,
+                    thesisTitle: values.thesisTitle!,
+                    desiredStartDate: values.desiredStartDate!,
+                    researchAreas: values.researchAreas!,
+                    focusTopics: values.focusTopics!,
+                  }
 
-                const formData = new FormData()
+                  const formData = new FormData()
 
-                formData.append(
-                  'thesisApplication',
-                  new Blob([JSON.stringify(applicationPayload)], { type: 'application/json' }),
-                )
+                  formData.append(
+                    'thesisApplication',
+                    new Blob([JSON.stringify(applicationPayload)], { type: 'application/json' }),
+                  )
 
-                formData.append('examinationReport', values.examinationReport!)
-                formData.append('cv', values.cv!)
+                  formData.append('examinationReport', values.examinationReport!)
+                  formData.append('cv', values.cv!)
 
-                if (values.degreeReport) {
-                  formData.append('bachelorReport', values.degreeReport)
-                }
+                  if (values.degreeReport) {
+                    formData.append('bachelorReport', values.degreeReport)
+                  }
 
-                const response = await doRequest('/v1/applications', {
-                  method: 'POST',
-                  requiresAuth: false,
-                  formData,
-                }).catch<ApiResponse<unknown>>((err) => {
-                  console.error(err)
+                  const response = await doRequest('/v1/applications', {
+                    method: 'POST',
+                    requiresAuth: false,
+                    formData,
+                  }).catch<ApiResponse<unknown>>((err) => {
+                    console.error(err)
 
-                  return { ok: false, status: 500, data: undefined }
-                })
-
-                if (response.ok) {
-                  notifications.show({
-                    color: 'green',
-                    autoClose: 5000,
-                    title: 'Success',
-                    message: `Your application was successfully submitted!`,
+                    return { ok: false, status: 500, data: undefined }
                   })
 
-                  setApplicationSuccessfullySubmitted(true)
-                } else {
-                  notifications.show({
-                    color: 'red',
-                    autoClose: 10000,
-                    title: 'Error',
-                    message: `Failed to submit the application. Server responded with ${response.status}`,
-                  })
+                  if (response.ok) {
+                    notifications.show({
+                      color: 'green',
+                      autoClose: 5000,
+                      title: 'Success',
+                      message: `Your application was successfully submitted!`,
+                    })
+
+                    setApplicationSuccessfullySubmitted(true)
+                  } else {
+                    notifications.show({
+                      color: 'red',
+                      autoClose: 10000,
+                      title: 'Error',
+                      message: `Failed to submit the application. Server responded with ${response.status}`,
+                    })
+                  }
+                } finally {
+                  loadingOverlayHandlers.close()
                 }
-              } finally {
-                loadingOverlayHandlers.close()
-              }
-            })}>
+              })}
+            >
               <Group grow align='flex-start'>
                 <TextInput
                   type='text'
@@ -412,11 +412,8 @@ const LegacyThesisApplicationForm = () => {
                     {...form.getInputProps('motivation')}
                   />
                   {!form.errors.motivation && (
-                      <Text
-                        fz='xs'
-                        ta='right'
-                      >{`${form.values.motivation?.length ?? 0} / 500`}</Text>
-                    )}
+                    <Text fz='xs' ta='right'>{`${form.values.motivation?.length ?? 0} / 500`}</Text>
+                  )}
                 </div>
               </Group>
               <Group grow align='flex-start'>
@@ -431,10 +428,7 @@ const LegacyThesisApplicationForm = () => {
                     {...form.getInputProps('interests')}
                   />
                   {!form.errors.interests && (
-                    <Text
-                      fz='xs'
-                      ta='right'
-                    >{`${form.values.interests?.length ?? 0} / 500`}</Text>
+                    <Text fz='xs' ta='right'>{`${form.values.interests?.length ?? 0} / 500`}</Text>
                   )}
                 </div>
                 <div>
@@ -463,10 +457,7 @@ const LegacyThesisApplicationForm = () => {
                   {...form.getInputProps('thesisTitle')}
                 />
                 {!form.errors.thesisTitle && (
-                  <Text
-                    fz='xs'
-                    ta='right'
-                  >{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
+                  <Text fz='xs' ta='right'>{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
                 )}
               </div>
               <DatePickerInput
@@ -506,22 +497,22 @@ const LegacyThesisApplicationForm = () => {
               </Group>
               <Stack>
                 <UploadArea
-                  label="Examination Report"
+                  label='Examination Report'
                   required={true}
                   value={form.values.examinationReport}
-                  onChange={file => form.setValues({ examinationReport: file })}
+                  onChange={(file) => form.setValues({ examinationReport: file })}
                 />
                 <UploadArea
-                  label="CV"
+                  label='CV'
                   required={true}
                   value={form.values.cv}
-                  onChange={file => form.setValues({ cv: file })}
+                  onChange={(file) => form.setValues({ cv: file })}
                 />
                 <UploadArea
-                  label="Bachelor Report"
+                  label='Bachelor Report'
                   required={false}
                   value={form.values.degreeReport}
-                  onChange={file => form.setValues({ degreeReport: file })}
+                  onChange={(file) => form.setValues({ degreeReport: file })}
                 />
               </Stack>
               <Stack>
@@ -539,10 +530,7 @@ const LegacyThesisApplicationForm = () => {
                 </Spoiler>
               </Stack>
               <Group>
-                <Button
-                  type='submit'
-                  disabled={!form.isValid()}
-                >
+                <Button type='submit' disabled={!form.isValid()}>
                   Submit
                 </Button>
               </Group>

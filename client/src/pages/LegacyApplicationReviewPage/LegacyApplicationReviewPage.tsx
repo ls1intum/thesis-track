@@ -1,4 +1,4 @@
-import { Affix, Button, Center, Transition, rem, Container } from '@mantine/core'
+import { Affix, Button, Transition, rem, Container } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
 import { LegacyApplicationsDatatable } from './components/LegacyApplicationsDatatable/LegacyApplicationsDatatable'
 import { ArrowUp } from 'phosphor-react'

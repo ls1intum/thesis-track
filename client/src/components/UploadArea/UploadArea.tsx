@@ -4,18 +4,18 @@ import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { notifications } from '@mantine/notifications'
 
 interface IUploadAreaProps {
-  label: string;
-  required: boolean;
-  value: File | undefined;
-  onChange: (file: File | undefined) => unknown;
-  maxSize?: number;
+  label: string
+  required: boolean
+  value: File | undefined
+  onChange: (file: File | undefined) => unknown
+  maxSize?: number
   accept?: string[]
 }
 
 const UploadArea = (props: IUploadAreaProps) => {
-  const {label, required, value, onChange, maxSize = 3 * 1024, accept = PDF_MIME_TYPE} = props;
+  const { label, required, value, onChange, maxSize = 3 * 1024, accept = PDF_MIME_TYPE } = props
 
-  const theme = useMantineTheme();
+  const theme = useMantineTheme()
 
   if (value) {
     return (
@@ -24,16 +24,14 @@ const UploadArea = (props: IUploadAreaProps) => {
           <Text fw={500} fz='sm'>
             {label}
           </Text>
-          {required && (<Text color='red'>*</Text>)}
+          {required && <Text color='red'>*</Text>}
         </Group>
         <Card shadow='sm' withBorder>
           <Group align='apart'>
             <Text c='dimmed' fz='sm'>
               {value.name}
             </Text>
-            <ActionIcon
-              onClick={() => onChange(undefined)}
-            >
+            <ActionIcon onClick={() => onChange(undefined)}>
               <X />
             </ActionIcon>
           </Group>
@@ -48,7 +46,7 @@ const UploadArea = (props: IUploadAreaProps) => {
         <Text fw={500} fz='sm'>
           {label}
         </Text>
-        {required && (<Text color='red'>*</Text>)}
+        {required && <Text color='red'>*</Text>}
       </Group>
       <Dropzone
         name={label}
@@ -64,11 +62,7 @@ const UploadArea = (props: IUploadAreaProps) => {
         maxSize={maxSize}
         accept={accept}
       >
-        <Group
-          align='center'
-          gap='xl'
-          style={{ minHeight: rem(220), pointerEvents: 'none' }}
-        >
+        <Group align='center' gap='xl' style={{ minHeight: rem(220), pointerEvents: 'none' }}>
           <Dropzone.Accept>
             <UploadSimple size='3.2rem' color={theme.colors[theme.primaryColor][4]} />
           </Dropzone.Accept>
@@ -93,4 +87,4 @@ const UploadArea = (props: IUploadAreaProps) => {
   )
 }
 
-export default UploadArea;
+export default UploadArea
