@@ -115,7 +115,7 @@ CREATE TABLE thesis_roles
     role        TEXT      NOT NULL,
     assigned_at TIMESTAMP NOT NULL,
     assigned_by UUID      NOT NULL,
-    PRIMARY KEY (thesis_id, user_id),
+    PRIMARY KEY (thesis_id, user_id, role),
     FOREIGN KEY (thesis_id) REFERENCES theses (thesis_id),
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     FOREIGN KEY (assigned_by) REFERENCES users (user_id)

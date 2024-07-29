@@ -47,7 +47,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${SPRING_DATASOURCE_DATABASE}
       - SEND_MAILS=true
       - POSTFIX_HOST=postfix
       - POSTFIX_PORT=25

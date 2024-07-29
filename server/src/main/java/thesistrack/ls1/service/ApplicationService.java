@@ -8,13 +8,17 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import thesistrack.ls1.constants.ThesisRoleName;
+import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
-import thesistrack.ls1.entity.Application;
-import thesistrack.ls1.entity.User;
+import thesistrack.ls1.entity.*;
 import thesistrack.ls1.constants.ApplicationState;
+import thesistrack.ls1.entity.key.ThesisRoleId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.ApplicationRepository;
+import thesistrack.ls1.repository.ThesisRepository;
+import thesistrack.ls1.repository.TopicRepository;
 import thesistrack.ls1.repository.UserRepository;
 
 import java.time.Instant;
@@ -25,24 +29,27 @@ import java.util.stream.Collectors;
 public class ApplicationService {
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
     private final UploadService uploadService;
     private final MailingService mailingService;
+    private final TopicRepository topicRepository;
+    private final ThesisRepository thesisRepository;
+    private final ThesisService thesisService;
 
     @Autowired
     public ApplicationService(
             ApplicationRepository applicationRepository,
             UserRepository userRepository,
-            UserService userService,
             UploadService storageService,
-            MailingService mailingService
-    ) {
+            MailingService mailingService,
+            TopicRepository topicRepository, ThesisRepository thesisRepository, ThesisService thesisService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
 
-        this.userService = userService;
         this.uploadService = storageService;
         this.mailingService = mailingService;
+        this.topicRepository = topicRepository;
+        this.thesisRepository = thesisRepository;
+        this.thesisService = thesisService;
     }
 
     public Page<Application> getAll(String searchString, ApplicationState[] states, int page, int limit, String sortBy, String sortOrder) {
@@ -111,12 +118,28 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application accept(UUID applicationId, User reviewer, UUID advisorId, String comment, boolean notifyUser) {
+    public Application accept(
+            UUID applicationId,
+            User reviewer,
+            String title,
+            List<UUID> advisorIds,
+            List<UUID> supervisorIds,
+            String comment,
+            boolean notifyUser,
+            boolean closeTopic
+    ) {
         Application application = findById(applicationId);
-        User advisor = userService.findById(advisorId);
+        Topic topic = application.getTopic();
 
-        if (!advisor.hasGroup("advisor")) {
-            throw new ResourceInvalidParametersException("User is not an advisor.");
+        List<User> advisors = userRepository.findAllById(advisorIds);
+        List<User> supervisors = userRepository.findAllById(supervisorIds);
+
+        if (advisors.isEmpty() || advisors.size() != advisorIds.size()) {
+            throw new ResourceInvalidParametersException("No advisors selected or advisors not found.");
+        }
+
+        if (supervisors.isEmpty() || supervisors.size() != supervisorIds.size()) {
+            throw new ResourceInvalidParametersException("No supervisors selected or supervisor not found.");
         }
 
         application.setState(ApplicationState.ACCEPTED);
@@ -124,8 +147,43 @@ public class ApplicationService {
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 
+        Thesis thesis = new Thesis();
+
+        thesis.setTitle(title);
+        thesis.setInfo("");
+        thesis.setAbstractField("");
+        thesis.setState(ThesisState.PROPOSAL);
+        thesis.setApplication(application);
+        thesis.setCreatedAt(Instant.now());
+
+        thesis = thesisRepository.save(thesis);
+
+        for (User advisor : advisors) {
+            if (!advisor.hasGroup("advisor")) {
+                throw new ResourceInvalidParametersException("User is not an advisor.");
+            }
+
+            thesisService.saveThesisRole(thesis, reviewer, advisor, ThesisRoleName.ADVISOR);
+        }
+
+        for (User supervisor : supervisors) {
+            if (!supervisor.hasGroup("supervisor")) {
+                throw new ResourceInvalidParametersException("User is not a supervisor.");
+            }
+
+            thesisService.saveThesisRole(thesis, reviewer, supervisor, ThesisRoleName.SUPERVISOR);
+        }
+
+        thesisService.saveThesisRole(thesis, reviewer, application.getUser(), ThesisRoleName.STUDENT);
+
+        if (topic != null && closeTopic) {
+            topic.setClosedAt(Instant.now());
+
+            topicRepository.save(topic);
+        }
+
         if (notifyUser) {
-            mailingService.sendApplicationAcceptanceEmail(application, advisor);
+            mailingService.sendApplicationAcceptanceEmail(application, advisors.getFirst());
         }
 
         return applicationRepository.save(application);

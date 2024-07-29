@@ -2,9 +2,7 @@ package thesistrack.ls1.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +11,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ApplicationState;
+import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
 import thesistrack.ls1.controller.payload.RejectApplicationPayload;
 import thesistrack.ls1.dto.ApplicationDto;
 import thesistrack.ls1.dto.PageResponse;
@@ -66,8 +65,25 @@ public class ApplicationController {
 
     @PutMapping("/{applicationId}/accept")
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<ApplicationDto> acceptApplication(@PathVariable String applicationId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ApplicationDto> acceptApplication(
+            @PathVariable UUID applicationId,
+            @RequestBody AcceptApplicationPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
+
+        Application application =  applicationService.accept(
+                applicationId,
+                authenticatedUser,
+                payload.getThesisTitle(),
+                payload.getAdvisorIds(),
+                payload.getSupervisorIds(),
+                payload.getComment(),
+                payload.getNotifyUser(),
+                payload.getCloseTopic()
+        );
+
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
     }
 
     @PutMapping("/{applicationId}/reject")

@@ -10,6 +10,7 @@ import {
   Space,
   Title,
   Center,
+  Divider
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
@@ -51,12 +52,14 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
   const form = useForm<{
     comment: string
     advisors: string[]
+    supervisors: string[]
     notifyUser: boolean
   }>({
     mode: 'controlled',
     initialValues: {
       comment: '',
       advisors: [],
+      supervisors: [],
       notifyUser: true,
     },
     validateInputOnBlur: true,
@@ -64,6 +67,11 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
       advisors: (value) => {
         if (value.length === 0) {
           return 'Advisor is required'
+        }
+      },
+      supervisors: (value) => {
+        if (value.length === 0) {
+          return 'Supervisor is required'
         }
       },
     },
@@ -151,16 +159,19 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
           </Stack>
         )}
 
-        <Space h='md' />
-        <hr />
-        <Space h='md' />
-
         {application?.state === ApplicationState.NOT_ASSESSED && (
           <Stack gap='md'>
+            <Divider my='md' />
+            <UserMultiSelect
+              label='Supervisor'
+              groups={['supervisor']}
+              multiSelect={false}
+              {...form.getInputProps('supervisors')}
+            />
             <UserMultiSelect
               label='Advisor'
               groups={['advisor']}
-              multiSelect={false}
+              multiSelect={true}
               {...form.getInputProps('advisors')}
             />
 
@@ -234,14 +245,17 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   setLoading(true)
 
                   const response = await doRequest<IApplication>(
-                    `/v1/applications/${application.applicationId}/accept`,
+                    `/v2/applications/${application.applicationId}/accept`,
                     {
                       method: 'PUT',
                       requiresAuth: true,
                       data: {
                         notifyUser: form.values.notifyUser,
+                        closeTopic: false,
                         comment: form.values.comment,
-                        advisorId: form.values.advisors?.[0],
+                        advisorIds: form.values.advisors,
+                        supervisorIds: form.values.supervisors,
+                        thesisTitle: application?.thesisTitle || 'Thesis Title',
                       },
                     },
                   ).catch<ApiResponse<IApplication>>(() => ({

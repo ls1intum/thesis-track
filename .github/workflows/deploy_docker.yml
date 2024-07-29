@@ -93,6 +93,7 @@ jobs:
           script: |
             touch .env.prod
 
+            echo "SPRING_DATASOURCE_DATABASE=${{ vars.SPRING_DATASOURCE_DATABASE }}" >> .env.prod
             echo "SPRING_DATASOURCE_USERNAME=${{ vars.SPRING_DATASOURCE_USERNAME }}" >> .env.prod
             echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env.prod
 

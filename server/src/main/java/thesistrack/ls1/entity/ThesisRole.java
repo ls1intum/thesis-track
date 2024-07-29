@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.entity.key.ThesisRoleId;
 
 import java.time.Instant;
@@ -26,10 +27,6 @@ public class ThesisRole {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @NotNull
-    @Column(name = "role", nullable = false, length = 100)
-    private String role;
 
     @CreationTimestamp
     @NotNull
