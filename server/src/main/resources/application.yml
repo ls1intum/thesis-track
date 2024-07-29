@@ -58,6 +58,7 @@ thesis-track:
     footer: ${MAIL_FOOTER:}
     workspace-url: ${MAIL_WORKSPACE_URL:https://slack.com}
     chair-member-recipients: ${MAIL_CHAIR_RECIPIENTS:}
+    mail-template-location: ${MAIL_TEMPLATE_FOLDER:/default-mail-templates}
   storage:
     upload-location: ${UPLOAD_FOLDER:uploads}
 

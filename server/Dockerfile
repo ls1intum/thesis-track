@@ -10,6 +10,6 @@ EXPOSE 8080
 RUN mkdir /app
 
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/server.jar
-COPY --from=build /home/gradle/src/mails /app/mails
+COPY ./mail-templates /default-mail-templates
 
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/server.jar"]

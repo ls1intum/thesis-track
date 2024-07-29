@@ -34,13 +34,14 @@ public class MailingService {
     private final String workspaceUrl;
     private final String sender;
     private final List<String> chairMemberRecipientsList;
-    private final Path rootLocation;
+    private final Path mailTemplateLocation;
 
     @Autowired
     public MailingService(
             JavaMailSender javaMailSender,
             UploadService uploadService,
             @Value("${thesis-track.mail.enabled}") boolean enabled,
+            @Value("${thesis-track.mail.mail-template-location}") String mailTemplateLocation,
             @Value("${thesis-track.mail.sender}") String sender,
             @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList,
             @Value("${thesis-track.mail.footer}") String mailFooter,
@@ -53,7 +54,7 @@ public class MailingService {
         this.sender = sender;
         this.workspaceUrl = workspaceUrl;
         this.mailFooter = mailFooter;
-        this.rootLocation = Paths.get("mails");
+        this.mailTemplateLocation = Paths.get(mailTemplateLocation);
 
         if (chairMemberRecipientsList != null && !chairMemberRecipientsList.isEmpty()) {
             this.chairMemberRecipientsList = Arrays.asList(chairMemberRecipientsList.split(";"));
@@ -172,7 +173,7 @@ public class MailingService {
     }
 
     private String getMailTemplate(String name) throws MailingException {
-        Path filePath = rootLocation.resolve(name + ".html");
+        Path filePath = mailTemplateLocation.resolve(name + ".html");
 
         try {
             byte[] fileBytes = Files.readAllBytes(filePath);
