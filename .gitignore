@@ -2,6 +2,7 @@
 
 db_backups
 uploads
+postfix-config
 
 # User-specific stuff
 .idea
