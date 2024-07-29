@@ -452,6 +452,7 @@ const LegacyThesisApplicationForm = () => {
                 </div>
                 <DatePickerInput
                   leftSection={<Calendar />}
+                  withAsterisk={true}
                   label='Desired Thesis Start Date'
                   {...form.getInputProps('desiredStartDate')}
                 />
