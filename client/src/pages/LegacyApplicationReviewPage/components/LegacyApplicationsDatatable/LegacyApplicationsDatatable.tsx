@@ -107,7 +107,7 @@ export const LegacyApplicationsDatatable = () => {
       <LegacyApplicationReviewModal
         application={openedApplication}
         onClose={() => {
-          navigate('/management/thesis-applications')
+          navigate('/management/thesis-applications', {replace: true})
           setOpenedApplication(undefined)
         }}
         onUpdate={(newApplication) => {
@@ -251,7 +251,7 @@ export const LegacyApplicationsDatatable = () => {
         onRowClick={({ record: application }) => {
           setOpenedApplication(application)
 
-          navigate(`/management/thesis-applications/${application.applicationId}`)
+          navigate(`/management/thesis-applications/${application.applicationId}`, {replace: true})
         }}
       />
     </Stack>
