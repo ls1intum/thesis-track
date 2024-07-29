@@ -47,7 +47,7 @@ spring:
             enable: true
 
 thesis-track:
-  jwt:
+  keycloak:
     client-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
     university-id-jwt-attribute: ${UNIVERSITY_ID_JWT_ATTRIBUTE:preferred_username}
   client:

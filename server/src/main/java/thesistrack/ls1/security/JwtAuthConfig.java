@@ -9,7 +9,7 @@ import org.springframework.validation.annotation.Validated;
 @Data
 @Validated
 @Configuration
-@ConfigurationProperties(prefix = "thesis-track.jwt")
+@ConfigurationProperties(prefix = "thesis-track.keycloak")
 public class JwtAuthConfig {
     @NotBlank
     private String clientId;
