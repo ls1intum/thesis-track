@@ -10,7 +10,7 @@ import {
   Space,
   Title,
   Center,
-  Divider
+  Divider,
 } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
@@ -140,8 +140,20 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                 label='Matriculation Number'
                 value={application.user.matriculationNumber}
               />
-              <LabeledItem label='Study Degree' value={GLOBAL_CONFIG.study_degrees[application.user.studyDegree || ''] ?? application.user.studyDegree} />
-              <LabeledItem label='Study Program' value={GLOBAL_CONFIG.study_programs[application.user.studyProgram || ''] ?? application.user.studyProgram} />
+              <LabeledItem
+                label='Study Degree'
+                value={
+                  GLOBAL_CONFIG.study_degrees[application.user.studyDegree || ''] ??
+                  application.user.studyDegree
+                }
+              />
+              <LabeledItem
+                label='Study Program'
+                value={
+                  GLOBAL_CONFIG.study_programs[application.user.studyProgram || ''] ??
+                  application.user.studyProgram
+                }
+              />
               <LabeledItem label='Enrollment Date' value={application.user.enrolledAt} />
             </Group>
             <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
@@ -153,9 +165,16 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               <LabeledItem label='Desired Start Date' value={application.desiredStartDate} />
               <LabeledItem
                 label='Research Areas'
-                value={application.user.researchAreas?.map(key => GLOBAL_CONFIG.research_areas[key] ?? key).join(', ')}
+                value={application.user.researchAreas
+                  ?.map((key) => GLOBAL_CONFIG.research_areas[key] ?? key)
+                  .join(', ')}
               />
-              <LabeledItem label='Focus Topics' value={application.user.focusTopics?.map(key => GLOBAL_CONFIG.focus_topics[key] ?? key).join(', ')} />
+              <LabeledItem
+                label='Focus Topics'
+                value={application.user.focusTopics
+                  ?.map((key) => GLOBAL_CONFIG.focus_topics[key] ?? key)
+                  .join(', ')}
+              />
             </Group>
           </Stack>
         )}
