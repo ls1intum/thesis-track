@@ -1,4 +1,4 @@
-import { ActionIcon, Card, Group, rem, Text, useMantineTheme } from '@mantine/core'
+import { ActionIcon, Card, Group, rem, Stack, Text, useMantineTheme } from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { notifications } from '@mantine/notifications'
@@ -19,12 +19,12 @@ const UploadArea = (props: IUploadAreaProps) => {
 
   if (value) {
     return (
-      <>
+      <Stack gap='0'>
         <Group align='left'>
           <Text fw={500} fz='sm'>
             {label}
           </Text>
-          {required && <Text color='red'>*</Text>}
+          {required && <Text c='red'>*</Text>}
         </Group>
         <Card shadow='sm' withBorder>
           <Group align='apart'>
@@ -36,17 +36,17 @@ const UploadArea = (props: IUploadAreaProps) => {
             </ActionIcon>
           </Group>
         </Card>
-      </>
+      </Stack>
     )
   }
 
   return (
-    <>
+    <Stack gap='0'>
       <Group align='left'>
         <Text fw={500} fz='sm'>
           {label}
         </Text>
-        {required && <Text color='red'>*</Text>}
+        {required && <Text c='red'>*</Text>}
       </Group>
       <Dropzone
         name={label}
@@ -77,13 +77,13 @@ const UploadArea = (props: IUploadAreaProps) => {
             <Text size='xl' inline>
               Drag the file here or click to select file
             </Text>
-            <Text size='sm' color='dimmed' inline mt={7}>
+            <Text size='sm' c='dimmed' inline mt={7}>
               The file should not exceed {Math.floor(maxSize / 1024)}mb
             </Text>
           </div>
         </Group>
       </Dropzone>
-    </>
+    </Stack>
   )
 }
 

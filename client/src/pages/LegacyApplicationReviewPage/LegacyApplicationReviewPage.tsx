@@ -1,13 +1,15 @@
-import { Affix, Button, Transition, rem, Container } from '@mantine/core'
+import { Affix, Button, Transition, rem } from '@mantine/core'
 import { useWindowScroll } from '@mantine/hooks'
 import { LegacyApplicationsDatatable } from './components/LegacyApplicationsDatatable/LegacyApplicationsDatatable'
 import { ArrowUp } from 'phosphor-react'
+import React from 'react'
+import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 
 const LegacyApplicationReviewPage = () => {
   const [scroll, scrollTo] = useWindowScroll()
 
   return (
-    <Container>
+    <ContentContainer>
       <LegacyApplicationsDatatable />
       <Affix position={{ bottom: 20, right: 20 }}>
         <Transition transition='slide-up' mounted={scroll.y > 0}>
@@ -22,7 +24,7 @@ const LegacyApplicationReviewPage = () => {
           )}
         </Transition>
       </Affix>
-    </Container>
+    </ContentContainer>
   )
 }
 

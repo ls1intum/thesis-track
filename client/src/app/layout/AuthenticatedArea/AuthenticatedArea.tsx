@@ -52,7 +52,7 @@ const links: Array<{
     icon: FolderSimplePlus,
     roles: ['admin', 'advisor', 'supervisor'],
   },
-  { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin'] },
+  { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin', 'supervisor'] },
 ]
 
 const SpinningLoader = () => (

@@ -3,12 +3,18 @@ import { Container } from '@mantine/core'
 
 import * as styles from './ContentContainer.module.scss'
 
-interface IContentContainerProps {}
+interface IContentContainerProps {
+  size?: 'xl'
+}
 
 const ContentContainer = (props: PropsWithChildren<IContentContainerProps>) => {
-  const { children } = props
+  const { size, children } = props
 
-  return <Container className={styles.contentContainer}>{children}</Container>
+  return (
+    <Container className={styles.contentContainer} size={size}>
+      {children}
+    </Container>
+  )
 }
 
 export default ContentContainer

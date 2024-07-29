@@ -30,6 +30,7 @@ import { GLOBAL_CONFIG } from '../../config/global'
 import { ApiResponse, doRequest } from '../../requests/request'
 import { ILegacyCreateApplicationPayload } from '../../requests/payloads/application'
 import UploadArea from '../../components/UploadArea/UploadArea'
+import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 
 countries.registerLocale(enLocale)
 
@@ -168,17 +169,8 @@ const LegacyThesisApplicationForm = () => {
   })
 
   return (
-    <div style={{ padding: '0 0 5vh 0' }}>
-      <Box
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          maxWidth: '80vw',
-          gap: '2vh',
-        }}
-        mx='auto'
-        pos='relative'
-      >
+    <ContentContainer size='xl'>
+      <Box mx='auto' pos='relative'>
         <LoadingOverlay visible={loadingOverlayVisible} overlayProps={{ blur: 2 }} />
         {applicationSuccessfullySubmitted ? (
           <LegacyApplicationSuccessfulSubmission
@@ -187,27 +179,14 @@ const LegacyThesisApplicationForm = () => {
           />
         ) : (
           <Stack>
-            <Group
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'center',
-              }}
-            >
-              <div
-                style={{
-                  width: '15vw',
-                  height: '15vw',
-                }}
-              >
+            <Center>
+              <Group>
                 <Image src={LS1Logo} alt='LS1 Logo' />
-              </div>
-              <Center>
                 <Title order={3}>Thesis Application at LS1 Chair</Title>
-              </Center>
-            </Group>
+              </Group>
+            </Center>
+
             <form
-              style={{ display: 'flex', flexDirection: 'column', gap: '2vh' }}
               onSubmit={form.onSubmit(async (values) => {
                 loadingOverlayHandlers.open()
 
@@ -280,265 +259,277 @@ const LegacyThesisApplicationForm = () => {
                 }
               })}
             >
-              <Group grow align='flex-start'>
+              <Stack gap='md'>
+                <Group grow align='flex-start'>
+                  <TextInput
+                    type='text'
+                    required={!form.values.isExchangeStudent}
+                    withAsterisk={!form.values.isExchangeStudent}
+                    placeholder='TUM ID'
+                    label='TUM ID'
+                    {...form.getInputProps('universityId')}
+                  />
+                  <TextInput
+                    type='text'
+                    required={!form.values.isExchangeStudent}
+                    withAsterisk={!form.values.isExchangeStudent}
+                    placeholder='Matriculation Number'
+                    label='Matriculation Number'
+                    {...form.getInputProps('matriculationNumber')}
+                  />
+                </Group>
+                <Group grow align='flex-start'>
+                  <TextInput
+                    type='text'
+                    required={true}
+                    withAsterisk={true}
+                    placeholder='First Name'
+                    label='First Name'
+                    {...form.getInputProps('firstName')}
+                  />
+                  <TextInput
+                    type='text'
+                    required={true}
+                    withAsterisk={true}
+                    placeholder='Last Name'
+                    label='Last Name'
+                    {...form.getInputProps('lastName')}
+                  />
+                </Group>
+                <Group grow align='flex-start'>
+                  <Select
+                    label='Gender'
+                    placeholder='Gender'
+                    data={Object.keys(GLOBAL_CONFIG.genders).map((key) => {
+                      return {
+                        label: GLOBAL_CONFIG.genders[key],
+                        value: key,
+                      }
+                    })}
+                    required={true}
+                    withAsterisk={true}
+                    searchable={true}
+                    {...form.getInputProps('gender')}
+                  />
+                  <Select
+                    label='Nationality'
+                    placeholder='Nationality'
+                    data={countriesArr}
+                    required={true}
+                    withAsterisk={true}
+                    searchable={true}
+                    {...form.getInputProps('nationality')}
+                  />
+                </Group>
                 <TextInput
                   type='text'
-                  required={!form.values.isExchangeStudent}
-                  withAsterisk={!form.values.isExchangeStudent}
-                  placeholder='TUM ID'
-                  label='TUM ID'
-                  {...form.getInputProps('universityId')}
-                />
-                <TextInput
-                  type='text'
-                  required={!form.values.isExchangeStudent}
-                  withAsterisk={!form.values.isExchangeStudent}
-                  placeholder='Matriculation Number'
-                  label='Matriculation Number'
-                  {...form.getInputProps('matriculationNumber')}
-                />
-              </Group>
-              <Group grow align='flex-start'>
-                <TextInput
-                  type='text'
                   required={true}
                   withAsterisk={true}
-                  placeholder='First Name'
-                  label='First Name'
-                  {...form.getInputProps('firstName')}
+                  placeholder='your@email.com'
+                  label='Email (preferrably a TUM email address)'
+                  {...form.getInputProps('email')}
                 />
-                <TextInput
-                  type='text'
-                  required={true}
-                  withAsterisk={true}
-                  placeholder='Last Name'
-                  label='Last Name'
-                  {...form.getInputProps('lastName')}
-                />
-              </Group>
-              <Group grow align='flex-start'>
-                <Select
-                  label='Gender'
-                  placeholder='Gender'
-                  data={Object.keys(GLOBAL_CONFIG.genders).map((key) => {
-                    return {
-                      label: GLOBAL_CONFIG.genders[key],
-                      value: key,
-                    }
-                  })}
-                  required={true}
-                  withAsterisk={true}
-                  searchable={true}
-                  {...form.getInputProps('gender')}
-                />
-                <Select
-                  label='Nationality'
-                  placeholder='Nationality'
-                  data={countriesArr}
-                  required={true}
-                  withAsterisk={true}
-                  searchable={true}
-                  {...form.getInputProps('nationality')}
-                />
-              </Group>
-              <TextInput
-                type='text'
-                required={true}
-                withAsterisk={true}
-                placeholder='your@email.com'
-                label='Email (preferrably a TUM email address)'
-                {...form.getInputProps('email')}
-              />
-              <Group grow align='flex-start'>
-                <Select
-                  label='Study Degree'
-                  placeholder='Study Degree'
-                  data={Object.keys(GLOBAL_CONFIG.study_degrees).map((key) => {
-                    return {
-                      label: GLOBAL_CONFIG.study_degrees[key],
-                      value: key,
-                    }
-                  })}
-                  required={true}
-                  withAsterisk={true}
-                  searchable={true}
-                  {...form.getInputProps('studyDegree')}
-                />
-                <Select
-                  label='Study Program'
-                  placeholder='Study Program'
-                  data={Object.keys(GLOBAL_CONFIG.study_programs).map((key) => {
-                    return {
-                      label: GLOBAL_CONFIG.study_programs[key],
-                      value: key,
-                    }
-                  })}
-                  required={true}
-                  withAsterisk={true}
-                  searchable={true}
-                  {...form.getInputProps('studyProgram')}
-                />
+                <Group grow align='flex-start'>
+                  <Select
+                    label='Study Degree'
+                    placeholder='Study Degree'
+                    data={Object.keys(GLOBAL_CONFIG.study_degrees).map((key) => {
+                      return {
+                        label: GLOBAL_CONFIG.study_degrees[key],
+                        value: key,
+                      }
+                    })}
+                    required={true}
+                    withAsterisk={true}
+                    searchable={true}
+                    {...form.getInputProps('studyDegree')}
+                  />
+                  <Select
+                    label='Study Program'
+                    placeholder='Study Program'
+                    data={Object.keys(GLOBAL_CONFIG.study_programs).map((key) => {
+                      return {
+                        label: GLOBAL_CONFIG.study_programs[key],
+                        value: key,
+                      }
+                    })}
+                    required={true}
+                    withAsterisk={true}
+                    searchable={true}
+                    {...form.getInputProps('studyProgram')}
+                  />
+                  <DatePickerInput
+                    leftSection={<Calendar />}
+                    withAsterisk={true}
+                    label='Enrollment Date'
+                    {...form.getInputProps('enrolledAt')}
+                  />
+                </Group>
+                <Group grow align='flex-start'>
+                  <div>
+                    <Textarea
+                      autosize
+                      minRows={5}
+                      label='Special Skills'
+                      placeholder='Programming languages, certificates, etc.'
+                      required={true}
+                      withAsterisk={true}
+                      {...form.getInputProps('specialSkills')}
+                    />
+                    {!form.errors.specialSkills && (
+                      <Text fz='xs' ta='right'>{`${
+                        form.values.specialSkills?.length ?? 0
+                      } / 500`}</Text>
+                    )}
+                  </div>
+                  <div>
+                    <Textarea
+                      autosize
+                      minRows={5}
+                      label='Motivation'
+                      placeholder='What are you looking for?'
+                      required={true}
+                      withAsterisk={true}
+                      {...form.getInputProps('motivation')}
+                    />
+                    {!form.errors.motivation && (
+                      <Text
+                        fz='xs'
+                        ta='right'
+                      >{`${form.values.motivation?.length ?? 0} / 500`}</Text>
+                    )}
+                  </div>
+                </Group>
+                <Group grow align='flex-start'>
+                  <div>
+                    <Textarea
+                      autosize
+                      minRows={5}
+                      label='Interests'
+                      placeholder='What are you interested in?'
+                      required={true}
+                      withAsterisk={true}
+                      {...form.getInputProps('interests')}
+                    />
+                    {!form.errors.interests && (
+                      <Text
+                        fz='xs'
+                        ta='right'
+                      >{`${form.values.interests?.length ?? 0} / 500`}</Text>
+                    )}
+                  </div>
+                  <div>
+                    <Textarea
+                      autosize
+                      minRows={5}
+                      label='Projects'
+                      placeholder='What projects have you worked on?'
+                      required={true}
+                      withAsterisk={true}
+                      {...form.getInputProps('projects')}
+                    />
+                    {!form.errors.projects && (
+                      <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
+                    )}
+                  </div>
+                </Group>
+                <div>
+                  <Textarea
+                    autosize
+                    minRows={1}
+                    label='Thesis Title Suggestion'
+                    placeholder='Thesis Title Suggestion'
+                    required={true}
+                    withAsterisk={true}
+                    {...form.getInputProps('thesisTitle')}
+                  />
+                  {!form.errors.thesisTitle && (
+                    <Text
+                      fz='xs'
+                      ta='right'
+                    >{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
+                  )}
+                </div>
                 <DatePickerInput
                   leftSection={<Calendar />}
-                  label='Enrollment Date'
-                  {...form.getInputProps('enrolledAt')}
+                  label='Desired Thesis Start Date'
+                  {...form.getInputProps('desiredStartDate')}
                 />
-              </Group>
-              <Group grow align='flex-start'>
-                <div>
-                  <Textarea
-                    autosize
-                    minRows={5}
-                    label='Special Skills'
-                    placeholder='Programming languages, certificates, etc.'
+                <Group grow>
+                  <MultiSelect
+                    hidePickedOptions
+                    label='Research Areas'
+                    placeholder='Research Areas'
+                    data={Object.keys(GLOBAL_CONFIG.research_areas).map((key) => {
+                      return {
+                        label: GLOBAL_CONFIG.research_areas[key] ?? key,
+                        value: key,
+                      }
+                    })}
                     required={true}
                     withAsterisk={true}
-                    {...form.getInputProps('specialSkills')}
+                    {...form.getInputProps('researchAreas')}
                   />
-                  {!form.errors.specialSkills && (
-                    <Text fz='xs' ta='right'>{`${
-                      form.values.specialSkills?.length ?? 0
-                    } / 500`}</Text>
-                  )}
-                </div>
-                <div>
-                  <Textarea
-                    autosize
-                    minRows={5}
-                    label='Motivation'
-                    placeholder='What are you looking for?'
+                  <MultiSelect
+                    hidePickedOptions
+                    label='Focus Topics'
+                    placeholder='Focus Topics'
+                    data={Object.keys(GLOBAL_CONFIG.focus_topics).map((key) => {
+                      return {
+                        label: GLOBAL_CONFIG.focus_topics[key] ?? key,
+                        value: key,
+                      }
+                    })}
                     required={true}
                     withAsterisk={true}
-                    {...form.getInputProps('motivation')}
+                    {...form.getInputProps('focusTopics')}
                   />
-                  {!form.errors.motivation && (
-                    <Text fz='xs' ta='right'>{`${form.values.motivation?.length ?? 0} / 500`}</Text>
-                  )}
-                </div>
-              </Group>
-              <Group grow align='flex-start'>
-                <div>
-                  <Textarea
-                    autosize
-                    minRows={5}
-                    label='Interests'
-                    placeholder='What are you interested in?'
+                </Group>
+                <Stack>
+                  <UploadArea
+                    label='Examination Report'
                     required={true}
-                    withAsterisk={true}
-                    {...form.getInputProps('interests')}
+                    value={form.values.examinationReport}
+                    onChange={(file) => form.setValues({ examinationReport: file })}
                   />
-                  {!form.errors.interests && (
-                    <Text fz='xs' ta='right'>{`${form.values.interests?.length ?? 0} / 500`}</Text>
-                  )}
-                </div>
-                <div>
-                  <Textarea
-                    autosize
-                    minRows={5}
-                    label='Projects'
-                    placeholder='What projects have you worked on?'
+                  <UploadArea
+                    label='CV'
                     required={true}
-                    withAsterisk={true}
-                    {...form.getInputProps('projects')}
+                    value={form.values.cv}
+                    onChange={(file) => form.setValues({ cv: file })}
                   />
-                  {!form.errors.projects && (
-                    <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
-                  )}
-                </div>
-              </Group>
-              <div>
-                <Textarea
-                  autosize
-                  minRows={1}
-                  label='Thesis Title Suggestion'
-                  placeholder='Thesis Title Suggestion'
-                  required={true}
-                  withAsterisk={true}
-                  {...form.getInputProps('thesisTitle')}
-                />
-                {!form.errors.thesisTitle && (
-                  <Text fz='xs' ta='right'>{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
-                )}
-              </div>
-              <DatePickerInput
-                leftSection={<Calendar />}
-                label='Desired Thesis Start Date'
-                {...form.getInputProps('desiredStartDate')}
-              />
-              <Group grow>
-                <MultiSelect
-                  hidePickedOptions
-                  label='Research Areas'
-                  placeholder='Research Areas'
-                  data={Object.keys(GLOBAL_CONFIG.research_areas).map((key) => {
-                    return {
-                      label: GLOBAL_CONFIG.research_areas[key] ?? key,
-                      value: key,
-                    }
-                  })}
-                  required={true}
-                  withAsterisk={true}
-                  {...form.getInputProps('researchAreas')}
-                />
-                <MultiSelect
-                  hidePickedOptions
-                  label='Focus Topics'
-                  placeholder='Focus Topics'
-                  data={Object.keys(GLOBAL_CONFIG.focus_topics).map((key) => {
-                    return {
-                      label: GLOBAL_CONFIG.focus_topics[key] ?? key,
-                      value: key,
-                    }
-                  })}
-                  required={true}
-                  withAsterisk={true}
-                  {...form.getInputProps('focusTopics')}
-                />
-              </Group>
-              <Stack>
-                <UploadArea
-                  label='Examination Report'
-                  required={true}
-                  value={form.values.examinationReport}
-                  onChange={(file) => form.setValues({ examinationReport: file })}
-                />
-                <UploadArea
-                  label='CV'
-                  required={true}
-                  value={form.values.cv}
-                  onChange={(file) => form.setValues({ cv: file })}
-                />
-                <UploadArea
-                  label='Bachelor Report'
-                  required={false}
-                  value={form.values.degreeReport}
-                  onChange={(file) => form.setValues({ degreeReport: file })}
-                />
+                  <UploadArea
+                    label='Bachelor Report'
+                    required={false}
+                    value={form.values.degreeReport}
+                    onChange={(file) => form.setValues({ degreeReport: file })}
+                  />
+                </Stack>
+                <Stack>
+                  <Checkbox
+                    mt='md'
+                    label='I have read the declaration of consent below and agree to the processing of my data.'
+                    {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}
+                  />
+                  <Spoiler
+                    maxHeight={0}
+                    showLabel={<Text fz='sm'>Show Declaration of Consent</Text>}
+                    hideLabel={<Text fz='sm'>Hide</Text>}
+                  >
+                    <DeclarationOfDataConsent />
+                  </Spoiler>
+                </Stack>
+                <Group>
+                  <Button type='submit' disabled={!form.isValid()}>
+                    Submit
+                  </Button>
+                </Group>
               </Stack>
-              <Stack>
-                <Checkbox
-                  mt='md'
-                  label='I have read the declaration of consent below and agree to the processing of my data.'
-                  {...form.getInputProps('declarationOfConsentAccepted')}
-                />
-                <Spoiler
-                  maxHeight={0}
-                  showLabel={<Text fz='sm'>Show Declaration of Consent</Text>}
-                  hideLabel={<Text fz='sm'>Hide</Text>}
-                >
-                  <DeclarationOfDataConsent />
-                </Spoiler>
-              </Stack>
-              <Group>
-                <Button type='submit' disabled={!form.isValid()}>
-                  Submit
-                </Button>
-              </Group>
             </form>
           </Stack>
         )}
       </Box>
-    </div>
+    </ContentContainer>
   )
 }
 
