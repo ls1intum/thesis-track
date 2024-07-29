@@ -140,8 +140,8 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                 label='Matriculation Number'
                 value={application.user.matriculationNumber}
               />
-              <LabeledItem label='Study Degree' value={application.user.studyDegree} />
-              <LabeledItem label='Study Program' value={application.user.studyProgram} />
+              <LabeledItem label='Study Degree' value={GLOBAL_CONFIG.study_degrees[application.user.studyDegree || ''] ?? application.user.studyDegree} />
+              <LabeledItem label='Study Program' value={GLOBAL_CONFIG.study_programs[application.user.studyProgram || ''] ?? application.user.studyProgram} />
               <LabeledItem label='Enrollment Date' value={application.user.enrolledAt} />
             </Group>
             <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
