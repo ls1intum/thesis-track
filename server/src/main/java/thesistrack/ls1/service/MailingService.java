@@ -20,9 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.time.Instant;
+import java.util.*;
 
 @Service
 public class MailingService {
@@ -208,8 +207,12 @@ public class MailingService {
 
         return template.replace("{{application.studyProgram}}", student.getStudyProgram())
                 .replace("{{application.studyDegree}}", student.getStudyDegree())
-                .replace("{{application.enrolledAt}}", simpleDateFormat.format(student.getEnrolledAt()))
-                .replace("{{application.desiredThesisStart}}", simpleDateFormat.format(application.getDesiredStartDate()))
+                .replace("{{application.enrolledAt}}", simpleDateFormat.format(
+                        Date.from(Objects.requireNonNullElse(student.getEnrolledAt(), Instant.now())
+                )))
+                .replace("{{application.desiredThesisStart}}", simpleDateFormat.format(
+                        Date.from(Objects.requireNonNullElse(application.getDesiredStartDate(), Instant.now())
+                )))
                 .replace("{{application.specialSkills}}", student.getSpecialSkills())
                 .replace("{{application.motivation}}", application.getMotivation())
                 .replace("{{application.interests}}", student.getInterests())
