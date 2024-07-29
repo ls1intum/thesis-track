@@ -1,5 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import { IThesisProgressChartDataElement, ThesisState } from '../../types/chart'
+import { IThesisProgressChartDataElement } from '../../types/chart'
+import { ThesisState } from '../../../../requests/responses/thesis'
 
 export interface IThesisOverviewChartContextFilters {
   advisors?: string[]

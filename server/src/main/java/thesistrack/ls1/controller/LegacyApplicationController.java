@@ -9,12 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import thesistrack.ls1.controller.payload.LegacyAcceptApplicationPayload;
 import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
 import thesistrack.ls1.dto.ApplicationDto;
 import thesistrack.ls1.entity.Application;
+import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.ApplicationService;
+import thesistrack.ls1.service.AuthenticationService;
 
 import java.time.Duration;
 import java.util.UUID;
@@ -25,10 +29,12 @@ import java.util.UUID;
 public class LegacyApplicationController {
     private final Bucket bucket;
     private final ApplicationService applicationService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public LegacyApplicationController(ApplicationService applicationService) {
+    public LegacyApplicationController(ApplicationService applicationService, AuthenticationService authenticationService) {
         this.applicationService = applicationService;
+        this.authenticationService = authenticationService;
 
         Bandwidth limit = Bandwidth.classic(100, Refill.greedy(100, Duration.ofMinutes(1)));
         this.bucket = Bucket.builder().addLimit(limit).build();
@@ -39,27 +45,33 @@ public class LegacyApplicationController {
             @RequestPart("thesisApplication") LegacyCreateApplicationPayload applicationPayload,
             @RequestPart("examinationReport") MultipartFile examinationReport,
             @RequestPart("cv") MultipartFile cv,
-            @RequestPart(value = "bachelorReport", required = false) MultipartFile bachelorReport
+            @RequestPart(value = "degreeReport", required = false) MultipartFile degreeReport
     ) {
         if (!bucket.tryConsume(1)) {
             return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).build();
         }
 
         final Application application = applicationService
-                .createLegacyApplication(applicationPayload, examinationReport, cv, bachelorReport);
+                .createLegacyApplication(applicationPayload, examinationReport, cv, degreeReport);
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
     }
 
     @PutMapping("/{applicationId}/accept")
-    @PreAuthorize("hasAnyRole('admin', 'advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> acceptApplication(
             @PathVariable UUID applicationId,
-            @RequestPart("advisorId") UUID advisorId,
-            @RequestPart("comment") String comment,
-            @RequestPart("notifyStudent") boolean notifyStudent
+            @RequestBody LegacyAcceptApplicationPayload payload,
+            JwtAuthenticationToken jwt
     ) {
-        Application application = applicationService.accept(applicationId, advisorId, comment, notifyStudent);
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Application application = applicationService.accept(
+                applicationId,
+                authenticatedUser,
+                payload.getAdvisorId(),
+                payload.getComment(),
+                payload.getNotifyUser()
+        );
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
     }

@@ -12,12 +12,14 @@ import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
 import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.constants.ApplicationState;
+import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.ApplicationRepository;
 import thesistrack.ls1.repository.UserRepository;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -43,29 +45,11 @@ public class ApplicationService {
         this.mailingService = mailingService;
     }
 
-    public Page<Application> getAll(String searchString, String[] states, int page, int limit, String sortBy, String sortOrder) {
+    public Page<Application> getAll(String searchString, ApplicationState[] states, int page, int limit, String sortBy, String sortOrder) {
         Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
         return applicationRepository
-                .searchApplications(new HashSet<>(Arrays.asList(states)), searchString.toLowerCase(), PageRequest.of(page, limit, Sort.by(order)));
-    }
-
-    public Resource getExaminationReport(UUID thesisApplicationId) {
-        Application application = findById(thesisApplicationId);
-
-        return uploadService.load(application.getUser().getExaminationFilename());
-    }
-
-    public Resource getCV(UUID thesisApplicationId) {
-        Application thesisApplication = findById(thesisApplicationId);
-
-        return uploadService.load(thesisApplication.getUser().getCvFilename());
-    }
-
-    public Resource getBachelorReport(UUID thesisApplicationId) {
-        Application thesisApplication = findById(thesisApplicationId);
-
-        return uploadService.load(thesisApplication.getUser().getDegreeFilename());
+                .searchApplications(new HashSet<>(Arrays.stream(states).map(Enum::toString).toList()), searchString.toLowerCase(), PageRequest.of(page, limit, Sort.by(order)));
     }
 
     @Transactional
@@ -88,6 +72,7 @@ public class ApplicationService {
 
         student.setUniversityId(payload.getUniversityId());
         student.setMatriculationNumber(payload.getMatriculationNumber());
+        student.setIsExchangeStudent(payload.getIsExchangeStudent());
         student.setFirstName(payload.getFirstName());
         student.setLastName(payload.getLastName());
         student.setGender(payload.getGender());
@@ -126,16 +111,20 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application accept(UUID applicationId, UUID advisorId, String comment, boolean notifyStudent) {
+    public Application accept(UUID applicationId, User reviewer, UUID advisorId, String comment, boolean notifyUser) {
         Application application = findById(applicationId);
         User advisor = userService.findById(advisorId);
+
+        if (!advisor.hasGroup("advisor")) {
+            throw new ResourceInvalidParametersException("User is not an advisor.");
+        }
 
         application.setState(ApplicationState.ACCEPTED);
         application.setComment(comment);
         application.setReviewedAt(Instant.now());
-        application.setReviewedBy(advisor);
+        application.setReviewedBy(reviewer);
 
-        if (notifyStudent) {
+        if (notifyUser) {
             mailingService.sendApplicationAcceptanceEmail(application, advisor);
         }
 
@@ -143,14 +132,15 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application reject(UUID thesisApplicationId, String comment, boolean notifyStudent) {
+    public Application reject(UUID thesisApplicationId, User reviewer, String comment, boolean notifyUser) {
         Application application = findById(thesisApplicationId);
 
         application.setState(ApplicationState.REJECTED);
         application.setComment(comment);
         application.setReviewedAt(Instant.now());
+        application.setReviewedBy(reviewer);
 
-        if (notifyStudent) {
+        if (notifyUser) {
             mailingService.sendApplicationRejectionEmail(application);
         }
 

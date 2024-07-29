@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.entity.Application;
 
 import java.util.Set;

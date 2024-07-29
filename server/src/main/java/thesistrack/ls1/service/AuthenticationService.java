@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.entity.UserGroup;
 import thesistrack.ls1.entity.key.UserGroupId;
+import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.UserGroupRepository;
 import thesistrack.ls1.repository.UserRepository;
 import thesistrack.ls1.security.JwtAuthConfig;
@@ -17,25 +18,29 @@ import java.util.Map;
 
 @Service
 public class AuthenticationService {
-    private final JwtAuthConfig config;
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, UserGroupRepository userGroupRepository, JwtAuthConfig config) {
+    public AuthenticationService(UserRepository userRepository, UserGroupRepository userGroupRepository) {
         this.userRepository = userRepository;
         this.userGroupRepository = userGroupRepository;
-        this.config = config;
+    }
+
+    public User getAuthenticatedUser(JwtAuthenticationToken jwt) {
+        return this.userRepository.findByUniversityId(jwt.getName())
+                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found."));
     }
 
     @Transactional
-    public User getAuthenticatedUser(JwtAuthenticationToken jwt) {
+    public User updateAuthenticatedUser(JwtAuthenticationToken jwt) {
         Map<String, Object> attributes = jwt.getTokenAttributes();
+        String universityId = jwt.getName();
 
         String email = (String) attributes.get("email");
         String firstName = (String) attributes.get("given_name");
         String lastName = (String) attributes.get("family_name");
-        String universityId = (String) attributes.get(config.getUniversityIdJwtAttribute());
+
         List<String> groups = jwt.getAuthorities().stream()
                 .filter(authority -> authority.getAuthority().startsWith("ROLE_"))
                 .map(authority -> authority.getAuthority().replace("ROLE_", "")).toList();

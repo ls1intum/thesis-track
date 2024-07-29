@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import thesistrack.ls1.dto.PageResponse;
 import thesistrack.ls1.dto.TopicDto;
 import thesistrack.ls1.service.TopicService;
 
@@ -25,24 +26,24 @@ public class TopicController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<TopicDto>> getTopics() {
+    public ResponseEntity<PageResponse<TopicDto>> getTopics() {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('admin', 'advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<TopicDto> createTopic() {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
     @PutMapping("/{topicId}")
-    @PreAuthorize("hasAnyRole('admin', 'advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<TopicDto> updateTopic(@PathVariable UUID topicId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
     @DeleteMapping("/{topicId}")
-    @PreAuthorize("hasAnyRole('admin', 'advisor')")
+    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<TopicDto> deleteTopic(@PathVariable UUID topicId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }

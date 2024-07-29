@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import thesistrack.ls1.dto.PageResponse;
 import thesistrack.ls1.dto.ThesisDto;
 import thesistrack.ls1.service.ThesisService;
 
@@ -25,7 +26,7 @@ public class ThesisController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ThesisDto>> getTheses() {
+    public ResponseEntity<PageResponse<ThesisDto>> getTheses() {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 

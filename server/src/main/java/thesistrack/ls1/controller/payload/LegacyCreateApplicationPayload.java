@@ -4,15 +4,17 @@ import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LegacyCreateApplicationPayload {
+public class LegacyCreateApplicationPayload implements Serializable {
     private String universityId;
     private String matriculationNumber;
+    private Boolean isExchangeStudent;
     private String firstName;
     private String lastName;
     private String gender;

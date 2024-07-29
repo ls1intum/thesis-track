@@ -1,10 +1,11 @@
 import React, { useMemo, useState } from 'react'
-import { IThesisProgressChartDataElement, ThesisState } from '../../types/chart'
+import { IThesisProgressChartDataElement } from '../../types/chart'
 import ThesisOverviewChartContext, {
   IThesisOverviewChartContext,
   IThesisOverviewChartContextFilters,
   IThesisOverviewChartContextSort,
 } from './context'
+import { ThesisState } from '../../../../requests/responses/thesis'
 
 interface IThesisOverviewChartProviderProps {
   children: any
@@ -20,7 +21,7 @@ const ThesisOverviewChartProvider = (props: IThesisOverviewChartProviderProps) =
   const [thesisData] = useState<IThesisProgressChartDataElement[] | undefined>(mockData?.thesisData)
   const [advisors, setAdvisors] = useState<string[] | undefined>(mockData?.advisors)
   const [filters, setFilters] = useState<IThesisOverviewChartContextFilters>({
-    states: [ThesisState.proposal, ThesisState.writing, ThesisState.submitted, ThesisState.graded],
+    states: [ThesisState.PROPOSAL, ThesisState.WRITING, ThesisState.SUBMITTED, ThesisState.GRADED],
   })
   const [sort, setSort] = useState<IThesisOverviewChartContextSort>({
     column: 'start_date',

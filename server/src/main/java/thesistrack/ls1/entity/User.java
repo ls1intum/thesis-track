@@ -96,4 +96,19 @@ public class User {
     @Column(name = "joined_at", nullable = false)
     private Instant joinedAt;
 
+    public boolean hasGroup(String group) {
+        List<UserGroup> groups = getGroups();
+
+        if (groups == null) {
+            return false;
+        }
+
+        for (UserGroup userGroup : groups) {
+            if (userGroup.getId().getGroup().equals(group)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

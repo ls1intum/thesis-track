@@ -34,7 +34,7 @@ public class Thesis {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false, length = 100)
+    @Column(name = "state", columnDefinition = "application_state", nullable = false, length = 100)
     private ThesisState state;
 
     @ManyToOne(fetch = FetchType.LAZY)

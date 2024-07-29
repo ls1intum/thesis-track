@@ -3,52 +3,48 @@ import { ActionIcon, Badge, Group, Modal, MultiSelect, Stack, TextInput } from '
 import { DataTable, type DataTableSortStatus } from 'mantine-datatable'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Link } from 'react-router-dom'
-import LegacyThesisApplicationForm from '../../../LegacySubmitApplicationPage/LegacyThesisApplicationForm'
 import { Pageable } from '../../../../requests/responses/pageable'
-import { LegacyThesisApplication } from '../../../../legacy/interfaces/thesisApplication'
-import {
-  LegacyApplicationFormAccessMode,
-  LegacyApplicationStatus,
-} from '../../../../legacy/interfaces/application'
 import { ArrowSquareOut, Eye, MagnifyingGlass } from 'phosphor-react'
 import { notifications } from '@mantine/notifications'
 import { doRequest } from '../../../../requests/request'
 import { useLoggedInUser } from '../../../../hooks/authentication'
 import { formatDate } from '../../../../utils/format'
+import { ApplicationState, IApplication } from '../../../../requests/responses/application'
+import { useDebouncedState, useDebouncedValue } from '@mantine/hooks'
+import LegacyApplicationReviewModal from '../LegacyApplicationReviewModal/LegacyApplicationReviewModal'
 
-export const LegacyThesisApplicationsDatatable = () => {
+export const LegacyApplicationsDatatable = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
   const [page, setPage] = useState(1)
   const [limit, setLimit] = useState(20)
-  const [version, setVersion] = useState(0)
 
-  const [selectedApplications, setSelectedApplications] = useState<LegacyThesisApplication[]>([])
-  const [openedApplication, setOpenedApplication] = useState<LegacyThesisApplication>()
+  const [openedApplication, setOpenedApplication] = useState<IApplication>()
 
   const [searchQuery, setSearchQuery] = useState('')
-  const [sort, setSort] = useState<DataTableSortStatus<LegacyThesisApplication>>({
+  const [debouncedSearchQuery] = useDebouncedValue(searchQuery, 500)
+  const [sort, setSort] = useState<DataTableSortStatus<IApplication>>({
     columnAccessor: 'createdAt',
     direction: 'desc',
   })
   const [filteredStates, setFilteredStates] = useState<string[] | undefined>(['NOT_ASSESSED'])
 
-  const [applications, setApplications] = useState<Pageable<LegacyThesisApplication>>()
+  const [applications, setApplications] = useState<Pageable<IApplication>>()
 
   const user = useLoggedInUser()
 
   useEffect(() => {
     setApplications(undefined)
 
-    return doRequest<Pageable<LegacyThesisApplication>>(
-      `/api/thesis-applications`,
+    return doRequest<Pageable<IApplication>>(
+      `/v2/applications`,
       {
         method: 'GET',
         params: {
           page: page - 1,
           limit,
-          states: filteredStates?.join(',') ?? Object.keys(LegacyApplicationStatus).join(','),
-          searchQuery,
+          states: filteredStates?.join(',') ?? Object.keys(ApplicationState).join(','),
+          searchQuery: debouncedSearchQuery,
           sortBy: sort.columnAccessor,
           sortOrder: sort.direction,
         },
@@ -67,12 +63,9 @@ export const LegacyThesisApplicationsDatatable = () => {
             content: [],
             totalPages: 0,
             totalElements: 0,
-            number: 0,
-            size: 0,
-            empty: true,
-            first: true,
             last: true,
-            numberOfElements: 0,
+            pageNumber: 0,
+            pageSize: limit
           })
         }
 
@@ -80,11 +73,10 @@ export const LegacyThesisApplicationsDatatable = () => {
       },
     )
   }, [
-    version,
     user.userId,
     page,
     limit,
-    searchQuery,
+    debouncedSearchQuery,
     filteredStates?.join(','),
     sort.columnAccessor,
     sort.direction,
@@ -92,25 +84,27 @@ export const LegacyThesisApplicationsDatatable = () => {
 
   return (
     <Stack>
-      {openedApplication && (
-        <Modal
-          centered
-          size='90%'
-          opened={!!openedApplication}
-          onClose={() => {
-            setOpenedApplication(undefined)
-          }}
-        >
-          <LegacyThesisApplicationForm
-            application={openedApplication}
-            accessMode={LegacyApplicationFormAccessMode.INSTRUCTOR}
-            onUpdate={() => {
-              setVersion((prev) => prev + 1)
-              setOpenedApplication(undefined)
-            }}
-          />
-        </Modal>
-      )}
+      <LegacyApplicationReviewModal
+        application={openedApplication}
+        onClose={() => {
+          setOpenedApplication(undefined)
+        }}
+        onUpdate={newApplication => {
+          setApplications(prev => {
+            if (!prev) {
+              return undefined
+            }
+
+            const index = prev.content.findIndex(x => x.applicationId === newApplication.applicationId)
+
+            if (index >= 0) {
+              prev.content[index] = newApplication
+            }
+
+            return {...prev}
+          })
+        }}
+      />
       <TextInput
         style={{ margin: '1vh 0', width: '100%' }}
         placeholder='Search applications...'
@@ -132,13 +126,9 @@ export const LegacyThesisApplicationsDatatable = () => {
         totalRecords={applications?.totalElements ?? 0}
         recordsPerPage={limit}
         page={page}
-        onPageChange={(x) => {
-          setPage(x)
-        }}
+        onPageChange={(x) => setPage(x)}
         recordsPerPageOptions={[5, 10, 15, 20, 25, 30, 35, 40, 50, 100, 200, 300]}
-        onRecordsPerPageChange={(pageSize) => {
-          setLimit(pageSize)
-        }}
+        onRecordsPerPageChange={(pageSize) => setLimit(pageSize)}
         sortStatus={sort}
         onSortStatusChange={(status) => {
           setPage(1)
@@ -146,11 +136,10 @@ export const LegacyThesisApplicationsDatatable = () => {
         }}
         bodyRef={bodyRef}
         records={applications?.content}
-        selectedRecords={selectedApplications}
-        onSelectedRecordsChange={setSelectedApplications}
+        idAccessor='applicationId'
         columns={[
           {
-            accessor: 'application_status',
+            accessor: 'state',
             title: 'Status',
             textAlign: 'center',
             filter: (
@@ -158,9 +147,9 @@ export const LegacyThesisApplicationsDatatable = () => {
                 hidePickedOptions
                 label='Status'
                 description='Show all applications having status in'
-                data={Object.keys(LegacyApplicationStatus).map((key) => {
+                data={Object.keys(ApplicationState).map((key) => {
                   return {
-                    label: LegacyApplicationStatus[key as keyof typeof LegacyApplicationStatus],
+                    label: ApplicationState[key as keyof typeof ApplicationState],
                     value: key,
                   }
                 })}
@@ -177,11 +166,11 @@ export const LegacyThesisApplicationsDatatable = () => {
             filtering: (filteredStates?.length ?? 0) > 0,
             render: (application) => {
               let color: string = 'gray'
-              switch (application.applicationStatus) {
-                case 'ACCEPTED':
+              switch (application.state) {
+                case ApplicationState.ACCEPTED:
                   color = 'green'
                   break
-                case 'REJECTED':
+                case ApplicationState.REJECTED:
                   color = 'red'
                   break
                 default:
@@ -189,32 +178,32 @@ export const LegacyThesisApplicationsDatatable = () => {
               }
               return (
                 <Badge color={color}>
-                  {LegacyApplicationStatus[application.applicationStatus]}
+                  {application.state}
                 </Badge>
               )
             },
           },
           {
-            accessor: 'student.tumId',
-            title: 'TUM ID',
+            accessor: 'user.universityId',
+            title: 'University ID',
             sortable: true,
           },
           {
-            accessor: 'student.matriculationNumber',
+            accessor: 'user.matriculationNumber',
             title: 'Matriculation Nr.',
             sortable: true,
           },
           {
-            accessor: 'student.email',
+            accessor: 'user.email',
             title: 'Email',
             sortable: true,
           },
           {
-            accessor: 'student.firstName',
+            accessor: 'user.firstName',
             title: 'Full name',
             sortable: true,
             render: (application) =>
-              `${application.student.firstName ?? ''} ${application.student.lastName ?? ''}`,
+              `${application.user.firstName ?? ''} ${application.user.lastName ?? ''}`,
           },
           {
             accessor: 'createdAt',

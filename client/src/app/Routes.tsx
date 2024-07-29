@@ -1,7 +1,6 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
-import { LegacyApplicationFormAccessMode } from '../legacy/interfaces/application'
 import { Center, Loader } from '@mantine/core'
 
 const LegacyThesisApplicationForm = lazy(
@@ -103,7 +102,7 @@ const AppRoutes = () => {
           <Route
             path='/applications/thesis'
             element={
-              <LegacyThesisApplicationForm accessMode={LegacyApplicationFormAccessMode.STUDENT} />
+              <LegacyThesisApplicationForm />
             }
           />
           <Route

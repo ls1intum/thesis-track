@@ -23,7 +23,7 @@ public class UserInfoController {
 
     @PostMapping
     public ResponseEntity<UserDto> getInfo(JwtAuthenticationToken jwt) {
-        return ResponseEntity.ok(UserDto.fromUserEntity(this.authenticationService.getAuthenticatedUser(jwt)));
+        return ResponseEntity.ok(UserDto.fromUserEntity(this.authenticationService.updateAuthenticatedUser(jwt)));
     }
 
     @PutMapping

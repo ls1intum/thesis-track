@@ -18,7 +18,10 @@ export interface IUser {
   enrolledAt: string | null,
   updatedAt: string,
   joinedAt: string,
-  groups: string[]
+  groups: string[],
+  hasCv: boolean,
+  hasDegreeReport: boolean,
+  hasExaminationReport: boolean,
 }
 
 export interface ILightUser {

@@ -47,7 +47,7 @@ INSERT INTO applications (
     created_at, reviewed_at
 )
 SELECT
-    t1.id, t1.student_id, NULL, t1.thesis_title, t1.motivation, t1.application_status::text::application_state,
+    t1.id, t1.student_id, NULL, t1.thesis_title, t1.motivation, t1.application_status::text,
     t3.user_id, t1.desired_thesis_start, t1.assessment_comment,
     t1.created_at, CASE WHEN t1.application_status = 'NOT_ASSESSED' THEN NULL ELSE t1.updated_at END
 FROM thesis_application t1

@@ -1,8 +1,8 @@
 import React from 'react'
 import { Grid, MultiSelect, Select } from '@mantine/core'
 import { useThesisOverviewChart } from '../ThesisOverviewChartProvider/hooks'
-import { ThesisState } from '../../types/chart'
 import { DateInput } from '@mantine/dates'
+import { ThesisState } from '../../../../requests/responses/thesis'
 
 const ThesisOverviewFilter = () => {
   const { filters, advisors, setFilters, sort, setSort } = useThesisOverviewChart()

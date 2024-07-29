@@ -1,12 +1,5 @@
 --liquibase formatted sql
 
---changeset emilius:01-v3-initial-changelog-1
-CREATE TYPE application_state AS ENUM ('NOT_ASSESSED', 'ACCEPTED', 'REJECTED');
-CREATE CAST (varchar AS application_state) WITH INOUT AS IMPLICIT;
-
-CREATE TYPE thesis_state AS ENUM ('PROPOSAL', 'WRITING', 'SUBMITTED', 'ASSESSED', 'GRADED', 'FINISHED', 'DROPPED_OUT');
-CREATE CAST (varchar AS thesis_state) WITH INOUT AS IMPLICIT;
-
 --changeset emilius:01-v3-initial-changelog-2
 CREATE TABLE users
 (
@@ -85,7 +78,7 @@ CREATE TABLE applications
     topic_id           UUID,
     thesis_title       TEXT,
     motivation         TEXT                   NOT NULL,
-    state              application_state      NOT NULL,
+    state              TEXT                   NOT NULL,
     desired_start_date TIMESTAMP              NOT NULL,
     comment            TEXT,
     created_at         TIMESTAMP              NOT NULL,
@@ -103,7 +96,7 @@ CREATE TABLE theses
     title                       TEXT              NOT NULL,
     info                        TEXT              NOT NULL,
     abstract                    TEXT              NOT NULL,
-    state                       thesis_state      NOT NULL,
+    state                       TEXT              NOT NULL,
     application_id              UUID,
     final_thesis_filename       TEXT,
     final_presentation_filename TEXT,

@@ -16,11 +16,12 @@ import java.util.UUID;
 public interface UserRepository extends JpaRepository<User, UUID> {
     Optional<User> findByUniversityId(String universityId);
 
-    @Query("SELECT u FROM User u WHERE " +
+    @Query("SELECT u FROM User u JOIN UserGroup g ON (u.id = g.id.userId) WHERE " +
+            "g.id.group IN (:groups) AND " +
             "(LOWER(u.firstName) LIKE %:searchQuery% OR " +
             "LOWER(u.lastName) LIKE %:searchQuery% OR " +
             "LOWER(u.email) LIKE %:searchQuery% OR " +
             "LOWER(u.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(u.universityId) LIKE %:searchQuery%)")
-    Page<User> searchUsers(@Param("searchQuery") String searchQuery, Pageable page);
+    Page<User> searchUsers(@Param("searchQuery") String searchQuery, @Param("groups") Set<String> groups, Pageable page);
 }

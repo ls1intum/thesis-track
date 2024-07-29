@@ -33,6 +33,9 @@ public class UserDto implements Serializable {
     private Instant updatedAt;
     private Instant joinedAt;
     private List<String> groups;
+    private boolean hasCv;
+    private boolean hasExaminationReport;
+    private boolean hasDegreeReport;
 
     static public UserDto fromUserEntity(User user) {
         if (user == null) {
@@ -45,7 +48,8 @@ public class UserDto implements Serializable {
                 user.getFocusTopics(), user.getResearchAreas(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
                 user.getSpecialSkills(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
-                user.getGroups().stream().map(x -> x.getId().getGroup()).toList()
+                user.getGroups() == null ? new ArrayList<>() : user.getGroups().stream().map(x -> x.getId().getGroup()).toList(),
+                user.getCvFilename() != null, user.getExaminationFilename() != null, user.getDegreeFilename() != null
         );
     }
 }

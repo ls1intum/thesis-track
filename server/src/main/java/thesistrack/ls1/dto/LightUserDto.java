@@ -25,6 +25,10 @@ public class LightUserDto implements Serializable {
     private List<String> groups;
 
     static public LightUserDto fromUserEntity(User user) {
+        if (user == null) {
+            return null;
+        }
+
         return new LightUserDto(
                 user.getId(), user.getUniversityId(), user.getMatriculationNumber(),
                 user.getFirstName(), user.getLastName(), user.getStudyDegree(), user.getStudyProgram(),

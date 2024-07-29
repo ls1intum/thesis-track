@@ -38,7 +38,7 @@ public class Application {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false, length = 100)
+    @Column(name = "state", nullable = false)
     private ApplicationState state;
 
     @NotNull
