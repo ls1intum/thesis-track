@@ -27,20 +27,20 @@ const links: Array<{
   icon: any
   roles: string[] | undefined
 }> = [
-  { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, roles: undefined },
+  /*{ link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, roles: undefined },
   {
     link: '/submit-application/pick-topic',
     label: 'Submit Application',
     icon: PaperPlaneTilt,
     roles: undefined,
-  },
+  },*/
   {
     link: '/management/thesis-applications',
-    label: 'Review Applications v1',
+    label: 'Review Applications',
     icon: Scroll,
     roles: ['admin', 'advisor', 'supervisor'],
   },
-  {
+  /*{
     link: '/applications',
     label: 'Review Applications v2',
     icon: Scroll,
@@ -52,7 +52,7 @@ const links: Array<{
     icon: FolderSimplePlus,
     roles: ['admin', 'advisor', 'supervisor'],
   },
-  { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin', 'supervisor'] },
+  { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin', 'supervisor'] },*/
 ]
 
 const SpinningLoader = () => (
@@ -124,14 +124,14 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             ))}
         </AppShell.Section>
         <AppShell.Section>
-          <Link
+          {/*<Link
             to='/settings/my-information'
             className={classes.link}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
             <User className={classes.linkIcon} size={32} />
             <span>My Information</span>
-          </Link>
+          </Link>*/}
 
           <Link to='/logout' className={classes.link}>
             <SignOut className={classes.linkIcon} size={32} />
