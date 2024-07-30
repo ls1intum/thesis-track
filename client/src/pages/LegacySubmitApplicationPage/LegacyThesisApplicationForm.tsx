@@ -1,6 +1,4 @@
 import { isEmail, isNotEmpty, useForm } from '@mantine/form'
-import countries from 'i18n-iso-countries'
-import enLocale from 'i18n-iso-countries/langs/en.json'
 import {
   Box,
   Button,
@@ -10,7 +8,6 @@ import {
   Image,
   LoadingOverlay,
   Select,
-  Spoiler,
   Stack,
   Text,
   Textarea,
@@ -410,7 +407,6 @@ const LegacyThesisApplicationForm = () => {
                       label='Projects'
                       placeholder='What projects have you worked on?'
                       required={true}
-                      
                       {...form.getInputProps('projects')}
                     />
                     {!form.errors.projects && (
@@ -488,7 +484,12 @@ const LegacyThesisApplicationForm = () => {
                 />
                 <Checkbox
                   mt='md'
-                  label={<>I have read the <DeclarationOfDataConsent text='declaration of consent' /> and agree to the processing of my data.</>}
+                  label={
+                    <>
+                      I have read the <DeclarationOfDataConsent text='declaration of consent' /> and
+                      agree to the processing of my data.
+                    </>
+                  }
                   {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}
                 />
                 <Group>

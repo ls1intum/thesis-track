@@ -1,4 +1,13 @@
-import { ActionIcon, Card, Group, InputLabel, rem, Stack, Text, useMantineTheme } from '@mantine/core'
+import {
+  ActionIcon,
+  Card,
+  Group,
+  InputLabel,
+  rem,
+  Stack,
+  Text,
+  useMantineTheme,
+} from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { notifications } from '@mantine/notifications'
@@ -20,9 +29,7 @@ const UploadArea = (props: IUploadAreaProps) => {
   return (
     <Stack gap='0'>
       <Group align='left'>
-        <InputLabel required={required}>
-          {label}
-        </InputLabel>
+        <InputLabel required={required}>{label}</InputLabel>
       </Group>
       {value ? (
         <Card shadow='sm' withBorder>

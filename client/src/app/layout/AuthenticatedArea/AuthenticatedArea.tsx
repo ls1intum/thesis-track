@@ -1,17 +1,19 @@
 import React, { PropsWithChildren, Suspense, useEffect } from 'react'
-import { ActionIcon, AppShell, Burger, Center, Group, Loader, Space, Stack, useMantineColorScheme } from '@mantine/core'
+import {
+  ActionIcon,
+  AppShell,
+  Burger,
+  Center,
+  Group,
+  Loader,
+  Space,
+  Stack,
+  useMantineColorScheme,
+} from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
-import {
-  FolderSimplePlus,
-  Kanban, Moon,
-  NewspaperClipping,
-  PaperPlaneTilt,
-  Scroll,
-  SignOut, Sun,
-  User,
-} from 'phosphor-react'
+import { Moon, Scroll, SignOut, Sun } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
 
@@ -69,7 +71,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     requiredGroups,
   } = props
 
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
   const [opened, { toggle }] = useDisclosure()
 
   const location = useLocation()
@@ -111,16 +113,16 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         <AppShell.Section grow mb='md'>
           <Stack justify='flex-end'>
             <ActionIcon
-              variant="outline"
+              variant='outline'
               color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}
               onClick={() => toggleColorScheme()}
-              title="Toggle color scheme"
+              title='Toggle color scheme'
               ml='auto'
             >
-              {colorScheme === 'dark' ? <Sun size="1.1rem" /> : <Moon size="1.1rem" />}
+              {colorScheme === 'dark' ? <Sun size='1.1rem' /> : <Moon size='1.1rem' />}
             </ActionIcon>
           </Stack>
-          <Space h="md" />
+          <Space h='md' />
           {links
             .filter(
               (item) => !item.roles || item.roles.some((role) => auth.user?.groups.includes(role)),

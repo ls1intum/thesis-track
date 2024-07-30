@@ -1,18 +1,18 @@
-import { Anchor, Button, Center, Modal, Text, Title } from '@mantine/core'
+import { Anchor, Modal, Text, Title } from '@mantine/core'
 import { useState } from 'react'
 
 interface IDeclarationOfDataConsentProps {
-  text: string;
+  text: string
 }
 
 export const DeclarationOfDataConsent = (props: IDeclarationOfDataConsentProps) => {
-  const {text} = props;
+  const { text } = props
 
-  const [opened, setOpened] = useState(false);
+  const [opened, setOpened] = useState(false)
 
   return (
     <>
-      <Anchor onClick={(e) => setOpened(true)}>{text}</Anchor>
+      <Anchor onClick={() => setOpened(true)}>{text}</Anchor>
       <Modal opened={opened} onClose={() => setOpened(false)}>
         <Title ta='center'>Data Consent</Title>
         <Text c='dimmed' fz='sm'>
