@@ -1,15 +1,15 @@
-import { PropsWithChildren, Suspense, useEffect } from 'react'
-import { AppShell, Burger, Center, Group, Loader } from '@mantine/core'
+import React, { PropsWithChildren, Suspense, useEffect } from 'react'
+import { ActionIcon, AppShell, Burger, Center, Group, Loader, Space, Stack, useMantineColorScheme } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import {
   FolderSimplePlus,
-  Kanban,
+  Kanban, Moon,
   NewspaperClipping,
   PaperPlaneTilt,
   Scroll,
-  SignOut,
+  SignOut, Sun,
   User,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
@@ -69,7 +69,9 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     requiredGroups,
   } = props
 
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme();
   const [opened, { toggle }] = useDisclosure()
+
   const location = useLocation()
   const showHeader = useIsSmallerBreakpoint('md') || collapseNavigation
   const auth = useAuthenticationContext()
@@ -106,7 +108,19 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       </AppShell.Header>
 
       <AppShell.Navbar p='md'>
-        <AppShell.Section grow my='md'>
+        <AppShell.Section grow mb='md'>
+          <Stack justify='flex-end'>
+            <ActionIcon
+              variant="outline"
+              color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}
+              onClick={() => toggleColorScheme()}
+              title="Toggle color scheme"
+              ml='auto'
+            >
+              {colorScheme === 'dark' ? <Sun size="1.1rem" /> : <Moon size="1.1rem" />}
+            </ActionIcon>
+          </Stack>
+          <Space h="md" />
           {links
             .filter(
               (item) => !item.roles || item.roles.some((role) => auth.user?.groups.includes(role)),
@@ -132,7 +146,6 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             <User className={classes.linkIcon} size={32} />
             <span>My Information</span>
           </Link>*/}
-
           <Link to='/logout' className={classes.link}>
             <SignOut className={classes.linkIcon} size={32} />
             <span>Logout</span>

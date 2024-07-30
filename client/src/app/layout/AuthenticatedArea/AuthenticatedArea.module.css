@@ -3,7 +3,7 @@
   align-items: center;
   text-decoration: none;
   font-size: var(--mantine-font-size-sm);
-  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-radius: var(--mantine-radius-sm);
   font-weight: 500;
@@ -11,10 +11,10 @@
 
   &[data-active], &:hover {
     background-color: var(--mantine-primary-color-filled);
-    color: var(--mantine-primary-color-light-color);
+    color: var(--mantine-primary-color-0);
 
     .linkIcon {
-      color: var(--mantine-primary-color-light-color);
+      color: var(--mantine-primary-color-0);
     }
   }
 }
