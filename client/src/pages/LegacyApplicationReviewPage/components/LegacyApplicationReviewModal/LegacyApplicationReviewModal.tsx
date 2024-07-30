@@ -215,14 +215,6 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               {...form.getInputProps('advisors')}
             />
 
-            <Textarea
-              autosize
-              minRows={5}
-              label='Comment'
-              placeholder='Comment'
-              {...form.getInputProps('comment')}
-            />
-
             <Checkbox
               label='Notify Student'
               {...form.getInputProps('notifyUser', { type: 'checkbox' })}
