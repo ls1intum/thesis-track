@@ -5,3 +5,5 @@ interface Window {
 interface WindowEventMap {
   'local-storage': StorageEvent
 }
+
+declare module "*.module.css";

@@ -40,7 +40,7 @@ const config = (env) => {
     module: {
       rules: [
         {
-          test: /\.tsx?$/,
+          test: /\.tsx?$/i,
           use: {
             loader: 'ts-loader',
             options: {
@@ -53,48 +53,27 @@ const config = (env) => {
           },
           exclude: /node_modules/,
         }, {
-          test: /\.(s[ac]ss|css)$/,
+          test: /\.css$/i,
           sideEffects: true,
           use: [
             MiniCssExtractPlugin.loader,
             {
               loader: 'css-loader',
               options: {
-                importLoaders: 3,
-                sourceMap: IS_DEV,
                 modules: {
-                  auto: /\.module\.scss$/,
-                  localIdentName: IS_DEV ? '[name]__[local]___[hash:base64:5]' : '[hash:base64:5]',
-                },
-              },
+                  auto: /\.module\.css$/,
+
+                }
+              }
             },
-            {
-              loader: 'sass-loader',
-              options: {
-                implementation: require('sass'),
-                sourceMap: IS_DEV,
-                webpackImporter: true,
-                sassOptions: {
-                  quietDeps: true,
-                  indentWidth: 2,
-                  includePaths: ['public'],
-                },
-              },
-            },
+            "postcss-loader"
           ],
         },
         {
-          test: /\.(?:ico|gif|png|jpg|jpeg|svg)$/i,
+          test: /\.(?:ico|gif|png|jpg|jpeg|svg|ttf|eot|woff2?|otf)$/i,
           type: 'asset/resource',
           generator: {
-            filename: 'static/assets/images/[name][hash][ext]',
-          },
-        },
-        {
-          test: /\.(ttf|eot|woff2?|otf)$/,
-          type: 'asset/resource',
-          generator: {
-            filename: 'static/assets/fonts/[name][hash][ext]',
+            filename: 'static/assets/[name][hash][ext]',
           },
         },
       ],

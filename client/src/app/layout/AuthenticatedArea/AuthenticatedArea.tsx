@@ -1,6 +1,6 @@
 import { PropsWithChildren, Suspense, useEffect } from 'react'
 import { AppShell, Burger, Center, Group, Loader } from '@mantine/core'
-import * as styles from './AuthenticatedArea.module.scss'
+import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 import {
@@ -56,7 +56,7 @@ const links: Array<{
 ]
 
 const SpinningLoader = () => (
-  <Center className={styles.fullHeight}>
+  <Center className={classes.fullHeight}>
     <Loader />
   </Center>
 )
@@ -113,12 +113,12 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             )
             .map((item) => (
               <Link
-                className={styles.link}
+                className={classes.link}
                 data-active={location.pathname.startsWith(item.link) || undefined}
                 key={item.label}
                 to={item.link}
               >
-                <item.icon className={styles.linkIcon} size={32} />
+                <item.icon className={classes.linkIcon} size={32} />
                 <span>{item.label}</span>
               </Link>
             ))}
@@ -126,15 +126,15 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         <AppShell.Section>
           <Link
             to='/settings/my-information'
-            className={styles.link}
+            className={classes.link}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
-            <User className={styles.linkIcon} size={32} />
+            <User className={classes.linkIcon} size={32} />
             <span>My Information</span>
           </Link>
 
-          <Link to='/logout' className={styles.link}>
-            <SignOut className={styles.linkIcon} size={32} />
+          <Link to='/logout' className={classes.link}>
+            <SignOut className={classes.linkIcon} size={32} />
             <span>Logout</span>
           </Link>
         </AppShell.Section>
@@ -146,7 +146,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
               children
             ) : (
-              <Center className={styles.fullHeight}>
+              <Center className={classes.fullHeight}>
                 <h1>403 - Unauthorized</h1>
               </Center>
             )}

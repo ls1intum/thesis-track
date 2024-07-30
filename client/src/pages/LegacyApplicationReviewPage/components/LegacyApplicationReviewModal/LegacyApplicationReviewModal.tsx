@@ -7,18 +7,16 @@ import {
   Textarea,
   Text,
   Group,
-  Space,
-  Title,
-  Center,
-  Divider,
+  Divider, TextInput,
 } from '@mantine/core'
-import { useForm } from '@mantine/form'
+import { isNotEmpty, useForm } from '@mantine/form'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
 import AuthenticatedIframe from '../../../../components/AuthenticatedIframe/AuthenticatedIframe'
 import { ApiResponse, doRequest } from '../../../../requests/request'
 import { notifications } from '@mantine/notifications'
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, ReactNode, useEffect, useState } from 'react'
 import { GLOBAL_CONFIG } from '../../../../config/global'
+import { AVAILABLE_COUNTRIES } from '../../../../config/countries'
 
 interface ILegacyApplicationReviewModalProps {
   application: IApplication | undefined
@@ -28,7 +26,7 @@ interface ILegacyApplicationReviewModalProps {
 
 const LabeledItem = (props: {
   label: string
-  value: string | number | null | undefined | ReactElement
+  value: ReactNode
 }) => {
   const { label, value } = props
 
@@ -37,12 +35,11 @@ const LabeledItem = (props: {
       <Text c='dimmed' fz='xs' fw={700}>
         {label}
       </Text>
-      {value && (typeof value === 'string' || typeof value === 'number') && (
+      {(typeof value === 'string' || typeof value === 'number') ? (
         <Text fz='sm' lineClamp={20}>
           {value}
         </Text>
-      )}
-      {value && typeof value === 'object' && <>{value}</>}
+      ) : value}
     </Stack>
   )
 }
@@ -51,6 +48,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
   const { application, onClose, onUpdate } = props
 
   const form = useForm<{
+    title: string
     comment: string
     advisors: string[]
     supervisors: string[]
@@ -58,6 +56,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
   }>({
     mode: 'controlled',
     initialValues: {
+      title: application?.thesisTitle || '',
       comment: '',
       advisors: [],
       supervisors: [],
@@ -65,6 +64,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
     },
     validateInputOnBlur: true,
     validate: {
+      title: isNotEmpty('Title must not be empty'),
       advisors: (value) => {
         if (value.length === 0) {
           return 'Advisor is required'
@@ -78,14 +78,15 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
     },
   })
 
+  useEffect(() => {
+    form.reset();
+    form.setFieldValue('title', application?.thesisTitle || '')
+  }, [application?.applicationId])
+
   const [loading, setLoading] = useState(false)
 
   return (
     <Modal centered size='90%' opened={!!application} onClose={onClose}>
-      <Center>
-        <Title>Review Application</Title>
-      </Center>
-      <Space h='md' />
       <form>
         {application && (
           <Stack gap='md'>
@@ -97,7 +98,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                     <AuthenticatedIframe
                       url={`/v1/users/${application.user.userId}/cv`}
                       height={300}
-                      frameBorder={0}
+                      style={{border: 0}}
                     />
                   }
                 />
@@ -109,7 +110,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                     <AuthenticatedIframe
                       url={`/v1/users/${application.user.userId}/examination-report`}
                       height={300}
-                      frameBorder={0}
+                      style={{border: 0}}
                     />
                   }
                 />
@@ -121,7 +122,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                     <AuthenticatedIframe
                       url={`/v1/users/${application.user.userId}/degree-report`}
                       height={300}
-                      frameBorder={0}
+                      style={{border: 0}}
                     />
                   }
                 />
@@ -131,8 +132,13 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               <LabeledItem label='First Name' value={application.user.firstName} />
               <LabeledItem label='Last Name' value={application.user.lastName} />
               <LabeledItem label='Email' value={application.user.email} />
-              <LabeledItem label='Gender' value={application.user.gender} />
-              <LabeledItem label='Nationality' value={application.user.nationality} />
+              <LabeledItem label='Gender' value={
+                GLOBAL_CONFIG.genders[application.user.gender || ''] ??
+                application.user.gender
+              } />
+              <LabeledItem label='Nationality' value={
+                AVAILABLE_COUNTRIES[application.user.nationality || ''] ?? application.user.nationality
+              } />
             </Group>
             <Group grow preventGrowOverflow>
               <LabeledItem label='University ID' value={application.user.universityId} />
@@ -158,9 +164,9 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
             </Group>
             <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
             <LabeledItem label='Motivation' value={application.motivation} />
-            <LabeledItem label='Special Skills' value={application.user.specialSkills} />
             <LabeledItem label='Interests' value={application.user.interests} />
             <LabeledItem label='Projects' value={application.user.projects} />
+            <LabeledItem label='Special Skills' value={application.user.specialSkills} />
             <Group grow>
               <LabeledItem label='Desired Start Date' value={application.desiredStartDate} />
               <LabeledItem
@@ -176,20 +182,34 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   .join(', ')}
               />
             </Group>
+            {application.comment && (
+              <LabeledItem label='Assessment Comment' value={application.comment} />
+            )}
           </Stack>
         )}
 
         {application?.state === ApplicationState.NOT_ASSESSED && (
           <Stack gap='md'>
             <Divider my='md' />
+
+            <TextInput
+              type='text'
+              required={true}
+              placeholder='Thesis Title'
+              label='Thesis Title'
+              {...form.getInputProps('title')}
+            />
+
             <UserMultiSelect
               label='Supervisor'
+              required={true}
               groups={['supervisor']}
               multiSelect={false}
               {...form.getInputProps('supervisors')}
             />
             <UserMultiSelect
               label='Advisor'
+              required={true}
               groups={['advisor', 'supervisor']}
               multiSelect={true}
               {...form.getInputProps('advisors')}
@@ -275,7 +295,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                         comment: form.values.comment,
                         advisorIds: form.values.advisors,
                         supervisorIds: form.values.supervisors,
-                        thesisTitle: application?.thesisTitle || 'Thesis Title',
+                        thesisTitle: form.values.title,
                       },
                     },
                   ).catch<ApiResponse<IApplication>>(() => ({

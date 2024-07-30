@@ -1,21 +1,22 @@
 {
   "compilerOptions": {
     "outDir": "./dist/",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
     "module": "ESNext",
     "target": "ESNext",
     "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
     "allowJs": true,
     "moduleResolution": "node",
     "strict": true,
     "isolatedModules": true,
-    "skipLibCheck": true,
     "noImplicitAny": true,
-    "lib": ["dom", "dom.iterable", "esnext"],
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true
+    "noEmit": true,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "plugins": [
+      { "name": "typescript-plugin-css-modules" }
+    ]
   },
   "include": [
     "src/**/*.ts",

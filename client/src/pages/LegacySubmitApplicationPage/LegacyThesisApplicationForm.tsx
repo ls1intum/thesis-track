@@ -31,17 +31,7 @@ import { ApiResponse, doRequest } from '../../requests/request'
 import { ILegacyCreateApplicationPayload } from '../../requests/payloads/application'
 import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
-
-countries.registerLocale(enLocale)
-
-const countriesArr = Object.entries(countries.getNames('en', { select: 'alias' })).map(
-  ([key, value]) => {
-    return {
-      label: value,
-      value: key,
-    }
-  },
-)
+import { AVAILABLE_COUNTRIES } from '../../config/countries'
 
 const LegacyThesisApplicationForm = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -282,7 +272,6 @@ const LegacyThesisApplicationForm = () => {
                   <TextInput
                     type='text'
                     required={true}
-                    withAsterisk={true}
                     placeholder='First Name'
                     label='First Name'
                     {...form.getInputProps('firstName')}
@@ -290,7 +279,6 @@ const LegacyThesisApplicationForm = () => {
                   <TextInput
                     type='text'
                     required={true}
-                    withAsterisk={true}
                     placeholder='Last Name'
                     label='Last Name'
                     {...form.getInputProps('lastName')}
@@ -307,16 +295,19 @@ const LegacyThesisApplicationForm = () => {
                       }
                     })}
                     required={true}
-                    withAsterisk={true}
                     searchable={true}
                     {...form.getInputProps('gender')}
                   />
                   <Select
                     label='Nationality'
                     placeholder='Nationality'
-                    data={countriesArr}
+                    data={Object.entries(AVAILABLE_COUNTRIES).map(([key, value]) => {
+                      return {
+                        label: value,
+                        value: key,
+                      }
+                    })}
                     required={true}
-                    withAsterisk={true}
                     searchable={true}
                     {...form.getInputProps('nationality')}
                   />
@@ -324,7 +315,6 @@ const LegacyThesisApplicationForm = () => {
                 <TextInput
                   type='text'
                   required={true}
-                  withAsterisk={true}
                   placeholder='your@email.com'
                   label='Email (preferrably a TUM email address)'
                   {...form.getInputProps('email')}
@@ -340,7 +330,6 @@ const LegacyThesisApplicationForm = () => {
                       }
                     })}
                     required={true}
-                    withAsterisk={true}
                     searchable={true}
                     {...form.getInputProps('studyDegree')}
                   />
@@ -354,26 +343,24 @@ const LegacyThesisApplicationForm = () => {
                       }
                     })}
                     required={true}
-                    withAsterisk={true}
                     searchable={true}
                     {...form.getInputProps('studyProgram')}
                   />
                   <DatePickerInput
                     leftSection={<Calendar />}
-                    withAsterisk={true}
+                    required={true}
                     label='Enrollment Date'
                     {...form.getInputProps('enrolledAt')}
                   />
                 </Group>
                 <Group grow align='flex-start'>
-                  <div>
+                  <Stack gap='0'>
                     <Textarea
                       autosize
                       minRows={5}
                       label='Special Skills'
                       placeholder='Programming languages, certificates, etc.'
                       required={true}
-                      withAsterisk={true}
                       {...form.getInputProps('specialSkills')}
                     />
                     {!form.errors.specialSkills && (
@@ -381,15 +368,14 @@ const LegacyThesisApplicationForm = () => {
                         form.values.specialSkills?.length ?? 0
                       } / 500`}</Text>
                     )}
-                  </div>
-                  <div>
+                  </Stack>
+                  <Stack gap='0'>
                     <Textarea
                       autosize
                       minRows={5}
                       label='Motivation'
                       placeholder='What are you looking for?'
                       required={true}
-                      withAsterisk={true}
                       {...form.getInputProps('motivation')}
                     />
                     {!form.errors.motivation && (
@@ -398,17 +384,16 @@ const LegacyThesisApplicationForm = () => {
                         ta='right'
                       >{`${form.values.motivation?.length ?? 0} / 500`}</Text>
                     )}
-                  </div>
+                  </Stack>
                 </Group>
                 <Group grow align='flex-start'>
-                  <div>
+                  <Stack gap='0'>
                     <Textarea
                       autosize
                       minRows={5}
                       label='Interests'
                       placeholder='What are you interested in?'
                       required={true}
-                      withAsterisk={true}
                       {...form.getInputProps('interests')}
                     />
                     {!form.errors.interests && (
@@ -417,30 +402,29 @@ const LegacyThesisApplicationForm = () => {
                         ta='right'
                       >{`${form.values.interests?.length ?? 0} / 500`}</Text>
                     )}
-                  </div>
-                  <div>
+                  </Stack>
+                  <Stack gap='0'>
                     <Textarea
                       autosize
                       minRows={5}
                       label='Projects'
                       placeholder='What projects have you worked on?'
                       required={true}
-                      withAsterisk={true}
+                      
                       {...form.getInputProps('projects')}
                     />
                     {!form.errors.projects && (
                       <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
                     )}
-                  </div>
+                  </Stack>
                 </Group>
-                <div>
+                <Stack gap='0'>
                   <Textarea
                     autosize
                     minRows={1}
                     label='Thesis Title Suggestion'
                     placeholder='Thesis Title Suggestion'
                     required={true}
-                    withAsterisk={true}
                     {...form.getInputProps('thesisTitle')}
                   />
                   {!form.errors.thesisTitle && (
@@ -449,11 +433,11 @@ const LegacyThesisApplicationForm = () => {
                       ta='right'
                     >{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
                   )}
-                </div>
+                </Stack>
                 <DatePickerInput
                   leftSection={<Calendar />}
-                  withAsterisk={true}
                   label='Desired Thesis Start Date'
+                  required={true}
                   {...form.getInputProps('desiredStartDate')}
                 />
                 <Group grow>
@@ -468,7 +452,6 @@ const LegacyThesisApplicationForm = () => {
                       }
                     })}
                     required={true}
-                    withAsterisk={true}
                     {...form.getInputProps('researchAreas')}
                   />
                   <MultiSelect
@@ -482,44 +465,32 @@ const LegacyThesisApplicationForm = () => {
                       }
                     })}
                     required={true}
-                    withAsterisk={true}
                     {...form.getInputProps('focusTopics')}
                   />
                 </Group>
-                <Stack>
-                  <UploadArea
-                    label='Examination Report'
-                    required={true}
-                    value={form.values.examinationReport}
-                    onChange={(file) => form.setValues({ examinationReport: file })}
-                  />
-                  <UploadArea
-                    label='CV'
-                    required={true}
-                    value={form.values.cv}
-                    onChange={(file) => form.setValues({ cv: file })}
-                  />
-                  <UploadArea
-                    label='Bachelor Report'
-                    required={false}
-                    value={form.values.degreeReport}
-                    onChange={(file) => form.setValues({ degreeReport: file })}
-                  />
-                </Stack>
-                <Stack>
-                  <Checkbox
-                    mt='md'
-                    label='I have read the declaration of consent below and agree to the processing of my data.'
-                    {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}
-                  />
-                  <Spoiler
-                    maxHeight={0}
-                    showLabel={<Text fz='sm'>Show Declaration of Consent</Text>}
-                    hideLabel={<Text fz='sm'>Hide</Text>}
-                  >
-                    <DeclarationOfDataConsent />
-                  </Spoiler>
-                </Stack>
+                <UploadArea
+                  label='Examination Report'
+                  required={true}
+                  value={form.values.examinationReport}
+                  onChange={(file) => form.setValues({ examinationReport: file })}
+                />
+                <UploadArea
+                  label='CV'
+                  required={true}
+                  value={form.values.cv}
+                  onChange={(file) => form.setValues({ cv: file })}
+                />
+                <UploadArea
+                  label='Bachelor Report'
+                  required={false}
+                  value={form.values.degreeReport}
+                  onChange={(file) => form.setValues({ degreeReport: file })}
+                />
+                <Checkbox
+                  mt='md'
+                  label={<>I have read the <DeclarationOfDataConsent text='declaration of consent' /> and agree to the processing of my data.</>}
+                  {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}
+                />
                 <Group>
                   <Button type='submit' disabled={!form.isValid()}>
                     Submit

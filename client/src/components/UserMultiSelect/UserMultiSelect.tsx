@@ -1,21 +1,20 @@
 import { MultiSelect } from '@mantine/core'
-import { GetInputPropsReturnType } from '@mantine/form/lib/types'
 import { useEffect, useState } from 'react'
 import { doRequest } from '../../requests/request'
 import { Pageable } from '../../requests/responses/pageable'
 import { ILightUser } from '../../requests/responses/user'
 import { useDebouncedValue } from '@mantine/hooks'
+import { GetInputPropsReturnType } from '@mantine/form/lib/types'
 
 interface IUserMultiSelectProps extends GetInputPropsReturnType {
   multiSelect: boolean
   groups: string[]
   label?: string
-  withAsterisk?: boolean
   required?: boolean
 }
 
 const UserMultiSelect = (props: IUserMultiSelectProps) => {
-  const { groups, multiSelect, label, required, withAsterisk, ...inputProps } = props
+  const { groups, multiSelect, label, required, ...inputProps } = props
 
   const [data, setData] = useState<Array<{ value: string; label: string }>>()
   const [searchValue, setSearchValue] = useState('')
@@ -65,7 +64,6 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
       nothingFoundMessage={data ? 'Nothing found...' : 'Loading...'}
       label={label}
       required={required}
-      withAsterisk={withAsterisk}
       {...inputProps}
     />
   )

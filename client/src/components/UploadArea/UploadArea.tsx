@@ -1,4 +1,4 @@
-import { ActionIcon, Card, Group, rem, Stack, Text, useMantineTheme } from '@mantine/core'
+import { ActionIcon, Card, Group, InputLabel, rem, Stack, Text, useMantineTheme } from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { notifications } from '@mantine/notifications'
@@ -17,15 +17,14 @@ const UploadArea = (props: IUploadAreaProps) => {
 
   const theme = useMantineTheme()
 
-  if (value) {
-    return (
-      <Stack gap='0'>
-        <Group align='left'>
-          <Text fw={500} fz='sm'>
-            {label}
-          </Text>
-          {required && <Text c='red'>*</Text>}
-        </Group>
+  return (
+    <Stack gap='0'>
+      <Group align='left'>
+        <InputLabel required={required}>
+          {label}
+        </InputLabel>
+      </Group>
+      {value ? (
         <Card shadow='sm' withBorder>
           <Group align='apart'>
             <Text c='dimmed' fz='sm'>
@@ -36,53 +35,43 @@ const UploadArea = (props: IUploadAreaProps) => {
             </ActionIcon>
           </Group>
         </Card>
-      </Stack>
-    )
-  }
+      ) : (
+        <Dropzone
+          name={label}
+          onDrop={(files) => onChange(files[0])}
+          onReject={() => {
+            notifications.show({
+              color: 'red',
+              autoClose: 5000,
+              title: 'Error',
+              message: `Failed upload file.`,
+            })
+          }}
+          maxSize={maxSize}
+          accept={accept}
+        >
+          <Group align='center' gap='xl' style={{ minHeight: rem(220), pointerEvents: 'none' }}>
+            <Dropzone.Accept>
+              <UploadSimple size='3.2rem' color={theme.colors[theme.primaryColor][4]} />
+            </Dropzone.Accept>
+            <Dropzone.Reject>
+              <X size='3.2rem' color={theme.colors.red[4]} />
+            </Dropzone.Reject>
+            <Dropzone.Idle>
+              <ImageSquare size='3.2rem' />
+            </Dropzone.Idle>
 
-  return (
-    <Stack gap='0'>
-      <Group align='left'>
-        <Text fw={500} fz='sm'>
-          {label}
-        </Text>
-        {required && <Text c='red'>*</Text>}
-      </Group>
-      <Dropzone
-        name={label}
-        onDrop={(files) => onChange(files[0])}
-        onReject={() => {
-          notifications.show({
-            color: 'red',
-            autoClose: 5000,
-            title: 'Error',
-            message: `Failed upload file.`,
-          })
-        }}
-        maxSize={maxSize}
-        accept={accept}
-      >
-        <Group align='center' gap='xl' style={{ minHeight: rem(220), pointerEvents: 'none' }}>
-          <Dropzone.Accept>
-            <UploadSimple size='3.2rem' color={theme.colors[theme.primaryColor][4]} />
-          </Dropzone.Accept>
-          <Dropzone.Reject>
-            <X size='3.2rem' color={theme.colors.red[4]} />
-          </Dropzone.Reject>
-          <Dropzone.Idle>
-            <ImageSquare size='3.2rem' />
-          </Dropzone.Idle>
-
-          <div>
-            <Text size='xl' inline>
-              Drag the file here or click to select file
-            </Text>
-            <Text size='sm' c='dimmed' inline mt={7}>
-              The file should not exceed {Math.floor(maxSize / 1024)}mb
-            </Text>
-          </div>
-        </Group>
-      </Dropzone>
+            <Stack>
+              <Text size='xl' inline>
+                Drag the file here or click to select file
+              </Text>
+              <Text size='sm' c='dimmed' inline>
+                The file should not exceed {Math.floor(maxSize / 1024)}mb
+              </Text>
+            </Stack>
+          </Group>
+        </Dropzone>
+      )}
     </Stack>
   )
 }
