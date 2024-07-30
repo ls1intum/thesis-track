@@ -91,44 +91,6 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
         {application && (
           <Stack gap='md'>
             <Group grow preventGrowOverflow>
-              {application.user.hasCv && (
-                <LabeledItem
-                  label='CV'
-                  value={
-                    <AuthenticatedIframe
-                      url={`/v1/users/${application.user.userId}/cv`}
-                      height={300}
-                      style={{border: 0}}
-                    />
-                  }
-                />
-              )}
-              {application.user.hasExaminationReport && (
-                <LabeledItem
-                  label='Examination Report'
-                  value={
-                    <AuthenticatedIframe
-                      url={`/v1/users/${application.user.userId}/examination-report`}
-                      height={300}
-                      style={{border: 0}}
-                    />
-                  }
-                />
-              )}
-              {application.user.hasDegreeReport && (
-                <LabeledItem
-                  label='Degree Report'
-                  value={
-                    <AuthenticatedIframe
-                      url={`/v1/users/${application.user.userId}/degree-report`}
-                      height={300}
-                      style={{border: 0}}
-                    />
-                  }
-                />
-              )}
-            </Group>
-            <Group grow preventGrowOverflow>
               <LabeledItem label='First Name' value={application.user.firstName} />
               <LabeledItem label='Last Name' value={application.user.lastName} />
               <LabeledItem label='Email' value={application.user.email} />
@@ -182,9 +144,55 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   .join(', ')}
               />
             </Group>
-            {application.comment && (
-              <LabeledItem label='Assessment Comment' value={application.comment} />
-            )}
+            <Group grow preventGrowOverflow>
+              {application.user.hasCv && (
+                <LabeledItem
+                  label='CV'
+                  value={
+                    <AuthenticatedIframe
+                      url={`/v1/users/${application.user.userId}/cv`}
+                      height={400}
+                      style={{border: 0}}
+                    />
+                  }
+                />
+              )}
+              {application.user.hasExaminationReport && (
+                <LabeledItem
+                  label='Examination Report'
+                  value={
+                    <AuthenticatedIframe
+                      url={`/v1/users/${application.user.userId}/examination-report`}
+                      height={400}
+                      style={{border: 0}}
+                    />
+                  }
+                />
+              )}
+              {application.user.hasDegreeReport && (
+                <LabeledItem
+                  label='Degree Report'
+                  value={
+                    <AuthenticatedIframe
+                      url={`/v1/users/${application.user.userId}/degree-report`}
+                      height={400}
+                      style={{border: 0}}
+                    />
+                  }
+                />
+              )}
+            </Group>
+            <Group grow>
+              {application.reviewedBy && (
+                <LabeledItem label='Reviewer' value={`${application.reviewedBy.firstName} ${application.reviewedBy.lastName}`} />
+              )}
+              {application.reviewedAt && (
+                <LabeledItem label='Reviewed At' value={application.reviewedAt} />
+              )}
+              {application.comment && (
+                <LabeledItem label='Review Comment' value={application.comment} />
+              )}
+            </Group>
           </Stack>
         )}
 
