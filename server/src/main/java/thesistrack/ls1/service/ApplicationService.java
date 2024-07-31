@@ -54,7 +54,7 @@ public class ApplicationService {
         Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
         return applicationRepository
-                .searchApplications(new HashSet<>(Arrays.stream(states).map(Enum::toString).toList()), searchString.toLowerCase(), PageRequest.of(page, limit, Sort.by(order)));
+                .searchApplications(searchString.toLowerCase(), new HashSet<>(Arrays.stream(states).map(Enum::toString).toList()), PageRequest.of(page, limit, Sort.by(order)));
     }
 
     @Transactional

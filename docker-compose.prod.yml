@@ -46,7 +46,7 @@ services:
       - "8080"
     environment:
       - TZ=Europe/Berlin
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${SPRING_DATASOURCE_DATABASE}
       - MAIL_ENABLED=true
       - POSTFIX_HOST=postfix

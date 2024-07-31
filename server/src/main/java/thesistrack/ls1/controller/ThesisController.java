@@ -40,8 +40,8 @@ public class ThesisController {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
-    @DeleteMapping("/{topicId}")
-    public ResponseEntity<ThesisDto> closeThesis(@PathVariable UUID topicId) {
+    @DeleteMapping("/{thesisId}")
+    public ResponseEntity<ThesisDto> closeThesis(@PathVariable UUID thesisId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 

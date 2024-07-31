@@ -25,11 +25,11 @@ public class Thesis {
     private String title;
 
     @NotNull
-    @Column(name = "info", nullable = false, length = 2000)
+    @Column(name = "info", nullable = false, length = 1000)
     private String info;
 
     @NotNull
-    @Column(name = "abstract", nullable = false, length = 2000)
+    @Column(name = "abstract", nullable = false, length = 1000)
     private String abstractField;
 
     @NotNull

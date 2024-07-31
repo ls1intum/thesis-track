@@ -25,7 +25,7 @@ public class ThesisComment {
     private Thesis thesis;
 
     @NotNull
-    @Column(name = "message", nullable = false, length = 2000)
+    @Column(name = "message", nullable = false, length = 1000)
     private String message;
 
     @Column(name = "filename", length = 200)

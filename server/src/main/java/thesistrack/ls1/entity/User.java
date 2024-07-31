@@ -24,10 +24,10 @@ public class User {
     private UUID id;
 
     @NotNull
-    @Column(name = "university_id", nullable = false, length = 100)
+    @Column(name = "university_id", nullable = false, length = 30)
     private String universityId;
 
-    @Column(name = "matriculation_number", length = 100)
+    @Column(name = "matriculation_number", length = 30)
     private String matriculationNumber;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
@@ -42,7 +42,7 @@ public class User {
     @Column(name = "last_name", length = 100)
     private String lastName;
 
-    @Column(name = "gender", length = 100)
+    @Column(name = "gender", length = 20)
     private String gender;
 
     @Column(name = "nationality", length = 100)
@@ -74,13 +74,13 @@ public class User {
     @Column(name = "study_program", length = 100)
     private String studyProgram;
 
-    @Column(name = "projects", length = 2000)
+    @Column(name = "projects", length = 1000)
     private String projects;
 
-    @Column(name = "interests", length = 2000)
+    @Column(name = "interests", length = 1000)
     private String interests;
 
-    @Column(name = "special_skills", length = 2000)
+    @Column(name = "special_skills", length = 1000)
     private String specialSkills;
 
     @Column(name = "enrolled_at")

@@ -33,7 +33,7 @@ public class Application {
     private String thesisTitle;
 
     @NotNull
-    @Column(name = "motivation", nullable = false, length = 2000)
+    @Column(name = "motivation", nullable = false, length = 1000)
     private String motivation;
 
     @NotNull
@@ -45,7 +45,7 @@ public class Application {
     @Column(name = "desired_start_date", nullable = false)
     private Instant desiredStartDate;
 
-    @Column(name = "comment", length = 2000)
+    @Column(name = "comment", length = 1000)
     private String comment;
 
     @CreationTimestamp

@@ -16,7 +16,7 @@ import java.time.Instant;
 @Table(name = "schedules")
 public class Schedule {
     @Id
-    @Column(name = "schedule_name", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "schedule_name", nullable = false, length = 100)
     private String scheduleName;
 
     @NotNull

@@ -25,19 +25,19 @@ public class Topic {
     private String title;
 
     @NotNull
-    @Column(name = "problem_statement", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "problem_statement", nullable = false, length = 2000)
     private String problemStatement;
 
     @NotNull
-    @Column(name = "goals", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "goals", nullable = false, length = 2000)
     private String goals;
 
     @NotNull
-    @Column(name = "\"references\"", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "\"references\"", nullable = false, length = 2000)
     private String references;
 
     @NotNull
-    @Column(name = "required_degree", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "required_degree", nullable = false, length = 2000)
     private String requiredDegree;
 
     @Column(name = "closed_at")

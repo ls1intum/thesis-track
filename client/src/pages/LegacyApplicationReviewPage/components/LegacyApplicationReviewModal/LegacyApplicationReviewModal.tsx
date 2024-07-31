@@ -266,6 +266,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
             />
 
             <Group grow>
+              {/* REJECT Button */}
               <Button
                 variant='outline'
                 loading={loading}
@@ -309,6 +310,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               >
                 Reject
               </Button>
+              {/* ACCEPT Button */}
               <Button
                 variant='outline'
                 color='green'

@@ -21,5 +21,5 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             "LOWER(a.user.email) LIKE %:searchQuery% OR " +
             "LOWER(a.user.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(a.user.universityId) LIKE %:searchQuery%)")
-    Page<Application> searchApplications(@Param("states") Set<String> states, @Param("searchQuery") String searchQuery, Pageable page);
+    Page<Application> searchApplications(@Param("searchQuery") String searchQuery, @Param("states") Set<String> states, Pageable page);
 }

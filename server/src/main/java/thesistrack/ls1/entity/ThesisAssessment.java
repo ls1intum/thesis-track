@@ -25,15 +25,15 @@ public class ThesisAssessment {
     private Thesis thesis;
 
     @NotNull
-    @Column(name = "summary", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "summary", nullable = false, length = 2000)
     private String summary;
 
     @NotNull
-    @Column(name = "positives", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "positives", nullable = false, length = 2000)
     private String positives;
 
     @NotNull
-    @Column(name = "negatives", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "negatives", nullable = false, length = 2000)
     private String negatives;
 
     @NotNull
