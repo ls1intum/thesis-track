@@ -51,10 +51,10 @@ const UploadArea = (props: IUploadAreaProps) => {
               color: 'red',
               autoClose: 5000,
               title: 'Error',
-              message: `Failed upload file.`,
+              message: `Failed upload file. Max file size is ${Math.floor(maxSize / 1024)}MB`,
             })
           }}
-          maxSize={maxSize}
+          maxSize={maxSize * 1024}
           accept={accept}
         >
           <Group align='center' gap='xl' style={{ minHeight: rem(220), pointerEvents: 'none' }}>
@@ -73,7 +73,7 @@ const UploadArea = (props: IUploadAreaProps) => {
                 Drag the file here or click to select file
               </Text>
               <Text size='sm' c='dimmed' inline>
-                The file should not exceed {Math.floor(maxSize / 1024)}mb
+                The file should not exceed {Math.floor(maxSize / 1024)}MB
               </Text>
             </Stack>
           </Group>
