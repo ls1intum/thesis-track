@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import thesistrack.ls1.dto.LightUserDto;
-import thesistrack.ls1.dto.PageResponse;
+import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.UserService;
 
@@ -29,7 +29,7 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<PageResponse<LightUserDto>> getUsers(
+    public ResponseEntity<PaginationDto<LightUserDto>> getUsers(
             @RequestParam(required = false) String searchQuery,
             @RequestParam(required = false) String[] groups,
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -39,7 +39,7 @@ public class UserController {
     ) {
         Page<User> users = userService.getAll(searchQuery, groups, page, limit, sortBy, sortOrder);
 
-        return ResponseEntity.ok(new PageResponse<>(users.map(LightUserDto::fromUserEntity)));
+        return ResponseEntity.ok(PaginationDto.fromSpringPage(users.map(LightUserDto::fromUserEntity)));
     }
 
     @GetMapping("/{userId}/examination-report")

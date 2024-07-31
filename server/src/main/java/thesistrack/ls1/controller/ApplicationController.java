@@ -15,7 +15,7 @@ import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
 import thesistrack.ls1.controller.payload.RejectApplicationPayload;
 import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
 import thesistrack.ls1.dto.ApplicationDto;
-import thesistrack.ls1.dto.PageResponse;
+import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.ApplicationService;
@@ -43,7 +43,7 @@ public class ApplicationController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<PageResponse<ApplicationDto>> getApplications(
+    public ResponseEntity<PaginationDto<ApplicationDto>> getApplications(
             @RequestParam(required = false) ApplicationState[] states,
             @RequestParam(required = false) String searchQuery,
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -53,7 +53,7 @@ public class ApplicationController {
     ) {
         Page<Application> applications = applicationService.getAll(searchQuery, states, page, limit, sortBy, sortOrder);
 
-        return ResponseEntity.ok(new PageResponse<>(applications.map(ApplicationDto::fromApplicationEntity)));
+        return ResponseEntity.ok(PaginationDto.fromSpringPage(applications.map(ApplicationDto::fromApplicationEntity)));
     }
 
     @GetMapping("/{applicationId}")

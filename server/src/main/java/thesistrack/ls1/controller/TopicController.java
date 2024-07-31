@@ -2,13 +2,12 @@ package thesistrack.ls1.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import thesistrack.ls1.dto.PageResponse;
+import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.TopicDto;
 import thesistrack.ls1.service.TopicService;
 
@@ -26,7 +25,7 @@ public class TopicController {
     }
 
     @GetMapping
-    public ResponseEntity<PageResponse<TopicDto>> getTopics() {
+    public ResponseEntity<PaginationDto<TopicDto>> getTopics() {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.exception.UploadException;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -63,7 +64,15 @@ public class UploadService {
     }
 
     public FileSystemResource load(String filename) {
-        return new FileSystemResource(rootLocation.resolve(filename));
+        try {
+            FileSystemResource file =  new FileSystemResource(rootLocation.resolve(filename));
+
+            file.contentLength();
+
+            return file;
+        } catch (IOException e) {
+            throw new UploadException("Failed to load file", e);
+        }
     }
 
     private String computeFileHash(MultipartFile file) throws IOException, NoSuchAlgorithmException {
