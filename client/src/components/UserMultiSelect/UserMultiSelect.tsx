@@ -5,24 +5,29 @@ import { Pageable } from '../../requests/responses/pageable'
 import { ILightUser } from '../../requests/responses/user'
 import { useDebouncedValue } from '@mantine/hooks'
 import { GetInputPropsReturnType } from '@mantine/form/lib/types'
+import { formatUser } from '../../utils/format'
+import { arrayUnique } from '../../utils/array'
 
 interface IUserMultiSelectProps extends GetInputPropsReturnType {
-  multiSelect: boolean
+  maxValues?: number
   groups: string[]
   label?: string
   required?: boolean
 }
 
 const UserMultiSelect = (props: IUserMultiSelectProps) => {
-  const { groups, multiSelect, label, required, ...inputProps } = props
+  const { groups, maxValues = Infinity, label, required, ...inputProps } = props
 
-  const [data, setData] = useState<Array<{ value: string; label: string }>>()
+  const selected: string[] = inputProps.value || [];
+
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState<Array<{ value: string; label: string }>>([])
   const [searchValue, setSearchValue] = useState('')
 
   const [debouncedSearchValue] = useDebouncedValue(searchValue, 500)
 
   useEffect(() => {
-    setData(undefined)
+    setLoading(true)
 
     return doRequest<Pageable<ILightUser>>(
       '/v1/users',
@@ -36,14 +41,16 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
           limit: '100',
         },
       },
-      (err, res) => {
-        if (res?.ok) {
-          setData(
-            res.data.content.map((user) => ({
+      (res) => {
+        if (res.ok) {
+          setData(prevState => arrayUnique([
+            ...prevState.filter(item => selected.includes(item.value)),
+            ...res.data.content.map((user) => ({
               value: user.userId,
-              label: `${user.firstName} ${user.lastName} (${user.universityId})`,
-            })),
-          )
+              label: formatUser(user),
+            }))
+          ], (a, b) => a.value === b.value))
+          setLoading(false)
         }
       },
     )
@@ -51,17 +58,17 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
 
   return (
     <MultiSelect
-      data={data ?? []}
-      searchable={true}
+      data={data}
+      searchable={selected.length < maxValues}
       clearable={true}
       searchValue={searchValue}
       onSearchChange={setSearchValue}
-      hidePickedOptions={true}
-      maxValues={multiSelect ? undefined : 1}
+      hidePickedOptions={selected.length < maxValues}
+      maxValues={maxValues}
       limit={10}
       filter={({ options }) => options}
-      placeholder='Search...'
-      nothingFoundMessage={data ? 'Nothing found...' : 'Loading...'}
+      placeholder={selected.length < maxValues ? 'Search...' : undefined}
+      nothingFoundMessage={!loading ? 'Nothing found...' : 'Loading...'}
       label={label}
       required={required}
       {...inputProps}

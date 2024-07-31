@@ -3,11 +3,10 @@ import {
   ActionIcon,
   AppShell,
   Burger,
-  Center,
-  Group,
+  Center, Divider,
+  Group, Image,
   Loader,
-  Space,
-  Stack,
+  Space, Text,
   useMantineColorScheme,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
@@ -16,6 +15,7 @@ import { useDisclosure } from '@mantine/hooks'
 import { Moon, Scroll, SignOut, Sun } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
+import Logo from '../../../static/logo'
 
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
@@ -111,7 +111,9 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
       <AppShell.Navbar p='md'>
         <AppShell.Section grow mb='md'>
-          <Stack justify='flex-end'>
+          <Group preventGrowOverflow={false}>
+            <Logo className={classes.logo} />
+            <Text className={classes.siteName} fw='bold'>ThesisTrack</Text>
             <ActionIcon
               variant='outline'
               color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}
@@ -121,8 +123,8 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             >
               {colorScheme === 'dark' ? <Sun size='1.1rem' /> : <Moon size='1.1rem' />}
             </ActionIcon>
-          </Stack>
-          <Space h='md' />
+          </Group>
+          <Divider my='sm' />
           {links
             .filter(
               (item) => !item.roles || item.roles.some((role) => auth.user?.groups.includes(role)),

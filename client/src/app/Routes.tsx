@@ -4,7 +4,7 @@ import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 import { Center, Loader } from '@mantine/core'
 
 const LegacyThesisApplicationForm = lazy(
-  () => import('../pages/LegacySubmitApplicationPage/LegacyThesisApplicationForm'),
+  () => import('../pages/LegacySubmitApplicationPage/LegacyCreateApplicationForm'),
 )
 const LegacyApplicationReviewPage = lazy(
   () => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'),

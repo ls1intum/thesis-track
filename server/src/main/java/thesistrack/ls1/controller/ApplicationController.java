@@ -13,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
 import thesistrack.ls1.controller.payload.RejectApplicationPayload;
+import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
 import thesistrack.ls1.dto.ApplicationDto;
 import thesistrack.ls1.dto.PageResponse;
 import thesistrack.ls1.entity.Application;
@@ -59,6 +60,20 @@ public class ApplicationController {
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> getApplication(@PathVariable UUID applicationId) {
         Application application = applicationService.findById(applicationId);
+
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
+    }
+
+    @PutMapping("/{applicationId}/comment")
+    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
+    public ResponseEntity<ApplicationDto> updateComment(
+            @PathVariable UUID applicationId,
+            @RequestBody UpdateApplicationCommentPayload payload
+    ) {
+        Application application =  applicationService.updateComment(
+                applicationId,
+                payload.getComment()
+        );
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
     }

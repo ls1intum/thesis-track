@@ -13,7 +13,6 @@ import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.constants.ApplicationState;
-import thesistrack.ls1.entity.key.ThesisRoleId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.ApplicationRepository;
@@ -23,7 +22,6 @@ import thesistrack.ls1.repository.UserRepository;
 
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -201,6 +199,15 @@ public class ApplicationService {
         if (notifyUser) {
             mailingService.sendApplicationRejectionEmail(application);
         }
+
+        return applicationRepository.save(application);
+    }
+
+    @Transactional
+    public Application updateComment(UUID thesisApplicationId, String comment) {
+        Application application = findById(thesisApplicationId);
+
+        application.setComment(comment);
 
         return applicationRepository.save(application);
     }

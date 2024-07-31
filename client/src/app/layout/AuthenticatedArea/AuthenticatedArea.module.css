@@ -29,3 +29,11 @@
 .fullHeight {
     height: 100vh;
 }
+
+.logo {
+  stroke: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-2))
+}
+
+.siteName {
+  color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-2))
+}

@@ -161,13 +161,9 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
           method: 'POST',
           requiresAuth: true,
         },
-        (err, res) => {
-          if (res?.ok) {
+        (res) => {
+          if (res.ok) {
             setUser(res.data)
-          }
-
-          if (err) {
-            console.error(err)
           }
         },
       )

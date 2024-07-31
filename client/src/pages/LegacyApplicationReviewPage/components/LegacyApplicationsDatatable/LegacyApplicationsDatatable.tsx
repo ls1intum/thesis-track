@@ -53,13 +53,13 @@ export const LegacyApplicationsDatatable = () => {
         },
         requiresAuth: true,
       },
-      (error, res) => {
-        if (!res?.ok) {
+      (res) => {
+        if (!res.ok) {
           notifications.show({
             color: 'red',
             autoClose: 10000,
             title: 'Error',
-            message: `Could not fetch thesis applications. ${error || ''}`,
+            message: `Could not fetch thesis applications.`,
           })
 
           return setApplications({
@@ -93,8 +93,8 @@ export const LegacyApplicationsDatatable = () => {
           method: 'GET',
           requiresAuth: true,
         },
-        (err, res) => {
-          if (res?.ok) {
+        (res) => {
+          if (res.ok) {
             setOpenedApplication(res.data)
           }
         },

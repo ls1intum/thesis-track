@@ -1,13 +1,15 @@
 import { ApplicationState, IApplication } from '../../../../requests/responses/application'
-import { Button, Checkbox, Modal, Stack, Text, Group, Divider, TextInput } from '@mantine/core'
+import { Button, Checkbox, Modal, Stack, Text, Group, Divider, TextInput, Textarea } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
-import AuthenticatedIframe from '../../../../components/AuthenticatedIframe/AuthenticatedIframe'
+import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 import { ApiResponse, doRequest } from '../../../../requests/request'
 import { notifications } from '@mantine/notifications'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../../../config/countries'
+import { useDebouncedValue } from '@mantine/hooks'
+import { formatDate, formatUser } from '../../../../utils/format'
 
 interface ILegacyApplicationReviewModalProps {
   application: IApplication | undefined
@@ -49,7 +51,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
       title: application?.thesisTitle || '',
       comment: '',
       advisors: [],
-      supervisors: [],
+      supervisors: GLOBAL_CONFIG.default_supervisors,
       notifyUser: true,
     },
     validateInputOnBlur: true,
@@ -71,9 +73,30 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
   useEffect(() => {
     form.reset()
     form.setFieldValue('title', application?.thesisTitle || '')
+    form.setFieldValue('comment', application?.comment || '')
   }, [application?.applicationId])
 
   const [loading, setLoading] = useState(false)
+
+  const [debouncedComment] = useDebouncedValue(form.values.comment, 1000)
+
+  useEffect(() => {
+    if (application && debouncedComment !== application.comment) {
+      doRequest<IApplication>(`/v2/applications/${application.applicationId}/comment`, {
+        method: 'PUT',
+        requiresAuth: true,
+        data: {
+          comment: debouncedComment,
+        },
+      },(res) => {
+        if (res.ok) {
+          application.comment = res.data.comment
+
+          onUpdate(res.data)
+        }
+      })
+    }
+  }, [debouncedComment, application?.applicationId])
 
   return (
     <Modal centered size='90%' opened={!!application} onClose={onClose}>
@@ -118,7 +141,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   application.user.studyProgram
                 }
               />
-              <LabeledItem label='Enrollment Date' value={application.user.enrolledAt} />
+              <LabeledItem label='Enrollment Date' value={formatDate(application.user.enrolledAt, {includeHours: false})} />
             </Group>
             <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
             <LabeledItem label='Motivation' value={application.motivation} />
@@ -126,7 +149,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
             <LabeledItem label='Projects' value={application.user.projects} />
             <LabeledItem label='Special Skills' value={application.user.specialSkills} />
             <Group grow>
-              <LabeledItem label='Desired Start Date' value={application.desiredStartDate} />
+              <LabeledItem label='Desired Start Date' value={formatDate(application.desiredStartDate, {includeHours: false})} />
               <LabeledItem
                 label='Research Areas'
                 value={application.user.researchAreas
@@ -145,10 +168,10 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                 <LabeledItem
                   label='CV'
                   value={
-                    <AuthenticatedIframe
+                    <AuthenticatedFilePreview
                       url={`/v1/users/${application.user.userId}/cv`}
                       height={400}
-                      style={{ border: 0 }}
+                      filename={`cv-${application.user.universityId}.pdf`}
                     />
                   }
                 />
@@ -157,10 +180,10 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                 <LabeledItem
                   label='Examination Report'
                   value={
-                    <AuthenticatedIframe
+                    <AuthenticatedFilePreview
                       url={`/v1/users/${application.user.userId}/examination-report`}
                       height={400}
-                      style={{ border: 0 }}
+                      filename={`examination-report-${application.user.universityId}.pdf`}
                     />
                   }
                 />
@@ -169,24 +192,27 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                 <LabeledItem
                   label='Degree Report'
                   value={
-                    <AuthenticatedIframe
+                    <AuthenticatedFilePreview
                       url={`/v1/users/${application.user.userId}/degree-report`}
                       height={400}
-                      style={{ border: 0 }}
+                      filename={`degree-report-${application.user.universityId}.pdf`}
                     />
                   }
                 />
               )}
             </Group>
+            {(application.reviewedBy || application.reviewedAt || application.comment) && (
+              <Divider mt="sm" />
+            )}
             <Group grow>
               {application.reviewedBy && (
                 <LabeledItem
                   label='Reviewer'
-                  value={`${application.reviewedBy.firstName} ${application.reviewedBy.lastName}`}
+                  value={formatUser(application.reviewedBy)}
                 />
               )}
               {application.reviewedAt && (
-                <LabeledItem label='Reviewed At' value={application.reviewedAt} />
+                <LabeledItem label='Reviewed At' value={formatDate(application.reviewedAt, {includeHours: true})} />
               )}
               {application.comment && (
                 <LabeledItem label='Review Comment' value={application.comment} />
@@ -211,16 +237,28 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               label='Supervisor'
               required={true}
               groups={['supervisor']}
-              multiSelect={false}
+              maxValues={1}
               {...form.getInputProps('supervisors')}
             />
             <UserMultiSelect
               label='Advisor'
               required={true}
               groups={['advisor', 'supervisor']}
-              multiSelect={true}
               {...form.getInputProps('advisors')}
             />
+
+            <Stack gap='0'>
+              <Textarea
+                label='Comment'
+                placeholder='Comment'
+                autosize={true}
+                minRows={5}
+                {...form.getInputProps('comment')}
+              />
+              <Text ta='right' fz='xs'>
+                {form.values.comment !== application.comment ? 'Saving...' : 'Saved!'}
+              </Text>
+            </Stack>
 
             <Checkbox
               label='Notify Student'
@@ -245,11 +283,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                         notifyUser: form.values.notifyUser,
                       },
                     },
-                  ).catch<ApiResponse<IApplication>>(() => ({
-                    ok: false,
-                    data: undefined,
-                    status: 500,
-                  }))
+                  )
 
                   setLoading(false)
 
@@ -297,11 +331,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                         thesisTitle: form.values.title,
                       },
                     },
-                  ).catch<ApiResponse<IApplication>>(() => ({
-                    ok: false,
-                    data: undefined,
-                    status: 500,
-                  }))
+                  )
 
                   setLoading(false)
 

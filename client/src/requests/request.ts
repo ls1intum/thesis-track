@@ -3,7 +3,7 @@ import { getAuthenticationTokens } from '../hooks/authentication'
 
 export type ApiResponse<T> =
   | { ok: true; status: number; data: T }
-  | { ok: false; status: number; data: undefined }
+  | { ok: false; status: number; data: undefined, error?: Error }
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 export type ResponseType = 'json' | 'blob'
 
@@ -21,12 +21,12 @@ export function doRequest<T>(url: string, options: IRequestOptions): Promise<Api
 export function doRequest<T>(
   url: string,
   options: IRequestOptions,
-  cb: (error?: Error, res?: ApiResponse<T>) => unknown,
+  cb: (res: ApiResponse<T>) => unknown,
 ): () => void
 export function doRequest<T>(
   url: string,
   options: IRequestOptions,
-  cb?: (error?: Error, res?: ApiResponse<T>) => unknown,
+  cb?: (res: ApiResponse<T>) => unknown,
 ): Promise<ApiResponse<T>> | (() => void) {
   const controller = options.controller || new AbortController()
 
@@ -75,11 +75,15 @@ export function doRequest<T>(
     }
   }
 
-  const promise = executeRequest()
+  const promise = executeRequest().catch<ApiResponse<T>>(error => ({
+    ok: false,
+    status: 1000,
+    data: undefined,
+    error
+  }))
 
   if (cb) {
-    promise.then((res) => cb(undefined, res))
-    promise.catch((error) => cb(error, undefined))
+    promise.then((res) => cb(res))
 
     return () => {
       controller.abort()

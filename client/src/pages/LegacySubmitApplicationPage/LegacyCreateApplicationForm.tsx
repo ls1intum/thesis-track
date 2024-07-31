@@ -30,7 +30,7 @@ import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
 
-const LegacyThesisApplicationForm = () => {
+const LegacyCreateApplicationForm = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
   const [applicationSuccessfullySubmitted, setApplicationSuccessfullySubmitted] = useState(false)
 
@@ -218,10 +218,6 @@ const LegacyThesisApplicationForm = () => {
                     method: 'POST',
                     requiresAuth: false,
                     formData,
-                  }).catch<ApiResponse<unknown>>((err) => {
-                    console.error(err)
-
-                    return { ok: false, status: 500, data: undefined }
                   })
 
                   if (response.ok) {
@@ -506,4 +502,4 @@ const LegacyThesisApplicationForm = () => {
   )
 }
 
-export default LegacyThesisApplicationForm
+export default LegacyCreateApplicationForm
