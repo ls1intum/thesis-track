@@ -101,6 +101,8 @@ jobs:
             echo "APP_HOSTNAME=${{ vars.APP_HOSTNAME }}" >> .env.prod
             echo "SERVER_HOST=${{ vars.SERVER_HOST }}" >> .env.prod
             echo "CLIENT_HOST=${{ vars.CLIENT_HOST }}" >> .env.prod
+            
+            echo "DEFAULT_SUPERVISOR_UUID=${{ vars.DEFAULT_SUPERVISOR_UUID }}" >> .env.prod
 
             echo "MAIL_SENDER=${{ vars.MAIL_SENDER }}" >> .env.prod
             echo "MAIL_FOOTER=${{ vars.MAIL_FOOTER }}" >> .env.prod

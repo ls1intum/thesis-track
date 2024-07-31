@@ -78,6 +78,7 @@ services:
       - KEYCLOAK_HOST
       - KEYCLOAK_REALM_NAME
       - KEYCLOAK_CLIENT_ID
+      - DEFAULT_SUPERVISOR_UUID
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.client.rule=Host(`${APP_HOSTNAME}`)"
