@@ -29,7 +29,7 @@ public class AuthenticationService {
 
     public User getAuthenticatedUser(JwtAuthenticationToken jwt) {
         return this.userRepository.findByUniversityId(jwt.getName())
-                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found"));
     }
 
     @Transactional

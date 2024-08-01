@@ -11,6 +11,7 @@ import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -62,11 +63,11 @@ public class User {
 
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "focus_topics", columnDefinition = "text[]")
-    private List<String> focusTopics;
+    private Set<String> focusTopics;
 
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "research_areas", columnDefinition = "text[]")
-    private List<String> researchAreas;
+    private Set<String> researchAreas;
 
     @Column(name = "study_degree", length = 100)
     private String studyDegree;

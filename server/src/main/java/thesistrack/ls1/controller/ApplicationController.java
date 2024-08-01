@@ -72,7 +72,7 @@ public class ApplicationController {
     ) {
         Application application =  applicationService.updateComment(
                 applicationId,
-                payload.getComment()
+                payload.comment()
         );
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
@@ -90,12 +90,12 @@ public class ApplicationController {
         Application application =  applicationService.accept(
                 applicationId,
                 authenticatedUser,
-                payload.getThesisTitle(),
-                payload.getAdvisorIds(),
-                payload.getSupervisorIds(),
-                payload.getComment(),
-                payload.getNotifyUser(),
-                payload.getCloseTopic()
+                payload.thesisTitle(),
+                payload.advisorIds(),
+                payload.supervisorIds(),
+                payload.comment(),
+                payload.notifyUser(),
+                payload.closeTopic()
         );
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
@@ -112,8 +112,8 @@ public class ApplicationController {
         Application application =  applicationService.reject(
                 applicationId,
                 authenticatedUser,
-                payload.getComment(),
-                payload.getNotifyUser()
+                payload.comment(),
+                payload.notifyUser()
         );
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));

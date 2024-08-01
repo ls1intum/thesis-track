@@ -6,9 +6,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ApplicationState {
-    NOT_ASSESSED("Not assessed"),
-    ACCEPTED("Accepted"),
-    REJECTED("Rejected");
+    NOT_ASSESSED("NOT_ASSESSED"),
+    ACCEPTED("ACCEPTED"),
+    REJECTED("REJECTED");
 
     private final String value;
 }

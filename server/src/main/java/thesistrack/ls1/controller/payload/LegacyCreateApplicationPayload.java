@@ -1,34 +1,28 @@
 package thesistrack.ls1.controller.payload;
 
-import lombok.Getter;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
 import java.time.Instant;
-import java.util.List;
+import java.util.Set;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-public class LegacyCreateApplicationPayload implements Serializable {
-    private String universityId;
-    private String matriculationNumber;
-    private Boolean isExchangeStudent;
-    private String firstName;
-    private String lastName;
-    private String gender;
-    private String nationality;
-    private String email;
-    private String studyDegree;
-    private String studyProgram;
-    private Instant enrolledAt;
-    private String specialSkills;
-    private String motivation;
-    private String interests;
-    private String projects;
-    private String thesisTitle;
-    private Instant desiredStartDate;
-    private List<String> researchAreas;
-    private List<String> focusTopics;
+public record LegacyCreateApplicationPayload (
+        String universityId,
+        String matriculationNumber,
+        Boolean isExchangeStudent,
+        String firstName,
+        String lastName,
+        String gender,
+        String nationality,
+        String email,
+        String studyDegree,
+        String studyProgram,
+        Instant enrolledAt,
+        String specialSkills,
+        String motivation,
+        String interests,
+        String projects,
+        String thesisTitle,
+        Instant desiredStartDate,
+        Set<String> researchAreas,
+        Set<String> focusTopics
+) {
+
 }

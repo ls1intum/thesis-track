@@ -37,10 +37,14 @@ public class UploadService {
         }
     }
 
-    public String store(MultipartFile file) {
+    public String store(MultipartFile file, Integer maxSize) {
         try {
             if (file.isEmpty()) {
-                throw new UploadException("Failed to store empty file.");
+                throw new UploadException("Failed to store empty file");
+            }
+
+            if (file.getSize() > maxSize) {
+                throw new UploadException("File size exceeds the maximum allowed size");
             }
 
             String originalFilename = file.getOriginalFilename();

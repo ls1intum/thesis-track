@@ -12,6 +12,7 @@ import thesistrack.ls1.repository.UserRepository;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -28,8 +29,11 @@ public class UserService {
     public Page<User> getAll(String searchQuery, String[] groups, Integer page, Integer limit, String sortBy, String sortOrder) {
         Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
+        String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
+        Set<String> groupsFilter = groups == null || groups.length == 0 ? null : new HashSet<>(Arrays.asList(groups));
+
         return userRepository
-                .searchUsers(searchQuery.toLowerCase(), new HashSet<>(Arrays.asList(groups)), PageRequest.of(page, limit, Sort.by(order)));
+                .searchUsers(searchQueryFilter, groupsFilter, PageRequest.of(page, limit, Sort.by(order)));
     }
 
     public User findById(UUID userId) {

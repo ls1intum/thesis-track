@@ -15,8 +15,8 @@ public record UserDto (
         String gender,
         String nationality,
         Boolean isExchangeStudent,
-        List<String> focusTopics,
-        List<String> researchAreas,
+        Set<String> focusTopics,
+        Set<String> researchAreas,
         String studyDegree,
         String studyProgram,
         String projects,
@@ -25,12 +25,12 @@ public record UserDto (
         Instant enrolledAt,
         Instant updatedAt,
         Instant joinedAt,
-        List<String> groups,
+        Set<String> groups,
         boolean hasCv,
         boolean hasExaminationReport,
         boolean hasDegreeReport
 ) {
-    static public UserDto fromUserEntity(User user) {
+    public static UserDto fromUserEntity(User user) {
         if (user == null) {
             return null;
         }
@@ -41,7 +41,7 @@ public record UserDto (
                 user.getFocusTopics(), user.getResearchAreas(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
                 user.getSpecialSkills(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
-                user.getGroups() == null ? new ArrayList<>() : user.getGroups().stream().map(x -> x.getId().getGroup()).toList(),
+                user.getGroups() == null ? Collections.emptySet() : new HashSet<>(user.getGroups().stream().map(x -> x.getId().getGroup()).toList()),
                 user.getCvFilename() != null, user.getExaminationFilename() != null, user.getDegreeFilename() != null
         );
     }

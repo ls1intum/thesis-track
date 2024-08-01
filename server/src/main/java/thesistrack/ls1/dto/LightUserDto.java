@@ -17,7 +17,7 @@ public record LightUserDto (
     Instant joinedAt,
     List<String> groups
 ) {
-    static public LightUserDto fromUserEntity(User user) {
+    public static LightUserDto fromUserEntity(User user) {
         if (user == null) {
             return null;
         }

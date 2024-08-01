@@ -12,7 +12,7 @@ public record PaginationDto<T> (
         int totalPages,
         boolean last
 ) {
-    static public <E> PaginationDto<E> fromSpringPage(Page<E> page) {
+    public static <E> PaginationDto<E> fromSpringPage(Page<E> page) {
         if (page == null) {
             return null;
         }

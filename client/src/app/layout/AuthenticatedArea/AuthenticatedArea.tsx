@@ -72,7 +72,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
   } = props
 
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
-  const [opened, { toggle }] = useDisclosure()
+  const [opened, { toggle, close }] = useDisclosure()
 
   const location = useLocation()
   const showHeader = useIsSmallerBreakpoint('md') || collapseNavigation
@@ -83,6 +83,10 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       auth.login()
     }
   }, [requireAuthentication, auth.isAuthenticated])
+
+  useEffect(() => {
+    close()
+  }, [location.pathname])
 
   if (!requireAuthentication && !auth.isAuthenticated) {
     return <>{children}</>

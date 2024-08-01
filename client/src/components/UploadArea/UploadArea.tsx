@@ -22,7 +22,7 @@ interface IUploadAreaProps {
 }
 
 const UploadArea = (props: IUploadAreaProps) => {
-  const { label, required, value, onChange, maxSize = 3 * 1024, accept = PDF_MIME_TYPE } = props
+  const { label, required, value, onChange, maxSize = 1024, accept = PDF_MIME_TYPE } = props
 
   const theme = useMantineTheme()
 

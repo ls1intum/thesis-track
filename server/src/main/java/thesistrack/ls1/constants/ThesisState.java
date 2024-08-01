@@ -6,13 +6,13 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum ThesisState {
-    PROPOSAL("Proposal"),
-    WRITING("Writing"),
-    SUBMITTED("Submitted"),
-    ASSESSED("Assessed"),
-    GRADED("Graded"),
-    FINISHED("Finished"),
-    DROPPED_OUT("Dropped out");
+    PROPOSAL("proposal"),
+    WRITING("writing"),
+    SUBMITTED("submitted"),
+    ASSESSED("assessed"),
+    GRADED("graded"),
+    FINISHED("finished"),
+    DROPPED_OUT("dropped_out");
 
     private final String value;
 }

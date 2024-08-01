@@ -1,6 +1,5 @@
 package thesistrack.ls1.dto;
 
-import lombok.Getter;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.entity.Application;
 
@@ -20,7 +19,7 @@ public record ApplicationDto (
     LightUserDto reviewedBy,
     Instant reviewedAt
 ) {
-    static public ApplicationDto fromApplicationEntity(Application application) {
+    public static ApplicationDto fromApplicationEntity(Application application) {
         if (application == null) {
             return null;
         }

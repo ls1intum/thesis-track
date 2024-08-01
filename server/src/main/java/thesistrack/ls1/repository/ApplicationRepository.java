@@ -15,11 +15,11 @@ import java.util.UUID;
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, UUID> {
     @Query("SELECT a FROM Application a WHERE " +
-            "(a.state IN(:states)) AND " +
-            "(LOWER(a.user.firstName) LIKE %:searchQuery% OR " +
+            "(:states IS NULL OR a.state IN :states) AND " +
+            "(:searchQuery IS NULL OR LOWER(a.user.firstName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.lastName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.email) LIKE %:searchQuery% OR " +
             "LOWER(a.user.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(a.user.universityId) LIKE %:searchQuery%)")
-    Page<Application> searchApplications(@Param("searchQuery") String searchQuery, @Param("states") Set<String> states, Pageable page);
+    Page<Application> searchApplications(@Param("searchQuery") String searchQuery, @Param("states") Set<ApplicationState> states, Pageable page);
 }
