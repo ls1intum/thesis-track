@@ -1,5 +1,6 @@
 import { GLOBAL_CONFIG } from '../config/global'
 import { getAuthenticationTokens } from '../hooks/authentication'
+import { keycloak } from '../contexts/AuthenticationContext/AuthenticationProvider'
 
 export type ApiResponse<T> =
   | { ok: true; status: number; data: T }
@@ -31,8 +32,11 @@ export function doRequest<T>(
   const controller = options.controller || new AbortController()
 
   const executeRequest = async (): Promise<ApiResponse<T>> => {
-    const authenticationTokens = getAuthenticationTokens()
-    const jwtToken = authenticationTokens?.access_token
+    if (options.requiresAuth && keycloak.isTokenExpired(5)) {
+      await keycloak.updateToken(5 * 60)
+    }
+
+    const jwtToken = keycloak.token
 
     if (options.requiresAuth && !jwtToken) {
       throw new Error('User not authenticated')

@@ -15,7 +15,7 @@ import { doRequest } from '../../requests/request'
 
 interface IAuthenticationProviderProps {}
 
-const keycloak = new Keycloak({
+export const keycloak = new Keycloak({
   realm: GLOBAL_CONFIG.keycloak.realm,
   url: GLOBAL_CONFIG.keycloak.host,
   clientId: GLOBAL_CONFIG.keycloak.client_id,
@@ -106,11 +106,7 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
     const refreshTokenFrequency = 60 * 1000
     const refreshTokenInterval = setInterval(() => {
       const refreshToken = keycloak.refreshToken
-      const accessToken = keycloak.token
 
-      const decodedAccessToken = accessToken
-        ? jwtDecode<IDecodedAccessToken>(accessToken)
-        : undefined
       const decodedRefreshToken = refreshToken
         ? jwtDecode<IDecodedRefreshToken>(refreshToken)
         : undefined
@@ -119,11 +115,6 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         keycloak.clearToken()
 
         return setAuthenticationTokens(undefined)
-      } else if (
-        decodedAccessToken?.exp &&
-        decodedAccessToken.exp <= Date.now() / 1000 + refreshTokenFrequency
-      ) {
-        return refreshAccessToken()
       }
     }, refreshTokenFrequency)
 
