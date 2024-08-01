@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: ${{ inputs.environment }}
-      url: 'https://${{ vars.SERVER_HOST }}'
+      url: '${{ vars.CLIENT_HOST }}'
     steps:
       - name: SSH to VM and Execute Docker-Compose Down
         uses: appleboy/ssh-action@v1.0.3
