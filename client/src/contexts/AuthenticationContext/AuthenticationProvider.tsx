@@ -178,12 +178,13 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         }, 2000)
 
         readySignal.then(() => {
-          clearTimeout(timeout)
+          if (keycloak.authenticated) {
+            clearTimeout(timeout)
 
-          keycloak.authenticated &&
-            keycloak.logout({
+            void keycloak.logout({
               redirectUri: `${window.location.origin}${redirectUri}`,
             })
+          }
         })
       },
     }
