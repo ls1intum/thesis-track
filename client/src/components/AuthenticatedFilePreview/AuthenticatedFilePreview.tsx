@@ -1,11 +1,11 @@
-import { IframeHTMLAttributes, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
-import { Button, Center, Stack } from '@mantine/core'
+import { Button, Stack } from '@mantine/core'
 import { downloadFile } from '../../utils/blob'
 
 interface IAuthenticatedIframeProps {
-  url: string,
-  filename: string,
+  url: string
+  filename: string
   height?: number
   allowDownload?: boolean
 }
@@ -41,7 +41,9 @@ const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
     <Stack>
       <iframe style={{ border: 0 }} height={height} src={iframeUrl} />
       {allowDownload && (
-        <Button variant='outline' mx='auto' onClick={() => file && downloadFile(file, filename)}>Download</Button>
+        <Button variant='outline' mx='auto' onClick={() => file && downloadFile(file, filename)}>
+          Download
+        </Button>
       )}
     </Stack>
   )

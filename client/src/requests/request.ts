@@ -1,10 +1,9 @@
 import { GLOBAL_CONFIG } from '../config/global'
-import { getAuthenticationTokens } from '../hooks/authentication'
 import { keycloak } from '../contexts/AuthenticationContext/AuthenticationProvider'
 
 export type ApiResponse<T> =
   | { ok: true; status: number; data: T }
-  | { ok: false; status: number; data: undefined, error?: Error }
+  | { ok: false; status: number; data: undefined; error?: Error }
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
 export type ResponseType = 'json' | 'blob'
 
@@ -79,11 +78,11 @@ export function doRequest<T>(
     }
   }
 
-  const promise = executeRequest().catch<ApiResponse<T>>(error => ({
+  const promise = executeRequest().catch<ApiResponse<T>>((error) => ({
     ok: false,
     status: 1000,
     data: undefined,
-    error
+    error,
   }))
 
   if (cb) {

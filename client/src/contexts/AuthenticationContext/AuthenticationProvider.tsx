@@ -170,15 +170,22 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
         readySignal.then(() => {
           !keycloak.authenticated && keycloak.login()
         }),
-      logout: (redirectUri: string) =>
+      logout: (redirectUri: string) => {
+        setAuthenticationTokens(undefined)
+
+        const timeout = setTimeout(() => {
+          window.location.href = `${window.location.origin}${redirectUri}`
+        }, 2000)
+
         readySignal.then(() => {
-          setAuthenticationTokens(undefined)
+          clearTimeout(timeout)
 
           keycloak.authenticated &&
             keycloak.logout({
               redirectUri: `${window.location.origin}${redirectUri}`,
             })
-        }),
+        })
+      },
     }
   }, [user, !!authenticationTokens?.access_token, location.origin])
 

@@ -29,5 +29,5 @@ export function formatDate(
 }
 
 export function formatUser(user: ILightUser) {
-  return `${user.firstName} ${user.lastName} (${user.universityId})`;
+  return `${user.firstName} ${user.lastName} (${user.universityId})`
 }

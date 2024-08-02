@@ -1,9 +1,20 @@
 import { ApplicationState, IApplication } from '../../../../requests/responses/application'
-import { Button, Checkbox, Modal, Stack, Text, Group, Divider, TextInput, Textarea, Grid } from '@mantine/core'
+import {
+  Button,
+  Checkbox,
+  Modal,
+  Stack,
+  Text,
+  Group,
+  Divider,
+  TextInput,
+  Textarea,
+  Grid,
+} from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
-import { ApiResponse, doRequest } from '../../../../requests/request'
+import { doRequest } from '../../../../requests/request'
 import { notifications } from '@mantine/notifications'
 import React, { ReactNode, useEffect, useState } from 'react'
 import { GLOBAL_CONFIG } from '../../../../config/global'
@@ -82,19 +93,23 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
 
   useEffect(() => {
     if (application && debouncedComment !== application.comment) {
-      doRequest<IApplication>(`/v2/applications/${application.applicationId}/comment`, {
-        method: 'PUT',
-        requiresAuth: true,
-        data: {
-          comment: debouncedComment,
+      doRequest<IApplication>(
+        `/v2/applications/${application.applicationId}/comment`,
+        {
+          method: 'PUT',
+          requiresAuth: true,
+          data: {
+            comment: debouncedComment,
+          },
         },
-      },(res) => {
-        if (res.ok) {
-          application.comment = res.data.comment
+        (res) => {
+          if (res.ok) {
+            application.comment = res.data.comment
 
-          onUpdate(res.data)
-        }
-      })
+            onUpdate(res.data)
+          }
+        },
+      )
     }
   }, [debouncedComment, application?.applicationId])
 
@@ -104,16 +119,16 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
         {application && (
           <Stack gap='md'>
             <Grid grow>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem label='First Name' value={application.user.firstName} />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem label='Last Name' value={application.user.lastName} />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem label='Email' value={application.user.email} />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem
                   label='Gender'
                   value={
@@ -121,7 +136,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   }
                 />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem
                   label='Nationality'
                   value={
@@ -130,21 +145,19 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   }
                 />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
-
-              </Grid.Col>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}></Grid.Col>
             </Grid>
             <Grid grow>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem label='University ID' value={application.user.universityId} />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem
                   label='Matriculation Number'
                   value={application.user.matriculationNumber}
                 />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem
                   label='Study Degree'
                   value={
@@ -153,7 +166,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   }
                 />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
                 <LabeledItem
                   label='Study Program'
                   value={
@@ -162,12 +175,13 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                   }
                 />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
-                <LabeledItem label='Enrollment Date' value={formatDate(application.user.enrolledAt, {includeHours: false})} />
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+                <LabeledItem
+                  label='Enrollment Date'
+                  value={formatDate(application.user.enrolledAt, { includeHours: false })}
+                />
               </Grid.Col>
-              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
-
-              </Grid.Col>
+              <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}></Grid.Col>
             </Grid>
             <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
             <LabeledItem label='Motivation' value={application.motivation} />
@@ -175,10 +189,13 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
             <LabeledItem label='Projects' value={application.user.projects} />
             <LabeledItem label='Special Skills' value={application.user.specialSkills} />
             <Grid grow>
-              <Grid.Col span={{sm: 4}}>
-                <LabeledItem label='Desired Start Date' value={formatDate(application.desiredStartDate, {includeHours: false})} />
+              <Grid.Col span={{ sm: 4 }}>
+                <LabeledItem
+                  label='Desired Start Date'
+                  value={formatDate(application.desiredStartDate, { includeHours: false })}
+                />
               </Grid.Col>
-              <Grid.Col span={{sm: 4}}>
+              <Grid.Col span={{ sm: 4 }}>
                 <LabeledItem
                   label='Research Areas'
                   value={application.user.researchAreas
@@ -186,7 +203,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                     .join(', ')}
                 />
               </Grid.Col>
-              <Grid.Col span={{sm: 4}}>
+              <Grid.Col span={{ sm: 4 }}>
                 <LabeledItem
                   label='Focus Topics'
                   value={application.user.focusTopics
@@ -197,7 +214,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
             </Grid>
             <Grid grow>
               {application.user.hasCv && (
-                <Grid.Col span={{md: 6, xl: 4}}>
+                <Grid.Col span={{ md: 6, xl: 4 }}>
                   <LabeledItem
                     label='CV'
                     value={
@@ -211,7 +228,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                 </Grid.Col>
               )}
               {application.user.hasExaminationReport && (
-                <Grid.Col span={{md: 6, xl: 4}}>
+                <Grid.Col span={{ md: 6, xl: 4 }}>
                   <LabeledItem
                     label='Examination Report'
                     value={
@@ -225,7 +242,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                 </Grid.Col>
               )}
               {application.user.hasDegreeReport && (
-                <Grid.Col span={{md: 6, xl: 4}}>
+                <Grid.Col span={{ md: 6, xl: 4 }}>
                   <LabeledItem
                     label='Degree Report'
                     value={
@@ -240,17 +257,17 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
               )}
             </Grid>
             {(application.reviewedBy || application.reviewedAt || application.comment) && (
-              <Divider mt="sm" />
+              <Divider mt='sm' />
             )}
             <Group grow>
               {application.reviewedBy && (
-                <LabeledItem
-                  label='Reviewer'
-                  value={formatUser(application.reviewedBy)}
-                />
+                <LabeledItem label='Reviewer' value={formatUser(application.reviewedBy)} />
               )}
               {application.reviewedAt && (
-                <LabeledItem label='Reviewed At' value={formatDate(application.reviewedAt, {includeHours: true})} />
+                <LabeledItem
+                  label='Reviewed At'
+                  value={formatDate(application.reviewedAt, { includeHours: true })}
+                />
               )}
               {application.comment && (
                 <LabeledItem label='Review Comment' value={application.comment} />

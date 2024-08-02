@@ -15,7 +15,7 @@ const ScrollToTop = () => {
       return
     }
 
-    scrollTo({y: 0})
+    scrollTo({ y: 0 })
   }, [location.pathname, navigationType])
 
   return (

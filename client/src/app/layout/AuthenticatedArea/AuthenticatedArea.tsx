@@ -3,10 +3,11 @@ import {
   ActionIcon,
   AppShell,
   Burger,
-  Center, Divider,
-  Group, Image,
+  Center,
+  Divider,
+  Group,
   Loader,
-  Space, Text,
+  Text,
   useMantineColorScheme,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
@@ -130,7 +131,9 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         <AppShell.Section grow mb='md'>
           <Group preventGrowOverflow={false}>
             <Logo className={classes.logo} />
-            <Text className={classes.siteName} fw='bold'>ThesisTrack</Text>
+            <Text className={classes.siteName} fw='bold'>
+              ThesisTrack
+            </Text>
             <ActionIcon
               variant='outline'
               color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}

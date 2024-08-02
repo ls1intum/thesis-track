@@ -13,7 +13,8 @@ import {
   Textarea,
   Title,
   TextInput,
-  MultiSelect, Grid,
+  MultiSelect,
+  Grid,
 } from '@mantine/core'
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
@@ -24,7 +25,7 @@ import { LegacyApplicationSuccessfulSubmission } from './components/LegacyApplic
 import { useState } from 'react'
 import { Calendar } from 'phosphor-react'
 import { GLOBAL_CONFIG } from '../../config/global'
-import { ApiResponse, doRequest } from '../../requests/request'
+import { doRequest } from '../../requests/request'
 import { ILegacyCreateApplicationPayload } from '../../requests/payloads/application'
 import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
@@ -169,7 +170,9 @@ const LegacyCreateApplicationForm = () => {
             <Center>
               <Group grow>
                 <Image src={LS1Logo} alt='Logo' />
-                <Title ta='center' order={3}>Thesis Application at LS1 Chair</Title>
+                <Title ta='center' order={3}>
+                  Thesis Application at LS1 Chair
+                </Title>
               </Group>
             </Center>
 
@@ -347,7 +350,7 @@ const LegacyCreateApplicationForm = () => {
                   />
                 </Group>
                 <Grid grow align='flex-start'>
-                  <Grid.Col span={{md: 6}}>
+                  <Grid.Col span={{ md: 6 }}>
                     <Textarea
                       autosize
                       minRows={5}
@@ -362,7 +365,7 @@ const LegacyCreateApplicationForm = () => {
                       } / 500`}</Text>
                     )}
                   </Grid.Col>
-                  <Grid.Col span={{md: 6}}>
+                  <Grid.Col span={{ md: 6 }}>
                     <Textarea
                       autosize
                       minRows={5}
@@ -380,7 +383,7 @@ const LegacyCreateApplicationForm = () => {
                   </Grid.Col>
                 </Grid>
                 <Grid grow align='flex-start'>
-                  <Grid.Col span={{md: 6}}>
+                  <Grid.Col span={{ md: 6 }}>
                     <Textarea
                       autosize
                       minRows={5}
@@ -396,7 +399,7 @@ const LegacyCreateApplicationForm = () => {
                       >{`${form.values.interests?.length ?? 0} / 500`}</Text>
                     )}
                   </Grid.Col>
-                  <Grid.Col span={{md: 6}}>
+                  <Grid.Col span={{ md: 6 }}>
                     <Textarea
                       autosize
                       minRows={5}

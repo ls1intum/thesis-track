@@ -18,9 +18,9 @@ interface IUserMultiSelectProps extends GetInputPropsReturnType {
 const UserMultiSelect = (props: IUserMultiSelectProps) => {
   const { groups, maxValues = Infinity, label, required, ...inputProps } = props
 
-  const selected: string[] = inputProps.value || [];
+  const selected: string[] = inputProps.value || []
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const [data, setData] = useState<Array<{ value: string; label: string }>>([])
   const [searchValue, setSearchValue] = useState('')
 
@@ -43,13 +43,18 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
       },
       (res) => {
         if (res.ok) {
-          setData(prevState => arrayUnique([
-            ...prevState.filter(item => selected.includes(item.value)),
-            ...res.data.content.map((user) => ({
-              value: user.userId,
-              label: formatUser(user),
-            }))
-          ], (a, b) => a.value === b.value))
+          setData((prevState) =>
+            arrayUnique(
+              [
+                ...prevState.filter((item) => selected.includes(item.value)),
+                ...res.data.content.map((user) => ({
+                  value: user.userId,
+                  label: formatUser(user),
+                })),
+              ],
+              (a, b) => a.value === b.value,
+            ),
+          )
           setLoading(false)
         }
       },
