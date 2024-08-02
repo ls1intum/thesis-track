@@ -13,7 +13,7 @@ import {
   Textarea,
   Title,
   TextInput,
-  MultiSelect,
+  MultiSelect, Grid,
 } from '@mantine/core'
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
@@ -167,9 +167,9 @@ const LegacyCreateApplicationForm = () => {
         ) : (
           <Stack>
             <Center>
-              <Group>
-                <Image src={LS1Logo} alt='LS1 Logo' />
-                <Title order={3}>Thesis Application at LS1 Chair</Title>
+              <Group grow>
+                <Image src={LS1Logo} alt='Logo' />
+                <Title ta='center' order={3}>Thesis Application at LS1 Chair</Title>
               </Group>
             </Center>
 
@@ -346,8 +346,8 @@ const LegacyCreateApplicationForm = () => {
                     {...form.getInputProps('enrolledAt')}
                   />
                 </Group>
-                <Group grow align='flex-start'>
-                  <Stack gap='0'>
+                <Grid grow align='flex-start'>
+                  <Grid.Col span={{md: 6}}>
                     <Textarea
                       autosize
                       minRows={5}
@@ -361,8 +361,8 @@ const LegacyCreateApplicationForm = () => {
                         form.values.specialSkills?.length ?? 0
                       } / 500`}</Text>
                     )}
-                  </Stack>
-                  <Stack gap='0'>
+                  </Grid.Col>
+                  <Grid.Col span={{md: 6}}>
                     <Textarea
                       autosize
                       minRows={5}
@@ -377,10 +377,10 @@ const LegacyCreateApplicationForm = () => {
                         ta='right'
                       >{`${form.values.motivation?.length ?? 0} / 500`}</Text>
                     )}
-                  </Stack>
-                </Group>
-                <Group grow align='flex-start'>
-                  <Stack gap='0'>
+                  </Grid.Col>
+                </Grid>
+                <Grid grow align='flex-start'>
+                  <Grid.Col span={{md: 6}}>
                     <Textarea
                       autosize
                       minRows={5}
@@ -395,8 +395,8 @@ const LegacyCreateApplicationForm = () => {
                         ta='right'
                       >{`${form.values.interests?.length ?? 0} / 500`}</Text>
                     )}
-                  </Stack>
-                  <Stack gap='0'>
+                  </Grid.Col>
+                  <Grid.Col span={{md: 6}}>
                     <Textarea
                       autosize
                       minRows={5}
@@ -408,8 +408,8 @@ const LegacyCreateApplicationForm = () => {
                     {!form.errors.projects && (
                       <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
                     )}
-                  </Stack>
-                </Group>
+                  </Grid.Col>
+                </Grid>
                 <Stack gap='0'>
                   <Textarea
                     autosize

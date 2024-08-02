@@ -35,7 +35,7 @@ const theme = createTheme({
 
 const App = () => {
   return (
-    <MantineProvider defaultColorScheme='auto' theme={theme}>
+    <MantineProvider defaultColorScheme='dark' theme={theme}>
       <AuthenticationProvider>
         <AppRoutes />
         <Notifications limit={5} />

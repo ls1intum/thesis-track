@@ -16,6 +16,8 @@ import { Moon, Scroll, SignOut, Sun } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
 import Logo from '../../../static/logo'
+import { useNavigationType } from 'react-router'
+import ScrollToTop from '../ScrollToTop/ScrollToTop'
 
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
@@ -75,6 +77,8 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
   const [opened, { toggle, close }] = useDisclosure()
 
   const location = useLocation()
+  const navigationType = useNavigationType()
+
   const showHeader = useIsSmallerBreakpoint('md') || collapseNavigation
   const auth = useAuthenticationContext()
 
@@ -85,11 +89,20 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
   }, [requireAuthentication, auth.isAuthenticated])
 
   useEffect(() => {
+    if (navigationType === 'POP') {
+      return
+    }
+
     close()
-  }, [location.pathname])
+  }, [location.pathname, navigationType])
 
   if (!requireAuthentication && !auth.isAuthenticated) {
-    return <>{children}</>
+    return (
+      <>
+        {children}
+        <ScrollToTop />
+      </>
+    )
   }
 
   return (
@@ -175,6 +188,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         ) : (
           <SpinningLoader />
         )}
+        <ScrollToTop />
       </AppShell.Main>
     </AppShell>
   )

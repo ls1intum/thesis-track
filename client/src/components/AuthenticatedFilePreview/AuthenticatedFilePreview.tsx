@@ -34,7 +34,7 @@ const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
   }, [url])
 
   const iframeUrl = useMemo(() => {
-    return file ? URL.createObjectURL(file) : undefined
+    return file ? `${URL.createObjectURL(file)}#toolbar=0&navpanes=0` : undefined
   }, [file])
 
   return (

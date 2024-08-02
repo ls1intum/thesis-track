@@ -57,7 +57,7 @@ const UploadArea = (props: IUploadAreaProps) => {
           maxSize={maxSize * 1024}
           accept={accept}
         >
-          <Group align='center' gap='xl' style={{ minHeight: rem(220), pointerEvents: 'none' }}>
+          <Group align='center' gap='xl' style={{ minHeight: rem(150), pointerEvents: 'none' }}>
             <Dropzone.Accept>
               <UploadSimple size='3.2rem' color={theme.colors[theme.primaryColor][4]} />
             </Dropzone.Accept>

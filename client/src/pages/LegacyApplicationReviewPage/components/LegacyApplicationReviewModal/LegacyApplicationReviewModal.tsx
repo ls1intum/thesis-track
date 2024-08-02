@@ -1,5 +1,5 @@
 import { ApplicationState, IApplication } from '../../../../requests/responses/application'
-import { Button, Checkbox, Modal, Stack, Text, Group, Divider, TextInput, Textarea } from '@mantine/core'
+import { Button, Checkbox, Modal, Stack, Text, Group, Divider, TextInput, Textarea, Grid } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
@@ -99,108 +99,146 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
   }, [debouncedComment, application?.applicationId])
 
   return (
-    <Modal centered size='90%' opened={!!application} onClose={onClose}>
+    <Modal centered size='100vw' opened={!!application} onClose={onClose}>
       <form>
         {application && (
           <Stack gap='md'>
-            <Group grow preventGrowOverflow>
-              <LabeledItem label='First Name' value={application.user.firstName} />
-              <LabeledItem label='Last Name' value={application.user.lastName} />
-              <LabeledItem label='Email' value={application.user.email} />
-              <LabeledItem
-                label='Gender'
-                value={
-                  GLOBAL_CONFIG.genders[application.user.gender || ''] ?? application.user.gender
-                }
-              />
-              <LabeledItem
-                label='Nationality'
-                value={
-                  AVAILABLE_COUNTRIES[application.user.nationality || ''] ??
-                  application.user.nationality
-                }
-              />
-            </Group>
-            <Group grow preventGrowOverflow>
-              <LabeledItem label='University ID' value={application.user.universityId} />
-              <LabeledItem
-                label='Matriculation Number'
-                value={application.user.matriculationNumber}
-              />
-              <LabeledItem
-                label='Study Degree'
-                value={
-                  GLOBAL_CONFIG.study_degrees[application.user.studyDegree || ''] ??
-                  application.user.studyDegree
-                }
-              />
-              <LabeledItem
-                label='Study Program'
-                value={
-                  GLOBAL_CONFIG.study_programs[application.user.studyProgram || ''] ??
-                  application.user.studyProgram
-                }
-              />
-              <LabeledItem label='Enrollment Date' value={formatDate(application.user.enrolledAt, {includeHours: false})} />
-            </Group>
+            <Grid grow>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem label='First Name' value={application.user.firstName} />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem label='Last Name' value={application.user.lastName} />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem label='Email' value={application.user.email} />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem
+                  label='Gender'
+                  value={
+                    GLOBAL_CONFIG.genders[application.user.gender || ''] ?? application.user.gender
+                  }
+                />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem
+                  label='Nationality'
+                  value={
+                    AVAILABLE_COUNTRIES[application.user.nationality || ''] ??
+                    application.user.nationality
+                  }
+                />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+
+              </Grid.Col>
+            </Grid>
+            <Grid grow>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem label='University ID' value={application.user.universityId} />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem
+                  label='Matriculation Number'
+                  value={application.user.matriculationNumber}
+                />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem
+                  label='Study Degree'
+                  value={
+                    GLOBAL_CONFIG.study_degrees[application.user.studyDegree || ''] ??
+                    application.user.studyDegree
+                  }
+                />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem
+                  label='Study Program'
+                  value={
+                    GLOBAL_CONFIG.study_programs[application.user.studyProgram || ''] ??
+                    application.user.studyProgram
+                  }
+                />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+                <LabeledItem label='Enrollment Date' value={formatDate(application.user.enrolledAt, {includeHours: false})} />
+              </Grid.Col>
+              <Grid.Col span={{xs: 4, sm: 3, md: 2}}>
+
+              </Grid.Col>
+            </Grid>
             <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
             <LabeledItem label='Motivation' value={application.motivation} />
             <LabeledItem label='Interests' value={application.user.interests} />
             <LabeledItem label='Projects' value={application.user.projects} />
             <LabeledItem label='Special Skills' value={application.user.specialSkills} />
-            <Group grow>
-              <LabeledItem label='Desired Start Date' value={formatDate(application.desiredStartDate, {includeHours: false})} />
-              <LabeledItem
-                label='Research Areas'
-                value={application.user.researchAreas
-                  ?.map((key) => GLOBAL_CONFIG.research_areas[key] ?? key)
-                  .join(', ')}
-              />
-              <LabeledItem
-                label='Focus Topics'
-                value={application.user.focusTopics
-                  ?.map((key) => GLOBAL_CONFIG.focus_topics[key] ?? key)
-                  .join(', ')}
-              />
-            </Group>
-            <Group grow preventGrowOverflow>
-              {application.user.hasCv && (
+            <Grid grow>
+              <Grid.Col span={{sm: 4}}>
+                <LabeledItem label='Desired Start Date' value={formatDate(application.desiredStartDate, {includeHours: false})} />
+              </Grid.Col>
+              <Grid.Col span={{sm: 4}}>
                 <LabeledItem
-                  label='CV'
-                  value={
-                    <AuthenticatedFilePreview
-                      url={`/v1/users/${application.user.userId}/cv`}
-                      height={400}
-                      filename={`cv-${application.user.universityId}.pdf`}
-                    />
-                  }
+                  label='Research Areas'
+                  value={application.user.researchAreas
+                    ?.map((key) => GLOBAL_CONFIG.research_areas[key] ?? key)
+                    .join(', ')}
                 />
+              </Grid.Col>
+              <Grid.Col span={{sm: 4}}>
+                <LabeledItem
+                  label='Focus Topics'
+                  value={application.user.focusTopics
+                    ?.map((key) => GLOBAL_CONFIG.focus_topics[key] ?? key)
+                    .join(', ')}
+                />
+              </Grid.Col>
+            </Grid>
+            <Grid grow>
+              {application.user.hasCv && (
+                <Grid.Col span={{md: 6, xl: 4}}>
+                  <LabeledItem
+                    label='CV'
+                    value={
+                      <AuthenticatedFilePreview
+                        url={`/v1/users/${application.user.userId}/cv`}
+                        height={400}
+                        filename={`cv-${application.user.universityId}.pdf`}
+                      />
+                    }
+                  />
+                </Grid.Col>
               )}
               {application.user.hasExaminationReport && (
-                <LabeledItem
-                  label='Examination Report'
-                  value={
-                    <AuthenticatedFilePreview
-                      url={`/v1/users/${application.user.userId}/examination-report`}
-                      height={400}
-                      filename={`examination-report-${application.user.universityId}.pdf`}
-                    />
-                  }
-                />
+                <Grid.Col span={{md: 6, xl: 4}}>
+                  <LabeledItem
+                    label='Examination Report'
+                    value={
+                      <AuthenticatedFilePreview
+                        url={`/v1/users/${application.user.userId}/examination-report`}
+                        height={400}
+                        filename={`examination-report-${application.user.universityId}.pdf`}
+                      />
+                    }
+                  />
+                </Grid.Col>
               )}
               {application.user.hasDegreeReport && (
-                <LabeledItem
-                  label='Degree Report'
-                  value={
-                    <AuthenticatedFilePreview
-                      url={`/v1/users/${application.user.userId}/degree-report`}
-                      height={400}
-                      filename={`degree-report-${application.user.universityId}.pdf`}
-                    />
-                  }
-                />
+                <Grid.Col span={{md: 6, xl: 4}}>
+                  <LabeledItem
+                    label='Degree Report'
+                    value={
+                      <AuthenticatedFilePreview
+                        url={`/v1/users/${application.user.userId}/degree-report`}
+                        height={400}
+                        filename={`degree-report-${application.user.universityId}.pdf`}
+                      />
+                    }
+                  />
+                </Grid.Col>
               )}
-            </Group>
+            </Grid>
             {(application.reviewedBy || application.reviewedAt || application.comment) && (
               <Divider mt="sm" />
             )}
