@@ -84,17 +84,7 @@ public class ThesisService {
         thesis = thesisRepository.save(thesis);
 
         assignThesisRoles(thesis, creator, supervisorIds, advisorIds, studentIds);
-
-        ThesisStateChangeId stateChangeId = new ThesisStateChangeId();
-        stateChangeId.setState(ThesisState.PROPOSAL);
-        stateChangeId.setThesisId(thesis.getId());
-
-        ThesisStateChange stateChange = new ThesisStateChange();
-        stateChange.setChangedAt(Instant.now());
-        stateChange.setThesis(thesis);
-        stateChange.setId(stateChangeId);
-
-        thesisStateChangeRepository.save(stateChange);
+        saveStateChange(thesis, ThesisState.PROPOSAL);
 
         return findById(thesis.getId());
     }
@@ -108,17 +98,7 @@ public class ThesisService {
         }
 
         thesis.setState(ThesisState.DROPPED_OUT);
-
-        ThesisStateChangeId stateChangeId = new ThesisStateChangeId();
-        stateChangeId.setThesisId(thesis.getId());
-        stateChangeId.setState(ThesisState.DROPPED_OUT);
-
-        ThesisStateChange stateChange = new ThesisStateChange();
-        stateChange.setId(stateChangeId);
-        stateChange.setThesis(thesis);
-        stateChange.setChangedAt(Instant.now());
-
-        thesisStateChangeRepository.save(stateChange);
+        saveStateChange(thesis, ThesisState.DROPPED_OUT);
 
         return thesisRepository.save(thesis);
     }
@@ -151,16 +131,7 @@ public class ThesisService {
         assignThesisRoles(thesis, updater, supervisorIds, advisorIds, studentIds);
 
         for (ThesisStatePayload state : states) {
-            ThesisStateChangeId stateChangeId = new ThesisStateChangeId();
-            stateChangeId.setThesisId(thesis.getId());
-            stateChangeId.setState(state.state());
-
-            ThesisStateChange stateChange = new ThesisStateChange();
-            stateChange.setId(stateChangeId);
-            stateChange.setThesis(thesis);
-            stateChange.setChangedAt(state.changedAt());
-
-            thesisStateChangeRepository.save(stateChange);
+            saveStateChange(thesis, state.state());
         }
 
         return thesisRepository.save(thesis);
@@ -213,6 +184,19 @@ public class ThesisService {
         for (User student : students) {
             saveThesisRole(thesis, assigner, student, ThesisRoleName.STUDENT);
         }
+    }
+
+    private void saveStateChange(Thesis thesis, ThesisState state) {
+        ThesisStateChangeId stateChangeId = new ThesisStateChangeId();
+        stateChangeId.setThesisId(thesis.getId());
+        stateChangeId.setState(state);
+
+        ThesisStateChange stateChange = new ThesisStateChange();
+        stateChange.setId(stateChangeId);
+        stateChange.setThesis(thesis);
+        stateChange.setChangedAt(Instant.now());
+
+        thesisStateChangeRepository.save(stateChange);
     }
 
     private void saveThesisRole(Thesis thesis, User assigner, User user, ThesisRoleName role) {

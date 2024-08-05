@@ -105,10 +105,10 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
   return (
     <Accordion
       variant='contained'
-      value={opened ? 'configuration' : ''}
-      onChange={(value) => setOpened(value === 'configuration')}
+      value={opened ? 'open' : ''}
+      onChange={(value) => setOpened(value === 'open')}
     >
-      <Accordion.Item value='configuration'>
+      <Accordion.Item value='open'>
         <Accordion.Control>Configuration</Accordion.Control>
         <Accordion.Panel>
           <form

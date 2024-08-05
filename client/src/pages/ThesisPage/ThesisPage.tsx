@@ -16,6 +16,7 @@ import { useLoggedInUser } from '../../hooks/authentication'
 import { IThesisAccessPermissions } from './types'
 import { IThesis, ThesisState } from '../../requests/responses/thesis'
 import { Info } from 'phosphor-react'
+import { checkMinimumThesisState } from '../../utils/thesis'
 
 const ThesisPage = () => {
   const { thesisId } = useParams<{ thesisId: string }>()
@@ -40,18 +41,24 @@ const ThesisPage = () => {
   }
 
   const access: IThesisAccessPermissions = {
-    student:
-      user.groups.includes('admin') ||
-      thesis.advisors.some((advisor) => user.userId === advisor.userId) ||
-      thesis.supervisors.some((supervisor) => user.userId === supervisor.userId) ||
-      thesis.students.some((student) => user.userId === student.userId),
-    advisor:
-      user.groups.includes('admin') ||
-      thesis.advisors.some((advisor) => user.userId === advisor.userId) ||
-      thesis.supervisors.some((supervisor) => user.userId === supervisor.userId),
-    supervisor:
-      user.groups.includes('admin') ||
-      thesis.supervisors.some((supervisor) => user.userId === supervisor.userId),
+    supervisor: false,
+    advisor: false,
+    student: false,
+  }
+
+  if (
+    user.groups.includes('admin') ||
+    thesis.supervisors.some((supervisor) => user.userId === supervisor.userId)
+  ) {
+    access.supervisor = true
+  }
+
+  if (access.supervisor || thesis.advisors.some((advisor) => user.userId === advisor.userId)) {
+    access.advisor = true
+  }
+
+  if (access.advisor || thesis.students.some((student) => user.userId === student.userId)) {
+    access.student = true
   }
 
   return (
@@ -63,15 +70,21 @@ const ThesisPage = () => {
       )}
       <ThesisConfigSection thesis={thesis} access={access} onUpdate={setThesis} />
       <Space my='md' />
-      <ThesisInfoSection thesis={thesis} />
+      <ThesisInfoSection thesis={thesis} access={access} onUpdate={setThesis} />
       <Space my='md' />
-      <ThesisProposalSection thesis={thesis} />
+      <ThesisProposalSection thesis={thesis} access={access} onUpdate={setThesis} />
       <Space my='md' />
-      <ThesisWritingSection thesis={thesis} />
+      {checkMinimumThesisState(thesis, ThesisState.WRITING) && (
+        <ThesisWritingSection thesis={thesis} access={access} onUpdate={setThesis} />
+      )}
       <Space my='md' />
-      <ThesisAssessmentSection thesis={thesis} />
+      {checkMinimumThesisState(thesis, ThesisState.SUBMITTED) && (
+        <ThesisAssessmentSection thesis={thesis} access={access} onUpdate={setThesis} />
+      )}
       <Space my='md' />
-      <ThesisFinalGradeSection thesis={thesis} />
+      {checkMinimumThesisState(thesis, ThesisState.ASSESSED) && (
+        <ThesisFinalGradeSection thesis={thesis} access={access} onUpdate={setThesis} />
+      )}
     </ContentContainer>
   )
 }
