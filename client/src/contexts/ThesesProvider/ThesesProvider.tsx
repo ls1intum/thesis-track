@@ -39,7 +39,7 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
     setTheses(undefined)
 
     return doRequest<Pageable<IThesis>>(
-      `/v1/theses`,
+      `/v2/theses`,
       {
         method: 'GET',
         requiresAuth: true,

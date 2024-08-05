@@ -116,7 +116,7 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
               setUpdating(true)
 
               try {
-                const response = await doRequest<IThesis>(`/v1/theses/${thesis.thesisId}`, {
+                const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
                   method: 'PUT',
                   requiresAuth: true,
                   data: {
@@ -245,7 +245,7 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
 
                         try {
                           const response = await doRequest<IThesis>(
-                            `/v1/theses/${thesis.thesisId}`,
+                            `/v2/theses/${thesis.thesisId}`,
                             {
                               method: 'DELETE',
                               requiresAuth: true,

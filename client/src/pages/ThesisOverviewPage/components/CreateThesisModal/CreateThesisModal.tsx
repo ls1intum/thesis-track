@@ -50,7 +50,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
           setLoading(true)
 
           try {
-            const response = await doRequest<IThesis>('/v1/theses', {
+            const response = await doRequest<IThesis>('/v2/theses', {
               method: 'POST',
               requiresAuth: true,
               data: {

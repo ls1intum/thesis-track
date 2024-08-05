@@ -9,7 +9,7 @@ export function useThesis(thesisId: string | undefined) {
     setThesis(undefined)
 
     return doRequest<IThesis>(
-      `/v1/theses/${thesisId}`,
+      `/v2/theses/${thesisId}`,
       {
         method: 'GET',
         requiresAuth: true,
