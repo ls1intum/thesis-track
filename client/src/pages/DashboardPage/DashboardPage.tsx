@@ -35,7 +35,9 @@ const DashboardPage = () => {
         emptyComponent={
           !managementAccess ? (
             <Stack>
-              <Title order={2}>My Applications</Title>
+              <Title order={2} mb='sm'>
+                My Applications
+              </Title>
               <Center>
                 <Button my='md' component={Link} to='/applications/thesis'>
                   New Application
@@ -45,13 +47,15 @@ const DashboardPage = () => {
           ) : undefined
         }
       >
-        <Title order={2}>My Applications</Title>
+        <Title order={2} mb='sm'>
+          My Applications
+        </Title>
+        <ApplicationsTable onApplicationClick={setApplication} />
         <ApplicationReviewModal
           application={application}
           onClose={() => setApplication(undefined)}
           allowReviews={false}
         />
-        <ApplicationsTable onApplicationClick={setApplication} />
         <Space mb='md' />
       </ApplicationsProvider>
     </ContentContainer>

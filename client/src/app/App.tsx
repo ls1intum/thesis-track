@@ -1,5 +1,5 @@
 import React from 'react'
-import { createTheme, MantineProvider } from '@mantine/core'
+import { Button, createTheme, MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
 import '../../public/favicon.svg'
 import AppRoutes from './Routes'
@@ -12,9 +12,10 @@ import '@mantine/tiptap/styles.css'
 import '@mantine/dropzone/styles.css'
 import 'mantine-datatable/styles.layer.css'
 
-import './styles.scss'
+import * as buttonClasses from './Buttons.module.css'
 
 const theme = createTheme({
+  respectReducedMotion: false,
   colors: {
     'pale-purple': [
       '#f2f0ff',
@@ -31,6 +32,11 @@ const theme = createTheme({
   },
   primaryColor: 'pale-purple',
   primaryShade: 7,
+  components: {
+    Button: Button.extend({
+      classNames: buttonClasses,
+    }),
+  },
 })
 
 const App = () => {

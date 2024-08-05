@@ -71,8 +71,6 @@ public class AuthenticationService {
 
         user = this.userRepository.save(user);
 
-        this.userGroupRepository.deleteByUserId(user.getId());
-
         for (String group : groups) {
             UserGroup entity = new UserGroup();
             UserGroupId entityId = new UserGroupId();

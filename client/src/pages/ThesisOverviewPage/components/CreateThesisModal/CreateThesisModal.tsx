@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import { doRequest } from '../../../../requests/request'
 import { IThesis } from '../../../../requests/responses/thesis'
 import { notifications } from '@mantine/notifications'
+import { isNotEmptyUserList } from '../../../../utils/validation'
 
 interface ICreateThesisModalProps {
   opened: boolean
@@ -34,21 +35,9 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
     validateInputOnBlur: true,
     validate: {
       title: isNotEmpty('Title must not be empty'),
-      students: (value) => {
-        if (value.length === 0) {
-          return 'Student is required'
-        }
-      },
-      advisors: (value) => {
-        if (value.length === 0) {
-          return 'Advisor is required'
-        }
-      },
-      supervisors: (value) => {
-        if (value.length === 0) {
-          return 'Supervisor is required'
-        }
-      },
+      students: isNotEmptyUserList('student'),
+      advisors: isNotEmptyUserList('advisor'),
+      supervisors: isNotEmptyUserList('supervisor'),
     },
   })
 

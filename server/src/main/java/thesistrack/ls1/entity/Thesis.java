@@ -82,6 +82,7 @@ public class Thesis {
     private ThesisAssessment assessment;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    @OrderBy("changedAt ASC")
     private List<ThesisStateChange> states;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)

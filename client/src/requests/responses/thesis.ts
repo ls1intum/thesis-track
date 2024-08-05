@@ -13,6 +13,7 @@ export enum ThesisState {
 export interface IThesis {
   thesisId: string
   title: string
+  visibility: string
   infoText: string
   abstractText: string
   state: ThesisState
@@ -28,4 +29,9 @@ export interface IThesis {
   supervisors: ILightUser[]
   assessment: null
   proposal: null
+  states: Array<{
+    state: ThesisState
+    startedAt: string
+    endedAt: string | null
+  }>
 }

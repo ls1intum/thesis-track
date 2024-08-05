@@ -2,8 +2,10 @@ package thesistrack.ls1.dto;
 
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
+import thesistrack.ls1.constants.ThesisVisibility;
 import thesistrack.ls1.entity.Thesis;
 import thesistrack.ls1.entity.ThesisRole;
+import thesistrack.ls1.entity.ThesisStateChange;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.UUID;
 public record ThesisDto (
         UUID thesisId,
         String title,
+        ThesisVisibility visibility,
         String infoText,
         String abstractText,
         ThesisState state,
@@ -30,7 +33,9 @@ public record ThesisDto (
 
         List<LightUserDto> students,
         List<LightUserDto> advisors,
-        List<LightUserDto> supervisors
+        List<LightUserDto> supervisors,
+
+        List<ThesisStateChangeDto> states
 ) {
     public static ThesisDto fromThesisEntity(Thesis thesis, boolean protectedAccess) {
         if (thesis == null) {
@@ -59,9 +64,26 @@ public record ThesisDto (
             }
         }
 
+        List<ThesisStateChangeDto> states = new ArrayList<>();
+        List<ThesisStateChange> stateChanges = thesis.getStates();
+
+        if (stateChanges != null) {
+            for (int i = 0; i < stateChanges.size(); i++) {
+                ThesisStateChange stateChange = stateChanges.get(i);
+                Instant endedAt = i + 1 < stateChanges.size() ? stateChanges.get(i + 1).getChangedAt() : Instant.now();
+
+                if (stateChange.getId().getState() == ThesisState.FINISHED || stateChange.getId().getState() == ThesisState.DROPPED_OUT) {
+                    endedAt = null;
+                }
+
+                states.add(ThesisStateChangeDto.fromStateChangeEntity(stateChange, endedAt));
+            }
+        }
+
         return new ThesisDto(
                 thesis.getId(),
                 thesis.getTitle(),
+                thesis.getVisibility(),
                 thesis.getInfo(),
                 thesis.getAbstractField(),
                 thesis.getState(),
@@ -76,7 +98,8 @@ public record ThesisDto (
                 ThesisProposalDto.fromProposalEntity(thesis.getProposal()),
                 students,
                 advisors,
-                supervisors
+                supervisors,
+                states
         );
     }
 }

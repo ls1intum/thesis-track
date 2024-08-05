@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.controller.payload.CreateThesisPayload;
 import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
+import thesistrack.ls1.controller.payload.UpdateThesisPayload;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisDto;
 import thesistrack.ls1.entity.Thesis;
@@ -95,14 +96,38 @@ public class ThesisController {
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
     }
 
-    @PutMapping
-    public ResponseEntity<ThesisDto> updateThesisConfig() {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    @PutMapping("/{thesisId}")
+    public ResponseEntity<ThesisDto> updateThesisConfig(
+            @PathVariable UUID thesisId,
+            @RequestBody UpdateThesisPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.updateThesis(
+                authenticatedUser,
+                thesisId,
+                payload.thesisTitle(),
+                payload.visibility(),
+                payload.startDate(),
+                payload.endDate(),
+                payload.studentIds(),
+                payload.advisorIds(),
+                payload.supervisorIds(),
+                payload.states()
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
     }
 
     @DeleteMapping("/{thesisId}")
-    public ResponseEntity<ThesisDto> closeThesis(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> closeThesis(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.closeThesis(thesisId);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}/info")

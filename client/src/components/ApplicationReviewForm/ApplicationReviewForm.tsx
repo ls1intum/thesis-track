@@ -8,6 +8,7 @@ import { doRequest } from '../../requests/request'
 import { Button, Checkbox, Divider, Group, Stack, Text, Textarea, TextInput } from '@mantine/core'
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { notifications } from '@mantine/notifications'
+import { isNotEmptyUserList } from '../../utils/validation'
 
 interface IApplicationReviewFormProps {
   application: IApplication
@@ -37,16 +38,8 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     validateInputOnBlur: true,
     validate: {
       title: isNotEmpty('Title must not be empty'),
-      advisors: (value) => {
-        if (value.length === 0) {
-          return 'Advisor is required'
-        }
-      },
-      supervisors: (value) => {
-        if (value.length === 0) {
-          return 'Supervisor is required'
-        }
-      },
+      advisors: isNotEmptyUserList('advisor'),
+      supervisors: isNotEmptyUserList('supervisor'),
     },
   })
 
