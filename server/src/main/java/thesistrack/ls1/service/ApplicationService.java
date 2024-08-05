@@ -138,7 +138,7 @@ public class ApplicationService {
 
     @Transactional
     public Application accept(
-            UUID applicationId,
+            Application application,
             User reviewer,
             String title,
             Set<UUID> advisorIds,
@@ -147,8 +147,6 @@ public class ApplicationService {
             boolean notifyUser,
             boolean closeTopic
     ) {
-        Application application = findById(applicationId);
-
         application.setState(ApplicationState.ACCEPTED);
         application.setComment(RequestValidator.validateStringMaxLength(comment, 1000));
         application.setReviewedAt(Instant.now());
@@ -179,9 +177,7 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application reject(UUID thesisApplicationId, User reviewer, String comment, boolean notifyUser) {
-        Application application = findById(thesisApplicationId);
-
+    public Application reject(Application application, User reviewer, String comment, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
         application.setComment(RequestValidator.validateStringMaxLength(comment, 1000));
         application.setReviewedAt(Instant.now());
@@ -195,9 +191,7 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application updateComment(UUID thesisApplicationId, String comment) {
-        Application application = findById(thesisApplicationId);
-
+    public Application updateComment(Application application, String comment) {
         application.setComment(RequestValidator.validateStringMaxLength(comment, 1000));
 
         return applicationRepository.save(application);

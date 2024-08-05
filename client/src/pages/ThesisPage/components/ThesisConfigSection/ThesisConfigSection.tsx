@@ -213,7 +213,7 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
               />
               {form.values.states.map((item, index) => (
                 <Group key={item.state} grow>
-                  <Group>
+                  <Group justify='center'>
                     <Text ta='center' fw='bold'>
                       State
                     </Text>

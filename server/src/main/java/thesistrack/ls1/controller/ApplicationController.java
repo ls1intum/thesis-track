@@ -83,16 +83,20 @@ public class ApplicationController {
     }
 
     @PutMapping("/{applicationId}/comment")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> updateComment(
             @PathVariable UUID applicationId,
             @RequestBody UpdateApplicationCommentPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
+        Application application = applicationService.findById(applicationId);
 
-        Application application =  applicationService.updateComment(
-                applicationId,
+        if (!application.hasProtectedAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+
+        application =  applicationService.updateComment(
+                application,
                 payload.comment()
         );
 
@@ -100,16 +104,20 @@ public class ApplicationController {
     }
 
     @PutMapping("/{applicationId}/accept")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> acceptApplication(
             @PathVariable UUID applicationId,
             @RequestBody AcceptApplicationPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
+        Application application = applicationService.findById(applicationId);
 
-        Application application =  applicationService.accept(
-                applicationId,
+        if (!application.hasProtectedAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+
+        application = applicationService.accept(
+                application,
                 authenticatedUser,
                 payload.thesisTitle(),
                 payload.advisorIds(),
@@ -123,15 +131,20 @@ public class ApplicationController {
     }
 
     @PutMapping("/{applicationId}/reject")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> rejectApplication(
             @PathVariable UUID applicationId,
             @RequestBody RejectApplicationPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
-        Application application =  applicationService.reject(
-                applicationId,
+        Application application = applicationService.findById(applicationId);
+
+        if (!application.hasProtectedAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+
+        application =  applicationService.reject(
+                application,
                 authenticatedUser,
                 payload.comment(),
                 payload.notifyUser()

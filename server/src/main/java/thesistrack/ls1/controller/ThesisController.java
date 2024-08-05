@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.controller.payload.CreateThesisPayload;
-import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
+import thesistrack.ls1.controller.payload.UpdateThesisInfoPayload;
 import thesistrack.ls1.controller.payload.UpdateThesisPayload;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisDto;
@@ -61,7 +61,7 @@ public class ThesisController {
         );
 
         return ResponseEntity.ok(PaginationDto.fromSpringPage(
-                theses.map(thesis -> ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)))
+                theses.map(thesis -> ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)))
         ));
     }
 
@@ -74,7 +74,7 @@ public class ThesisController {
             throw new AccessDeniedException("You do not have access to this thesis");
         }
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @PostMapping
@@ -93,7 +93,7 @@ public class ThesisController {
                 null
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}")
@@ -103,9 +103,15 @@ public class ThesisController {
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
-        Thesis thesis = thesisService.updateThesis(
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this thesis");
+        }
+
+        thesis = thesisService.updateThesis(
                 authenticatedUser,
-                thesisId,
+                thesis,
                 payload.thesisTitle(),
                 payload.visibility(),
                 payload.startDate(),
@@ -116,7 +122,7 @@ public class ThesisController {
                 payload.states()
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @DeleteMapping("/{thesisId}")
@@ -125,15 +131,53 @@ public class ThesisController {
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
-        Thesis thesis = thesisService.closeThesis(thesisId);
+        Thesis thesis = thesisService.findById(thesisId);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this thesis");
+        }
+
+        thesis = thesisService.closeThesis(thesis);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}/info")
-    public ResponseEntity<ThesisDto> updateThesisInfo(@PathVariable UUID thesisId) {
+    public ResponseEntity<ThesisDto> updateThesisInfo(
+            @PathVariable UUID thesisId,
+            @RequestBody UpdateThesisInfoPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this thesis");
+        }
+
+        thesis = thesisService.updateThesisInfo(thesis, payload.abstractText(), payload.infoText());
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
+    /* PROPOSAL ENDPOINTS */
+
+    @GetMapping("/{thesisId}/proposal")
+    public ResponseEntity<Resource> getProposalFile(@PathVariable UUID thesisId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
+
+    @PutMapping("/{thesisId}/proposal")
+    public ResponseEntity<ThesisDto> uploadProposal(@PathVariable UUID thesisId) {
+        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    }
+
+    @PostMapping("/{thesisId}/proposal/accept")
+    public ResponseEntity<ThesisDto> acceptProposal(@PathVariable UUID thesisId) {
+        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    }
+
+    /* WRITING ENDPOINTS */
 
     @GetMapping("/{thesisId}/presentation")
     public ResponseEntity<Resource> getLastPresentationUpload(@PathVariable UUID thesisId) {
@@ -152,26 +196,6 @@ public class ThesisController {
 
     @PutMapping("/{thesisId}/thesis")
     public ResponseEntity<ThesisDto> uploadThesis(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
-    }
-
-    @GetMapping("/{thesisId}/proposal")
-    public ResponseEntity<Resource> getProposalFile(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
-    }
-
-    @PutMapping("/{thesisId}/proposal")
-    public ResponseEntity<ThesisDto> uploadProposal(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
-    }
-
-    @PostMapping("/{thesisId}/proposal/accept")
-    public ResponseEntity<ThesisDto> acceptProposal(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
-    }
-
-    @PostMapping("/{thesisId}/proposal/reject")
-    public ResponseEntity<ThesisDto> rejectProposal(@PathVariable UUID thesisId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
@@ -200,10 +224,14 @@ public class ThesisController {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
+    /* ASSESSMENT ENDPOINTS */
+
     @PostMapping("/{thesisId}/assessment")
     public ResponseEntity<ThesisDto> createAssessment(@PathVariable UUID thesisId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
+
+    /* GRADE ENDPOINTS */
 
     @PostMapping("/{thesisId}/grade")
     public ResponseEntity<ThesisDto> addGrade(@PathVariable UUID thesisId) {

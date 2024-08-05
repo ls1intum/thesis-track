@@ -88,20 +88,12 @@ public class Thesis {
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     private List<ThesisPresentation> presentations;
 
-    public boolean hasProtectedAccess(User user) {
+    public boolean hasSupervisorAccess(User user) {
         if (user.hasAnyGroup("admin")) {
             return true;
         }
 
         for (ThesisRole role : roles) {
-            if (
-                    role.getId().getRole().equals(ThesisRoleName.ADVISOR) &&
-                    user.hasAnyGroup("advisor") &&
-                    role.getUser().getId().equals(user.getId())
-            ) {
-                return true;
-            }
-
             if (
                     role.getId().getRole().equals(ThesisRoleName.SUPERVISOR) &&
                     user.hasAnyGroup("supervisor") &&
@@ -114,8 +106,40 @@ public class Thesis {
         return false;
     }
 
+    public boolean hasAdvisorAccess(User user) {
+        if (hasSupervisorAccess(user)) {
+            return true;
+        }
+
+        for (ThesisRole role : roles) {
+            if (
+                    role.getId().getRole().equals(ThesisRoleName.ADVISOR) &&
+                    user.hasAnyGroup("advisor") &&
+                    role.getUser().getId().equals(user.getId())
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasStudentAccess(User user) {
+        if (hasAdvisorAccess(user)) {
+            return true;
+        }
+
+        for (ThesisRole role : roles) {
+            if (role.getId().getRole().equals(ThesisRoleName.STUDENT) && role.getUser().getId().equals(user.getId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public boolean hasAccess(User user) {
-        if (user.hasAnyGroup("admin")) {
+        if (hasStudentAccess(user)) {
             return true;
         }
 
@@ -125,12 +149,6 @@ public class Thesis {
 
         if (visibility.equals(ThesisVisibility.INTERNAL) && user.hasAnyGroup("advisor", "supervisor", "student")) {
             return true;
-        }
-
-        for (ThesisRole role : roles) {
-            if (role.getUser().getId().equals(user.getId())) {
-                return true;
-            }
         }
 
         return false;

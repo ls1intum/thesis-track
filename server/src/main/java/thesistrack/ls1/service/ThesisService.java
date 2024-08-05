@@ -90,9 +90,7 @@ public class ThesisService {
     }
 
     @Transactional
-    public Thesis closeThesis(UUID thesisId) {
-        Thesis thesis = findById(thesisId);
-
+    public Thesis closeThesis(Thesis thesis) {
         if (thesis.getState() == ThesisState.DROPPED_OUT || thesis.getState() == ThesisState.FINISHED) {
             throw new ResourceInvalidParametersException("Thesis is already completed");
         }
@@ -106,7 +104,7 @@ public class ThesisService {
     @Transactional
     public Thesis updateThesis(
             User updater,
-            UUID thesisId,
+            Thesis thesis,
             String thesisTitle,
             ThesisVisibility visibility,
             Instant startDate,
@@ -116,8 +114,6 @@ public class ThesisService {
             Set<UUID> supervisorIds,
             List<ThesisStatePayload> states
     ) {
-        Thesis thesis = findById(thesisId);
-
         thesis.setTitle(RequestValidator.validateStringMaxLength(thesisTitle, 500));
         thesis.setVisibility(visibility);
 
@@ -133,6 +129,18 @@ public class ThesisService {
         for (ThesisStatePayload state : states) {
             saveStateChange(thesis, state.state());
         }
+
+        return thesisRepository.save(thesis);
+    }
+
+    @Transactional
+    public Thesis updateThesisInfo(
+            Thesis thesis,
+            String abstractText,
+            String infoText
+    ) {
+        thesis.setAbstractField(RequestValidator.validateStringMaxLength(abstractText, 2000));
+        thesis.setInfo(RequestValidator.validateStringMaxLength(infoText, 2000));
 
         return thesisRepository.save(thesis);
     }
