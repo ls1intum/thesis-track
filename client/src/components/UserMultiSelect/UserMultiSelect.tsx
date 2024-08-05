@@ -30,7 +30,7 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
     setLoading(true)
 
     return doRequest<Pageable<ILightUser>>(
-      '/v1/users',
+      '/v2/users',
       {
         method: 'GET',
         requiresAuth: true,

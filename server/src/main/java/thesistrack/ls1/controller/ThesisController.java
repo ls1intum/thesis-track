@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1/theses")
+@RequestMapping("/v2/theses")
 public class ThesisController {
     private final ThesisService thesisService;
 

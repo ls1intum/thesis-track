@@ -147,7 +147,7 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
 
     if (isReady && universityId) {
       return doRequest<IUser>(
-        '/v1/user-info',
+        '/v2/user-info',
         {
           method: 'POST',
           requiresAuth: true,

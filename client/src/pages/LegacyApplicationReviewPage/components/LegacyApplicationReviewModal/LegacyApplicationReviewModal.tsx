@@ -219,7 +219,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                     label='CV'
                     value={
                       <AuthenticatedFilePreview
-                        url={`/v1/users/${application.user.userId}/cv`}
+                        url={`/v2/users/${application.user.userId}/cv`}
                         height={400}
                         filename={`cv-${application.user.universityId}.pdf`}
                       />
@@ -233,7 +233,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                     label='Examination Report'
                     value={
                       <AuthenticatedFilePreview
-                        url={`/v1/users/${application.user.userId}/examination-report`}
+                        url={`/v2/users/${application.user.userId}/examination-report`}
                         height={400}
                         filename={`examination-report-${application.user.universityId}.pdf`}
                       />
@@ -247,7 +247,7 @@ const LegacyApplicationReviewModal = (props: ILegacyApplicationReviewModalProps)
                     label='Degree Report'
                     value={
                       <AuthenticatedFilePreview
-                        url={`/v1/users/${application.user.userId}/degree-report`}
+                        url={`/v2/users/${application.user.userId}/degree-report`}
                         height={400}
                         filename={`degree-report-${application.user.universityId}.pdf`}
                       />

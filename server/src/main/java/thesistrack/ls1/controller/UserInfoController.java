@@ -12,7 +12,7 @@ import thesistrack.ls1.service.AuthenticationService;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1/user-info")
+@RequestMapping("/v2/user-info")
 public class UserInfoController {
     private final AuthenticationService authenticationService;
 

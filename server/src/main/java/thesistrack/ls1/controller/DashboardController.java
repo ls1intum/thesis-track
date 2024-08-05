@@ -13,7 +13,7 @@ import thesistrack.ls1.service.DashboardService;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1/dashboard")
+@RequestMapping("/v2/dashboard")
 public class DashboardController {
     private final DashboardService dashboardService;
 
