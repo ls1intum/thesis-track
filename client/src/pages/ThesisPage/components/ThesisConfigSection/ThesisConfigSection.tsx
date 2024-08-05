@@ -1,5 +1,12 @@
-const ThesisConfigSection = () => {
-  // TODO: implement component
+import { IThesis } from '../../../../requests/responses/thesis'
+
+interface IThesisConfigSectionProps {
+  thesis: IThesis
+}
+
+const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
+  const {} = props
+
   return <></>
 }
 

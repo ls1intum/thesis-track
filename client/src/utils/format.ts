@@ -1,15 +1,15 @@
 import { ILightUser } from '../requests/responses/user'
 
 interface IFormatDateOptions {
-  includeHours: boolean
+  withTime: boolean
 }
 
 export function formatDate(
   date: string | Date | undefined | null,
-  options: Partial<IFormatDateOptions>,
+  options: Partial<IFormatDateOptions> = {},
 ): string {
-  const { includeHours }: IFormatDateOptions = {
-    includeHours: true,
+  const { withTime }: IFormatDateOptions = {
+    withTime: true,
     ...options,
   }
 
@@ -23,8 +23,8 @@ export function formatDate(
     year: 'numeric',
     month: 'numeric',
     day: 'numeric',
-    hour: includeHours ? 'numeric' : undefined,
-    minute: includeHours ? 'numeric' : undefined,
+    hour: withTime ? 'numeric' : undefined,
+    minute: withTime ? 'numeric' : undefined,
   })
 }
 

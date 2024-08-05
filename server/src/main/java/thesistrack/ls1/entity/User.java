@@ -31,9 +31,6 @@ public class User {
     @Column(name = "matriculation_number", length = 30)
     private String matriculationNumber;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<UserGroup> groups;
-
     @Column(name = "email", length = 100)
     private String email;
 
@@ -97,16 +94,21 @@ public class User {
     @Column(name = "joined_at", nullable = false)
     private Instant joinedAt;
 
-    public boolean hasGroup(String group) {
-        List<UserGroup> groups = getGroups();
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private List<UserGroup> groups;
 
-        if (groups == null) {
+    public boolean hasAnyGroup(String...groups) {
+        List<UserGroup> userGroups = getGroups();
+
+        if (userGroups == null) {
             return false;
         }
 
-        for (UserGroup userGroup : groups) {
-            if (userGroup.getId().getGroup().equals(group)) {
-                return true;
+        for (String group : groups) {
+            for (UserGroup userGroup : userGroups) {
+                if (userGroup.getId().getGroup().equals(group)) {
+                    return true;
+                }
             }
         }
 

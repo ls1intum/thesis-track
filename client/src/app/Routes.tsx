@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
-import { Center, Loader } from '@mantine/core'
+import PageLoader from '../components/PageLoader/PageLoader'
 
 const LegacyThesisApplicationForm = lazy(
   () => import('../pages/LegacySubmitApplicationPage/LegacyCreateApplicationForm'),
@@ -34,13 +34,7 @@ const LandingPage = lazy(() => import('../pages/LandingPage/LandingPage'))
 
 const AppRoutes = () => {
   return (
-    <Suspense
-      fallback={
-        <Center styles={{ root: { height: '100vh' } }}>
-          <Loader />
-        </Center>
-      }
-    >
+    <Suspense fallback={<PageLoader />}>
       <BrowserRouter>
         <Routes>
           <Route
@@ -114,13 +108,13 @@ const AppRoutes = () => {
           <Route
             path='/theses'
             element={
-              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'supervisor', 'advisor', 'student']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }
           />
           <Route
-            path='/theses/:thesis_id'
+            path='/theses/:thesisId'
             element={
               <AuthenticatedArea>
                 <ThesisPage />
@@ -148,14 +142,6 @@ const AppRoutes = () => {
             element={
               <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <LegacyApplicationReviewPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/management/thesis-overview'
-            element={
-              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
-                <ThesisOverviewPage />
               </AuthenticatedArea>
             }
           />

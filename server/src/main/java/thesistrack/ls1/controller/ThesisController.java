@@ -6,10 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import thesistrack.ls1.constants.ThesisState;
+import thesistrack.ls1.controller.payload.CreateThesisPayload;
+import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisDto;
+import thesistrack.ls1.entity.Thesis;
+import thesistrack.ls1.entity.User;
+import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.ThesisService;
 
 import java.util.UUID;
@@ -19,24 +28,75 @@ import java.util.UUID;
 @RequestMapping("/v1/theses")
 public class ThesisController {
     private final ThesisService thesisService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public ThesisController(ThesisService thesisService) {
+    public ThesisController(ThesisService thesisService, AuthenticationService authenticationService) {
         this.thesisService = thesisService;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping
-    public ResponseEntity<PaginationDto<ThesisDto>> getTheses() {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<PaginationDto<ThesisDto>> getTheses(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) ThesisState[] state,
+            @RequestParam(required = false, defaultValue = "false") Boolean fetchAll,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "20") Integer limit,
+            @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+
+        Page<Thesis> theses = thesisService.getAll(
+                fetchAll && authenticatedUser.hasAnyGroup("admin") ? null : authenticatedUser.getId(),
+                search,
+                state,
+                page,
+                limit,
+                sortBy,
+                sortOrder
+        );
+
+        return ResponseEntity.ok(PaginationDto.fromSpringPage(
+                theses.map(thesis -> ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)))
+        ));
+    }
+
+    @GetMapping("/{thesisId}")
+    public ResponseEntity<ThesisDto> getThesis(@PathVariable UUID thesisId, JwtAuthenticationToken jwt) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this thesis");
+        }
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
     }
 
     @PostMapping
-    public ResponseEntity<ThesisDto> createThesis() {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
+    public ResponseEntity<ThesisDto> createThesis(
+            @RequestBody CreateThesisPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.createThesis(
+                authenticatedUser,
+                payload.thesisTitle(),
+                payload.supervisorIds(),
+                payload.advisorIds(),
+                payload.studentIds(),
+                null
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasProtectedAccess(authenticatedUser)));
     }
 
-    @PutMapping("/{thesisId}")
-    public ResponseEntity<ThesisDto> updateThesisConfig(@PathVariable UUID thesisId) {
+    @PutMapping
+    public ResponseEntity<ThesisDto> updateThesisConfig() {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 

@@ -19,17 +19,22 @@ public record ApplicationDto (
     LightUserDto reviewedBy,
     Instant reviewedAt
 ) {
-    public static ApplicationDto fromApplicationEntity(Application application) {
+    public static ApplicationDto fromApplicationEntity(Application application, boolean protectedData) {
         if (application == null) {
             return null;
         }
 
         return new ApplicationDto(
-                application.getId(), UserDto.fromUserEntity(application.getUser()),
-                TopicDto.fromTopicEntity(application.getTopic()), application.getThesisTitle(),
-                application.getMotivation(), application.getState(),
-                application.getDesiredStartDate(), application.getComment(), application.getCreatedAt(),
-                LightUserDto.fromUserEntity(application.getReviewedBy()), application.getReviewedAt()
+                application.getId(),
+                UserDto.fromUserEntity(application.getUser()),
+                TopicDto.fromTopicEntity(application.getTopic()),
+                application.getThesisTitle(),
+                application.getMotivation(),
+                application.getState(),
+                application.getDesiredStartDate(), protectedData ? application.getComment() : null,
+                application.getCreatedAt(),
+                protectedData ? LightUserDto.fromUserEntity(application.getReviewedBy()) : null,
+                application.getReviewedAt()
         );
     }
 }

@@ -14,12 +14,18 @@ import java.util.UUID;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, UUID> {
-    @Query("SELECT a FROM Application a WHERE " +
+    @Query("SELECT DISTINCT a FROM Application a WHERE " +
+            "(:userId IS NULL OR a.user.id = :userId) AND " +
             "(:states IS NULL OR a.state IN :states) AND " +
             "(:searchQuery IS NULL OR LOWER(a.user.firstName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.lastName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.email) LIKE %:searchQuery% OR " +
             "LOWER(a.user.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(a.user.universityId) LIKE %:searchQuery%)")
-    Page<Application> searchApplications(@Param("searchQuery") String searchQuery, @Param("states") Set<ApplicationState> states, Pageable page);
+    Page<Application> searchApplications(
+            @Param("userId") UUID userId,
+            @Param("searchQuery") String searchQuery,
+            @Param("states") Set<ApplicationState> states,
+            Pageable page
+    );
 }

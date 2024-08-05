@@ -6,4 +6,5 @@
     <include file="changes/initial_changelog.sql" relativeToChangelogFile="true" />
     <include file="changes/01_v3_initial_changelog.sql" relativeToChangelogFile="true" />
     <include file="changes/02_migrate_data_to_v3.sql" relativeToChangelogFile="true" />
+    <include file="changes/03_thesis_migration.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

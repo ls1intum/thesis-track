@@ -2,10 +2,13 @@ package thesistrack.ls1.entity.key;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import thesistrack.ls1.constants.ThesisState;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -21,8 +24,9 @@ public class ThesisStateChangeId implements Serializable {
     private UUID thesisId;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false, length = 100)
-    private String state;
+    private ThesisState state;
 
     @Override
     public boolean equals(Object o) {

@@ -46,6 +46,6 @@ public class LegacyApplicationController {
         final Application application = applicationService
                 .createLegacyApplication(applicationPayload, examinationReport, cv, degreeReport);
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, false));
     }
 }

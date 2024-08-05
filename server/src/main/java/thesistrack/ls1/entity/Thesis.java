@@ -5,9 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
+import thesistrack.ls1.constants.ThesisVisibility;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -37,6 +40,11 @@ public class Thesis {
     @Column(name = "state", nullable = false, length = 100)
     private ThesisState state;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility", nullable = false, length = 100)
+    private ThesisVisibility visibility;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")
     private Application application;
@@ -64,4 +72,66 @@ public class Thesis {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
+    @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    private List<ThesisRole> roles;
+
+    @OneToOne(mappedBy = "thesis", fetch = FetchType.EAGER)
+    private ThesisProposal proposal;
+
+    @OneToOne(mappedBy = "thesis", fetch = FetchType.EAGER)
+    private ThesisAssessment assessment;
+
+    @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    private List<ThesisStateChange> states;
+
+    @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    private List<ThesisPresentation> presentations;
+
+    public boolean hasProtectedAccess(User user) {
+        if (user.hasAnyGroup("admin")) {
+            return true;
+        }
+
+        for (ThesisRole role : roles) {
+            if (
+                    role.getId().getRole().equals(ThesisRoleName.ADVISOR) &&
+                    user.hasAnyGroup("advisor") &&
+                    role.getUser().getId().equals(user.getId())
+            ) {
+                return true;
+            }
+
+            if (
+                    role.getId().getRole().equals(ThesisRoleName.SUPERVISOR) &&
+                    user.hasAnyGroup("supervisor") &&
+                    role.getUser().getId().equals(user.getId())
+            ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasAccess(User user) {
+        if (user.hasAnyGroup("admin")) {
+            return true;
+        }
+
+        if (visibility.equals(ThesisVisibility.PUBLIC)) {
+            return true;
+        }
+
+        if (visibility.equals(ThesisVisibility.INTERNAL) && user.hasAnyGroup("advisor", "supervisor", "student")) {
+            return true;
+        }
+
+        for (ThesisRole role : roles) {
+            if (role.getUser().getId().equals(user.getId())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

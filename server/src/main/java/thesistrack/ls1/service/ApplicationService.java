@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
+import thesistrack.ls1.constants.ThesisVisibility;
 import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.constants.ApplicationState;
@@ -32,6 +33,7 @@ public class ApplicationService {
     private final TopicRepository topicRepository;
     private final ThesisRepository thesisRepository;
     private final ThesisService thesisService;
+    private final UserService userService;
 
     @Autowired
     public ApplicationService(
@@ -39,7 +41,7 @@ public class ApplicationService {
             UserRepository userRepository,
             UploadService storageService,
             MailingService mailingService,
-            TopicRepository topicRepository, ThesisRepository thesisRepository, ThesisService thesisService) {
+            TopicRepository topicRepository, ThesisRepository thesisRepository, ThesisService thesisService, UserService userService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
 
@@ -48,16 +50,29 @@ public class ApplicationService {
         this.topicRepository = topicRepository;
         this.thesisRepository = thesisRepository;
         this.thesisService = thesisService;
+        this.userService = userService;
     }
 
-    public Page<Application> getAll(String searchQuery, ApplicationState[] states, int page, int limit, String sortBy, String sortOrder) {
+    public Page<Application> getAll(
+            UUID userId,
+            String searchQuery,
+            ApplicationState[] states,
+            int page,
+            int limit,
+            String sortBy,
+            String sortOrder
+    ) {
         Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
         String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
         Set<ApplicationState> statesFilter = states == null || states.length == 0 ? null : new HashSet<>(Arrays.asList(states));
 
-        return applicationRepository
-                .searchApplications(searchQueryFilter, statesFilter, PageRequest.of(page, limit, Sort.by(order)));
+        return applicationRepository.searchApplications(
+                userId,
+                searchQueryFilter,
+                statesFilter,
+                PageRequest.of(page, limit, Sort.by(order))
+        );
     }
 
     @Transactional
@@ -133,52 +148,22 @@ public class ApplicationService {
             boolean closeTopic
     ) {
         Application application = findById(applicationId);
-        Topic topic = application.getTopic();
-
-        List<User> advisors = userRepository.findAllById(advisorIds);
-        List<User> supervisors = userRepository.findAllById(supervisorIds);
-
-        if (advisors.isEmpty() || advisors.size() != advisorIds.size()) {
-            throw new ResourceInvalidParametersException("No advisors selected or advisors not found");
-        }
-
-        if (supervisors.isEmpty() || supervisors.size() != supervisorIds.size()) {
-            throw new ResourceInvalidParametersException("No supervisors selected or supervisors not found");
-        }
 
         application.setState(ApplicationState.ACCEPTED);
         application.setComment(RequestValidator.validateStringMaxLength(comment, 1000));
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 
-        Thesis thesis = new Thesis();
+        thesisService.createThesis(
+                reviewer,
+                title,
+                supervisorIds,
+                advisorIds,
+                Collections.singleton(application.getUser().getId()),
+                application
+        );
 
-        thesis.setTitle(RequestValidator.validateStringMaxLength(title, 500));
-        thesis.setInfo("");
-        thesis.setAbstractField("");
-        thesis.setState(ThesisState.PROPOSAL);
-        thesis.setApplication(application);
-        thesis.setCreatedAt(Instant.now());
-
-        thesis = thesisRepository.save(thesis);
-
-        for (User advisor : advisors) {
-            if (!advisor.hasGroup("advisor") && !advisor.hasGroup("supervisor")) {
-                throw new ResourceInvalidParametersException("User is not an advisor");
-            }
-
-            thesisService.saveThesisRole(thesis, reviewer, advisor, ThesisRoleName.ADVISOR);
-        }
-
-        for (User supervisor : supervisors) {
-            if (!supervisor.hasGroup("supervisor")) {
-                throw new ResourceInvalidParametersException("User is not a supervisor");
-            }
-
-            thesisService.saveThesisRole(thesis, reviewer, supervisor, ThesisRoleName.SUPERVISOR);
-        }
-
-        thesisService.saveThesisRole(thesis, reviewer, application.getUser(), ThesisRoleName.STUDENT);
+        Topic topic = application.getTopic();
 
         if (topic != null && closeTopic) {
             topic.setClosedAt(Instant.now());
@@ -187,7 +172,7 @@ public class ApplicationService {
         }
 
         if (notifyUser) {
-            mailingService.sendApplicationAcceptanceEmail(application, advisors.getFirst());
+            mailingService.sendApplicationAcceptanceEmail(application, userService.findById(advisorIds.iterator().next()));
         }
 
         return applicationRepository.save(application);
@@ -220,6 +205,6 @@ public class ApplicationService {
 
     public Application findById(UUID applicationId) {
         return applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Thesis application with id %s not found.", applicationId)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Application with id %s not found.", applicationId)));
     }
 }

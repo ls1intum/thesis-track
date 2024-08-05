@@ -6,20 +6,36 @@ import ThesisProposalSection from './components/ThesisProposalSection/ThesisProp
 import ThesisWritingSection from './components/ThesisWritingSection/ThesisWritingSection'
 import ThesisAssessmentSection from './components/ThesisAssessmentSection/ThesisAssessmentSection'
 import ThesisFinalGradeSection from './components/ThesisFinalGradeSection/ThesisFinalGradeSection'
+import { useThesis } from '../../hooks/fetcher'
+import { useParams } from 'react-router-dom'
+import NotFound from '../../components/NotFound/NotFound'
+import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
+import PageLoader from '../../components/PageLoader/PageLoader'
 
 const ThesisPage = () => {
-  // TODO: implement component
-  usePageTitle('Topic')
+  const { thesisId } = useParams<{ thesisId: string }>()
+
+  const thesis = useThesis(thesisId)
+
+  usePageTitle(thesis ? thesis.title : 'Thesis')
+
+  if (thesis === false) {
+    return <NotFound />
+  }
+
+  if (thesis === undefined) {
+    return <PageLoader />
+  }
 
   return (
-    <>
-      <ThesisConfigSection />
-      <ThesisInfoSection />
-      <ThesisProposalSection />
-      <ThesisWritingSection />
-      <ThesisAssessmentSection />
-      <ThesisFinalGradeSection />
-    </>
+    <ContentContainer>
+      <ThesisConfigSection thesis={thesis} />
+      <ThesisInfoSection thesis={thesis} />
+      <ThesisProposalSection thesis={thesis} />
+      <ThesisWritingSection thesis={thesis} />
+      <ThesisAssessmentSection thesis={thesis} />
+      <ThesisFinalGradeSection thesis={thesis} />
+    </ContentContainer>
   )
 }
 

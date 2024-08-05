@@ -59,4 +59,16 @@ public class Application {
 
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
+
+    public boolean hasAccess(User user) {
+        if (user.hasAnyGroup("admin", "advisor", "supervisor")) {
+            return true;
+        }
+
+        return this.user.getId().equals(user.getId());
+    }
+
+    public boolean hasProtectedAccess(User user) {
+        return user.hasAnyGroup("admin", "advisor", "supervisor");
+    }
 }
