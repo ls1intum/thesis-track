@@ -1,9 +1,7 @@
-import { IDecodedAccessToken } from '../contexts/AuthenticationContext/context'
-
 export interface IGlobalConfig {
   title: string
 
-  api_server: string
+  server_host: string
 
   focus_topics: Record<string, string>
   research_areas: Record<string, string>
@@ -11,10 +9,12 @@ export interface IGlobalConfig {
   study_programs: Record<string, string>
   study_degrees: Record<string, string>
 
+  default_supervisors: string[]
+
   keycloak: {
     client_id: string
     realm: string
     host: string
-    university_id_jwt_field: string
+    university_id_jwt_attribute: string
   }
 }

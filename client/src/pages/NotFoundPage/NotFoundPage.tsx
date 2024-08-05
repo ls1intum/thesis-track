@@ -1,5 +1,4 @@
-import { Center, Group, Text, ThemeIcon } from '@mantine/core'
-import * as styles from './NotFoundPage.module.scss'
+import { Center, Group, Text } from '@mantine/core'
 import { SmileySad } from 'phosphor-react'
 import { usePageTitle } from '../../hooks/theme'
 
@@ -7,11 +6,9 @@ const NotFoundPage = () => {
   usePageTitle('Not Found')
 
   return (
-    <Center className={styles.root}>
+    <Center h='100vh'>
       <Group>
-        <ThemeIcon className={styles.icon} variant='outline'>
-          <SmileySad size={48} />
-        </ThemeIcon>
+        <SmileySad size={32} />
         <Text c='dimmed' fw={500} fz='md'>
           404 Page Not Found
         </Text>

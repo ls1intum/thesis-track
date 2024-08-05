@@ -1,11 +1,10 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
-import { LegacyApplicationFormAccessMode } from '../legacy/interfaces/application'
 import { Center, Loader } from '@mantine/core'
 
 const LegacyThesisApplicationForm = lazy(
-  () => import('../pages/LegacySubmitApplicationPage/LegacyThesisApplicationForm'),
+  () => import('../pages/LegacySubmitApplicationPage/LegacyCreateApplicationForm'),
 )
 const LegacyApplicationReviewPage = lazy(
   () => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'),
@@ -79,7 +78,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/create'
             element={
-              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -87,7 +86,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/edit/:topic_id'
             element={
-              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <CreateTopicPage />
               </AuthenticatedArea>
             }
@@ -100,16 +99,14 @@ const AppRoutes = () => {
               </AuthenticatedArea>
             }
           />
-          <Route
-            path='/applications/thesis'
-            element={
-              <LegacyThesisApplicationForm accessMode={LegacyApplicationFormAccessMode.STUDENT} />
-            }
-          />
+          <Route path='/applications/thesis' element={<LegacyThesisApplicationForm />} />
           <Route
             path='/applications/:application_id?'
             element={
-              <AuthenticatedArea collapseNavigation={true} requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea
+                collapseNavigation={true}
+                requiredGroups={['admin', 'advisor', 'supervisor']}
+              >
                 <ReviewApplicationPage />
               </AuthenticatedArea>
             }
@@ -117,7 +114,7 @@ const AppRoutes = () => {
           <Route
             path='/theses'
             element={
-              <AuthenticatedArea requiredRoles={['admin']}>
+              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }
@@ -147,9 +144,9 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path='/management/thesis-applications'
+            path='/management/thesis-applications/:applicationId?'
             element={
-              <AuthenticatedArea requiredRoles={['admin', 'advisor']}>
+              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <LegacyApplicationReviewPage />
               </AuthenticatedArea>
             }
@@ -157,7 +154,7 @@ const AppRoutes = () => {
           <Route
             path='/management/thesis-overview'
             element={
-              <AuthenticatedArea requiredRoles={['admin']}>
+              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }

@@ -11,11 +11,22 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/thesis-track
       - SPRING_DATASOURCE_USERNAME=thesis-track-postgres
       - SPRING_DATASOURCE_PASSWORD=thesis-track-postgres
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-      - KEYCLOAK_ISSUER_URI=http://keycloak:8080/realms/thesis-track
-      - KEYCLOAK_JWK_SET_URI=http://keycloak:8080/realms/thesis-track/protocol/openid-connect/certs
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - KEYCLOAK_HOST=http://keycloak:8080
+      - POSTFIX_HOST=postfix
+      - POSTFIX_PORT=25
     ports:
       - "8080:8080"
+
+  client:
+    image: ghcr.io/ls1intum/thesis-track/thesis-track-client:latest
+    build:
+      context: ./client
+    container_name: thesis-track-client
+    depends_on:
+      - server
+    ports:
+      - "80:80"
 
   db:
     image: 'postgres:15.2-alpine'
@@ -32,28 +43,18 @@ services:
     ports:
       - "5432:5432"
 
-  client:
-    image: ghcr.io/ls1intum/thesis-track/thesis-track-client:latest
-    build:
-      context: ./client
-    container_name: thesis-track-client
-    depends_on:
-      - server
-    ports:
-      - "80:80"
-
   postfix:
     image: ghcr.io/ls1admin/postfix:latest
     container_name: thesis-track-postfix
     restart: unless-stopped
     volumes:
       - ./postfix-config:/config # See https://github.com/ls1admin/postfix-container-tum-mailrelay/tree/main for details
-    hostname: thesis-track.ase.cit.tum.de
+    hostname: localhost
     ports:
       - "25:25"
 
   keycloak:
-    image: quay.io/keycloak/keycloak:20.0
+    image: quay.io/keycloak/keycloak:25.0
     container_name: thesis-track-keycloak
     environment:
       KEYCLOAK_ADMIN: admin

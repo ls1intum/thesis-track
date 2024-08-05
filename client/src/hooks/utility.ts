@@ -31,21 +31,3 @@ export function useSignal(): IUseSignalReturnType {
     }
   }, [])
 }
-
-export function usePromiseLoader<T extends any[]>(
-  fn: (...args: T) => Promise<unknown>,
-): {
-  execute: (...args: T) => unknown
-  isLoading: boolean
-} {
-  const [loading, setLoading] = useState(false)
-
-  return {
-    isLoading: loading,
-    execute: (...args: T) => {
-      setLoading(true)
-
-      void fn(...args).finally(() => setLoading(false))
-    },
-  }
-}

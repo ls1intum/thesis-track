@@ -1,24 +1,29 @@
-import { PropsWithChildren, Suspense, useEffect } from 'react'
-import { AppShell, Burger, Center, Group, Loader } from '@mantine/core'
-import * as styles from './AuthenticatedArea.module.scss'
+import React, { PropsWithChildren, Suspense, useEffect } from 'react'
+import {
+  ActionIcon,
+  AppShell,
+  Burger,
+  Center,
+  Divider,
+  Group,
+  Loader,
+  Text,
+  useMantineColorScheme,
+} from '@mantine/core'
+import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
-import {
-  FolderSimplePlus,
-  Kanban,
-  NewspaperClipping,
-  PaperPlaneTilt,
-  Scroll,
-  SignOut,
-  User,
-} from 'phosphor-react'
+import { Moon, Scroll, SignOut, Sun } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
+import Logo from '../../../static/logo'
+import { useNavigationType } from 'react-router'
+import ScrollToTop from '../ScrollToTop/ScrollToTop'
 
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
   collapseNavigation?: boolean
-  requiredRoles?: string[]
+  requiredGroups?: string[]
 }
 
 const links: Array<{
@@ -27,36 +32,36 @@ const links: Array<{
   icon: any
   roles: string[] | undefined
 }> = [
-  { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, roles: undefined },
+  /*{ link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, roles: undefined },
   {
     link: '/submit-application/pick-topic',
     label: 'Submit Application',
     icon: PaperPlaneTilt,
     roles: undefined,
-  },
+  },*/
   {
     link: '/management/thesis-applications',
-    label: 'Review Applications v1',
+    label: 'Review Applications',
     icon: Scroll,
-    roles: ['admin', 'advisor'],
+    roles: ['admin', 'advisor', 'supervisor'],
   },
-  {
+  /*{
     link: '/applications',
     label: 'Review Applications v2',
     icon: Scroll,
-    roles: ['admin', 'advisor'],
+    roles: ['admin', 'advisor', 'supervisor'],
   },
   {
     link: '/topics/create',
     label: 'Create Topic',
     icon: FolderSimplePlus,
-    roles: ['admin', 'advisor'],
+    roles: ['admin', 'advisor', 'supervisor'],
   },
-  { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin'] },
+  { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin', 'supervisor'] },*/
 ]
 
 const SpinningLoader = () => (
-  <Center className={styles.fullHeight}>
+  <Center className={classes.fullHeight}>
     <Loader />
   </Center>
 )
@@ -66,11 +71,15 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     children,
     requireAuthentication = true,
     collapseNavigation = false,
-    requiredRoles,
+    requiredGroups,
   } = props
 
-  const [opened, { toggle }] = useDisclosure()
+  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
+  const [opened, { toggle, close }] = useDisclosure()
+
   const location = useLocation()
+  const navigationType = useNavigationType()
+
   const showHeader = useIsSmallerBreakpoint('md') || collapseNavigation
   const auth = useAuthenticationContext()
 
@@ -80,8 +89,21 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     }
   }, [requireAuthentication, auth.isAuthenticated])
 
+  useEffect(() => {
+    if (navigationType === 'POP') {
+      return
+    }
+
+    close()
+  }, [location.pathname, navigationType])
+
   if (!requireAuthentication && !auth.isAuthenticated) {
-    return <>{children}</>
+    return (
+      <>
+        {children}
+        <ScrollToTop />
+      </>
+    )
   }
 
   return (
@@ -106,35 +128,50 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       </AppShell.Header>
 
       <AppShell.Navbar p='md'>
-        <AppShell.Section grow my='md'>
+        <AppShell.Section grow mb='md'>
+          <Group preventGrowOverflow={false}>
+            <Logo className={classes.logo} />
+            <Text className={classes.siteName} fw='bold'>
+              ThesisTrack
+            </Text>
+            <ActionIcon
+              variant='outline'
+              color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}
+              onClick={() => toggleColorScheme()}
+              title='Toggle color scheme'
+              ml='auto'
+            >
+              {colorScheme === 'dark' ? <Sun size='1.1rem' /> : <Moon size='1.1rem' />}
+            </ActionIcon>
+          </Group>
+          <Divider my='sm' />
           {links
             .filter(
-              (item) => !item.roles || item.roles.some((role) => auth.user?.roles.includes(role)),
+              (item) => !item.roles || item.roles.some((role) => auth.user?.groups.includes(role)),
             )
             .map((item) => (
               <Link
-                className={styles.link}
+                className={classes.link}
                 data-active={location.pathname.startsWith(item.link) || undefined}
                 key={item.label}
                 to={item.link}
               >
-                <item.icon className={styles.linkIcon} size={32} />
+                <item.icon className={classes.linkIcon} size={32} />
                 <span>{item.label}</span>
               </Link>
             ))}
         </AppShell.Section>
         <AppShell.Section>
-          <Link
+          {/*<Link
             to='/settings/my-information'
-            className={styles.link}
+            className={classes.link}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
-            <User className={styles.linkIcon} size={32} />
+            <User className={classes.linkIcon} size={32} />
             <span>My Information</span>
-          </Link>
-
-          <Link to='/logout' className={styles.link}>
-            <SignOut className={styles.linkIcon} size={32} />
+          </Link>*/}
+          <Link to='/logout' className={classes.link}>
+            <SignOut className={classes.linkIcon} size={32} />
             <span>Logout</span>
           </Link>
         </AppShell.Section>
@@ -143,10 +180,10 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       <AppShell.Main>
         {auth.user ? (
           <Suspense fallback={<SpinningLoader />}>
-            {!requiredRoles || requiredRoles.some((role) => auth.user?.roles.includes(role)) ? (
+            {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
               children
             ) : (
-              <Center className={styles.fullHeight}>
+              <Center className={classes.fullHeight}>
                 <h1>403 - Unauthorized</h1>
               </Center>
             )}
@@ -154,6 +191,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         ) : (
           <SpinningLoader />
         )}
+        <ScrollToTop />
       </AppShell.Main>
     </AppShell>
   )

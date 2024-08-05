@@ -1,6 +1,84 @@
-const UserMultiSelect = () => {
-  // TODO: implement component
-  return <></>
+import { MultiSelect } from '@mantine/core'
+import { useEffect, useState } from 'react'
+import { doRequest } from '../../requests/request'
+import { Pageable } from '../../requests/responses/pageable'
+import { ILightUser } from '../../requests/responses/user'
+import { useDebouncedValue } from '@mantine/hooks'
+import { GetInputPropsReturnType } from '@mantine/form/lib/types'
+import { formatUser } from '../../utils/format'
+import { arrayUnique } from '../../utils/array'
+
+interface IUserMultiSelectProps extends GetInputPropsReturnType {
+  maxValues?: number
+  groups: string[]
+  label?: string
+  required?: boolean
+}
+
+const UserMultiSelect = (props: IUserMultiSelectProps) => {
+  const { groups, maxValues = Infinity, label, required, ...inputProps } = props
+
+  const selected: string[] = inputProps.value || []
+
+  const [loading, setLoading] = useState(false)
+  const [data, setData] = useState<Array<{ value: string; label: string }>>([])
+  const [searchValue, setSearchValue] = useState('')
+
+  const [debouncedSearchValue] = useDebouncedValue(searchValue, 500)
+
+  useEffect(() => {
+    setLoading(true)
+
+    return doRequest<Pageable<ILightUser>>(
+      '/v2/users',
+      {
+        method: 'GET',
+        requiresAuth: true,
+        params: {
+          groups: groups.join(','),
+          searchQuery: debouncedSearchValue,
+          page: '0',
+          limit: '100',
+        },
+      },
+      (res) => {
+        if (res.ok) {
+          setData((prevState) =>
+            arrayUnique(
+              [
+                ...prevState.filter((item) => selected.includes(item.value)),
+                ...res.data.content.map((user) => ({
+                  value: user.userId,
+                  label: formatUser(user),
+                })),
+              ],
+              (a, b) => a.value === b.value,
+            ),
+          )
+          setLoading(false)
+        }
+      },
+    )
+  }, [groups.join(','), debouncedSearchValue])
+
+  return (
+    <MultiSelect
+      data={data}
+      searchable={selected.length < maxValues}
+      clearable={true}
+      searchValue={searchValue}
+      onSearchChange={setSearchValue}
+      hidePickedOptions={selected.length < maxValues}
+      maxValues={maxValues}
+      limit={10}
+      filter={({ options }) => options}
+      placeholder={selected.length < maxValues ? 'Search...' : undefined}
+      nothingFoundMessage={!loading ? 'Nothing found...' : 'Loading...'}
+      label={label}
+      required={required}
+      {...inputProps}
+    />
+  )
 }
 
 export default UserMultiSelect

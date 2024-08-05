@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Grid, Skeleton } from '@mantine/core'
 import { useThesisOverviewChart } from '../ThesisOverviewChartProvider/hooks'
-import './CustomThesisProgressChart.scss'
+import './CustomThesisProgressChart.css'
 import { ThesisStateColor } from '../../types/chart'
 
 interface ICustomThesisProgressChartProps {

@@ -10,217 +10,242 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-import thesistrack.ls1.model.Student;
-import thesistrack.ls1.model.ThesisAdvisor;
-import thesistrack.ls1.model.ThesisApplication;
-import thesistrack.ls1.model.enums.FocusTopic;
-import thesistrack.ls1.model.enums.ResearchArea;
+import thesistrack.ls1.entity.Application;
+import thesistrack.ls1.entity.User;
+import thesistrack.ls1.exception.MailingException;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.time.Instant;
+import java.util.*;
 
 @Service
 public class MailingService {
-
     private final JavaMailSender javaMailSender;
-    private final FileSystemStorageService storageService;
-    private final String environment;
+    private final UploadService uploadService;
+
+    private final boolean enabled;
+    private final String mailFooter;
+    private final String workspaceUrl;
     private final String sender;
-    private final String chairMemberRecipientsList;
-    private final Path rootLocation;
+    private final List<String> chairMemberRecipientsList;
+    private final Path mailTemplateLocation;
 
     @Autowired
-    public MailingService(final JavaMailSender javaMailSender,
-                          final FileSystemStorageService storageService,
-                          @Value("${thesis-track.environment}") String environment,
-                          @Value("${thesis-track.mail.sender}") String sender,
-                          @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList,
-                          @Value("${thesis-track.storage.mailing-templates-location}") String mailingTemplatesLocation) {
+    public MailingService(
+            JavaMailSender javaMailSender,
+            UploadService uploadService,
+            @Value("${thesis-track.mail.enabled}") boolean enabled,
+            @Value("${thesis-track.mail.mail-template-location}") String mailTemplateLocation,
+            @Value("${thesis-track.mail.sender}") String sender,
+            @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList,
+            @Value("${thesis-track.mail.footer}") String mailFooter,
+            @Value("${thesis-track.mail.workspace-url}") String workspaceUrl
+    ) {
         this.javaMailSender = javaMailSender;
-        this.storageService = storageService;
-        this.environment = environment;
+        this.uploadService = uploadService;
+
+        this.enabled = enabled;
         this.sender = sender;
-        this.chairMemberRecipientsList = chairMemberRecipientsList;
-        this.rootLocation = Paths.get(mailingTemplatesLocation);
-    }
+        this.workspaceUrl = workspaceUrl;
+        this.mailFooter = mailFooter;
+        this.mailTemplateLocation = Paths.get(mailTemplateLocation);
 
-    public String getMailTemplate(final String filename) {
-        return storageService.readFromFile(rootLocation, filename + ".html");
-    }
-
-    public void updateMailTemplate(final String filename, final String htmlContents) {
-        storageService.writeToFile(rootLocation, filename + ".html", htmlContents);
-    }
-
-    public void thesisApplicationCreatedEmail(final Student student,
-                                              final ThesisApplication thesisApplication) throws MessagingException, IOException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
-        message.setFrom(sender);
-        Arrays.asList(chairMemberRecipientsList.split(";")).forEach(recipient -> {
-            try {
-                message.addRecipients(MimeMessage.RecipientType.TO, recipient);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
-        });
-
-        message.setSubject("Thesis Track | New Thesis Application");
-
-        String template = storageService.readFromFile(rootLocation, "thesis-application-created.html");
-        template = fillStudentPlaceholders(template, student);
-        template = fillThesisApplicationPlaceholders(template, thesisApplication);
-
-        Multipart multipart = new MimeMultipart();
-
-        BodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setContent(template, "text/html; charset=utf-8");
-        multipart.addBodyPart(messageBodyPart);
-
-        MimeBodyPart examinationReportAttachment = new MimeBodyPart();
-        examinationReportAttachment.attachFile(new File("thesis_application_uploads/" + thesisApplication.getExaminationReportFilename()));
-        multipart.addBodyPart(examinationReportAttachment);
-
-        MimeBodyPart cvAttachment = new MimeBodyPart();
-        cvAttachment.attachFile(new File("thesis_application_uploads/" + thesisApplication.getCvFilename()));
-        multipart.addBodyPart(cvAttachment);
-
-        if (thesisApplication.getBachelorReportFilename() != null && !thesisApplication.getBachelorReportFilename().isBlank()) {
-            MimeBodyPart bachelorReportAttachment = new MimeBodyPart();
-            bachelorReportAttachment.attachFile(new File("thesis_application_uploads/" + thesisApplication.getBachelorReportFilename()));
-            multipart.addBodyPart(bachelorReportAttachment);
-        }
-
-        message.setContent(multipart);
-
-        javaMailSender.send(message);
-    }
-
-    public void sendThesisApplicationConfirmationEmail(final Student student,
-                                              final ThesisApplication thesisApplication) throws MessagingException, IOException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
-        message.setFrom(sender);
-        message.setRecipients(MimeMessage.RecipientType.TO, student.getEmail());
-
-        message.setSubject("Thesis Track | Thesis Application Confirmation");
-
-        String template = storageService.readFromFile(rootLocation, "thesis-application-confirmation.html");
-        template = fillStudentPlaceholders(template, student);
-        template = fillThesisApplicationPlaceholders(template, thesisApplication);
-
-        Multipart multipart = new MimeMultipart();
-
-        BodyPart messageBodyPart = new MimeBodyPart();
-        messageBodyPart.setContent(template, "text/html; charset=utf-8");
-        multipart.addBodyPart(messageBodyPart);
-
-        MimeBodyPart examinationReportAttachment = new MimeBodyPart();
-        examinationReportAttachment.attachFile(new File("thesis_application_uploads/" + thesisApplication.getExaminationReportFilename()));
-        multipart.addBodyPart(examinationReportAttachment);
-
-        MimeBodyPart cvAttachment = new MimeBodyPart();
-        cvAttachment.attachFile(new File("thesis_application_uploads/" + thesisApplication.getCvFilename()));
-        multipart.addBodyPart(cvAttachment);
-
-        if (thesisApplication.getBachelorReportFilename() != null && !thesisApplication.getBachelorReportFilename().isBlank()) {
-            MimeBodyPart bachelorReportAttachment = new MimeBodyPart();
-            bachelorReportAttachment.attachFile(new File("thesis_application_uploads/" + thesisApplication.getBachelorReportFilename()));
-            multipart.addBodyPart(bachelorReportAttachment);
-        }
-
-        message.setContent(multipart);
-
-        javaMailSender.send(message);
-    }
-
-    public void sendThesisAcceptanceEmail(final Student student,
-                                          final ThesisApplication thesisApplication,
-                                          final ThesisAdvisor thesisAdvisor) throws MessagingException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
-        message.setFrom(sender);
-        message.setRecipients(MimeMessage.RecipientType.TO, student.getEmail());
-        if (environment.equals("prod")) {
-            message.addRecipients(MimeMessage.RecipientType.CC, "krusche@tum.de");
-        }
-        message.addRecipients(MimeMessage.RecipientType.BCC, "valeryia.andraichuk@tum.de");
-        message.setSubject("Thesis Application Acceptance");
-
-        String template;
-        if (!thesisAdvisor.getEmail().equals("krusche@tum.de")) {
-            message.addRecipients(MimeMessage.RecipientType.CC, thesisAdvisor.getEmail());
-
-            template = storageService.readFromFile(rootLocation, "thesis-application-acceptance.html");
-            template = fillThesisAdvisorPlaceholders(template, thesisAdvisor);
+        if (chairMemberRecipientsList != null && !chairMemberRecipientsList.isEmpty()) {
+            this.chairMemberRecipientsList = Arrays.asList(chairMemberRecipientsList.split(";"));
+            this.chairMemberRecipientsList.removeIf(String::isEmpty);
         } else {
-            template = storageService.readFromFile(rootLocation, "thesis-application-acceptance-no-advisor.html");
+            this.chairMemberRecipientsList = new ArrayList<>();
         }
-        template = fillStudentPlaceholders(template, student);
-        template = fillThesisApplicationPlaceholders(template, thesisApplication);
-        message.setContent(template, "text/html; charset=utf-8");
-
-        javaMailSender.send(message);
     }
 
-    public void sendThesisRejectionEmail(final Student student, final ThesisApplication thesisApplication) throws MessagingException {
-        MimeMessage message = javaMailSender.createMimeMessage();
-
-        message.setFrom(sender);
-        message.setRecipients(MimeMessage.RecipientType.TO, student.getEmail());
-        if (environment.equals("prod")) {
-            message.addRecipients(MimeMessage.RecipientType.BCC, "krusche@tum.de");
+    public void sendApplicationCreatedMailToChair(Application application) throws MailingException {
+        if (!enabled) {
+            return;
         }
-        message.addRecipients(MimeMessage.RecipientType.BCC, "valeryia.andraichuk@tum.de");
-        message.setSubject("Thesis Application Rejection");
 
-        String template = storageService.readFromFile(rootLocation, "thesis-application-rejection.html");
-        template = fillStudentPlaceholders(template, student);
-        template = fillThesisApplicationPlaceholders(template, thesisApplication);
+        if (chairMemberRecipientsList.isEmpty()) {
+            return;
+        }
 
-        message.setContent(template, "text/html; charset=utf-8");
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
 
-        javaMailSender.send(message);
+            message.setFrom(sender);
+
+            for (String recipient : chairMemberRecipientsList) {
+                message.addRecipients(MimeMessage.RecipientType.TO, recipient);
+            }
+
+            message.setSubject("New Thesis Application");
+
+            String template = getMailTemplate("application-created-chair");
+            template = fillUserPlaceholders(template, "student", application.getUser());
+            template = fillApplicationPlaceholders(template, application);
+
+            message.setContent(createApplicationFilesMailContent(template, application));
+
+            javaMailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            throw new MailingException("Failed to send email", e);
+        }
     }
 
-    private String fillStudentPlaceholders(final String template, final Student student) {
+    public void sendApplicationCreatedMailToStudent(Application application) throws MailingException {
+        if (!enabled) {
+            return;
+        }
+
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+
+            message.setSubject("Thesis Application Confirmation");
+
+            message.setFrom(sender);
+            message.setRecipients(MimeMessage.RecipientType.TO, application.getUser().getEmail());
+
+            String template = getMailTemplate("application-created-student");
+            template = fillUserPlaceholders(template, "student", application.getUser());
+            template = fillApplicationPlaceholders(template, application);
+
+            message.setContent(createApplicationFilesMailContent(template, application));
+
+            javaMailSender.send(message);
+        } catch (MessagingException | IOException e) {
+            throw new MailingException("Failed to send email", e);
+        }
+    }
+
+    public void sendApplicationAcceptanceEmail(Application application, User advisor) throws MailingException {
+        if (!enabled) {
+            return;
+        }
+
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+
+            message.setSubject("Thesis Application Acceptance");
+
+            message.setFrom(sender);
+            message.setRecipients(MimeMessage.RecipientType.TO, application.getUser().getEmail());
+            message.addRecipients(MimeMessage.RecipientType.CC, advisor.getEmail());
+
+            String template = getMailTemplate("application-acceptance");
+            template = fillUserPlaceholders(template, "advisor", advisor);
+            template = fillUserPlaceholders(template, "student", application.getUser());
+            template = fillApplicationPlaceholders(template, application);
+            message.setContent(template, "text/html; charset=utf-8");
+
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            throw new MailingException("Failed to send email", e);
+        }
+    }
+
+    public void sendApplicationRejectionEmail(Application application) throws MailingException {
+        if (!enabled) {
+            return;
+        }
+
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+
+            message.setSubject("Thesis Application Rejection");
+
+            message.setFrom(sender);
+            message.setRecipients(MimeMessage.RecipientType.TO, application.getUser().getEmail());
+
+            String content = getMailTemplate("application-rejection");
+            content = fillUserPlaceholders(content, "student", application.getUser());
+            content = fillApplicationPlaceholders(content, application);
+
+            message.setContent(content, "text/html; charset=utf-8");
+
+            javaMailSender.send(message);
+        } catch (MessagingException e) {
+            throw new MailingException("Failed to send email", e);
+        }
+    }
+
+    private String getMailTemplate(String name) throws MailingException {
+        Path filePath = mailTemplateLocation.resolve(name + ".html");
+
+        try {
+            byte[] fileBytes = Files.readAllBytes(filePath);
+
+            String template = new String(fileBytes, StandardCharsets.UTF_8);
+
+            return template
+                    .replace("{{config.footer}}", mailFooter)
+                    .replace("{{config.workspaceUrl}}", workspaceUrl);
+        } catch (IOException e) {
+            throw new MailingException("Mail template not found", e);
+        }
+    }
+
+    private String fillUserPlaceholders(String template, String placeholder, User user) {
         return template
-                .replace("{{student.firstName}}", student.getFirstName())
-                .replace("{{student.lastName}}", student.getLastName())
-                .replace("{{student.email}}", student.getEmail())
-                .replace("{{student.tumId}}", student.getTumId())
-                .replace("{{student.matriculationNumber}}", student.getMatriculationNumber())
-                .replace("{{student.gender}}", student.getGender().getValue())
-                .replace("{{student.nationality}}", student.getNationality())
-                .replace("{{student.isExchangeStudent}}", student.getIsExchangeStudent().toString());
+                .replace("{{" + placeholder + ".firstName}}", user.getFirstName())
+                .replace("{{" + placeholder + ".lastName}}", user.getLastName())
+                .replace("{{" + placeholder + ".email}}", user.getEmail())
+                .replace("{{" + placeholder + ".tumId}}", user.getUniversityId())
+                .replace("{{" + placeholder + ".matriculationNumber}}", user.getMatriculationNumber())
+                .replace("{{" + placeholder + ".gender}}", user.getGender())
+                .replace("{{" + placeholder + ".nationality}}", user.getNationality())
+                .replace("{{" + placeholder + ".isExchangeStudent}}", user.getIsExchangeStudent().toString());
     }
 
-    private String fillThesisApplicationPlaceholders(final String template, final ThesisApplication thesisApplication) {
+    private String fillApplicationPlaceholders(String template, Application application) {
         String pattern = "dd. MMM yyyy";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
 
-        return template.replace("{{application.studyProgram}}", thesisApplication.getStudyProgram().getValue())
-                .replace("{{application.studyDegree}}", thesisApplication.getStudyDegree().getValue())
-                .replace("{{application.currentSemester}}", thesisApplication.getCurrentSemester().toString())
-                .replace("{{application.desiredThesisStart}}", simpleDateFormat.format(thesisApplication.getDesiredThesisStart()))
-                .replace("{{application.specialSkills}}", thesisApplication.getSpecialSkills())
-                .replace("{{application.motivation}}", thesisApplication.getMotivation())
-                .replace("{{application.interests}}", thesisApplication.getInterests())
-                .replace("{{application.projects}}", thesisApplication.getProjects())
-                .replace("{{application.specialSkills}}", thesisApplication.getSpecialSkills())
-                .replace("{{application.thesisTitle}}", thesisApplication.getThesisTitle())
-                .replace("{{application.researchAreas}}", String.join(", ", thesisApplication.getResearchAreas().stream().map(ResearchArea::getValue).toList()))
-                .replace("{{application.focusTopics}}", String.join(", ", thesisApplication.getFocusTopics().stream().map(FocusTopic::getValue).toList()));
+        User student = application.getUser();
+
+        return template.replace("{{application.studyProgram}}", student.getStudyProgram())
+                .replace("{{application.studyDegree}}", student.getStudyDegree())
+                .replace("{{application.enrolledAt}}", simpleDateFormat.format(
+                        Date.from(Objects.requireNonNullElse(student.getEnrolledAt(), Instant.now())
+                )))
+                .replace("{{application.desiredThesisStart}}", simpleDateFormat.format(
+                        Date.from(Objects.requireNonNullElse(application.getDesiredStartDate(), Instant.now())
+                )))
+                .replace("{{application.specialSkills}}", student.getSpecialSkills())
+                .replace("{{application.motivation}}", application.getMotivation())
+                .replace("{{application.interests}}", student.getInterests())
+                .replace("{{application.projects}}", student.getProjects())
+                .replace("{{application.specialSkills}}", student.getSpecialSkills())
+                .replace("{{application.thesisTitle}}", application.getThesisTitle())
+                .replace("{{application.researchAreas}}", String.join(", ", student.getResearchAreas()))
+                .replace("{{application.focusTopics}}", String.join(", ", student.getFocusTopics()));
     }
 
-    private String fillThesisAdvisorPlaceholders(final String template, final ThesisAdvisor thesisAdvisor) {
-        return template.replace("{{advisor.firstName}}", thesisAdvisor.getFirstName())
-                .replace("{{advisor.lastName}}", thesisAdvisor.getLastName())
-                .replace("{{advisor.email}}", thesisAdvisor.getEmail())
-                .replace("{{advisor.tumId}}", thesisAdvisor.getTumId());
+    private Multipart createApplicationFilesMailContent(String text, Application application) throws MessagingException, IOException {
+        Multipart multipart = new MimeMultipart();
+
+        BodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart.setContent(text, "text/html; charset=utf-8");
+        multipart.addBodyPart(messageBodyPart);
+
+        MimeBodyPart examinationReportAttachment = new MimeBodyPart();
+        examinationReportAttachment.attachFile(uploadService.load(application.getUser().getExaminationFilename()).getFile());
+        multipart.addBodyPart(examinationReportAttachment);
+
+        MimeBodyPart cvAttachment = new MimeBodyPart();
+        cvAttachment.attachFile(uploadService.load(application.getUser().getCvFilename()).getFile());
+        multipart.addBodyPart(cvAttachment);
+
+        String degreeReportFilename = application.getUser().getDegreeFilename();
+
+        if (degreeReportFilename != null && !degreeReportFilename.isBlank()) {
+            MimeBodyPart degreeReportAttachment = new MimeBodyPart();
+            degreeReportAttachment.attachFile(uploadService.load(degreeReportFilename).getFile());
+            multipart.addBodyPart(degreeReportAttachment);
+        }
+
+        return multipart;
     }
 }

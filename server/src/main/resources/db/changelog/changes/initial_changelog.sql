@@ -1,6 +1,6 @@
 --liquibase formatted sql
 
---changeset airelawaleria:1
+--changeset airelawaleria:1 failOnError:false
 
 CREATE TYPE gender AS ENUM ('FEMALE', 'MALE', 'OTHER', 'PREFER_NOT_TO_SAY');
 CREATE CAST (varchar AS gender) WITH INOUT AS IMPLICIT;
@@ -56,49 +56,52 @@ CREATE TYPE application_status AS ENUM ('NOT_ASSESSED', 'ACCEPTED', 'REJECTED');
 CREATE CAST (varchar AS application_status) WITH INOUT AS IMPLICIT;
 
 --changeset airelawaleria:2
-CREATE TABLE student (
-                       id uuid PRIMARY KEY,
-                       first_name VARCHAR(100),
-                       last_name VARCHAR(100),
-                       gender gender,
-                       nationality VARCHAR(10),
-                       email VARCHAR(255),
-                       tum_id VARCHAR(20),
-                       matriculation_number VARCHAR(30),
-                       is_exchange_student BOOLEAN
+CREATE TABLE IF NOT EXISTS student
+(
+    id                   uuid PRIMARY KEY,
+    first_name           VARCHAR(100),
+    last_name            VARCHAR(100),
+    gender               gender,
+    nationality          VARCHAR(10),
+    email                VARCHAR(255),
+    tum_id               VARCHAR(20),
+    matriculation_number VARCHAR(30),
+    is_exchange_student  BOOLEAN
 );
 
 --changeset airelawaleria:3
-CREATE TABLE thesis_advisor (
-                                id uuid NOT NULL,
-                                first_name varchar(255),
-                                last_name varchar(255),
-                                tum_id varchar(50),
-                                email varchar(255)
+CREATE TABLE IF NOT EXISTS thesis_advisor
+(
+    id         uuid NOT NULL,
+    first_name varchar(255),
+    last_name  varchar(255),
+    tum_id     varchar(50),
+    email      varchar(255)
 );
 
 --changeset airelawaleria:4
-CREATE TABLE thesis_application (
-                                    id uuid PRIMARY KEY,
-                                    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-                                    updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
-                                    student_id UUID NOT NULL,
-                                    current_semester SMALLINT,
-                                    study_degree study_degree,
-                                    study_program study_program,
-                                    desired_thesis_start DATE,
-                                    thesis_title VARCHAR(255),
-                                    interests VARCHAR(1000),
-                                    projects VARCHAR(1000),
-                                    special_skills VARCHAR(1000),
-                                    motivation VARCHAR(500),
-                                    research_areas research_area[],
-                                    focus_topics focus_topic[],
-                                    assessment_comment VARCHAR(2000),
-                                    application_status application_status,
-                                    examination_report_filename VARCHAR(255),
-                                    cv_filename VARCHAR(255),
-                                    bachelor_report_filename VARCHAR(255),
-                                    thesis_advisor_id uuid,
-                                    CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES student (id)
+CREATE TABLE IF NOT EXISTS thesis_application
+(
+    id                          uuid PRIMARY KEY,
+    created_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at                  TIMESTAMP NOT NULL DEFAULT NOW(),
+    student_id                  UUID      NOT NULL,
+    current_semester            SMALLINT,
+    study_degree                study_degree,
+    study_program               study_program,
+    desired_thesis_start        DATE,
+    thesis_title                VARCHAR(255),
+    interests                   VARCHAR(1000),
+    projects                    VARCHAR(1000),
+    special_skills              VARCHAR(1000),
+    motivation                  VARCHAR(500),
+    research_areas              research_area[],
+    focus_topics                focus_topic[],
+    assessment_comment          VARCHAR(2000),
+    application_status          application_status,
+    examination_report_filename VARCHAR(255),
+    cv_filename                 VARCHAR(255),
+    bachelor_report_filename    VARCHAR(255),
+    thesis_advisor_id           uuid,
+    CONSTRAINT fk_student FOREIGN KEY (student_id) REFERENCES student (id)
 );

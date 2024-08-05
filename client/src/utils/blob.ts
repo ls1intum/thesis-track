@@ -1,9 +1,9 @@
-export function downloadPdf(blob: Blob, filename: string) {
+export function downloadFile(blob: Blob, filename: string) {
   const url = window.URL.createObjectURL(blob)
 
   const a = document.createElement('a')
   a.href = url
-  a.setAttribute('download', `${filename}.pdf`)
+  a.setAttribute('download', filename)
 
   document.body.appendChild(a)
   a.click()
