@@ -69,6 +69,10 @@ public class UploadService {
 
     public FileSystemResource load(String filename) {
         try {
+            if (filename.contains("..")) {
+                throw new UploadException("Cannot load file with relative path outside current directory");
+            }
+
             FileSystemResource file =  new FileSystemResource(rootLocation.resolve(filename));
 
             file.contentLength();

@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1/topics")
+@RequestMapping("/v2/topics")
 public class TopicController {
     private final TopicService topicService;
 
