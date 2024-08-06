@@ -104,7 +104,7 @@ const AppRoutes = () => {
           <Route
             path='/theses'
             element={
-              <AuthenticatedArea requiredGroups={['admin', 'supervisor', 'advisor', 'student']}>
+              <AuthenticatedArea>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }

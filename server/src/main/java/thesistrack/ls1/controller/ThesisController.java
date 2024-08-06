@@ -16,10 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
-import thesistrack.ls1.controller.payload.CreateAssessmentPayload;
-import thesistrack.ls1.controller.payload.CreateThesisPayload;
-import thesistrack.ls1.controller.payload.UpdateThesisInfoPayload;
-import thesistrack.ls1.controller.payload.UpdateThesisPayload;
+import thesistrack.ls1.controller.payload.*;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisDto;
 import thesistrack.ls1.entity.Thesis;
@@ -333,12 +330,41 @@ public class ThesisController {
     /* GRADE ENDPOINTS */
 
     @PostMapping("/{thesisId}/grade")
-    public ResponseEntity<ThesisDto> addGrade(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> addGrade(
+            @PathVariable UUID thesisId,
+            @RequestBody AddThesisGradePayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasSupervisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        }
+
+        thesis = thesisService.gradeThesis(
+                thesis,
+                payload.finalGrade(),
+                payload.finalFeedback()
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/complete")
-    public ResponseEntity<ThesisDto> completeThesis(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> completeThesis(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasSupervisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        }
+
+        thesis = thesisService.completeThesis(thesis);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 }

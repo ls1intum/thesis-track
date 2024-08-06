@@ -2,6 +2,7 @@
 
 --changeset emilius:03-thesis-migration-1
 ALTER TABLE theses ADD visibility TEXT NOT NULL DEFAULT 'PRIVATE';
+ALTER TABLE theses ADD final_feedback TEXT;
 ALTER TABLE theses DROP COLUMN published_at;
 
 --changeset emilius:03-thesis-migration-2

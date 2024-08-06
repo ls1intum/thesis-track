@@ -60,7 +60,7 @@ const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
       opened={opened}
       onClose={onClose}
       size='xl'
-      title={<Title order={2}>Submit Assessment</Title>}
+      title='Submit Assessment'
     >
       <Stack gap='md'>
         <Stack gap={0}>

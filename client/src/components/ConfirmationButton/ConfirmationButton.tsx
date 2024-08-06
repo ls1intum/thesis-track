@@ -18,7 +18,7 @@ const ConfirmationButton = (props: PropsWithChildren<IConfirmationButtonProps>) 
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title={<Title order={2}>{confirmationTitle}</Title>}
+        title={confirmationTitle}
       >
         <Stack>
           <Text>{confirmationText}</Text>

@@ -61,7 +61,7 @@ const links: Array<{
     link: '/theses',
     label: 'Theses Overview',
     icon: Kanban,
-    roles: ['admin', 'advisor', 'supervisor', 'student'],
+    roles: undefined,
   },
 ]
 

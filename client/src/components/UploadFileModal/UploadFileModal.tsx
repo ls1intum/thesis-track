@@ -21,7 +21,7 @@ const UploadFileModal = (props: IUploadFileModalProps) => {
   }, [opened])
 
   return (
-    <Modal opened={opened} onClose={onClose} title={<Title order={2}>{title}</Title>}>
+    <Modal opened={opened} onClose={onClose} title={title}>
       <Stack>
         <UploadArea value={file} onChange={setFile} />
         <Button

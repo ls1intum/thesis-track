@@ -45,7 +45,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
   const [loading, setLoading] = useState(false)
 
   return (
-    <Modal opened={opened} onClose={onClose} title={<Title order={2}>Create Thesis</Title>}>
+    <Modal opened={opened} onClose={onClose} title='Create Thesis'>
       <form
         onSubmit={form.onSubmit(async (values) => {
           setLoading(true)

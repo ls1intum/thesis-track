@@ -21,6 +21,7 @@ export interface IThesis {
   hasThesisFile: boolean
   hasPresentationFile: boolean
   finalGrade: string | null
+  finalFeedback: string | null
   startDate: string | null
   endDate: string | null
   createdAt: string

@@ -58,6 +58,9 @@ public class Thesis {
     @Column(name = "final_grade", length = 10)
     private String finalGrade;
 
+    @Column(name = "final_feedback", length = 2000)
+    private String finalFeedback;
+
     @Column(name = "start_date")
     private Instant startDate;
 

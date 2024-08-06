@@ -13,6 +13,7 @@ import thesistrack.ls1.repository.UserRepository;
 import thesistrack.ls1.security.JwtAuthConfig;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -71,6 +72,8 @@ public class AuthenticationService {
 
         user = this.userRepository.save(user);
 
+        List<UserGroup> userGroups = new ArrayList<>();
+
         for (String group : groups) {
             UserGroup entity = new UserGroup();
             UserGroupId entityId = new UserGroupId();
@@ -81,9 +84,11 @@ public class AuthenticationService {
             entity.setUser(user);
             entity.setId(entityId);
 
-            this.userGroupRepository.save(entity);
+            userGroups.add(this.userGroupRepository.save(entity));
         }
 
-        return this.userRepository.findByUniversityId(universityId).orElseThrow();
+        user.setGroups(userGroups);
+
+        return this.userRepository.save(user);
     }
 }

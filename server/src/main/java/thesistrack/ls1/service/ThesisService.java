@@ -258,6 +258,25 @@ public class ThesisService {
         return thesisRepository.save(thesis);
     }
 
+    /* GRADING */
+    public Thesis gradeThesis(Thesis thesis, String finalGrade, String finalFeedback) {
+        thesis.setState(ThesisState.GRADED);
+        thesis.setFinalGrade(RequestValidator.validateStringMaxLength(finalGrade, 10));
+        thesis.setFinalFeedback(RequestValidator.validateStringMaxLength(finalFeedback, 2000));
+
+        saveStateChange(thesis, ThesisState.GRADED);
+
+        return thesisRepository.save(thesis);
+    }
+
+    public Thesis completeThesis(Thesis thesis) {
+        thesis.setState(ThesisState.FINISHED);
+
+        saveStateChange(thesis, ThesisState.FINISHED);
+
+        return thesisRepository.save(thesis);
+    }
+
     /* UTILITY */
 
     public Thesis findById(UUID thesisId) {
