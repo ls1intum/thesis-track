@@ -51,16 +51,12 @@ const ThesisFinalGradeSection = (props: IThesisFinalGradeSectionProps) => {
         <Accordion.Control>Final Grade</Accordion.Control>
         <Accordion.Panel>
           <Stack>
-            {thesis.finalGrade ? (
+            {thesis.grade ? (
               <Stack>
                 <Title order={3}>Final Grade</Title>
-                <Text>{thesis.finalGrade}</Text>
-                {thesis.finalFeedback && (
-                  <>
-                    <Title order={3}>Feedback</Title>
-                    <DocumentEditor value={thesis.finalFeedback} />
-                  </>
-                )}
+                <Text>{thesis.grade.finalGrade}</Text>
+                <Title order={3}>Feedback</Title>
+                <DocumentEditor value={thesis.grade.feedback} />
               </Stack>
             ) : (
               <Text ta='center'>No grade added yet</Text>

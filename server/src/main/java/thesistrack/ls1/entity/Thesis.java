@@ -10,6 +10,7 @@ import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -73,22 +74,23 @@ public class Thesis {
     private Instant createdAt;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private List<ThesisRole> roles;
+    private List<ThesisRole> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("createdAt DESC")
-    private List<ThesisProposal> proposals;
+    private List<ThesisProposal> proposals = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("createdAt DESC")
-    private List<ThesisAssessment> assessments;
+    private List<ThesisAssessment> assessments = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("changedAt ASC")
-    private List<ThesisStateChange> states;
+    private List<ThesisStateChange> states = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private List<ThesisPresentation> presentations;
+    @OrderBy("date ASC")
+    private List<ThesisPresentation> presentations = new ArrayList<>();
 
     public boolean hasSupervisorAccess(User user) {
         if (user == null) {
@@ -152,7 +154,7 @@ public class Thesis {
         return false;
     }
 
-    public boolean hasAccess(User user) {
+    public boolean hasReadAccess(User user) {
         if (user == null && visibility == ThesisVisibility.PUBLIC) {
             return true;
         }

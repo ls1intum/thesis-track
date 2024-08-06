@@ -14,15 +14,18 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import thesistrack.ls1.constants.StringLimits;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
 import thesistrack.ls1.controller.payload.*;
 import thesistrack.ls1.dto.PaginationDto;
+import thesistrack.ls1.dto.ThesisCommentDto;
 import thesistrack.ls1.dto.ThesisDto;
 import thesistrack.ls1.entity.Thesis;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.ThesisService;
+import thesistrack.ls1.utility.RequestValidator;
 
 import java.util.Set;
 import java.util.UUID;
@@ -46,7 +49,7 @@ public class ThesisController {
             @RequestParam(required = false) ThesisState[] state,
             @RequestParam(required = false, defaultValue = "false") Boolean fetchAll,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "20") Integer limit,
+            @RequestParam(required = false, defaultValue = "50") Integer limit,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false, defaultValue = "desc") String sortOrder,
             JwtAuthenticationToken jwt
@@ -91,8 +94,8 @@ public class ThesisController {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.findById(thesisId);
 
-        if (!thesis.hasAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        if (!thesis.hasReadAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
         }
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
@@ -107,10 +110,10 @@ public class ThesisController {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.createThesis(
                 authenticatedUser,
-                payload.thesisTitle(),
-                payload.supervisorIds(),
-                payload.advisorIds(),
-                payload.studentIds(),
+                RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateNotNull(payload.supervisorIds()),
+                RequestValidator.validateNotNull(payload.advisorIds()),
+                RequestValidator.validateNotNull(payload.studentIds()),
                 null
         );
 
@@ -127,20 +130,20 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
         }
 
         thesis = thesisService.updateThesis(
                 authenticatedUser,
                 thesis,
-                payload.thesisTitle(),
-                payload.visibility(),
+                RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateNotNull(payload.visibility()),
                 payload.startDate(),
                 payload.endDate(),
-                payload.studentIds(),
-                payload.advisorIds(),
-                payload.supervisorIds(),
-                payload.states()
+                RequestValidator.validateNotNull(payload.studentIds()),
+                RequestValidator.validateNotNull(payload.advisorIds()),
+                RequestValidator.validateNotNull(payload.supervisorIds()),
+                RequestValidator.validateNotNull(payload.states())
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
@@ -155,7 +158,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
         }
 
         thesis = thesisService.closeThesis(thesis);
@@ -173,10 +176,14 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
         }
 
-        thesis = thesisService.updateThesisInfo(thesis, payload.abstractText(), payload.infoText());
+        thesis = thesisService.updateThesisInfo(
+                thesis,
+                RequestValidator.validateStringMaxLength(payload.abstractText(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.infoText(), StringLimits.LONGTEXT.getLimit())
+        );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
@@ -191,8 +198,8 @@ public class ThesisController {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.findById(thesisId);
 
-        if (!thesis.hasAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        if (!thesis.hasReadAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
         }
 
         return ResponseEntity.ok()
@@ -204,17 +211,17 @@ public class ThesisController {
     @PostMapping("/{thesisId}/proposal")
     public ResponseEntity<ThesisDto> uploadProposal(
             @PathVariable UUID thesisId,
-            @RequestPart("proposal") MultipartFile proposal,
+            @RequestPart("proposal") MultipartFile proposalFile,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
         }
 
-        thesis = thesisService.uploadProposal(authenticatedUser, thesis, proposal);
+        thesis = thesisService.uploadProposal(authenticatedUser, thesis, RequestValidator.validateNotNull(proposalFile));
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
@@ -228,7 +235,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
         }
 
         thesis = thesisService.acceptProposal(authenticatedUser, thesis);
@@ -247,7 +254,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be advisor to perform this action");
         }
 
         thesis = thesisService.submitThesis(thesis);
@@ -256,23 +263,75 @@ public class ThesisController {
     }
 
     @GetMapping("/{thesisId}/presentation")
-    public ResponseEntity<Resource> getLastPresentationUpload(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<Resource> getPresentationFile(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasReadAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=presentation_%s.pdf", thesisId))
+                .body(thesisService.getPresentationFile(thesis));
     }
 
     @PutMapping("/{thesisId}/presentation")
-    public ResponseEntity<ThesisDto> uploadPresentation(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> uploadPresentation(
+            @PathVariable UUID thesisId,
+            @RequestPart("proposal") MultipartFile presentationFile,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+        }
+
+        thesis = thesisService.uploadPresentation(thesis, RequestValidator.validateNotNull(presentationFile));
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @GetMapping("/{thesisId}/thesis")
-    public ResponseEntity<Resource> getThesisFile(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<Resource> getThesisFile(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasReadAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=thesis_%s.pdf", thesisId))
+                .body(thesisService.getThesisFile(thesis));
     }
 
     @PutMapping("/{thesisId}/thesis")
-    public ResponseEntity<ThesisDto> uploadThesis(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> uploadThesis(
+            @PathVariable UUID thesisId,
+            @RequestPart("proposal") MultipartFile thesisFile,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+        }
+
+        thesis = thesisService.uploadThesis(thesis, RequestValidator.validateNotNull(thesisFile));
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/presentations")
@@ -286,17 +345,17 @@ public class ThesisController {
     }
 
     @GetMapping("/{thesisId}/comments")
-    public ResponseEntity<Page<ThesisDto>> getComments(@PathVariable UUID thesisId) {
+    public ResponseEntity<PaginationDto<ThesisCommentDto>> getComments(@PathVariable UUID thesisId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
     @PostMapping("/{thesisId}/comments")
-    public ResponseEntity<ThesisDto> createComment(@PathVariable UUID thesisId) {
+    public ResponseEntity<ThesisCommentDto> createComment(@PathVariable UUID thesisId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
-    @GetMapping("/{thesisId}/comments/{fileId}")
-    public ResponseEntity<ThesisDto> getCommentFile(@PathVariable UUID thesisId, @PathVariable String fileId) {
+    @GetMapping("/{thesisId}/comments/{commentId}")
+    public ResponseEntity<Resource> getCommentFile(@PathVariable UUID thesisId, @PathVariable UUID commentId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 
@@ -312,16 +371,16 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
         }
 
         thesis = thesisService.submitAssessment(
                 authenticatedUser,
                 thesis,
-                payload.summary(),
-                payload.positives(),
-                payload.negatives(),
-                payload.gradeSuggestion()
+                RequestValidator.validateStringMaxLength(payload.summary(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.positives(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.negatives(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.gradeSuggestion(), StringLimits.THESIS_GRADE.getLimit())
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
@@ -339,13 +398,13 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasSupervisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be a supervisor of this thesis to perform this action");
         }
 
         thesis = thesisService.gradeThesis(
                 thesis,
-                payload.finalGrade(),
-                payload.finalFeedback()
+                RequestValidator.validateStringMaxLength(payload.finalGrade(), StringLimits.THESIS_GRADE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.finalFeedback(), StringLimits.LONGTEXT.getLimit())
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
@@ -360,7 +419,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasSupervisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+            throw new AccessDeniedException("You need to be a supervisor of this thesis to perform this action");
         }
 
         thesis = thesisService.completeThesis(thesis);

@@ -17,7 +17,7 @@ import java.util.UUID;
 public interface ThesisRepository extends JpaRepository<Thesis, UUID> {
     @Query("SELECT DISTINCT t FROM Thesis t LEFT JOIN ThesisRole r ON (t.id = r.thesis.id) WHERE " +
             "(:userId IS NULL OR r.user.id = :userId) AND " +
-            "(:visibilities IS NULL OR t.visibility IN :visibilities) AND " +
+            "(:visibilities IS NULL OR t.visibility IN :visibilities OR r.user.id = :userId) AND " +
             "(:states IS NULL OR t.state IN :states) AND " +
             "(:searchQuery IS NULL OR LOWER(t.title) LIKE %:searchQuery% OR " +
             "LOWER(r.user.firstName) LIKE %:searchQuery% OR " +

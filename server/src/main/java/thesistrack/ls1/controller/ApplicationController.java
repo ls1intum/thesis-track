@@ -7,11 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ApplicationState;
+import thesistrack.ls1.constants.StringLimits;
 import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
 import thesistrack.ls1.controller.payload.RejectApplicationPayload;
 import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
@@ -21,6 +21,7 @@ import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.ApplicationService;
 import thesistrack.ls1.service.AuthenticationService;
+import thesistrack.ls1.utility.RequestValidator;
 
 import java.util.UUID;
 
@@ -48,7 +49,7 @@ public class ApplicationController {
             @RequestParam(required = false) ApplicationState[] state,
             @RequestParam(required = false, defaultValue = "false") Boolean fetchAll,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "20") Integer limit,
+            @RequestParam(required = false, defaultValue = "50") Integer limit,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
             @RequestParam(required = false, defaultValue = "desc") String sortOrder,
             JwtAuthenticationToken jwt
@@ -66,7 +67,7 @@ public class ApplicationController {
         );
 
         return ResponseEntity.ok(PaginationDto.fromSpringPage(
-                applications.map(application -> ApplicationDto.fromApplicationEntity(application, application.hasProtectedAccess(authenticatedUser)))
+                applications.map(application -> ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)))
         ));
     }
 
@@ -79,7 +80,7 @@ public class ApplicationController {
             throw new AccessDeniedException("You do not have access to this application");
         }
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasProtectedAccess(authenticatedUser)));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 
     @PutMapping("/{applicationId}/comment")
@@ -91,16 +92,16 @@ public class ApplicationController {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
         Application application = applicationService.findById(applicationId);
 
-        if (!application.hasProtectedAccess(authenticatedUser)) {
+        if (!application.hasManagementAccess(authenticatedUser)) {
             throw new AccessDeniedException("You do not have access to this application");
         }
 
         application =  applicationService.updateComment(
                 application,
-                payload.comment()
+                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasProtectedAccess(authenticatedUser)));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 
     @PutMapping("/{applicationId}/accept")
@@ -112,22 +113,22 @@ public class ApplicationController {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
         Application application = applicationService.findById(applicationId);
 
-        if (!application.hasProtectedAccess(authenticatedUser)) {
+        if (!application.hasManagementAccess(authenticatedUser)) {
             throw new AccessDeniedException("You do not have access to this application");
         }
 
         application = applicationService.accept(
-                application,
                 authenticatedUser,
-                payload.thesisTitle(),
-                payload.advisorIds(),
-                payload.supervisorIds(),
-                payload.comment(),
-                payload.notifyUser(),
-                payload.closeTopic()
+                application,
+                RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateNotNull(payload.advisorIds()),
+                RequestValidator.validateNotNull(payload.supervisorIds()),
+                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.notifyUser()),
+                RequestValidator.validateNotNull(payload.closeTopic())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasProtectedAccess(authenticatedUser)));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 
     @PutMapping("/{applicationId}/reject")
@@ -139,17 +140,17 @@ public class ApplicationController {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
         Application application = applicationService.findById(applicationId);
 
-        if (!application.hasProtectedAccess(authenticatedUser)) {
+        if (!application.hasManagementAccess(authenticatedUser)) {
             throw new AccessDeniedException("You do not have access to this application");
         }
 
         application =  applicationService.reject(
-                application,
                 authenticatedUser,
-                payload.comment(),
-                payload.notifyUser()
+                application,
+                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.notifyUser())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasProtectedAccess(authenticatedUser)));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 }

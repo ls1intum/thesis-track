@@ -18,21 +18,24 @@ export interface IThesis {
   abstractText: string
   state: ThesisState
   applicationId: string | null
-  hasThesisFile: boolean
-  hasPresentationFile: boolean
-  finalGrade: string | null
-  finalFeedback: string | null
   startDate: string | null
   endDate: string | null
   createdAt: string
   students: ILightUser[]
   advisors: ILightUser[]
   supervisors: ILightUser[]
+  files: {
+    thesis: string | null
+    presentation: string | null
+    proposal: string | null
+  }
   assessment: null | {
     summary: string
     positives: string
     negatives: string
     gradeSuggestion: string
+    createdAt: string
+    createdBy: ILightUser
   }
   proposal: null | {
     createdAt: string
@@ -40,6 +43,19 @@ export interface IThesis {
     approvedAt: string | null
     approvedBy: ILightUser | null
   }
+  grade: null | {
+    finalGrade: string
+    feedback: string
+  }
+  presentations: Array<{
+    presentationId: string
+    type: string
+    medium: string
+    location: string
+    scheduledAt: string
+    createdAt: string
+    createdBy: ILightUser
+  }>
   states: Array<{
     state: ThesisState
     startedAt: string

@@ -62,7 +62,7 @@ const ThesisPage = () => {
   }
 
   return (
-    <ContentContainer>
+    <ContentContainer key={thesis.thesisId}>
       <Title>{thesis.title}</Title>
       <Space my='md' />
       {thesis.state === ThesisState.DROPPED_OUT && (

@@ -48,4 +48,12 @@ public class RequestValidator {
             throw new ResourceInvalidParametersException("Invalid email address");
         }
     }
+
+    public static <T> T validateNotNull(T value) {
+        if (value == null) {
+            throw new ResourceInvalidParametersException("Required value is null");
+        }
+
+        return value;
+    }
 }

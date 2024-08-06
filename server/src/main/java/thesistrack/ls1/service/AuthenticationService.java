@@ -29,14 +29,14 @@ public class AuthenticationService {
     }
 
     public User getAuthenticatedUser(JwtAuthenticationToken jwt) {
-        return this.userRepository.findByUniversityId(jwt.getName())
+        return this.userRepository.findByUniversityId(getUniversityId(jwt))
                 .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found"));
     }
 
     @Transactional
     public User updateAuthenticatedUser(JwtAuthenticationToken jwt) {
         Map<String, Object> attributes = jwt.getTokenAttributes();
-        String universityId = jwt.getName();
+        String universityId = getUniversityId(jwt);
 
         String email = (String) attributes.get("email");
         String firstName = (String) attributes.get("given_name");
@@ -71,7 +71,6 @@ public class AuthenticationService {
         }
 
         user = this.userRepository.save(user);
-
         List<UserGroup> userGroups = new ArrayList<>();
 
         for (String group : groups) {
@@ -90,5 +89,9 @@ public class AuthenticationService {
         user.setGroups(userGroups);
 
         return this.userRepository.save(user);
+    }
+
+    private String getUniversityId(JwtAuthenticationToken jwt) {
+        return jwt.getName();
     }
 }

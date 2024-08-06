@@ -12,7 +12,6 @@ import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
 import thesistrack.ls1.controller.payload.ThesisStatePayload;
-import thesistrack.ls1.controller.payload.UpdateThesisPayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.entity.key.ThesisRoleId;
 import thesistrack.ls1.entity.key.ThesisStateChangeId;
@@ -40,8 +39,10 @@ public class ThesisService {
             ThesisRepository thesisRepository,
             ThesisStateChangeRepository thesisStateChangeRepository,
             UserRepository userRepository,
-            UploadService uploadService,
-            ThesisProposalRepository thesisProposalRepository, ThesisAssessmentRepository thesisAssessmentRepository) {
+            ThesisProposalRepository thesisProposalRepository,
+            ThesisAssessmentRepository thesisAssessmentRepository,
+            UploadService uploadService
+    ) {
         this.thesisRoleRepository = thesisRoleRepository;
         this.thesisRepository = thesisRepository;
         this.thesisStateChangeRepository = thesisStateChangeRepository;
@@ -86,7 +87,7 @@ public class ThesisService {
     ) {
         Thesis thesis = new Thesis();
 
-        thesis.setTitle(RequestValidator.validateStringMaxLength(title, 500));
+        thesis.setTitle(title);
         thesis.setInfo("");
         thesis.setAbstractField("");
         thesis.setState(ThesisState.PROPOSAL);
@@ -127,7 +128,7 @@ public class ThesisService {
             Set<UUID> supervisorIds,
             List<ThesisStatePayload> states
     ) {
-        thesis.setTitle(RequestValidator.validateStringMaxLength(thesisTitle, 500));
+        thesis.setTitle(thesisTitle);
         thesis.setVisibility(visibility);
 
         if ((startDate == null && endDate != null) || (startDate != null && endDate == null)) {
@@ -152,8 +153,8 @@ public class ThesisService {
             String abstractText,
             String infoText
     ) {
-        thesis.setAbstractField(RequestValidator.validateStringMaxLength(abstractText, 2000));
-        thesis.setInfo(RequestValidator.validateStringMaxLength(infoText, 2000));
+        thesis.setAbstractField(abstractText);
+        thesis.setInfo(infoText);
 
         return thesisRepository.save(thesis);
     }
@@ -163,7 +164,7 @@ public class ThesisService {
     public Resource getProposalFile(Thesis thesis) {
         List<ThesisProposal> proposals = thesis.getProposals();
 
-        if (proposals == null || proposals.isEmpty()) {
+        if (proposals.isEmpty()) {
             throw new ResourceNotFoundException("Proposal file not found.");
         }
 
@@ -172,10 +173,6 @@ public class ThesisService {
 
     @Transactional
     public Thesis uploadProposal(User uploader, Thesis thesis, MultipartFile proposalFile) {
-        if (proposalFile == null ) {
-            throw new ResourceInvalidParametersException("No proposal added to request");
-        }
-
         ThesisProposal proposal = new ThesisProposal();
 
         proposal.setThesis(thesis);
@@ -218,11 +215,49 @@ public class ThesisService {
 
     @Transactional
     public Thesis submitThesis(Thesis thesis) {
+        if (thesis.getFinalThesisFilename() == null || thesis.getFinalPresentationFilename() == null) {
+            throw new ResourceInvalidParametersException("Thesis or presentation file not uploaded yet");
+        }
+
         thesis.setState(ThesisState.SUBMITTED);
 
         saveStateChange(thesis, ThesisState.SUBMITTED);
 
         return thesisRepository.save(thesis);
+    }
+
+    @Transactional
+    public Thesis uploadPresentation(Thesis thesis, MultipartFile presentationFile) {
+        thesis.setFinalPresentationFilename(uploadService.store(presentationFile, 3 * 1024 * 1024));
+
+        return thesisRepository.save(thesis);
+    }
+
+    @Transactional
+    public Thesis uploadThesis(Thesis thesis, MultipartFile thesisFile) {
+        thesis.setFinalThesisFilename(uploadService.store(thesisFile, 3 * 1024 * 1024));
+
+        return thesisRepository.save(thesis);
+    }
+
+    public Resource getPresentationFile(Thesis thesis) {
+        String filename = thesis.getFinalPresentationFilename();
+
+        if (filename == null) {
+            throw new ResourceNotFoundException("Presentation file not found.");
+        }
+
+        return uploadService.load(filename);
+    }
+
+    public Resource getThesisFile(Thesis thesis) {
+        String filename = thesis.getFinalThesisFilename();
+
+        if (filename == null) {
+            throw new ResourceNotFoundException("Thesis file not found.");
+        }
+
+        return uploadService.load(filename);
     }
 
     /* ASSESSMENT */
@@ -240,10 +275,10 @@ public class ThesisService {
         assessment.setThesis(thesis);
         assessment.setCreatedBy(creator);
         assessment.setCreatedAt(Instant.now());
-        assessment.setSummary(RequestValidator.validateStringMaxLength(summary, 2000));
-        assessment.setPositives(RequestValidator.validateStringMaxLength(positives, 2000));
-        assessment.setNegatives(RequestValidator.validateStringMaxLength(negatives, 2000));
-        assessment.setGradeSuggestion(RequestValidator.validateStringMaxLength(gradeSuggestion, 100));
+        assessment.setSummary(summary);
+        assessment.setPositives(positives);
+        assessment.setNegatives(negatives);
+        assessment.setGradeSuggestion(gradeSuggestion);
 
         thesisAssessmentRepository.save(assessment);
 
@@ -261,8 +296,8 @@ public class ThesisService {
     /* GRADING */
     public Thesis gradeThesis(Thesis thesis, String finalGrade, String finalFeedback) {
         thesis.setState(ThesisState.GRADED);
-        thesis.setFinalGrade(RequestValidator.validateStringMaxLength(finalGrade, 10));
-        thesis.setFinalFeedback(RequestValidator.validateStringMaxLength(finalFeedback, 2000));
+        thesis.setFinalGrade(finalGrade);
+        thesis.setFinalFeedback(finalFeedback);
 
         saveStateChange(thesis, ThesisState.GRADED);
 
@@ -340,9 +375,8 @@ public class ThesisService {
 
         thesisStateChangeRepository.save(stateChange);
 
-        List<ThesisStateChange> stateChanges = thesis.getStates() == null ? new ArrayList<>() : thesis.getStates();
+        List<ThesisStateChange> stateChanges = thesis.getStates();
         stateChanges.add(stateChange);
-
         thesis.setStates(stateChanges);
     }
 
@@ -366,10 +400,8 @@ public class ThesisService {
 
         thesisRoleRepository.save(thesisRole);
 
-        List<ThesisRole> roles = thesis.getRoles() == null ? new ArrayList<>() : thesis.getRoles();
-
+        List<ThesisRole> roles = thesis.getRoles();
         roles.add(thesisRole);
-
         thesis.setRoles(roles);
     }
 }

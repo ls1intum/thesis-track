@@ -37,8 +37,8 @@ public class ThesisPresentation {
     private String location;
 
     @NotNull
-    @Column(name = "date", nullable = false)
-    private Instant date;
+    @Column(name = "scheduledAt", nullable = false)
+    private Instant scheduledAt;
 
     @CreationTimestamp
     @NotNull

@@ -68,7 +68,7 @@ public class Application {
         return this.user.getId().equals(user.getId());
     }
 
-    public boolean hasProtectedAccess(User user) {
+    public boolean hasManagementAccess(User user) {
         return user.hasAnyGroup("admin", "advisor", "supervisor");
     }
 }

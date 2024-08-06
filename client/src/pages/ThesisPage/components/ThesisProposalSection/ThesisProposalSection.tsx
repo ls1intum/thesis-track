@@ -78,6 +78,7 @@ const ThesisProposalSection = (props: IThesisProposalSectionProps) => {
                 url={`/v2/theses/${thesis.thesisId}/proposal`}
                 filename={`proposal-${thesis.thesisId}`}
                 height={400}
+                key={thesis.files.proposal}
               />
             ) : (
               <Text ta='center'>No proposal uploaded yet</Text>

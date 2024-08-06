@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -95,17 +96,11 @@ public class User {
     private Instant joinedAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<UserGroup> groups;
+    private List<UserGroup> groups = new ArrayList<>();
 
     public boolean hasAnyGroup(String...groups) {
-        List<UserGroup> userGroups = getGroups();
-
-        if (userGroups == null) {
-            return false;
-        }
-
         for (String group : groups) {
-            for (UserGroup userGroup : userGroups) {
+            for (UserGroup userGroup : getGroups()) {
                 if (userGroup.getId().getGroup().equals(group)) {
                     return true;
                 }
