@@ -30,6 +30,7 @@ import { ILegacyCreateApplicationPayload } from '../../requests/payloads/applica
 import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
+import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 
 const LegacyCreateApplicationForm = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -224,21 +225,13 @@ const LegacyCreateApplicationForm = () => {
                   })
 
                   if (response.ok) {
-                    notifications.show({
-                      color: 'green',
-                      autoClose: 5000,
-                      title: 'Success',
-                      message: `Your application was successfully submitted!`,
-                    })
+                    showSimpleSuccess('Your application was successfully submitted!')
 
                     setApplicationSuccessfullySubmitted(true)
                   } else {
-                    notifications.show({
-                      color: 'red',
-                      autoClose: 10000,
-                      title: 'Error',
-                      message: `Failed to submit the application. Server responded with ${response.status}`,
-                    })
+                    showSimpleError(
+                      `Failed to submit the application. Server responded with ${response.status}`,
+                    )
                   }
                 } finally {
                   loadingOverlayHandlers.close()

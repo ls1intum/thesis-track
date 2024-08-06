@@ -5,6 +5,7 @@ import { doRequest } from '../../requests/request'
 import { Pageable } from '../../requests/responses/pageable'
 import { notifications } from '@mantine/notifications'
 import { useDebouncedValue } from '@mantine/hooks'
+import { showSimpleError } from '../../utils/notification'
 
 interface IThesesProviderProps {
   fetchAll?: boolean
@@ -53,12 +54,7 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
       },
       (res) => {
         if (!res.ok) {
-          notifications.show({
-            color: 'red',
-            autoClose: 10000,
-            title: 'Error',
-            message: `Could not fetch theses: ${res.status}`,
-          })
+          showSimpleError(`Could not fetch theses: ${res.status}`)
 
           return setTheses({
             content: [],

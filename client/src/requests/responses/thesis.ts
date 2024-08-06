@@ -27,8 +27,18 @@ export interface IThesis {
   students: ILightUser[]
   advisors: ILightUser[]
   supervisors: ILightUser[]
-  assessment: null
-  proposal: null
+  assessment: null | {
+    summary: string
+    positives: string
+    negatives: string
+    gradeSuggestion: string
+  }
+  proposal: null | {
+    createdAt: string
+    createdBy: ILightUser
+    approvedAt: string | null
+    approvedBy: ILightUser | null
+  }
   states: Array<{
     state: ThesisState
     startedAt: string

@@ -8,6 +8,7 @@ import { doRequest } from '../../../../requests/request'
 import { IThesis } from '../../../../requests/responses/thesis'
 import { notifications } from '@mantine/notifications'
 import { isNotEmptyUserList } from '../../../../utils/validation'
+import { showSimpleError } from '../../../../utils/notification'
 
 interface ICreateThesisModalProps {
   opened: boolean
@@ -64,12 +65,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
             if (response.ok) {
               navigate(`/theses/${response.data.thesisId}`)
             } else {
-              notifications.show({
-                color: 'red',
-                autoClose: 10000,
-                title: 'Error',
-                message: `Failed to create thesis: ${response.status}`,
-              })
+              showSimpleError(`Failed to create thesis: ${response.status}`)
             }
           } finally {
             setLoading(false)

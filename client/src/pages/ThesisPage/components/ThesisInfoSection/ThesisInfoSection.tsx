@@ -5,6 +5,7 @@ import { Accordion, Button, Group, Stack, Title } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../requests/request'
 import { notifications } from '@mantine/notifications'
+import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 
 interface IThesisInfoSectionProps {
   thesis: IThesis
@@ -27,9 +28,35 @@ const ThesisInfoSection = (props: IThesisInfoSectionProps) => {
     setAbstractText(thesis.abstractText)
   }, [thesis.thesisId])
 
+  const onSave = async () => {
+    setSaving(true)
+
+    try {
+      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/info`, {
+        method: 'PUT',
+        requiresAuth: true,
+        data: {
+          abstractText,
+          infoText,
+        },
+      })
+
+      if (response.ok) {
+        showSimpleSuccess('Thesis info updated successfully')
+
+        setEditMode(false)
+        onUpdate(response.data)
+      } else {
+        showSimpleError(`Failed to update thesis ${response.status}`)
+      }
+    } finally {
+      setSaving(false)
+    }
+  }
+
   return (
     <Accordion
-      variant='contained'
+      variant='separated'
       value={opened ? 'open' : ''}
       onChange={(value) => setOpened(value === 'open')}
     >
@@ -48,51 +75,18 @@ const ThesisInfoSection = (props: IThesisInfoSectionProps) => {
             )}
             {editMode && (
               <Group justify='flex-end'>
-                <Button loading={saving} variant='danger' onClick={() => setEditMode(false)}>
-                  Cancel
-                </Button>
                 <Button
                   loading={saving}
-                  onClick={async () => {
-                    setSaving(true)
-
-                    try {
-                      const response = await doRequest<IThesis>(
-                        `/v2/theses/${thesis.thesisId}/info`,
-                        {
-                          method: 'PUT',
-                          requiresAuth: true,
-                          data: {
-                            abstractText,
-                            infoText,
-                          },
-                        },
-                      )
-
-                      if (response.ok) {
-                        setEditMode(false)
-
-                        onUpdate(response.data)
-
-                        notifications.show({
-                          color: 'green',
-                          autoClose: 5000,
-                          title: 'Success',
-                          message: `Thesis info updated successfully`,
-                        })
-                      } else {
-                        notifications.show({
-                          color: 'red',
-                          autoClose: 5000,
-                          title: 'Error',
-                          message: `Failed to update thesis ${response.status}`,
-                        })
-                      }
-                    } finally {
-                      setSaving(false)
-                    }
+                  variant='danger'
+                  onClick={() => {
+                    setInfoText(thesis.infoText)
+                    setAbstractText(thesis.abstractText)
+                    setEditMode(false)
                   }}
                 >
+                  Cancel
+                </Button>
+                <Button loading={saving} onClick={onSave}>
                   Save
                 </Button>
               </Group>

@@ -2,14 +2,15 @@ import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { Accordion, Badge, Button, Group, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
-import { DateInput, DateValue } from '@mantine/dates'
+import { DateInput, DateTimePicker, DateValue } from '@mantine/dates'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
 import { ThesisStateColor } from '../../../../config/colors'
 import { isNotEmptyUserList } from '../../../../utils/validation'
 import { IThesisAccessPermissions } from '../../types'
 import { isThesisClosed } from '../../../../utils/thesis'
 import { doRequest } from '../../../../requests/request'
-import { notifications } from '@mantine/notifications'
+import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
+import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 
 interface IThesisConfigSectionProps {
   thesis: IThesis
@@ -97,65 +98,76 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
     form.validate()
   }, [form.values.startDate, form.values.endDate, form.values.states])
 
-  const [opened, setOpened] = useState(true)
+  const [opened, setOpened] = useState(false)
 
   const [updating, setUpdating] = useState(false)
   const [closing, setClosing] = useState(false)
 
+  const onClose = async () => {
+    setClosing(true)
+
+    try {
+      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
+        method: 'DELETE',
+        requiresAuth: true,
+      })
+
+      if (response.ok) {
+        showSimpleSuccess(`Thesis closed successfully`)
+
+        onUpdate(response.data)
+      } else {
+        showSimpleError(`Failed to close thesis ${response.status}`)
+      }
+    } finally {
+      setClosing(false)
+    }
+  }
+
+  const onSubmit = async (values: IThesisConfigSectionFormValues) => {
+    setUpdating(true)
+
+    try {
+      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
+        method: 'PUT',
+        requiresAuth: true,
+        data: {
+          thesisTitle: values.title,
+          visibility: values.visibility,
+          startDate: values.startDate,
+          endDate: values.endDate,
+          studentIds: values.students,
+          advisorIds: values.advisors,
+          supervisorIds: values.supervisors,
+          states: values.states.map((state) => ({
+            state: state.state,
+            changedAt: state.changedAt,
+          })),
+        },
+      })
+
+      if (response.ok) {
+        showSimpleSuccess('Thesis updated successfully')
+
+        onUpdate(response.data)
+      } else {
+        showSimpleError(`Failed to update thesis: ${response.status}`)
+      }
+    } finally {
+      setUpdating(false)
+    }
+  }
+
   return (
     <Accordion
-      variant='contained'
+      variant='separated'
       value={opened ? 'open' : ''}
       onChange={(value) => setOpened(value === 'open')}
     >
       <Accordion.Item value='open'>
         <Accordion.Control>Configuration</Accordion.Control>
         <Accordion.Panel>
-          <form
-            onSubmit={form.onSubmit(async (values) => {
-              setUpdating(true)
-
-              try {
-                const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
-                  method: 'PUT',
-                  requiresAuth: true,
-                  data: {
-                    thesisTitle: values.title,
-                    visibility: values.visibility,
-                    startDate: values.startDate,
-                    endDate: values.endDate,
-                    studentIds: values.students,
-                    advisorIds: values.advisors,
-                    supervisorIds: values.supervisors,
-                    states: values.states.map((state) => ({
-                      state: state.state,
-                      changedAt: state.changedAt,
-                    })),
-                  },
-                })
-
-                if (response.ok) {
-                  onUpdate(response.data)
-
-                  notifications.show({
-                    color: 'green',
-                    autoClose: 5000,
-                    title: 'Success',
-                    message: `Thesis updated successfully`,
-                  })
-                } else {
-                  notifications.show({
-                    color: 'red',
-                    autoClose: 5000,
-                    title: 'Error',
-                    message: `Failed to close thesis ${response.status}`,
-                  })
-                }
-              } finally {
-                setUpdating(false)
-              }
-            })}
-          >
+          <form onSubmit={form.onSubmit(onSubmit)}>
             <Stack gap='md'>
               <TextInput
                 label='Thesis Title'
@@ -215,14 +227,14 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
                 <Group key={item.state} grow>
                   <Group justify='center'>
                     <Text ta='center' fw='bold'>
-                      State
+                      State changed to
                     </Text>
                     <Badge color={ThesisStateColor[item.state]}>{item.state}</Badge>
                     <Text ta='center' fw='bold'>
-                      changed at
+                      at
                     </Text>
                   </Group>
-                  <DateInput
+                  <DateTimePicker
                     required={true}
                     disabled={!access.advisor}
                     value={item.changedAt}
@@ -237,45 +249,16 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
               {access.advisor && (
                 <Group>
                   {!isThesisClosed(thesis) && (
-                    <Button
-                      variant='danger'
+                    <ConfirmationButton
+                      confirmationText='Are you sure you want to close the thesis? This action cannot be undone.'
+                      confirmationTitle='Close Thesis'
+                      variant='outline'
+                      color='red'
                       loading={closing}
-                      onClick={async () => {
-                        setClosing(true)
-
-                        try {
-                          const response = await doRequest<IThesis>(
-                            `/v2/theses/${thesis.thesisId}`,
-                            {
-                              method: 'DELETE',
-                              requiresAuth: true,
-                            },
-                          )
-
-                          if (response.ok) {
-                            onUpdate(response.data)
-
-                            notifications.show({
-                              color: 'green',
-                              autoClose: 5000,
-                              title: 'Success',
-                              message: `Thesis closed successfully`,
-                            })
-                          } else {
-                            notifications.show({
-                              color: 'red',
-                              autoClose: 5000,
-                              title: 'Error',
-                              message: `Failed to close thesis ${response.status}`,
-                            })
-                          }
-                        } finally {
-                          setClosing(false)
-                        }
-                      }}
+                      onClick={onClose}
                     >
                       Close Thesis
-                    </Button>
+                    </ConfirmationButton>
                   )}
                   <Button type='submit' ml='auto' loading={updating} disabled={!form.isValid()}>
                     Update

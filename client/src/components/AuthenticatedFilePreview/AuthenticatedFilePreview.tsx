@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
 import { Button, Stack } from '@mantine/core'
-import { downloadFile } from '../../utils/blob'
+import { downloadPdf } from '../../utils/blob'
 
 interface IAuthenticatedIframeProps {
   url: string
@@ -41,7 +41,7 @@ const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
     <Stack>
       <iframe style={{ border: 0 }} height={height} src={iframeUrl} />
       {allowDownload && (
-        <Button variant='outline' mx='auto' onClick={() => file && downloadFile(file, filename)}>
+        <Button variant='outline' mx='auto' onClick={() => file && downloadPdf(file, filename)}>
           Download
         </Button>
       )}

@@ -9,6 +9,7 @@ import { Button, Checkbox, Divider, Group, Stack, Text, Textarea, TextInput } fr
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { notifications } from '@mantine/notifications'
 import { isNotEmptyUserList } from '../../utils/validation'
+import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 
 interface IApplicationReviewFormProps {
   application: IApplication
@@ -145,22 +146,12 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
                 setLoading(false)
 
                 if (response.ok) {
-                  notifications.show({
-                    color: 'green',
-                    autoClose: 5000,
-                    title: 'Success',
-                    message: 'Application rejected successfully',
-                  })
+                  showSimpleSuccess('Application rejected successfully')
 
                   updateApplication(response.data)
                   onUpdate()
                 } else {
-                  notifications.show({
-                    color: 'red',
-                    autoClose: 5000,
-                    title: 'Error',
-                    message: 'Failed to reject application',
-                  })
+                  showSimpleError(`Failed to reject application: ${response.status}`)
                 }
               }}
             >
@@ -194,22 +185,12 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
                 setLoading(false)
 
                 if (response.ok) {
-                  notifications.show({
-                    color: 'green',
-                    autoClose: 5000,
-                    title: 'Success',
-                    message: 'Application accepted successfully',
-                  })
+                  showSimpleSuccess('Application accepted successfully')
 
                   updateApplication(response.data)
                   onUpdate()
                 } else {
-                  notifications.show({
-                    color: 'red',
-                    autoClose: 5000,
-                    title: 'Error',
-                    message: 'Failed to accept application',
-                  })
+                  showSimpleError(`Failed to accept application: ${response.status}`)
                 }
               }}
             >

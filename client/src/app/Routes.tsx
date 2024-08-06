@@ -26,10 +26,6 @@ const ReviewApplicationPage = lazy(
   () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
 )
 const ThesisPage = lazy(() => import('../pages/ThesisPage/ThesisPage'))
-const SubmitProposalPage = lazy(() => import('../pages/SubmitProposalPage/SubmitProposalPage'))
-const SubmitAssessmentPage = lazy(
-  () => import('../pages/SubmitAssessmentPage/SubmitAssessmentPage'),
-)
 const LandingPage = lazy(() => import('../pages/LandingPage/LandingPage'))
 
 const AppRoutes = () => {
@@ -118,22 +114,6 @@ const AppRoutes = () => {
             element={
               <AuthenticatedArea>
                 <ThesisPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/theses/:thesis_id/submit-proposal'
-            element={
-              <AuthenticatedArea>
-                <SubmitProposalPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/theses/:thesis_id/submit-assessment'
-            element={
-              <AuthenticatedArea>
-                <SubmitAssessmentPage />
               </AuthenticatedArea>
             }
           />

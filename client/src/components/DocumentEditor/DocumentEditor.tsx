@@ -10,12 +10,12 @@ import { useEffect } from 'react'
 
 interface IRichTextEditorProps {
   value: string
-  editMode: boolean
-  onChange: (value: string) => unknown
+  editMode?: boolean
+  onChange?: (value: string) => unknown
 }
 
 const DocumentEditor = (props: IRichTextEditorProps) => {
-  const { value, onChange, editMode } = props
+  const { value, onChange, editMode = false } = props
 
   const editor = useEditor({
     editable: editMode,
@@ -29,7 +29,7 @@ const DocumentEditor = (props: IRichTextEditorProps) => {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     content: value,
-    onUpdate: ({ editor: x }) => onChange(x.getHTML()),
+    onUpdate: ({ editor: x }) => onChange?.(x.getHTML()),
   })
 
   useEffect(() => {

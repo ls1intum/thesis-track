@@ -1,17 +1,22 @@
 package thesistrack.ls1.controller;
 
-import com.nimbusds.jose.util.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ThesisState;
+import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.controller.payload.CreateAssessmentPayload;
 import thesistrack.ls1.controller.payload.CreateThesisPayload;
 import thesistrack.ls1.controller.payload.UpdateThesisInfoPayload;
 import thesistrack.ls1.controller.payload.UpdateThesisPayload;
@@ -22,6 +27,7 @@ import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.ThesisService;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Slf4j
@@ -50,8 +56,26 @@ public class ThesisController {
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
 
+        UUID userId = authenticatedUser.getId();
+        Set<ThesisVisibility> visibilities = Set.of(
+                ThesisVisibility.PUBLIC,
+                ThesisVisibility.INTERNAL,
+                ThesisVisibility.PRIVATE
+        );
+
+        if (fetchAll) {
+            if (authenticatedUser.hasAnyGroup("admin")) {
+                userId = null;
+                visibilities = null;
+            } else if (authenticatedUser.hasAnyGroup("student", "advisor", "supervisor")) {
+                userId = null;
+                visibilities = Set.of(ThesisVisibility.PUBLIC, ThesisVisibility.INTERNAL);
+            }
+        }
+
         Page<Thesis> theses = thesisService.getAll(
-                fetchAll && authenticatedUser.hasAnyGroup("admin") ? null : authenticatedUser.getId(),
+                userId,
+                visibilities,
                 search,
                 state,
                 page,
@@ -71,7 +95,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have access to this thesis");
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
         }
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
@@ -106,7 +130,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have access to this thesis");
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
         }
 
         thesis = thesisService.updateThesis(
@@ -134,7 +158,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have access to this thesis");
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
         }
 
         thesis = thesisService.closeThesis(thesis);
@@ -152,7 +176,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have access to this thesis");
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
         }
 
         thesis = thesisService.updateThesisInfo(thesis, payload.abstractText(), payload.infoText());
@@ -163,21 +187,76 @@ public class ThesisController {
     /* PROPOSAL ENDPOINTS */
 
     @GetMapping("/{thesisId}/proposal")
-    public ResponseEntity<Resource> getProposalFile(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<Resource> getProposalFile(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=proposal_%s.pdf", thesisId))
+                .body(thesisService.getProposalFile(thesis));
     }
 
-    @PutMapping("/{thesisId}/proposal")
-    public ResponseEntity<ThesisDto> uploadProposal(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    @PostMapping("/{thesisId}/proposal")
+    public ResponseEntity<ThesisDto> uploadProposal(
+            @PathVariable UUID thesisId,
+            @RequestPart("proposal") MultipartFile proposal,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        }
+
+        thesis = thesisService.uploadProposal(authenticatedUser, thesis, proposal);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
-    @PostMapping("/{thesisId}/proposal/accept")
-    public ResponseEntity<ThesisDto> acceptProposal(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    @PutMapping("/{thesisId}/proposal/accept")
+    public ResponseEntity<ThesisDto> acceptProposal(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        }
+
+        thesis = thesisService.acceptProposal(authenticatedUser, thesis);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     /* WRITING ENDPOINTS */
+
+    @PutMapping("/{thesisId}/thesis/final-submission")
+    public ResponseEntity<ThesisDto> submitThesis(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        }
+
+        thesis = thesisService.submitThesis(thesis);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
 
     @GetMapping("/{thesisId}/presentation")
     public ResponseEntity<Resource> getLastPresentationUpload(@PathVariable UUID thesisId) {
@@ -227,8 +306,28 @@ public class ThesisController {
     /* ASSESSMENT ENDPOINTS */
 
     @PostMapping("/{thesisId}/assessment")
-    public ResponseEntity<ThesisDto> createAssessment(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> createAssessment(
+            @PathVariable UUID thesisId,
+            @RequestBody CreateAssessmentPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions for this thesis");
+        }
+
+        thesis = thesisService.submitAssessment(
+                authenticatedUser,
+                thesis,
+                payload.summary(),
+                payload.positives(),
+                payload.negatives(),
+                payload.gradeSuggestion()
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     /* GRADE ENDPOINTS */

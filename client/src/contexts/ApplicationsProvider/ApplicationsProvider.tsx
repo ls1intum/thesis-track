@@ -10,6 +10,7 @@ import {
 } from './context'
 import { ApplicationState, IApplication } from '../../requests/responses/application'
 import { useDebouncedValue } from '@mantine/hooks'
+import { showSimpleError } from '../../utils/notification'
 
 interface IApplicationsProviderProps {
   fetchAll?: boolean
@@ -65,12 +66,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
       },
       (res) => {
         if (!res.ok) {
-          notifications.show({
-            color: 'red',
-            autoClose: 10000,
-            title: 'Error',
-            message: `Could not fetch applications: ${res.status}`,
-          })
+          showSimpleError(`Could not fetch applications: ${res.status}`)
 
           return setApplications({
             content: [],

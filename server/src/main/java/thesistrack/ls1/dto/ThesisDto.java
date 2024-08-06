@@ -3,9 +3,7 @@ package thesistrack.ls1.dto;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
-import thesistrack.ls1.entity.Thesis;
-import thesistrack.ls1.entity.ThesisRole;
-import thesistrack.ls1.entity.ThesisStateChange;
+import thesistrack.ls1.entity.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -80,6 +78,9 @@ public record ThesisDto (
             }
         }
 
+        List<ThesisProposal> proposals = thesis.getProposals();
+        List<ThesisAssessment> assessments = thesis.getAssessments();
+
         return new ThesisDto(
                 thesis.getId(),
                 thesis.getTitle(),
@@ -94,8 +95,8 @@ public record ThesisDto (
                 thesis.getStartDate(),
                 thesis.getEndDate(),
                 thesis.getCreatedAt(),
-                protectedAccess ? ThesisAssessmentDto.fromAssessmentEntity(thesis.getAssessment()) : null,
-                ThesisProposalDto.fromProposalEntity(thesis.getProposal()),
+                protectedAccess && assessments != null && !assessments.isEmpty() ? ThesisAssessmentDto.fromAssessmentEntity(assessments.getFirst()) : null,
+                ThesisProposalDto.fromProposalEntity(proposals != null && !proposals.isEmpty() ? proposals.getFirst() : null),
                 students,
                 advisors,
                 supervisors,

@@ -20,7 +20,7 @@ public class ThesisProposal {
     private UUID id;
 
     @NotNull
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "thesis_id", nullable = false)
     private Thesis thesis;
 

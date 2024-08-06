@@ -78,7 +78,7 @@ const ThesisPage = () => {
         <ThesisWritingSection thesis={thesis} access={access} onUpdate={setThesis} />
       )}
       <Space my='md' />
-      {checkMinimumThesisState(thesis, ThesisState.SUBMITTED) && (
+      {access.advisor && checkMinimumThesisState(thesis, ThesisState.SUBMITTED) && (
         <ThesisAssessmentSection thesis={thesis} access={access} onUpdate={setThesis} />
       )}
       <Space my='md' />

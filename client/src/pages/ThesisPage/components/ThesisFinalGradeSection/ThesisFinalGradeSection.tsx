@@ -16,7 +16,7 @@ const ThesisFinalGradeSection = (props: IThesisFinalGradeSectionProps) => {
 
   return (
     <Accordion
-      variant='contained'
+      variant='separated'
       value={opened ? 'open' : ''}
       onChange={(value) => setOpened(value === 'open')}
     >

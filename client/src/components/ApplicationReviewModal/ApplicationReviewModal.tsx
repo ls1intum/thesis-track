@@ -125,7 +125,7 @@ const ApplicationReviewModal = (props: ILegacyApplicationReviewModalProps) => {
                       <AuthenticatedFilePreview
                         url={`/v2/users/${application.user.userId}/cv`}
                         height={400}
-                        filename={`cv-${application.user.universityId}.pdf`}
+                        filename={`cv-${application.user.universityId}`}
                       />
                     }
                   />
@@ -139,7 +139,7 @@ const ApplicationReviewModal = (props: ILegacyApplicationReviewModalProps) => {
                       <AuthenticatedFilePreview
                         url={`/v2/users/${application.user.userId}/examination-report`}
                         height={400}
-                        filename={`examination-report-${application.user.universityId}.pdf`}
+                        filename={`examination-report-${application.user.universityId}`}
                       />
                     }
                   />
@@ -153,7 +153,7 @@ const ApplicationReviewModal = (props: ILegacyApplicationReviewModalProps) => {
                       <AuthenticatedFilePreview
                         url={`/v2/users/${application.user.userId}/degree-report`}
                         height={400}
-                        filename={`degree-report-${application.user.universityId}.pdf`}
+                        filename={`degree-report-${application.user.universityId}`}
                       />
                     }
                   />

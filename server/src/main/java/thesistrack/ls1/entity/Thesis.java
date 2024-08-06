@@ -58,9 +58,6 @@ public class Thesis {
     @Column(name = "final_grade", length = 10)
     private String finalGrade;
 
-    @Column(name = "published_at")
-    private Instant publishedAt;
-
     @Column(name = "start_date")
     private Instant startDate;
 
@@ -75,11 +72,13 @@ public class Thesis {
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     private List<ThesisRole> roles;
 
-    @OneToOne(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private ThesisProposal proposal;
+    @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    @OrderBy("createdAt DESC")
+    private List<ThesisProposal> proposals;
 
-    @OneToOne(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private ThesisAssessment assessment;
+    @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    @OrderBy("createdAt DESC")
+    private List<ThesisAssessment> assessments;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("changedAt ASC")
@@ -89,6 +88,10 @@ public class Thesis {
     private List<ThesisPresentation> presentations;
 
     public boolean hasSupervisorAccess(User user) {
+        if (user == null) {
+            return false;
+        }
+
         if (user.hasAnyGroup("admin")) {
             return true;
         }
@@ -107,6 +110,10 @@ public class Thesis {
     }
 
     public boolean hasAdvisorAccess(User user) {
+        if (user == null) {
+            return false;
+        }
+
         if (hasSupervisorAccess(user)) {
             return true;
         }
@@ -125,6 +132,10 @@ public class Thesis {
     }
 
     public boolean hasStudentAccess(User user) {
+        if (user == null) {
+            return false;
+        }
+
         if (hasAdvisorAccess(user)) {
             return true;
         }
@@ -139,6 +150,14 @@ public class Thesis {
     }
 
     public boolean hasAccess(User user) {
+        if (user == null && visibility == ThesisVisibility.PUBLIC) {
+            return true;
+        }
+
+        if (user == null) {
+            return false;
+        }
+
         if (hasStudentAccess(user)) {
             return true;
         }
