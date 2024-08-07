@@ -142,20 +142,23 @@ const ThesisWritingSection = () => {
               </Stack>
             </Group>
             <Group grow>
-              {access.student && thesis.state === ThesisState.WRITING && (
-                <Stack>
-                  <Divider />
-                  <ConfirmationButton
-                    confirmationTitle='Final Submission'
-                    confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
-                    ml='auto'
-                    onClick={onFinalSubmission}
-                    loading={submitting}
-                  >
-                    Mark Submission as final
-                  </ConfirmationButton>
-                </Stack>
-              )}
+              {access.student &&
+                thesis.state === ThesisState.WRITING &&
+                thesis.files.thesis &&
+                thesis.files.presentation && (
+                  <Stack>
+                    <Divider />
+                    <ConfirmationButton
+                      confirmationTitle='Final Submission'
+                      confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
+                      ml='auto'
+                      onClick={onFinalSubmission}
+                      loading={submitting}
+                    >
+                      Mark Submission as final
+                    </ConfirmationButton>
+                  </Stack>
+                )}
             </Group>
           </Stack>
         </Accordion.Panel>
