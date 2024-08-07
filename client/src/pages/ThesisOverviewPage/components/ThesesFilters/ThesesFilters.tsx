@@ -3,6 +3,7 @@ import { Grid, MultiSelect, Select, TextInput } from '@mantine/core'
 import { useThesesContext } from '../../../../contexts/ThesesProvider/hooks'
 import { ThesisState } from '../../../../requests/responses/thesis'
 import { MagnifyingGlass } from 'phosphor-react'
+import { formatThesisState } from '../../../../utils/format'
 
 const ThesesFilters = () => {
   const { filters, setFilters, sort, setSort } = useThesesContext()
@@ -21,7 +22,10 @@ const ThesesFilters = () => {
         <MultiSelect
           hidePickedOptions
           label='Thesis State'
-          data={Object.values(ThesisState)}
+          data={Object.values(ThesisState).map((value) => ({
+            value: value,
+            label: formatThesisState(value),
+          }))}
           value={filters.states || []}
           onChange={(x) =>
             setFilters((prev) => ({

@@ -1,7 +1,7 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { Badge } from '@mantine/core'
-import { formatDate, formatUser } from '../../utils/format'
+import { formatDate, formatThesisState, formatUser } from '../../utils/format'
 import React from 'react'
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
 import { IThesesSort } from '../../contexts/ThesesProvider/context'
@@ -34,7 +34,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       title: 'State',
       textAlign: 'center',
       render: (thesis: IThesis) => {
-        return <Badge color={ThesisStateColor[thesis.state] ?? 'gray'}>{thesis.state}</Badge>
+        return <Badge color={ThesisStateColor[thesis.state] ?? 'gray'}>{formatThesisState(thesis.state)}</Badge>
       },
     },
     supervisors: {

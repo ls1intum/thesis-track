@@ -13,6 +13,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
+import { formatThesisState } from '../../../../utils/format'
 
 interface IThesisConfigSectionFormValues {
   title: string
@@ -224,7 +225,9 @@ const ThesisConfigSection = () => {
                     <Text ta='center' fw='bold'>
                       State changed to
                     </Text>
-                    <Badge color={ThesisStateColor[item.state]}>{item.state}</Badge>
+                    <Badge color={ThesisStateColor[item.state]}>
+                      {formatThesisState(item.state)}
+                    </Badge>
                     <Text ta='center' fw='bold'>
                       at
                     </Text>

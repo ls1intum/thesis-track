@@ -3,6 +3,7 @@ import { MagnifyingGlass } from 'phosphor-react'
 import { ApplicationState } from '../../../../requests/responses/application'
 import { useApplicationsContext } from '../../../../contexts/ApplicationsProvider/hooks'
 import React from 'react'
+import { formatApplicationState } from '../../../../utils/format'
 
 const ApplicationsFilters = () => {
   const { filters, setFilters, sort, setSort } = useApplicationsContext()
@@ -23,12 +24,10 @@ const ApplicationsFilters = () => {
         <MultiSelect
           hidePickedOptions
           label='Application State'
-          data={Object.entries(ApplicationState).map(([key, value]) => {
-            return {
-              label: value,
-              value: key,
-            }
-          })}
+          data={Object.values(ApplicationState).map((value) => ({
+            value: value,
+            label: formatApplicationState(value),
+          }))}
           value={filters.states || []}
           placeholder='Search status...'
           onChange={(value) => {

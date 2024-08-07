@@ -3,7 +3,7 @@ import React from 'react'
 import { IApplication } from '../../requests/responses/application'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { Badge } from '@mantine/core'
-import { formatDate, formatUser } from '../../utils/format'
+import { formatApplicationState, formatDate, formatUser } from '../../utils/format'
 import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
 import { IApplicationsSort } from '../../contexts/ApplicationsProvider/context'
 import { ApplicationStateColor } from '../../config/colors'
@@ -28,7 +28,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       title: 'State',
       textAlign: 'center',
       render: (application) => {
-        return <Badge color={ApplicationStateColor[application.state]}>{application.state}</Badge>
+        return <Badge color={ApplicationStateColor[application.state]}>{formatApplicationState(application.state)}</Badge>
       },
     },
     user: {
