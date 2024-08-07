@@ -10,10 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -96,7 +93,7 @@ public class User {
     private Instant joinedAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<UserGroup> groups = Set.of();
+    private Set<UserGroup> groups = new HashSet<>();
 
     public boolean hasAnyGroup(String...groups) {
         for (String group : groups) {

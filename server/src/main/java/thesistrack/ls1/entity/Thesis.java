@@ -10,10 +10,7 @@ import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -75,7 +72,7 @@ public class Thesis {
     private Instant createdAt;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private Set<ThesisRole> roles = Set.of();
+    private Set<ThesisRole> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("createdAt DESC")
@@ -90,7 +87,7 @@ public class Thesis {
     private List<ThesisPresentation> presentations = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private Set<ThesisStateChange> states = Set.of();
+    private Set<ThesisStateChange> states = new HashSet<>();
 
     public boolean hasSupervisorAccess(User user) {
         if (user == null) {
