@@ -9,7 +9,10 @@ import { isNotEmptyUserList } from '../../../../utils/validation'
 import { isThesisClosed } from '../../../../utils/thesis'
 import { doRequest } from '../../../../requests/request'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
-import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
+import {
+  useLoadedThesisContext,
+  useThesisUpdateAction,
+} from '../../../../contexts/ThesisProvider/hooks'
 
 interface IThesisConfigSectionFormValues {
   title: string

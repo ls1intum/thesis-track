@@ -1,4 +1,4 @@
-import { Button, Modal, Stack, Title } from '@mantine/core'
+import { Button, Modal, Stack } from '@mantine/core'
 import UploadArea from '../UploadArea/UploadArea'
 import { useState, useEffect } from 'react'
 

@@ -5,7 +5,10 @@ import SubmitFinalGradeModal from './components/SubmitFinalGradeModal/SubmitFina
 import { doRequest } from '../../../../requests/request'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
-import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
+import {
+  useLoadedThesisContext,
+  useThesisUpdateAction,
+} from '../../../../contexts/ThesisProvider/hooks'
 
 const ThesisFinalGradeSection = () => {
   const { thesis, access } = useLoadedThesisContext()

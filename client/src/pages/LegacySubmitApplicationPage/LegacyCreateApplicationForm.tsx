@@ -19,7 +19,6 @@ import {
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
-import { notifications } from '@mantine/notifications'
 import { useDisclosure } from '@mantine/hooks'
 import { LegacyApplicationSuccessfulSubmission } from './components/LegacyApplicationSubmission/LegacyApplicationSuccessfulSubmission'
 import { useState } from 'react'

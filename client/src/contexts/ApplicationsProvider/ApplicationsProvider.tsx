@@ -1,7 +1,6 @@
 import React, { PropsWithChildren, ReactNode, useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
 import { Pageable } from '../../requests/responses/pageable'
-import { notifications } from '@mantine/notifications'
 import {
   ApplicationsContext,
   IApplicationsContext,

@@ -6,7 +6,10 @@ import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
-import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
+import {
+  useLoadedThesisContext,
+  useThesisUpdateAction,
+} from '../../../../contexts/ThesisProvider/hooks'
 
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()

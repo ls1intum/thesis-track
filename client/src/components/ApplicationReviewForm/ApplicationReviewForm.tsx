@@ -7,7 +7,6 @@ import { useDebouncedValue } from '@mantine/hooks'
 import { doRequest } from '../../requests/request'
 import { Button, Checkbox, Divider, Group, Stack, Text, Textarea, TextInput } from '@mantine/core'
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
-import { notifications } from '@mantine/notifications'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 

@@ -1,4 +1,4 @@
-import { Button, Modal, Stack, TextInput, Title } from '@mantine/core'
+import { Button, Modal, Stack, TextInput } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import React, { useState } from 'react'
@@ -6,7 +6,6 @@ import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSel
 import { useNavigate } from 'react-router-dom'
 import { doRequest } from '../../../../requests/request'
 import { IThesis } from '../../../../requests/responses/thesis'
-import { notifications } from '@mantine/notifications'
 import { isNotEmptyUserList } from '../../../../utils/validation'
 import { showSimpleError } from '../../../../utils/notification'
 

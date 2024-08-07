@@ -1,4 +1,4 @@
-import { Button, Group, Modal, Stack, Text, Title } from '@mantine/core'
+import { Button, Group, Modal, Stack, Text } from '@mantine/core'
 import { PropsWithChildren, useState } from 'react'
 import { ButtonProps } from '@mantine/core/lib/components/Button/Button'
 
@@ -15,11 +15,7 @@ const ConfirmationButton = (props: PropsWithChildren<IConfirmationButtonProps>) 
 
   return (
     <>
-      <Modal
-        opened={opened}
-        onClose={() => setOpened(false)}
-        title={confirmationTitle}
-      >
+      <Modal opened={opened} onClose={() => setOpened(false)} title={confirmationTitle}>
         <Stack>
           <Text>{confirmationText}</Text>
           <Group grow>

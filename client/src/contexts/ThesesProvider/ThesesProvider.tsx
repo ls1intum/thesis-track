@@ -3,7 +3,6 @@ import { ThesesContext, IThesesContext, IThesesFilters, IThesesSort } from './co
 import { IThesis, ThesisState } from '../../requests/responses/thesis'
 import { doRequest } from '../../requests/request'
 import { Pageable } from '../../requests/responses/pageable'
-import { notifications } from '@mantine/notifications'
 import { useDebouncedValue } from '@mantine/hooks'
 import { showSimpleError } from '../../utils/notification'
 

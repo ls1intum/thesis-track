@@ -3,7 +3,10 @@ import React, { useEffect, useState } from 'react'
 import { Accordion, Button, Group, Stack, Title } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../requests/request'
-import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
+import {
+  useLoadedThesisContext,
+  useThesisUpdateAction,
+} from '../../../../contexts/ThesisProvider/hooks'
 import { useNavigate } from 'react-router-dom'
 
 const ThesisInfoSection = () => {

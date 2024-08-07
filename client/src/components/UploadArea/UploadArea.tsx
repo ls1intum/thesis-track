@@ -10,7 +10,6 @@ import {
 } from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
-import { notifications } from '@mantine/notifications'
 import { showSimpleError } from '../../utils/notification'
 
 interface IUploadAreaProps {
