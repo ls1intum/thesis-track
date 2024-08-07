@@ -83,8 +83,8 @@ public record ThesisDto (
     record ThesisPresentationDto(
             UUID presentationId,
             String type,
-            String medium,
             String location,
+            String streamUrl,
             Instant scheduledAt,
             Instant createdAt,
             LightUserDto createdBy
@@ -97,8 +97,8 @@ public record ThesisDto (
             return new ThesisPresentationDto(
                     presentation.getId(),
                     presentation.getType(),
-                    presentation.getMedium(),
                     presentation.getLocation(),
+                    presentation.getStreamUrl(),
                     presentation.getScheduledAt(),
                     presentation.getCreatedAt(),
                     LightUserDto.fromUserEntity(presentation.getCreatedBy())

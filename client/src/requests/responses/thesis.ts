@@ -50,8 +50,8 @@ export interface IThesis {
   presentations: Array<{
     presentationId: string
     type: string
-    medium: string
-    location: string
+    location: string | null
+    streamUrl: string | null
     scheduledAt: string
     createdAt: string
     createdBy: ILightUser

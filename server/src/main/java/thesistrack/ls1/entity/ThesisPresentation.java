@@ -28,13 +28,11 @@ public class ThesisPresentation {
     @Column(name = "type", nullable = false, length = 100)
     private String type;
 
-    @NotNull
-    @Column(name = "medium", nullable = false, length = 100)
-    private String medium;
-
-    @NotNull
-    @Column(name = "location", nullable = false, length = 200)
+    @Column(name = "location", length = 200)
     private String location;
+
+    @Column(name = "stream_url", length = 200)
+    private String streamUrl;
 
     @NotNull
     @Column(name = "scheduledAt", nullable = false)

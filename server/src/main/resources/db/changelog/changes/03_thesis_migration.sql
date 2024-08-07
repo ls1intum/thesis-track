@@ -5,6 +5,9 @@ ALTER TABLE theses ADD visibility TEXT NOT NULL DEFAULT 'PRIVATE';
 ALTER TABLE theses ADD final_feedback TEXT;
 ALTER TABLE theses DROP COLUMN published_at;
 ALTER TABLE thesis_presentations RENAME COLUMN date TO scheduled_at;
+ALTER TABLE thesis_presentations ADD stream_url TEXT;
+ALTER TABLE thesis_presentations DROP COLUMN medium;
+ALTER TABLE thesis_presentations ALTER COLUMN location DROP NOT NULL;
 
 --changeset emilius:03-thesis-migration-2
 INSERT INTO thesis_state_changes (
