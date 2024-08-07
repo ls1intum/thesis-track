@@ -1,44 +1,33 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { IThesisAccessPermissions } from '../../types'
 import { useState } from 'react'
 import { Accordion, Button, Stack, Text, Title } from '@mantine/core'
 import SubmitFinalGradeModal from './components/SubmitFinalGradeModal/SubmitFinalGradeModal'
-import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import { doRequest } from '../../../../requests/request'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
+import { checkMinimumThesisState } from '../../../../utils/thesis'
+import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
 
-interface IThesisFinalGradeSectionProps {
-  thesis: IThesis
-  access: IThesisAccessPermissions
-  onUpdate: (thesis: IThesis) => unknown
-}
-
-const ThesisFinalGradeSection = (props: IThesisFinalGradeSectionProps) => {
-  const { thesis, access, onUpdate } = props
+const ThesisFinalGradeSection = () => {
+  const { thesis, access } = useLoadedThesisContext()
 
   const [opened, setOpened] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
   const [finalGradeModal, setFinalGradeModal] = useState(false)
 
-  const onThesisComplete = async () => {
-    setSubmitting(true)
+  const [submitting, onThesisComplete] = useThesisUpdateAction(async () => {
+    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/complete`, {
+      method: 'POST',
+      requiresAuth: true,
+    })
 
-    try {
-      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/complete`, {
-        method: 'POST',
-        requiresAuth: true,
-      })
-
-      if (response.ok) {
-        showSimpleSuccess('Thesis successfully marked as finished')
-
-        onUpdate(response.data)
-      } else {
-        showSimpleError(`Failed to complete thesis: ${response.status}`)
-      }
-    } finally {
-      setSubmitting(false)
+    if (response.ok) {
+      return response.data
+    } else {
+      throw new Error(`Failed to complete thesis: ${response.status}`)
     }
+  }, 'Thesis successfully marked as finished')
+
+  if (!checkMinimumThesisState(thesis, ThesisState.ASSESSED)) {
+    return <></>
   }
 
   return (
@@ -73,10 +62,8 @@ const ThesisFinalGradeSection = (props: IThesisFinalGradeSectionProps) => {
             )}
           </Stack>
           <SubmitFinalGradeModal
-            thesis={thesis}
             opened={finalGradeModal}
             onClose={() => setFinalGradeModal(false)}
-            onUpdate={onUpdate}
           />
         </Accordion.Panel>
       </Accordion.Item>

@@ -18,7 +18,6 @@ import thesistrack.ls1.entity.key.ThesisStateChangeId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.*;
-import thesistrack.ls1.utility.RequestValidator;
 
 import java.time.Instant;
 import java.util.*;
@@ -98,7 +97,7 @@ public class ThesisService {
         thesis = thesisRepository.save(thesis);
 
         assignThesisRoles(thesis, creator, supervisorIds, advisorIds, studentIds);
-        saveStateChange(thesis, ThesisState.PROPOSAL);
+        saveStateChange(thesis, ThesisState.PROPOSAL, Instant.now());
 
         return findById(thesis.getId());
     }
@@ -110,7 +109,7 @@ public class ThesisService {
         }
 
         thesis.setState(ThesisState.DROPPED_OUT);
-        saveStateChange(thesis, ThesisState.DROPPED_OUT);
+        saveStateChange(thesis, ThesisState.DROPPED_OUT, Instant.now());
 
         return thesisRepository.save(thesis);
     }
@@ -141,7 +140,7 @@ public class ThesisService {
         assignThesisRoles(thesis, updater, supervisorIds, advisorIds, studentIds);
 
         for (ThesisStatePayload state : states) {
-            saveStateChange(thesis, state.state());
+            saveStateChange(thesis, state.state(), state.changedAt());
         }
 
         return thesisRepository.save(thesis);
@@ -165,7 +164,7 @@ public class ThesisService {
         List<ThesisProposal> proposals = thesis.getProposals();
 
         if (proposals.isEmpty()) {
-            throw new ResourceNotFoundException("Proposal file not found.");
+            throw new ResourceNotFoundException("Proposal file not found");
         }
 
         return uploadService.load(proposals.getFirst().getProposalFilename());
@@ -204,7 +203,7 @@ public class ThesisService {
 
         thesisProposalRepository.save(proposal);
 
-        saveStateChange(thesis, ThesisState.WRITING);
+        saveStateChange(thesis, ThesisState.WRITING, Instant.now());
 
         thesis.setState(ThesisState.WRITING);
 
@@ -221,7 +220,7 @@ public class ThesisService {
 
         thesis.setState(ThesisState.SUBMITTED);
 
-        saveStateChange(thesis, ThesisState.SUBMITTED);
+        saveStateChange(thesis, ThesisState.SUBMITTED, Instant.now());
 
         return thesisRepository.save(thesis);
     }
@@ -288,7 +287,7 @@ public class ThesisService {
         thesis.setAssessments(assessments);
         thesis.setState(ThesisState.ASSESSED);
 
-        saveStateChange(thesis, ThesisState.ASSESSED);
+        saveStateChange(thesis, ThesisState.ASSESSED, Instant.now());
 
         return thesisRepository.save(thesis);
     }
@@ -299,7 +298,7 @@ public class ThesisService {
         thesis.setFinalGrade(finalGrade);
         thesis.setFinalFeedback(finalFeedback);
 
-        saveStateChange(thesis, ThesisState.GRADED);
+        saveStateChange(thesis, ThesisState.GRADED, Instant.now());
 
         return thesisRepository.save(thesis);
     }
@@ -307,7 +306,7 @@ public class ThesisService {
     public Thesis completeThesis(Thesis thesis) {
         thesis.setState(ThesisState.FINISHED);
 
-        saveStateChange(thesis, ThesisState.FINISHED);
+        saveStateChange(thesis, ThesisState.FINISHED, Instant.now());
 
         return thesisRepository.save(thesis);
     }
@@ -363,7 +362,7 @@ public class ThesisService {
         }
     }
 
-    private void saveStateChange(Thesis thesis, ThesisState state) {
+    private void saveStateChange(Thesis thesis, ThesisState state, Instant changedAt) {
         ThesisStateChangeId stateChangeId = new ThesisStateChangeId();
         stateChangeId.setThesisId(thesis.getId());
         stateChangeId.setState(state);
@@ -371,11 +370,11 @@ public class ThesisService {
         ThesisStateChange stateChange = new ThesisStateChange();
         stateChange.setId(stateChangeId);
         stateChange.setThesis(thesis);
-        stateChange.setChangedAt(Instant.now());
+        stateChange.setChangedAt(changedAt);
 
         thesisStateChangeRepository.save(stateChange);
 
-        List<ThesisStateChange> stateChanges = thesis.getStates();
+        Set<ThesisStateChange> stateChanges = thesis.getStates();
         stateChanges.add(stateChange);
         thesis.setStates(stateChanges);
     }
@@ -400,7 +399,7 @@ public class ThesisService {
 
         thesisRoleRepository.save(thesisRole);
 
-        List<ThesisRole> roles = thesis.getRoles();
+        Set<ThesisRole> roles = thesis.getRoles();
         roles.add(thesisRole);
         thesis.setRoles(roles);
     }

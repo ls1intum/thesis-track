@@ -1,22 +1,21 @@
-import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { IThesisAccessPermissions } from '../../types'
+import { ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
 import { Accordion, Button, Stack, Text, Title } from '@mantine/core'
 import SubmitAssessmentModal from './components/SubmitAssessmentModal/SubmitAssessmentModal'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
+import { checkMinimumThesisState } from '../../../../utils/thesis'
+import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
 
-interface IThesisAssessmentSectionProps {
-  thesis: IThesis
-  access: IThesisAccessPermissions
-  onUpdate: (thesis: IThesis) => unknown
-}
-
-const ThesisAssessmentSection = (props: IThesisAssessmentSectionProps) => {
-  const { thesis, access, onUpdate } = props
+const ThesisAssessmentSection = () => {
+  const { thesis, access } = useLoadedThesisContext()
 
   const [opened, setOpened] = useState(true)
 
   const [assessmentModal, setAssessmentModal] = useState(false)
+
+  if (!access.advisor || !checkMinimumThesisState(thesis, ThesisState.SUBMITTED)) {
+    return <></>
+  }
 
   return (
     <Accordion
@@ -49,8 +48,6 @@ const ThesisAssessmentSection = (props: IThesisAssessmentSectionProps) => {
             )}
           </Stack>
           <SubmitAssessmentModal
-            thesis={thesis}
-            onUpdate={onUpdate}
             opened={assessmentModal}
             onClose={() => setAssessmentModal(false)}
           />

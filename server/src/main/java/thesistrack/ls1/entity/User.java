@@ -96,7 +96,7 @@ public class User {
     private Instant joinedAt;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<UserGroup> groups = new ArrayList<>();
+    private Set<UserGroup> groups = Set.of();
 
     public boolean hasAnyGroup(String...groups) {
         for (String group : groups) {

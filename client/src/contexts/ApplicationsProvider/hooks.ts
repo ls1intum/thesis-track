@@ -5,7 +5,7 @@ export function useApplicationsContext() {
   const data = useContext(ApplicationsContext)
 
   if (!data) {
-    throw new Error('ApplicationsContext not properly initialized')
+    throw new Error('ApplicationsContext not initialized')
   }
 
   return data

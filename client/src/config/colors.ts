@@ -2,13 +2,13 @@ import { ThesisState } from '../requests/responses/thesis'
 import { ApplicationState } from '../requests/responses/application'
 
 export const ThesisStateColor: Record<ThesisState, string> = {
-  [ThesisState.PROPOSAL]: '#45aaf2',
-  [ThesisState.WRITING]: '#26de81',
-  [ThesisState.SUBMITTED]: '#fc5c65',
-  [ThesisState.ASSESSED]: '#fed330',
-  [ThesisState.GRADED]: '#fed330',
-  [ThesisState.FINISHED]: '#a55eea',
-  [ThesisState.DROPPED_OUT]: '#a55eea',
+  [ThesisState.PROPOSAL]: '#FFB347',
+  [ThesisState.WRITING]: '#4A69BD',
+  [ThesisState.SUBMITTED]: '#1E3799',
+  [ThesisState.ASSESSED]: '#F8C291',
+  [ThesisState.GRADED]: '#78e08f',
+  [ThesisState.FINISHED]: '#38ada9',
+  [ThesisState.DROPPED_OUT]: '#E55039',
 }
 
 export const ApplicationStateColor: Record<ApplicationState, string> = {

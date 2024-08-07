@@ -283,7 +283,7 @@ public class ThesisController {
     @PutMapping("/{thesisId}/presentation")
     public ResponseEntity<ThesisDto> uploadPresentation(
             @PathVariable UUID thesisId,
-            @RequestPart("proposal") MultipartFile presentationFile,
+            @RequestPart("presentation") MultipartFile presentationFile,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
@@ -319,7 +319,7 @@ public class ThesisController {
     @PutMapping("/{thesisId}/thesis")
     public ResponseEntity<ThesisDto> uploadThesis(
             @PathVariable UUID thesisId,
-            @RequestPart("proposal") MultipartFile thesisFile,
+            @RequestPart("thesis") MultipartFile thesisFile,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
@@ -356,6 +356,11 @@ public class ThesisController {
 
     @GetMapping("/{thesisId}/comments/{commentId}")
     public ResponseEntity<Resource> getCommentFile(@PathVariable UUID thesisId, @PathVariable UUID commentId) {
+        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    }
+
+    @DeleteMapping("/{thesisId}/comments/{commentId}")
+    public ResponseEntity<ThesisCommentDto> deleteComment(@PathVariable UUID thesisId, @PathVariable UUID commentId) {
         throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
     }
 

@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from 'react'
 import { usePageTitle } from '../../hooks/theme'
 import ThesisConfigSection from './components/ThesisConfigSection/ThesisConfigSection'
 import ThesisInfoSection from './components/ThesisInfoSection/ThesisInfoSection'
@@ -6,86 +5,34 @@ import ThesisProposalSection from './components/ThesisProposalSection/ThesisProp
 import ThesisWritingSection from './components/ThesisWritingSection/ThesisWritingSection'
 import ThesisAssessmentSection from './components/ThesisAssessmentSection/ThesisAssessmentSection'
 import ThesisFinalGradeSection from './components/ThesisFinalGradeSection/ThesisFinalGradeSection'
-import { useThesis } from '../../hooks/fetcher'
 import { useParams } from 'react-router-dom'
-import NotFound from '../../components/NotFound/NotFound'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
-import PageLoader from '../../components/PageLoader/PageLoader'
-import { Alert, Space, Title } from '@mantine/core'
-import { useLoggedInUser } from '../../hooks/authentication'
-import { IThesisAccessPermissions } from './types'
-import { IThesis, ThesisState } from '../../requests/responses/thesis'
-import { Info } from 'phosphor-react'
-import { checkMinimumThesisState } from '../../utils/thesis'
+import { Space } from '@mantine/core'
+import ThesisHeader from './components/ThesisHeader/ThesisHeader'
+import ThesisProvider from '../../contexts/ThesisProvider/ThesisProvider'
 
 const ThesisPage = () => {
   const { thesisId } = useParams<{ thesisId: string }>()
 
-  const initialThesis = useThesis(thesisId)
-  const [thesis, setThesis] = useState<IThesis | undefined | false>(initialThesis)
-
-  useEffect(() => {
-    setThesis(initialThesis)
-  }, [initialThesis])
-
-  usePageTitle(thesis ? thesis.title : 'Thesis')
-
-  const user = useLoggedInUser()
-
-  if (thesis === false) {
-    return <NotFound />
-  }
-
-  if (thesis === undefined) {
-    return <PageLoader />
-  }
-
-  const access: IThesisAccessPermissions = {
-    supervisor: false,
-    advisor: false,
-    student: false,
-  }
-
-  if (
-    user.groups.includes('admin') ||
-    thesis.supervisors.some((supervisor) => user.userId === supervisor.userId)
-  ) {
-    access.supervisor = true
-  }
-
-  if (access.supervisor || thesis.advisors.some((advisor) => user.userId === advisor.userId)) {
-    access.advisor = true
-  }
-
-  if (access.advisor || thesis.students.some((student) => user.userId === student.userId)) {
-    access.student = true
-  }
+  usePageTitle('Thesis')
 
   return (
-    <ContentContainer key={thesis.thesisId}>
-      <Title>{thesis.title}</Title>
-      <Space my='md' />
-      {thesis.state === ThesisState.DROPPED_OUT && (
-        <Alert variant='light' color='red' title='This thesis is closed' icon={<Info />} mb='md' />
-      )}
-      <ThesisConfigSection thesis={thesis} access={access} onUpdate={setThesis} />
-      <Space my='md' />
-      <ThesisInfoSection thesis={thesis} access={access} onUpdate={setThesis} />
-      <Space my='md' />
-      <ThesisProposalSection thesis={thesis} access={access} onUpdate={setThesis} />
-      <Space my='md' />
-      {checkMinimumThesisState(thesis, ThesisState.WRITING) && (
-        <ThesisWritingSection thesis={thesis} access={access} onUpdate={setThesis} />
-      )}
-      <Space my='md' />
-      {access.advisor && checkMinimumThesisState(thesis, ThesisState.SUBMITTED) && (
-        <ThesisAssessmentSection thesis={thesis} access={access} onUpdate={setThesis} />
-      )}
-      <Space my='md' />
-      {checkMinimumThesisState(thesis, ThesisState.ASSESSED) && (
-        <ThesisFinalGradeSection thesis={thesis} access={access} onUpdate={setThesis} />
-      )}
-    </ContentContainer>
+    <ThesisProvider thesisId={thesisId} requireLoadedThesis>
+      <ContentContainer>
+        <ThesisHeader />
+        <ThesisConfigSection />
+        <Space my='md' />
+        <ThesisInfoSection />
+        <Space my='md' />
+        <ThesisProposalSection />
+        <Space my='md' />
+        <ThesisWritingSection />
+        <Space my='md' />
+        <ThesisAssessmentSection />
+        <Space my='md' />
+        <ThesisFinalGradeSection />
+      </ContentContainer>
+    </ThesisProvider>
   )
 }
 

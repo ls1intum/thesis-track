@@ -44,7 +44,7 @@ const App = () => {
     <MantineProvider defaultColorScheme='dark' theme={theme}>
       <AuthenticationProvider>
         <AppRoutes />
-        <Notifications limit={5} />
+        <Notifications limit={5} position='top-right' />
       </AuthenticationProvider>
     </MantineProvider>
   )

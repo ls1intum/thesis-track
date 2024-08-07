@@ -7,6 +7,7 @@ import thesistrack.ls1.entity.*;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -158,7 +159,7 @@ public record ThesisDto (
         }
 
         List<ThesisStateChangeDto> states = new ArrayList<>();
-        List<ThesisStateChange> stateChanges = thesis.getStates();
+        List<ThesisStateChange> stateChanges = thesis.getStates().stream().sorted(Comparator.comparing(ThesisStateChange::getChangedAt)).toList();
 
         for (int i = 0; i < stateChanges.size(); i++) {
             ThesisStateChange stateChange = stateChanges.get(i);

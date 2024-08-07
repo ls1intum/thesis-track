@@ -13,9 +13,7 @@ import thesistrack.ls1.repository.UserRepository;
 import thesistrack.ls1.security.JwtAuthConfig;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AuthenticationService {
@@ -71,7 +69,7 @@ public class AuthenticationService {
         }
 
         user = this.userRepository.save(user);
-        List<UserGroup> userGroups = new ArrayList<>();
+        Set<UserGroup> userGroups = new HashSet<>();
 
         for (String group : groups) {
             UserGroup entity = new UserGroup();

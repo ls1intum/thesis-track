@@ -1,24 +1,18 @@
 import { IThesis } from '../../../../requests/responses/thesis'
-import { IThesisAccessPermissions } from '../../types'
 import React, { useEffect, useState } from 'react'
 import { Accordion, Button, Group, Stack, Title } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../requests/request'
-import { notifications } from '@mantine/notifications'
-import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
+import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
+import { useNavigate } from 'react-router-dom'
 
-interface IThesisInfoSectionProps {
-  thesis: IThesis
-  access: IThesisAccessPermissions
-  onUpdate: (thesis: IThesis) => unknown
-}
+const ThesisInfoSection = () => {
+  const { thesis, access } = useLoadedThesisContext()
 
-const ThesisInfoSection = (props: IThesisInfoSectionProps) => {
-  const { thesis, access, onUpdate } = props
+  const navigate = useNavigate()
 
   const [opened, setOpened] = useState(true)
   const [editMode, setEditMode] = useState(false)
-  const [saving, setSaving] = useState(false)
 
   const [infoText, setInfoText] = useState(thesis.infoText)
   const [abstractText, setAbstractText] = useState(thesis.abstractText)
@@ -26,33 +20,26 @@ const ThesisInfoSection = (props: IThesisInfoSectionProps) => {
   useEffect(() => {
     setInfoText(thesis.infoText)
     setAbstractText(thesis.abstractText)
-  }, [thesis.thesisId])
+  }, [thesis.infoText, thesis.abstractText])
 
-  const onSave = async () => {
-    setSaving(true)
+  const [saving, onSave] = useThesisUpdateAction(async () => {
+    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/info`, {
+      method: 'PUT',
+      requiresAuth: true,
+      data: {
+        abstractText,
+        infoText,
+      },
+    })
 
-    try {
-      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/info`, {
-        method: 'PUT',
-        requiresAuth: true,
-        data: {
-          abstractText,
-          infoText,
-        },
-      })
+    if (response.ok) {
+      setEditMode(false)
 
-      if (response.ok) {
-        showSimpleSuccess('Thesis info updated successfully')
-
-        setEditMode(false)
-        onUpdate(response.data)
-      } else {
-        showSimpleError(`Failed to update thesis ${response.status}`)
-      }
-    } finally {
-      setSaving(false)
+      return response.data
+    } else {
+      throw new Error(`Failed to update thesis ${response.status}`)
     }
-  }
+  }, 'Thesis info updated successfully')
 
   return (
     <Accordion
@@ -68,29 +55,41 @@ const ThesisInfoSection = (props: IThesisInfoSectionProps) => {
             <DocumentEditor value={abstractText} editMode={editMode} onChange={setAbstractText} />
             <Title order={3}>Info</Title>
             <DocumentEditor value={infoText} editMode={editMode} onChange={setInfoText} />
-            {access.student && !editMode && (
-              <Button ml='auto' onClick={() => setEditMode(true)}>
-                Edit
-              </Button>
-            )}
-            {editMode && (
-              <Group justify='flex-end'>
+            <Group>
+              {access.advisor && thesis.applicationId && (
                 <Button
-                  loading={saving}
-                  variant='danger'
-                  onClick={() => {
-                    setInfoText(thesis.infoText)
-                    setAbstractText(thesis.abstractText)
-                    setEditMode(false)
-                  }}
+                  variant='outline'
+                  onClick={() =>
+                    navigate(`/management/thesis-applications/${thesis.applicationId}`)
+                  }
                 >
-                  Cancel
+                  View Student Application
                 </Button>
-                <Button loading={saving} onClick={onSave}>
-                  Save
+              )}
+              {access.student && !editMode && (
+                <Button ml='auto' onClick={() => setEditMode(true)}>
+                  Edit
                 </Button>
-              </Group>
-            )}
+              )}
+              {editMode && (
+                <Group justify='flex-end'>
+                  <Button
+                    loading={saving}
+                    variant='danger'
+                    onClick={() => {
+                      setInfoText(thesis.infoText)
+                      setAbstractText(thesis.abstractText)
+                      setEditMode(false)
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button loading={saving} onClick={onSave}>
+                    Save
+                  </Button>
+                </Group>
+              )}
+            </Group>
           </Stack>
         </Accordion.Panel>
       </Accordion.Item>

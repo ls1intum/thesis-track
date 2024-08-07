@@ -1,5 +1,4 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { IThesisAccessPermissions } from '../../types'
 import { useState } from 'react'
 import { Accordion, Button, Group, Stack, Text } from '@mantine/core'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
@@ -7,41 +6,27 @@ import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
+import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
 
-interface IThesisProposalSectionProps {
-  thesis: IThesis
-  access: IThesisAccessPermissions
-  onUpdate: (thesis: IThesis) => unknown
-}
-
-const ThesisProposalSection = (props: IThesisProposalSectionProps) => {
-  const { thesis, access, onUpdate } = props
+const ThesisProposalSection = () => {
+  const { thesis, access, updateThesis } = useLoadedThesisContext()
 
   const [opened, setOpened] = useState(thesis.state === ThesisState.PROPOSAL)
 
-  const [accepting, setAccepting] = useState(false)
   const [uploadModal, setUploadModal] = useState(false)
 
-  const onAccept = async () => {
-    setAccepting(true)
+  const [accepting, onAccept] = useThesisUpdateAction(async () => {
+    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/proposal/accept`, {
+      method: 'PUT',
+      requiresAuth: true,
+    })
 
-    try {
-      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/proposal/accept`, {
-        method: 'PUT',
-        requiresAuth: true,
-      })
-
-      if (response.ok) {
-        showSimpleSuccess('Proposal accepted successfully')
-
-        onUpdate(response.data)
-      } else {
-        showSimpleError(`Failed to accept proposal: ${response.status}`)
-      }
-    } finally {
-      setAccepting(false)
+    if (response.ok) {
+      return response.data
+    } else {
+      throw new Error(`Failed to accept proposal: ${response.status}`)
     }
-  }
+  }, 'Proposal accepted successfully')
 
   const onUpload = async (file: File) => {
     const formData = new FormData()
@@ -57,7 +42,7 @@ const ThesisProposalSection = (props: IThesisProposalSectionProps) => {
     if (response.ok) {
       showSimpleSuccess('Proposal uploaded successfully')
 
-      onUpdate(response.data)
+      updateThesis(response.data)
     } else {
       showSimpleError(`Failed to upload proposal: ${response.status}`)
     }

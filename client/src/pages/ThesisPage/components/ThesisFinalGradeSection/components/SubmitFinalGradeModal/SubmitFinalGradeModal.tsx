@@ -1,55 +1,46 @@
 import { IThesis } from '../../../../../../requests/responses/thesis'
-import { Button, InputLabel, Modal, Stack, TextInput, Title } from '@mantine/core'
+import { Button, InputLabel, Modal, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
-import { showSimpleError, showSimpleSuccess } from '../../../../../../utils/notification'
 import { useState } from 'react'
 import DocumentEditor from '../../../../../../components/DocumentEditor/DocumentEditor'
+import {
+  useLoadedThesisContext,
+  useThesisUpdateAction,
+} from '../../../../../../contexts/ThesisProvider/hooks'
 
 interface ISubmitFinalGradeModalProps {
-  thesis: IThesis
   opened: boolean
   onClose: () => unknown
-  onUpdate: (thesis: IThesis) => unknown
 }
 
 const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
-  const { thesis, opened, onClose, onUpdate } = props
+  const { opened, onClose } = props
+
+  const { thesis } = useLoadedThesisContext()
 
   const [finalGrade, setFinalGrade] = useState('')
   const [feedback, setFeedback] = useState('')
-  const [submitting, setSubmitting] = useState(false)
 
   const isEmpty = !finalGrade || !feedback
 
-  const onGradeSubmit = async () => {
-    if (isEmpty) {
-      return
+  const [submitting, onGradeSubmit] = useThesisUpdateAction(async () => {
+    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/grade`, {
+      method: 'POST',
+      requiresAuth: true,
+      data: {
+        finalGrade,
+        finalFeedback: feedback,
+      },
+    })
+
+    if (response.ok) {
+      onClose()
+
+      return response.data
+    } else {
+      throw new Error(`Failed to submit assessment: ${response.status}`)
     }
-
-    setSubmitting(true)
-
-    try {
-      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/grade`, {
-        method: 'POST',
-        requiresAuth: true,
-        data: {
-          finalGrade,
-          finalFeedback: feedback,
-        },
-      })
-
-      if (response.ok) {
-        showSimpleSuccess('Assessment submitted successfully')
-
-        onUpdate(response.data)
-        onClose()
-      } else {
-        showSimpleError(`Failed to submit assessment: ${response.status}`)
-      }
-    } finally {
-      setSubmitting(false)
-    }
-  }
+  }, 'Final Grade submitted successfully')
 
   return (
     <Modal opened={opened} onClose={onClose} size='xl' title='Submit Final Grade'>

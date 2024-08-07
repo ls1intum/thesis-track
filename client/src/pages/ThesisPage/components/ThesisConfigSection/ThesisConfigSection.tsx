@@ -6,17 +6,10 @@ import { DateInput, DateTimePicker, DateValue } from '@mantine/dates'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
 import { ThesisStateColor } from '../../../../config/colors'
 import { isNotEmptyUserList } from '../../../../utils/validation'
-import { IThesisAccessPermissions } from '../../types'
 import { isThesisClosed } from '../../../../utils/thesis'
 import { doRequest } from '../../../../requests/request'
-import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
-
-interface IThesisConfigSectionProps {
-  thesis: IThesis
-  access: IThesisAccessPermissions
-  onUpdate: (thesis: IThesis) => unknown
-}
+import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
 
 interface IThesisConfigSectionFormValues {
   title: string
@@ -49,8 +42,8 @@ const thesisDatesValidator = (
   }
 }
 
-const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
-  const { thesis, access, onUpdate } = props
+const ThesisConfigSection = () => {
+  const { thesis, access } = useLoadedThesisContext()
 
   const form = useForm<IThesisConfigSectionFormValues>({
     mode: 'controlled',
@@ -98,65 +91,64 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
     form.validate()
   }, [form.values.startDate, form.values.endDate, form.values.states])
 
+  useEffect(() => {
+    form.setValues({
+      title: thesis.title,
+      visibility: thesis.visibility,
+      startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
+      endDate: thesis.endDate ? new Date(thesis.endDate) : undefined,
+      students: thesis.students.map((user) => user.userId),
+      advisors: thesis.advisors.map((user) => user.userId),
+      supervisors: thesis.supervisors.map((user) => user.userId),
+      states: thesis.states.map((state) => ({
+        state: state.state,
+        changedAt: new Date(state.startedAt),
+      })),
+    })
+  }, [thesis])
+
   const [opened, setOpened] = useState(false)
 
-  const [updating, setUpdating] = useState(false)
-  const [closing, setClosing] = useState(false)
+  const [closing, onClose] = useThesisUpdateAction(async () => {
+    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
+      method: 'DELETE',
+      requiresAuth: true,
+    })
 
-  const onClose = async () => {
-    setClosing(true)
-
-    try {
-      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
-        method: 'DELETE',
-        requiresAuth: true,
-      })
-
-      if (response.ok) {
-        showSimpleSuccess(`Thesis closed successfully`)
-
-        onUpdate(response.data)
-      } else {
-        showSimpleError(`Failed to close thesis ${response.status}`)
-      }
-    } finally {
-      setClosing(false)
+    if (response.ok) {
+      return response.data
+    } else {
+      throw new Error(`Failed to close thesis ${response.status}`)
     }
-  }
+  }, 'Thesis closed successfully')
 
-  const onSubmit = async (values: IThesisConfigSectionFormValues) => {
-    setUpdating(true)
+  const [updating, onSave] = useThesisUpdateAction(async () => {
+    const values = form.values
 
-    try {
-      const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
-        method: 'PUT',
-        requiresAuth: true,
-        data: {
-          thesisTitle: values.title,
-          visibility: values.visibility,
-          startDate: values.startDate,
-          endDate: values.endDate,
-          studentIds: values.students,
-          advisorIds: values.advisors,
-          supervisorIds: values.supervisors,
-          states: values.states.map((state) => ({
-            state: state.state,
-            changedAt: state.changedAt,
-          })),
-        },
-      })
+    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
+      method: 'PUT',
+      requiresAuth: true,
+      data: {
+        thesisTitle: values.title,
+        visibility: values.visibility,
+        startDate: values.startDate,
+        endDate: values.endDate,
+        studentIds: values.students,
+        advisorIds: values.advisors,
+        supervisorIds: values.supervisors,
+        states: values.states.map((state) => ({
+          state: state.state,
+          changedAt: state.changedAt,
+        })),
+      },
+    })
 
-      if (response.ok) {
-        showSimpleSuccess('Thesis updated successfully')
-
-        onUpdate(response.data)
-      } else {
-        showSimpleError(`Failed to update thesis: ${response.status}`)
-      }
-    } finally {
-      setUpdating(false)
+    if (response.ok) {
+      return response.data
+    } else {
+      throw new Error(`Failed to update thesis: ${response.status}`)
     }
-  }
+  }, 'Thesis updated successfully')
 
   return (
     <Accordion
@@ -167,7 +159,7 @@ const ThesisConfigSection = (props: IThesisConfigSectionProps) => {
       <Accordion.Item value='open'>
         <Accordion.Control>Configuration</Accordion.Control>
         <Accordion.Panel>
-          <form onSubmit={form.onSubmit(onSubmit)}>
+          <form onSubmit={form.onSubmit(onSave)}>
             <Stack gap='md'>
               <TextInput
                 label='Thesis Title'

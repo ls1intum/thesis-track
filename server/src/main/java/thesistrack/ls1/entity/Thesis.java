@@ -12,6 +12,7 @@ import thesistrack.ls1.constants.ThesisVisibility;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -74,7 +75,7 @@ public class Thesis {
     private Instant createdAt;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private List<ThesisRole> roles = new ArrayList<>();
+    private Set<ThesisRole> roles = Set.of();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("createdAt DESC")
@@ -85,12 +86,11 @@ public class Thesis {
     private List<ThesisAssessment> assessments = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    @OrderBy("changedAt ASC")
-    private List<ThesisStateChange> states = new ArrayList<>();
+    @OrderBy("scheduledAt ASC")
+    private List<ThesisPresentation> presentations = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    @OrderBy("date ASC")
-    private List<ThesisPresentation> presentations = new ArrayList<>();
+    private Set<ThesisStateChange> states = Set.of();
 
     public boolean hasSupervisorAccess(User user) {
         if (user == null) {
