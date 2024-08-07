@@ -55,6 +55,7 @@ const ThesisWritingSection = () => {
       showSimpleError(`Failed to upload thesis: ${response.status}`)
     }
   }
+
   const onPresentationUpload = async (file: File) => {
     const formData = new FormData()
 

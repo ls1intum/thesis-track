@@ -50,7 +50,10 @@ const DashboardPage = () => {
         <Title order={2} mb='sm'>
           My Applications
         </Title>
-        <ApplicationsTable onApplicationClick={setApplication} />
+        <ApplicationsTable
+          onApplicationClick={setApplication}
+          columns={['state', 'user', 'reviewed_at', 'created_at']}
+        />
         <ApplicationReviewModal
           application={application}
           onClose={() => setApplication(undefined)}
