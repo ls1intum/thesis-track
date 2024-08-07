@@ -68,6 +68,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
           accessor: 'thesisTitle',
           title: 'Thesis Title',
           ellipsis: true,
+          width: 300,
         },
         {
           accessor: 'createdAt',

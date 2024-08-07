@@ -70,6 +70,7 @@ const ThesesTable = () => {
           accessor: 'title',
           title: 'Thesis Title',
           ellipsis: true,
+          width: 300,
         },
         {
           accessor: 'startDate',

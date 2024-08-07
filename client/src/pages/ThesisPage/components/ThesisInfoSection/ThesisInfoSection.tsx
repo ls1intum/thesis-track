@@ -1,6 +1,6 @@
 import { IThesis } from '../../../../requests/responses/thesis'
 import React, { useEffect, useState } from 'react'
-import { Accordion, Button, Group, Stack, Title } from '@mantine/core'
+import { Accordion, Button, Flex, Grid, Group, Stack, Title } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../requests/request'
 import {
@@ -58,41 +58,47 @@ const ThesisInfoSection = () => {
             <DocumentEditor value={abstractText} editMode={editMode} onChange={setAbstractText} />
             <Title order={3}>Info</Title>
             <DocumentEditor value={infoText} editMode={editMode} onChange={setInfoText} />
-            <Group>
-              {access.advisor && thesis.applicationId && (
-                <Button
-                  variant='outline'
-                  onClick={() =>
-                    navigate(`/management/thesis-applications/${thesis.applicationId}`)
-                  }
-                >
-                  View Student Application
-                </Button>
-              )}
-              {access.student && !editMode && (
-                <Button ml='auto' onClick={() => setEditMode(true)}>
-                  Edit
-                </Button>
-              )}
-              {editMode && (
-                <Group justify='flex-end'>
+            <Grid>
+              <Grid.Col>
+                {access.advisor && thesis.applicationId && (
                   <Button
-                    loading={saving}
-                    variant='danger'
-                    onClick={() => {
-                      setInfoText(thesis.infoText)
-                      setAbstractText(thesis.abstractText)
-                      setEditMode(false)
-                    }}
+                    variant='outline'
+                    onClick={() =>
+                      navigate(`/management/thesis-applications/${thesis.applicationId}`)
+                    }
                   >
-                    Cancel
+                    View Student Application
                   </Button>
-                  <Button loading={saving} onClick={onSave}>
-                    Save
-                  </Button>
-                </Group>
-              )}
-            </Group>
+                )}
+              </Grid.Col>
+              <Grid.Col>
+                <Flex justify='flex-end'>
+                  {access.student && !editMode && (
+                    <Button ml='auto' onClick={() => setEditMode(true)}>
+                      Edit
+                    </Button>
+                  )}
+                  {editMode && (
+                    <Group>
+                      <Button
+                        loading={saving}
+                        variant='danger'
+                        onClick={() => {
+                          setInfoText(thesis.infoText)
+                          setAbstractText(thesis.abstractText)
+                          setEditMode(false)
+                        }}
+                      >
+                        Cancel
+                      </Button>
+                      <Button loading={saving} onClick={onSave}>
+                        Save
+                      </Button>
+                    </Group>
+                  )}
+                </Flex>
+              </Grid.Col>
+            </Grid>
           </Stack>
         </Accordion.Panel>
       </Accordion.Item>
