@@ -30,9 +30,9 @@ const links: Array<{
   link: string
   label: string
   icon: any
-  roles: string[] | undefined
+  groups: string[] | undefined
 }> = [
-  { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, roles: undefined },
+  { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
   /*{
     link: '/submit-application/pick-topic',
     label: 'Submit Application',
@@ -43,7 +43,7 @@ const links: Array<{
     link: '/management/thesis-applications',
     label: 'Review Applications',
     icon: Scroll,
-    roles: ['admin', 'advisor', 'supervisor'],
+    groups: ['admin', 'advisor', 'supervisor'],
   },
   /*{
     link: '/applications',
@@ -61,7 +61,7 @@ const links: Array<{
     link: '/theses',
     label: 'Theses Overview',
     icon: Kanban,
-    roles: undefined,
+    groups: ['admin', 'advisor', 'supervisor'],
   },
 ]
 
@@ -146,7 +146,8 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
           <Divider my='sm' />
           {links
             .filter(
-              (item) => !item.roles || item.roles.some((role) => auth.user?.groups.includes(role)),
+              (item) =>
+                !item.groups || item.groups.some((role) => auth.user?.groups.includes(role)),
             )
             .map((item) => (
               <Link
@@ -176,7 +177,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         </AppShell.Section>
       </AppShell.Navbar>
 
-      <AppShell.Main>
+      <AppShell.Main px={0}>
         {auth.user ? (
           <Suspense fallback={<PageLoader />}>
             {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (

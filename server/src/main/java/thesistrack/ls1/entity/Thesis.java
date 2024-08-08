@@ -168,7 +168,7 @@ public class Thesis {
             return true;
         }
 
-        if (visibility.equals(ThesisVisibility.INTERNAL) && user.hasAnyGroup("advisor", "supervisor", "student")) {
+        if (visibility.equals(ThesisVisibility.INTERNAL) && user.hasAnyGroup("advisor", "supervisor")) {
             return true;
         }
 

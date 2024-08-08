@@ -9,7 +9,14 @@ import { ThesisStateColor } from '../../config/colors'
 import { useNavigate } from 'react-router-dom'
 import { IThesis } from '../../requests/responses/thesis'
 
-type ThesisColumn = 'state' | 'supervisors' | 'advisors' | 'students' | 'title' | 'start_date' | 'end_date'
+type ThesisColumn =
+  | 'state'
+  | 'supervisors'
+  | 'advisors'
+  | 'students'
+  | 'title'
+  | 'start_date'
+  | 'end_date'
 
 interface IThesesTableProps {
   columns?: ThesisColumn[]
@@ -34,7 +41,11 @@ const ThesesTable = (props: IThesesTableProps) => {
       title: 'State',
       textAlign: 'center',
       render: (thesis: IThesis) => {
-        return <Badge color={ThesisStateColor[thesis.state] ?? 'gray'}>{formatThesisState(thesis.state)}</Badge>
+        return (
+          <Badge color={ThesisStateColor[thesis.state] ?? 'gray'}>
+            {formatThesisState(thesis.state)}
+          </Badge>
+        )
       },
     },
     supervisors: {

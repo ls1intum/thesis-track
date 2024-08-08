@@ -28,7 +28,11 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       title: 'State',
       textAlign: 'center',
       render: (application) => {
-        return <Badge color={ApplicationStateColor[application.state]}>{formatApplicationState(application.state)}</Badge>
+        return (
+          <Badge color={ApplicationStateColor[application.state]}>
+            {formatApplicationState(application.state)}
+          </Badge>
+        )
       },
     },
     user: {

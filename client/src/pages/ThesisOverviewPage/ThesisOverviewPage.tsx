@@ -41,7 +41,12 @@ const ThesisOverviewPage = () => {
         <Group>
           <Title mb='md'>Theses Overview</Title>
           {managementAccess && (
-            <Button ml='auto' leftSection={<Plus />} onClick={() => setOpenCreateThesisModal(true)}>
+            <Button
+              ml='auto'
+              leftSection={<Plus />}
+              onClick={() => setOpenCreateThesisModal(true)}
+              visibleFrom='md'
+            >
               Create Thesis
             </Button>
           )}
@@ -49,6 +54,18 @@ const ThesisOverviewPage = () => {
         <ThesesFilters />
         <Space my='md' />
         {managementAccess && <ThesesGanttChart />}
+        {managementAccess && (
+          <Group mb='md'>
+            <Button
+              ml='auto'
+              leftSection={<Plus />}
+              onClick={() => setOpenCreateThesisModal(true)}
+              hiddenFrom='md'
+            >
+              Create Thesis
+            </Button>
+          </Group>
+        )}
         <ThesesTable />
       </ThesesProvider>
     </ContentContainer>

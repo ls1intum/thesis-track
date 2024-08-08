@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Center, Divider, Group, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Center, Divider, Grid, Group, Stack, Text } from '@mantine/core'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 import { doRequest } from '../../../../requests/request'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
@@ -90,8 +90,8 @@ const ThesisWritingSection = () => {
         <Accordion.Control>Thesis</Accordion.Control>
         <Accordion.Panel>
           <Stack>
-            <Group grow>
-              <Stack>
+            <Grid>
+              <Grid.Col span={{ lg: 6 }}>
                 <UploadFileModal
                   title='Upload Thesis'
                   opened={uploadThesisModal}
@@ -114,8 +114,8 @@ const ThesisWritingSection = () => {
                     <Button onClick={() => setUploadThesisModal(true)}>Upload Thesis</Button>
                   </Center>
                 )}
-              </Stack>
-              <Stack>
+              </Grid.Col>
+              <Grid.Col span={{ lg: 6 }}>
                 <UploadFileModal
                   title='Upload Presentation'
                   opened={uploadPresentationModal}
@@ -140,8 +140,8 @@ const ThesisWritingSection = () => {
                     </Button>
                   </Center>
                 )}
-              </Stack>
-            </Group>
+              </Grid.Col>
+            </Grid>
             <Group grow>
               {access.student &&
                 thesis.state === ThesisState.WRITING &&
