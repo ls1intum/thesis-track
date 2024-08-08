@@ -12,7 +12,7 @@ import '@mantine/tiptap/styles.css'
 import '@mantine/dropzone/styles.css'
 import 'mantine-datatable/styles.layer.css'
 
-import * as buttonClasses from './Buttons.module.css'
+import * as buttonClasses from './styles/Buttons.module.css'
 
 const theme = createTheme({
   respectReducedMotion: false,
