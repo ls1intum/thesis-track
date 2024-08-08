@@ -177,7 +177,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         </AppShell.Section>
       </AppShell.Navbar>
 
-      <AppShell.Main px={0}>
+      <AppShell.Main>
         {auth.user ? (
           <Suspense fallback={<PageLoader />}>
             {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
