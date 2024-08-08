@@ -5,7 +5,7 @@ import {
   Burger,
   Center,
   Divider,
-  Group,
+  Group, Stack,
   Text,
   useMantineColorScheme,
 } from '@mantine/core'
@@ -98,10 +98,10 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
   if (!requireAuthentication && !auth.isAuthenticated) {
     return (
-      <>
+      <Stack px='md'>
         {children}
         <ScrollToTop />
-      </>
+      </Stack>
     )
   }
 
