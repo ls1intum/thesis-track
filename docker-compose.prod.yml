@@ -13,7 +13,7 @@ services:
       - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.letsencrypt.acme.email=valeryia.andraichuk@tum.de"
+      - "--certificatesresolvers.letsencrypt.acme.email=admin@tum.de"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
     restart: unless-stopped
     ports:
@@ -67,6 +67,7 @@ services:
       - MAIL_SENDER
       - MAIL_FOOTER
       - MAIL_CHAIR_RECIPIENTS
+      - MAIL_BCC_RECIPIENTS
     networks:
       - thesis-track-network
 

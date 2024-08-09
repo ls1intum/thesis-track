@@ -14,6 +14,7 @@ import java.util.UUID;
 public record ThesisDto (
         UUID thesisId,
         String title,
+        String type,
         ThesisVisibility visibility,
         String infoText,
         String abstractText,
@@ -179,6 +180,7 @@ public record ThesisDto (
         return new ThesisDto(
                 thesis.getId(),
                 thesis.getTitle(),
+                thesis.getType(),
                 thesis.getVisibility(),
                 thesis.getInfo(),
                 thesis.getAbstractField(),

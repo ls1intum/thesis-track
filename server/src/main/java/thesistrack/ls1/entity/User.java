@@ -1,5 +1,6 @@
 package thesistrack.ls1.entity;
 
+import jakarta.mail.internet.InternetAddress;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -94,6 +95,14 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserGroup> groups = new HashSet<>();
+
+    public InternetAddress getEmail() {
+        try {
+            return new InternetAddress(email);
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     public boolean hasAnyGroup(String...groups) {
         for (String group : groups) {

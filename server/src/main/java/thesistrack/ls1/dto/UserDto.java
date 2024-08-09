@@ -1,5 +1,6 @@
 package thesistrack.ls1.dto;
 
+import jakarta.mail.internet.InternetAddress;
 import thesistrack.ls1.entity.User;
 
 import java.time.Instant;
@@ -36,7 +37,7 @@ public record UserDto (
         }
 
         return new UserDto(
-                user.getId(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail(),
+                user.getId(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
                 user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(), user.getIsExchangeStudent(),
                 user.getFocusTopics(), user.getResearchAreas(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
