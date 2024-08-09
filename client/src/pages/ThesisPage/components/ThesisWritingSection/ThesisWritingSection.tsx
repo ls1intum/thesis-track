@@ -149,7 +149,7 @@ const ThesisWritingSection = () => {
             <Stack>
               <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
                 <ThesisCommentsList />
-                <ThesisCommentsForm />
+                {access.student && <ThesisCommentsForm />}
               </ThesisCommentsProvider>
             </Stack>
             <Group grow>
