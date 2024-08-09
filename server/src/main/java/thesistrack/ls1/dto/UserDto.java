@@ -1,5 +1,6 @@
 package thesistrack.ls1.dto;
 
+import jakarta.mail.internet.InternetAddress;
 import thesistrack.ls1.entity.User;
 
 import java.time.Instant;
@@ -9,7 +10,7 @@ public record UserDto (
         UUID userId,
         String universityId,
         String matriculationNumber,
-        String email,
+        InternetAddress email,
         String firstName,
         String lastName,
         String gender,

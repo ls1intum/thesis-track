@@ -27,6 +27,10 @@ public class Thesis {
     private String title;
 
     @NotNull
+    @Column(name = "type", nullable = false, length = 100)
+    private String type;
+
+    @NotNull
     @Column(name = "info", nullable = false, length = 1000)
     private String info;
 

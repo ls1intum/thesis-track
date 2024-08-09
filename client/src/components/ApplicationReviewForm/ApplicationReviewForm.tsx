@@ -5,7 +5,7 @@ import { GLOBAL_CONFIG } from '../../config/global'
 import React, { useEffect, useState } from 'react'
 import { useDebouncedValue } from '@mantine/hooks'
 import { doRequest } from '../../requests/request'
-import { Button, Checkbox, Divider, Group, Stack, Text, Textarea, TextInput } from '@mantine/core'
+import { Button, Checkbox, Divider, Group, Select, Stack, Text, Textarea, TextInput } from '@mantine/core'
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
@@ -22,6 +22,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
 
   const form = useForm<{
     title: string
+    type: string | null
     comment: string
     advisors: string[]
     supervisors: string[]
@@ -30,6 +31,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     mode: 'controlled',
     initialValues: {
       title: application?.thesisTitle || '',
+      type: null,
       comment: '',
       advisors: [],
       supervisors: GLOBAL_CONFIG.default_supervisors,
@@ -37,7 +39,8 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     },
     validateInputOnBlur: true,
     validate: {
-      title: isNotEmpty('Title must not be empty'),
+      title: isNotEmpty('Thesis title must not be empty'),
+      type: isNotEmpty('Thesis type must not be empty'),
       advisors: isNotEmptyUserList('advisor'),
       supervisors: isNotEmptyUserList('supervisor'),
     },
@@ -87,6 +90,16 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             placeholder='Thesis Title'
             label='Thesis Title'
             {...form.getInputProps('title')}
+          />
+
+          <Select
+            label='Thesis Type'
+            required={true}
+            data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+              value: key,
+              label: value,
+            }))}
+            {...form.getInputProps('type')}
           />
 
           <UserMultiSelect

@@ -78,7 +78,8 @@ public class ThesisService {
     @Transactional
     public Thesis createThesis(
             User creator,
-            String title,
+            String thesisTitle,
+            String thesisType,
             Set<UUID> supervisorIds,
             Set<UUID> advisorIds,
             Set<UUID> studentIds,
@@ -86,7 +87,8 @@ public class ThesisService {
     ) {
         Thesis thesis = new Thesis();
 
-        thesis.setTitle(title);
+        thesis.setTitle(thesisTitle);
+        thesis.setType(thesisType);
         thesis.setInfo("");
         thesis.setAbstractField("");
         thesis.setState(ThesisState.PROPOSAL);
@@ -119,6 +121,7 @@ public class ThesisService {
             User updater,
             Thesis thesis,
             String thesisTitle,
+            String thesisType,
             ThesisVisibility visibility,
             Instant startDate,
             Instant endDate,
@@ -128,6 +131,7 @@ public class ThesisService {
             List<ThesisStatePayload> states
     ) {
         thesis.setTitle(thesisTitle);
+        thesis.setType(thesisType);
         thesis.setVisibility(visibility);
 
         if ((startDate == null && endDate != null) || (startDate != null && endDate == null)) {
@@ -340,6 +344,8 @@ public class ThesisService {
         if (students.isEmpty() || students.size() != studentIds.size()) {
             throw new ResourceInvalidParametersException("No students selected or students not found");
         }
+
+        thesisRoleRepository.deleteByThesisId(thesis.getId());
 
         for (User supervisor : supervisors) {
             if (!supervisor.hasAnyGroup("supervisor")) {

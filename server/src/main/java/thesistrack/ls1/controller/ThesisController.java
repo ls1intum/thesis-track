@@ -111,6 +111,7 @@ public class ThesisController {
         Thesis thesis = thesisService.createThesis(
                 authenticatedUser,
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TYPE.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateNotNull(payload.advisorIds()),
                 RequestValidator.validateNotNull(payload.studentIds()),
@@ -137,6 +138,7 @@ public class ThesisController {
                 authenticatedUser,
                 thesis,
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TYPE.getLimit()),
                 RequestValidator.validateNotNull(payload.visibility()),
                 payload.startDate(),
                 payload.endDate(),

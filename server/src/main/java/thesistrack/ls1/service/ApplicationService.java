@@ -135,7 +135,8 @@ public class ApplicationService {
     public Application accept(
             User reviewer,
             Application application,
-            String title,
+            String thesisTitle,
+            String thesisType,
             Set<UUID> advisorIds,
             Set<UUID> supervisorIds,
             String comment,
@@ -149,7 +150,8 @@ public class ApplicationService {
 
         thesisService.createThesis(
                 reviewer,
-                title,
+                thesisTitle,
+                thesisType,
                 supervisorIds,
                 advisorIds,
                 Collections.singleton(application.getUser().getId()),
