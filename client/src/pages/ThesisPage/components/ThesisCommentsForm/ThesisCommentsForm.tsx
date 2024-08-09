@@ -1,4 +1,4 @@
-import { Button, Group, Stack, Textarea } from '@mantine/core'
+import { Button, Stack, Textarea } from '@mantine/core'
 import { useState } from 'react'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { useThesisCommentsContext } from '../../../../contexts/ThesisCommentsProvider/hooks'

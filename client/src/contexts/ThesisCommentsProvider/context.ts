@@ -13,4 +13,6 @@ export interface IThesisCommentsContext {
   postComment: (message: string, file: File | undefined) => unknown
 }
 
-export const ThesisCommentsContext = React.createContext<IThesisCommentsContext | undefined>(undefined)
+export const ThesisCommentsContext = React.createContext<IThesisCommentsContext | undefined>(
+  undefined,
+)
