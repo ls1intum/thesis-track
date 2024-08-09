@@ -10,5 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface UserGroupRepository extends JpaRepository<UserGroup, UserGroupId> {
-    List<UserGroup> deleteByUserId(UUID userId);
+
 }

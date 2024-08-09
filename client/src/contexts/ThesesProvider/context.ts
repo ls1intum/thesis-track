@@ -1,6 +1,6 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import { IThesis, ThesisState } from '../../requests/responses/thesis'
-import { Pageable } from '../../requests/responses/pageable'
+import { PaginationResponse } from '../../requests/responses/pagination'
 
 export interface IThesesFilters {
   search?: string
@@ -13,7 +13,7 @@ export interface IThesesSort {
 }
 
 export interface IThesesContext {
-  theses: Pageable<IThesis> | undefined
+  theses: PaginationResponse<IThesis> | undefined
   filters: IThesesFilters
   setFilters: Dispatch<SetStateAction<IThesesFilters>>
   sort: IThesesSort

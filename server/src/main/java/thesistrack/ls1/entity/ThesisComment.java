@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ThesisCommentType;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -25,6 +26,11 @@ public class ThesisComment {
     private Thesis thesis;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @JoinColumn(name = "type", nullable = false)
+    private ThesisCommentType type;
+
+    @NotNull
     @Column(name = "message", nullable = false, length = 1000)
     private String message;
 
@@ -41,4 +47,7 @@ public class ThesisComment {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
+    public boolean hasManagementAccess(User user) {
+        return user.hasAnyGroup("admin") || createdBy.getId().equals(user.getId());
+    }
 }

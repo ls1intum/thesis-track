@@ -5,7 +5,8 @@ import {
   Burger,
   Center,
   Divider,
-  Group, Stack,
+  Group,
+  Stack,
   Text,
   useMantineColorScheme,
 } from '@mantine/core'

@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import { Pageable } from '../../requests/responses/pageable'
+import { PaginationResponse } from '../../requests/responses/pagination'
 import { ApplicationState, IApplication } from '../../requests/responses/application'
 
 export interface IApplicationsFilters {
@@ -13,7 +13,7 @@ export interface IApplicationsSort {
 }
 
 export interface IApplicationsContext {
-  applications: Pageable<IApplication> | undefined
+  applications: PaginationResponse<IApplication> | undefined
   filters: IApplicationsFilters
   setFilters: Dispatch<SetStateAction<IApplicationsFilters>>
   sort: IApplicationsSort

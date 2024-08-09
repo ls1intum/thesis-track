@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { ThesesContext, IThesesContext, IThesesFilters, IThesesSort } from './context'
 import { IThesis, ThesisState } from '../../requests/responses/thesis'
 import { doRequest } from '../../requests/request'
-import { Pageable } from '../../requests/responses/pageable'
+import { PaginationResponse } from '../../requests/responses/pagination'
 import { useDebouncedValue } from '@mantine/hooks'
 import { showSimpleError } from '../../utils/notification'
 
@@ -16,7 +16,7 @@ interface IThesesProviderProps {
 const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
   const { children, fetchAll = false, limit = 50, hideIfEmpty = false } = props
 
-  const [theses, setTheses] = useState<Pageable<IThesis>>()
+  const [theses, setTheses] = useState<PaginationResponse<IThesis>>()
   const [page, setPage] = useState(0)
 
   const [filters, setFilters] = useState<IThesesFilters>({
@@ -38,7 +38,7 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
   useEffect(() => {
     setTheses(undefined)
 
-    return doRequest<Pageable<IThesis>>(
+    return doRequest<PaginationResponse<IThesis>>(
       `/v2/theses`,
       {
         method: 'GET',

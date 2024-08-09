@@ -10,6 +10,7 @@ import ContentContainer from '../../app/layout/ContentContainer/ContentContainer
 import { Space } from '@mantine/core'
 import ThesisHeader from './components/ThesisHeader/ThesisHeader'
 import ThesisProvider from '../../contexts/ThesisProvider/ThesisProvider'
+import ThesisAdvisorCommentsSection from './components/ThesisAdvisorCommentsSection/ThesisAdvisorCommentsSection'
 
 const ThesisPage = () => {
   const { thesisId } = useParams<{ thesisId: string }>()
@@ -21,6 +22,8 @@ const ThesisPage = () => {
       <ContentContainer>
         <ThesisHeader />
         <ThesisConfigSection />
+        <Space my='md' />
+        <ThesisAdvisorCommentsSection />
         <Space my='md' />
         <ThesisInfoSection />
         <Space my='md' />

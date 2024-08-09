@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, ReactNode, useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
-import { Pageable } from '../../requests/responses/pageable'
+import { PaginationResponse } from '../../requests/responses/pagination'
 import {
   ApplicationsContext,
   IApplicationsContext,
@@ -29,7 +29,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
     emptyComponent,
   } = props
 
-  const [applications, setApplications] = useState<Pageable<IApplication>>()
+  const [applications, setApplications] = useState<PaginationResponse<IApplication>>()
   const [page, setPage] = useState(0)
 
   const [filters, setFilters] = useState<IApplicationsFilters>({
@@ -49,7 +49,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
   useEffect(() => {
     setApplications(undefined)
 
-    return doRequest<Pageable<IApplication>>(
+    return doRequest<PaginationResponse<IApplication>>(
       `/v2/applications`,
       {
         method: 'GET',
