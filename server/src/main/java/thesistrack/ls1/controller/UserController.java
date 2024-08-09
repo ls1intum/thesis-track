@@ -33,7 +33,7 @@ public class UserController {
             @RequestParam(required = false) String searchQuery,
             @RequestParam(required = false) String[] groups,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "20") Integer limit,
+            @RequestParam(required = false, defaultValue = "50") Integer limit,
             @RequestParam(required = false, defaultValue = "joinedAt") String sortBy,
             @RequestParam(required = false, defaultValue = "desc") String sortOrder
     ) {

@@ -10,9 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -30,9 +28,6 @@ public class User {
 
     @Column(name = "matriculation_number", length = 30)
     private String matriculationNumber;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private List<UserGroup> groups;
 
     @Column(name = "email", length = 100)
     private String email;
@@ -97,16 +92,15 @@ public class User {
     @Column(name = "joined_at", nullable = false)
     private Instant joinedAt;
 
-    public boolean hasGroup(String group) {
-        List<UserGroup> groups = getGroups();
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    private Set<UserGroup> groups = new HashSet<>();
 
-        if (groups == null) {
-            return false;
-        }
-
-        for (UserGroup userGroup : groups) {
-            if (userGroup.getId().getGroup().equals(group)) {
-                return true;
+    public boolean hasAnyGroup(String...groups) {
+        for (String group : groups) {
+            for (UserGroup userGroup : getGroups()) {
+                if (userGroup.getId().getGroup().equals(group)) {
+                    return true;
+                }
             }
         }
 

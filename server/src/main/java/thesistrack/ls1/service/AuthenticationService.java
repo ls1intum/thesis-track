@@ -13,8 +13,7 @@ import thesistrack.ls1.repository.UserRepository;
 import thesistrack.ls1.security.JwtAuthConfig;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class AuthenticationService {
@@ -28,14 +27,14 @@ public class AuthenticationService {
     }
 
     public User getAuthenticatedUser(JwtAuthenticationToken jwt) {
-        return this.userRepository.findByUniversityId(jwt.getName())
+        return this.userRepository.findByUniversityId(getUniversityId(jwt))
                 .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found"));
     }
 
     @Transactional
     public User updateAuthenticatedUser(JwtAuthenticationToken jwt) {
         Map<String, Object> attributes = jwt.getTokenAttributes();
-        String universityId = jwt.getName();
+        String universityId = getUniversityId(jwt);
 
         String email = (String) attributes.get("email");
         String firstName = (String) attributes.get("given_name");
@@ -70,8 +69,7 @@ public class AuthenticationService {
         }
 
         user = this.userRepository.save(user);
-
-        this.userGroupRepository.deleteByUserId(user.getId());
+        Set<UserGroup> userGroups = new HashSet<>();
 
         for (String group : groups) {
             UserGroup entity = new UserGroup();
@@ -83,9 +81,15 @@ public class AuthenticationService {
             entity.setUser(user);
             entity.setId(entityId);
 
-            this.userGroupRepository.save(entity);
+            userGroups.add(this.userGroupRepository.save(entity));
         }
 
-        return this.userRepository.findByUniversityId(universityId).orElseThrow();
+        user.setGroups(userGroups);
+
+        return this.userRepository.save(user);
+    }
+
+    private String getUniversityId(JwtAuthenticationToken jwt) {
+        return jwt.getName();
     }
 }

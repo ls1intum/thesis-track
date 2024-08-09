@@ -10,27 +10,28 @@ import {
 } from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
-import { notifications } from '@mantine/notifications'
+import { showSimpleError } from '../../utils/notification'
 
 interface IUploadAreaProps {
-  label: string
-  required: boolean
   value: File | undefined
   onChange: (file: File | undefined) => unknown
+  label?: string
+  required?: boolean
   maxSize?: number
-  accept?: string[]
 }
 
 const UploadArea = (props: IUploadAreaProps) => {
-  const { label, required, value, onChange, maxSize = 1024, accept = PDF_MIME_TYPE } = props
+  const { label, required, value, onChange, maxSize = 1024 } = props
 
   const theme = useMantineTheme()
 
   return (
     <Stack gap='0'>
-      <Group align='left'>
-        <InputLabel required={required}>{label}</InputLabel>
-      </Group>
+      {label && (
+        <Group align='left'>
+          <InputLabel required={required}>{label}</InputLabel>
+        </Group>
+      )}
       {value ? (
         <Card shadow='sm' withBorder>
           <Group align='apart'>
@@ -47,15 +48,10 @@ const UploadArea = (props: IUploadAreaProps) => {
           name={label}
           onDrop={(files) => onChange(files[0])}
           onReject={() => {
-            notifications.show({
-              color: 'red',
-              autoClose: 5000,
-              title: 'Error',
-              message: `Failed upload file. Max file size is ${Math.floor(maxSize / 1024)}MB`,
-            })
+            showSimpleError(`Failed upload file. Max file size is ${Math.floor(maxSize / 1024)}MB`)
           }}
           maxSize={maxSize * 1024}
-          accept={accept}
+          accept={PDF_MIME_TYPE}
         >
           <Group align='center' gap='xl' style={{ minHeight: rem(150), pointerEvents: 'none' }}>
             <Dropzone.Accept>

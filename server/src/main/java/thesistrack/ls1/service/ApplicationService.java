@@ -7,15 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import thesistrack.ls1.constants.ThesisRoleName;
-import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.constants.ApplicationState;
-import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.ApplicationRepository;
-import thesistrack.ls1.repository.ThesisRepository;
 import thesistrack.ls1.repository.TopicRepository;
 import thesistrack.ls1.repository.UserRepository;
 import thesistrack.ls1.utility.RequestValidator;
@@ -30,8 +26,8 @@ public class ApplicationService {
     private final UploadService uploadService;
     private final MailingService mailingService;
     private final TopicRepository topicRepository;
-    private final ThesisRepository thesisRepository;
     private final ThesisService thesisService;
+    private final UserService userService;
 
     @Autowired
     public ApplicationService(
@@ -39,25 +35,40 @@ public class ApplicationService {
             UserRepository userRepository,
             UploadService storageService,
             MailingService mailingService,
-            TopicRepository topicRepository, ThesisRepository thesisRepository, ThesisService thesisService) {
+            TopicRepository topicRepository,
+            ThesisService thesisService,
+            UserService userService
+    ) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
 
         this.uploadService = storageService;
         this.mailingService = mailingService;
         this.topicRepository = topicRepository;
-        this.thesisRepository = thesisRepository;
         this.thesisService = thesisService;
+        this.userService = userService;
     }
 
-    public Page<Application> getAll(String searchQuery, ApplicationState[] states, int page, int limit, String sortBy, String sortOrder) {
+    public Page<Application> getAll(
+            UUID userId,
+            String searchQuery,
+            ApplicationState[] states,
+            int page,
+            int limit,
+            String sortBy,
+            String sortOrder
+    ) {
         Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
         String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
         Set<ApplicationState> statesFilter = states == null || states.length == 0 ? null : new HashSet<>(Arrays.asList(states));
 
-        return applicationRepository
-                .searchApplications(searchQueryFilter, statesFilter, PageRequest.of(page, limit, Sort.by(order)));
+        return applicationRepository.searchApplications(
+                userId,
+                searchQueryFilter,
+                statesFilter,
+                PageRequest.of(page, limit, Sort.by(order))
+        );
     }
 
     @Transactional
@@ -76,7 +87,6 @@ public class ApplicationService {
 
             return user;
         });
-        Application application = new Application();
 
         student.setUniversityId(RequestValidator.validateStringMaxLength(payload.universityId(), 30));
         student.setMatriculationNumber(RequestValidator.validateStringMaxLength(payload.matriculationNumber(), 30));
@@ -106,7 +116,9 @@ public class ApplicationService {
             student.setDegreeFilename(uploadService.store(degreeReport, 3 * 1024 * 1024));
         }
 
-        application.setUser(student);
+        Application application = new Application();
+        application.setUser(userRepository.save(student));
+
         application.setThesisTitle(RequestValidator.validateStringMaxLength(payload.thesisTitle(), 500));
         application.setMotivation(RequestValidator.validateStringMaxLength(payload.motivation(), 1000));
         application.setState(ApplicationState.NOT_ASSESSED);
@@ -116,15 +128,13 @@ public class ApplicationService {
         mailingService.sendApplicationCreatedMailToChair(application);
         mailingService.sendApplicationCreatedMailToStudent(application);
 
-        userRepository.save(student);
-
         return applicationRepository.save(application);
     }
 
     @Transactional
     public Application accept(
-            UUID applicationId,
             User reviewer,
+            Application application,
             String title,
             Set<UUID> advisorIds,
             Set<UUID> supervisorIds,
@@ -132,73 +142,39 @@ public class ApplicationService {
             boolean notifyUser,
             boolean closeTopic
     ) {
-        Application application = findById(applicationId);
-        Topic topic = application.getTopic();
-
-        List<User> advisors = userRepository.findAllById(advisorIds);
-        List<User> supervisors = userRepository.findAllById(supervisorIds);
-
-        if (advisors.isEmpty() || advisors.size() != advisorIds.size()) {
-            throw new ResourceInvalidParametersException("No advisors selected or advisors not found");
-        }
-
-        if (supervisors.isEmpty() || supervisors.size() != supervisorIds.size()) {
-            throw new ResourceInvalidParametersException("No supervisors selected or supervisors not found");
-        }
-
         application.setState(ApplicationState.ACCEPTED);
-        application.setComment(RequestValidator.validateStringMaxLength(comment, 1000));
+        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 
-        Thesis thesis = new Thesis();
+        thesisService.createThesis(
+                reviewer,
+                title,
+                supervisorIds,
+                advisorIds,
+                Collections.singleton(application.getUser().getId()),
+                application
+        );
 
-        thesis.setTitle(RequestValidator.validateStringMaxLength(title, 500));
-        thesis.setInfo("");
-        thesis.setAbstractField("");
-        thesis.setState(ThesisState.PROPOSAL);
-        thesis.setApplication(application);
-        thesis.setCreatedAt(Instant.now());
-
-        thesis = thesisRepository.save(thesis);
-
-        for (User advisor : advisors) {
-            if (!advisor.hasGroup("advisor") && !advisor.hasGroup("supervisor")) {
-                throw new ResourceInvalidParametersException("User is not an advisor");
-            }
-
-            thesisService.saveThesisRole(thesis, reviewer, advisor, ThesisRoleName.ADVISOR);
-        }
-
-        for (User supervisor : supervisors) {
-            if (!supervisor.hasGroup("supervisor")) {
-                throw new ResourceInvalidParametersException("User is not a supervisor");
-            }
-
-            thesisService.saveThesisRole(thesis, reviewer, supervisor, ThesisRoleName.SUPERVISOR);
-        }
-
-        thesisService.saveThesisRole(thesis, reviewer, application.getUser(), ThesisRoleName.STUDENT);
+        Topic topic = application.getTopic();
 
         if (topic != null && closeTopic) {
             topic.setClosedAt(Instant.now());
 
-            topicRepository.save(topic);
+            application.setTopic(topicRepository.save(topic));
         }
 
         if (notifyUser) {
-            mailingService.sendApplicationAcceptanceEmail(application, advisors.getFirst());
+            mailingService.sendApplicationAcceptanceEmail(application, userService.findById(advisorIds.iterator().next()));
         }
 
         return applicationRepository.save(application);
     }
 
     @Transactional
-    public Application reject(UUID thesisApplicationId, User reviewer, String comment, boolean notifyUser) {
-        Application application = findById(thesisApplicationId);
-
+    public Application reject(User reviewer, Application application, String comment, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
-        application.setComment(RequestValidator.validateStringMaxLength(comment, 1000));
+        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 
@@ -210,16 +186,14 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application updateComment(UUID thesisApplicationId, String comment) {
-        Application application = findById(thesisApplicationId);
-
-        application.setComment(RequestValidator.validateStringMaxLength(comment, 1000));
+    public Application updateComment(Application application, String comment) {
+        application.setComment(comment);
 
         return applicationRepository.save(application);
     }
 
     public Application findById(UUID applicationId) {
         return applicationRepository.findById(applicationId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Thesis application with id %s not found.", applicationId)));
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Application with id %s not found.", applicationId)));
     }
 }

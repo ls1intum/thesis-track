@@ -5,20 +5,20 @@ import {
   Burger,
   Center,
   Divider,
-  Group,
-  Loader,
+  Group, Stack,
   Text,
   useMantineColorScheme,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
-import { Moon, Scroll, SignOut, Sun } from 'phosphor-react'
+import { Kanban, Moon, NewspaperClipping, Scroll, SignOut, Sun } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
 import Logo from '../../../static/logo'
 import { useNavigationType } from 'react-router'
 import ScrollToTop from '../ScrollToTop/ScrollToTop'
+import PageLoader from '../../../components/PageLoader/PageLoader'
 
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
@@ -30,10 +30,10 @@ const links: Array<{
   link: string
   label: string
   icon: any
-  roles: string[] | undefined
+  groups: string[] | undefined
 }> = [
-  /*{ link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, roles: undefined },
-  {
+  { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
+  /*{
     link: '/submit-application/pick-topic',
     label: 'Submit Application',
     icon: PaperPlaneTilt,
@@ -43,7 +43,7 @@ const links: Array<{
     link: '/management/thesis-applications',
     label: 'Review Applications',
     icon: Scroll,
-    roles: ['admin', 'advisor', 'supervisor'],
+    groups: ['admin', 'advisor', 'supervisor'],
   },
   /*{
     link: '/applications',
@@ -56,15 +56,14 @@ const links: Array<{
     label: 'Create Topic',
     icon: FolderSimplePlus,
     roles: ['admin', 'advisor', 'supervisor'],
+  },*/
+  {
+    link: '/theses',
+    label: 'Theses Overview',
+    icon: Kanban,
+    groups: ['admin', 'advisor', 'supervisor'],
   },
-  { link: '/theses', label: 'Thesis Overview', icon: Kanban, roles: ['admin', 'supervisor'] },*/
 ]
-
-const SpinningLoader = () => (
-  <Center className={classes.fullHeight}>
-    <Loader />
-  </Center>
-)
 
 const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) => {
   const {
@@ -99,10 +98,10 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
   if (!requireAuthentication && !auth.isAuthenticated) {
     return (
-      <>
+      <Stack px='md'>
         {children}
         <ScrollToTop />
-      </>
+      </Stack>
     )
   }
 
@@ -147,7 +146,8 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
           <Divider my='sm' />
           {links
             .filter(
-              (item) => !item.roles || item.roles.some((role) => auth.user?.groups.includes(role)),
+              (item) =>
+                !item.groups || item.groups.some((role) => auth.user?.groups.includes(role)),
             )
             .map((item) => (
               <Link
@@ -179,7 +179,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
       <AppShell.Main>
         {auth.user ? (
-          <Suspense fallback={<SpinningLoader />}>
+          <Suspense fallback={<PageLoader />}>
             {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
               children
             ) : (
@@ -189,7 +189,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             )}
           </Suspense>
         ) : (
-          <SpinningLoader />
+          <PageLoader />
         )}
         <ScrollToTop />
       </AppShell.Main>

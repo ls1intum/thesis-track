@@ -11,12 +11,22 @@ import { arrayUnique } from '../../utils/array'
 interface IUserMultiSelectProps extends GetInputPropsReturnType {
   maxValues?: number
   groups: string[]
+  disabled?: boolean
   label?: string
   required?: boolean
+  initialUsers?: ILightUser[]
 }
 
 const UserMultiSelect = (props: IUserMultiSelectProps) => {
-  const { groups, maxValues = Infinity, label, required, ...inputProps } = props
+  const {
+    groups,
+    maxValues = Infinity,
+    initialUsers = [],
+    disabled,
+    label,
+    required,
+    ...inputProps
+  } = props
 
   const selected: string[] = inputProps.value || []
 
@@ -63,7 +73,19 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
 
   return (
     <MultiSelect
-      data={data}
+      data={arrayUnique(
+        [
+          ...data,
+          ...initialUsers
+            .filter((user) => selected.includes(user.userId))
+            .map((user) => ({
+              value: user.userId,
+              label: formatUser(user),
+            })),
+        ],
+        (a, b) => a.value === b.value,
+      )}
+      disabled={disabled}
       searchable={selected.length < maxValues}
       clearable={true}
       searchValue={searchValue}

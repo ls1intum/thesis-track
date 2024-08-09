@@ -1,4 +1,3 @@
-import React from 'react'
 import { usePageTitle } from '../../hooks/theme'
 import ThesisConfigSection from './components/ThesisConfigSection/ThesisConfigSection'
 import ThesisInfoSection from './components/ThesisInfoSection/ThesisInfoSection'
@@ -6,20 +5,34 @@ import ThesisProposalSection from './components/ThesisProposalSection/ThesisProp
 import ThesisWritingSection from './components/ThesisWritingSection/ThesisWritingSection'
 import ThesisAssessmentSection from './components/ThesisAssessmentSection/ThesisAssessmentSection'
 import ThesisFinalGradeSection from './components/ThesisFinalGradeSection/ThesisFinalGradeSection'
+import { useParams } from 'react-router-dom'
+import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
+import { Space } from '@mantine/core'
+import ThesisHeader from './components/ThesisHeader/ThesisHeader'
+import ThesisProvider from '../../contexts/ThesisProvider/ThesisProvider'
 
 const ThesisPage = () => {
-  // TODO: implement component
-  usePageTitle('Topic')
+  const { thesisId } = useParams<{ thesisId: string }>()
+
+  usePageTitle('Thesis')
 
   return (
-    <>
-      <ThesisConfigSection />
-      <ThesisInfoSection />
-      <ThesisProposalSection />
-      <ThesisWritingSection />
-      <ThesisAssessmentSection />
-      <ThesisFinalGradeSection />
-    </>
+    <ThesisProvider thesisId={thesisId} requireLoadedThesis>
+      <ContentContainer>
+        <ThesisHeader />
+        <ThesisConfigSection />
+        <Space my='md' />
+        <ThesisInfoSection />
+        <Space my='md' />
+        <ThesisProposalSection />
+        <Space my='md' />
+        <ThesisWritingSection />
+        <Space my='md' />
+        <ThesisAssessmentSection />
+        <Space my='md' />
+        <ThesisFinalGradeSection />
+      </ContentContainer>
+    </ThesisProvider>
   )
 }
 

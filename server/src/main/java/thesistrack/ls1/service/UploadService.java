@@ -21,6 +21,7 @@ import java.nio.file.StandardCopyOption;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
+import java.util.Set;
 
 @Service
 public class UploadService {
@@ -47,8 +48,15 @@ public class UploadService {
                 throw new UploadException("File size exceeds the maximum allowed size");
             }
 
+            Set<String> allowedContentTypes = Set.of("application/pdf");
+            Set<String> allowedExtensions = Set.of("pdf");
+
             String originalFilename = file.getOriginalFilename();
             String extension = FilenameUtils.getExtension(originalFilename);
+
+            if (!allowedContentTypes.contains(file.getContentType()) || !allowedExtensions.contains(extension)) {
+                throw new UploadException("Invalid file type");
+            }
 
             String filename = StringUtils.cleanPath(computeFileHash(file) + "." + extension);
 

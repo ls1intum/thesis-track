@@ -1,7 +1,7 @@
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
-import { Center, Loader } from '@mantine/core'
+import PageLoader from '../components/PageLoader/PageLoader'
 
 const LegacyThesisApplicationForm = lazy(
   () => import('../pages/LegacySubmitApplicationPage/LegacyCreateApplicationForm'),
@@ -26,21 +26,11 @@ const ReviewApplicationPage = lazy(
   () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
 )
 const ThesisPage = lazy(() => import('../pages/ThesisPage/ThesisPage'))
-const SubmitProposalPage = lazy(() => import('../pages/SubmitProposalPage/SubmitProposalPage'))
-const SubmitAssessmentPage = lazy(
-  () => import('../pages/SubmitAssessmentPage/SubmitAssessmentPage'),
-)
 const LandingPage = lazy(() => import('../pages/LandingPage/LandingPage'))
 
 const AppRoutes = () => {
   return (
-    <Suspense
-      fallback={
-        <Center styles={{ root: { height: '100vh' } }}>
-          <Loader />
-        </Center>
-      }
-    >
+    <Suspense fallback={<PageLoader />}>
       <BrowserRouter>
         <Routes>
           <Route
@@ -114,32 +104,16 @@ const AppRoutes = () => {
           <Route
             path='/theses'
             element={
-              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
+              <AuthenticatedArea>
                 <ThesisOverviewPage />
               </AuthenticatedArea>
             }
           />
           <Route
-            path='/theses/:thesis_id'
+            path='/theses/:thesisId'
             element={
               <AuthenticatedArea>
                 <ThesisPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/theses/:thesis_id/submit-proposal'
-            element={
-              <AuthenticatedArea>
-                <SubmitProposalPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/theses/:thesis_id/submit-assessment'
-            element={
-              <AuthenticatedArea>
-                <SubmitAssessmentPage />
               </AuthenticatedArea>
             }
           />
@@ -148,14 +122,6 @@ const AppRoutes = () => {
             element={
               <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
                 <LegacyApplicationReviewPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/management/thesis-overview'
-            element={
-              <AuthenticatedArea requiredGroups={['admin', 'supervisor']}>
-                <ThesisOverviewPage />
               </AuthenticatedArea>
             }
           />

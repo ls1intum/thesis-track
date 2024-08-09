@@ -6,6 +6,7 @@ postfix-config
 
 # User-specific stuff
 .idea
+*.iml
 
 # misc
 .DS_Store

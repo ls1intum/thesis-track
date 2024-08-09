@@ -19,7 +19,6 @@ import {
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
-import { notifications } from '@mantine/notifications'
 import { useDisclosure } from '@mantine/hooks'
 import { LegacyApplicationSuccessfulSubmission } from './components/LegacyApplicationSubmission/LegacyApplicationSuccessfulSubmission'
 import { useState } from 'react'
@@ -30,6 +29,7 @@ import { ILegacyCreateApplicationPayload } from '../../requests/payloads/applica
 import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
+import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 
 const LegacyCreateApplicationForm = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -157,7 +157,7 @@ const LegacyCreateApplicationForm = () => {
   })
 
   return (
-    <ContentContainer size='xl'>
+    <ContentContainer size='xl' px='md'>
       <Box mx='auto' pos='relative'>
         <LoadingOverlay visible={loadingOverlayVisible} overlayProps={{ blur: 2 }} />
         {applicationSuccessfullySubmitted ? (
@@ -224,21 +224,13 @@ const LegacyCreateApplicationForm = () => {
                   })
 
                   if (response.ok) {
-                    notifications.show({
-                      color: 'green',
-                      autoClose: 5000,
-                      title: 'Success',
-                      message: `Your application was successfully submitted!`,
-                    })
+                    showSimpleSuccess('Your application was successfully submitted!')
 
                     setApplicationSuccessfullySubmitted(true)
                   } else {
-                    notifications.show({
-                      color: 'red',
-                      autoClose: 10000,
-                      title: 'Error',
-                      message: `Failed to submit the application. Server responded with ${response.status}`,
-                    })
+                    showSimpleError(
+                      `Failed to submit the application. Server responded with ${response.status}`,
+                    )
                   }
                 } finally {
                   loadingOverlayHandlers.close()

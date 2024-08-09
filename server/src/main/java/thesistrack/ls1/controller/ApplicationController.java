@@ -6,11 +6,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ApplicationState;
+import thesistrack.ls1.constants.StringLimits;
 import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
 import thesistrack.ls1.controller.payload.RejectApplicationPayload;
 import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
@@ -20,6 +21,7 @@ import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.ApplicationService;
 import thesistrack.ls1.service.AuthenticationService;
+import thesistrack.ls1.utility.RequestValidator;
 
 import java.util.UUID;
 
@@ -42,80 +44,113 @@ public class ApplicationController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<PaginationDto<ApplicationDto>> getApplications(
-            @RequestParam(required = false) ApplicationState[] states,
-            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) ApplicationState[] state,
+            @RequestParam(required = false, defaultValue = "false") Boolean fetchAll,
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "20") Integer limit,
+            @RequestParam(required = false, defaultValue = "50") Integer limit,
             @RequestParam(required = false, defaultValue = "createdAt") String sortBy,
-            @RequestParam(required = false, defaultValue = "desc") String sortOrder
+            @RequestParam(required = false, defaultValue = "desc") String sortOrder,
+            JwtAuthenticationToken jwt
     ) {
-        Page<Application> applications = applicationService.getAll(searchQuery, states, page, limit, sortBy, sortOrder);
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
 
-        return ResponseEntity.ok(PaginationDto.fromSpringPage(applications.map(ApplicationDto::fromApplicationEntity)));
+        Page<Application> applications = applicationService.getAll(
+                fetchAll && authenticatedUser.hasAnyGroup("admin", "supervisor", "advisor") ? null : authenticatedUser.getId(),
+                search,
+                state,
+                page,
+                limit,
+                sortBy,
+                sortOrder
+        );
+
+        return ResponseEntity.ok(PaginationDto.fromSpringPage(
+                applications.map(application -> ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)))
+        ));
     }
 
     @GetMapping("/{applicationId}")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<ApplicationDto> getApplication(@PathVariable UUID applicationId) {
+    public ResponseEntity<ApplicationDto> getApplication(@PathVariable UUID applicationId, JwtAuthenticationToken jwt) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Application application = applicationService.findById(applicationId);
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
+        if (!application.hasAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 
     @PutMapping("/{applicationId}/comment")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> updateComment(
             @PathVariable UUID applicationId,
-            @RequestBody UpdateApplicationCommentPayload payload
+            @RequestBody UpdateApplicationCommentPayload payload,
+            JwtAuthenticationToken jwt
     ) {
-        Application application =  applicationService.updateComment(
-                applicationId,
-                payload.comment()
+        User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
+        Application application = applicationService.findById(applicationId);
+
+        if (!application.hasManagementAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+
+        application =  applicationService.updateComment(
+                application,
+                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 
     @PutMapping("/{applicationId}/accept")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> acceptApplication(
             @PathVariable UUID applicationId,
             @RequestBody AcceptApplicationPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
+        Application application = applicationService.findById(applicationId);
 
-        Application application =  applicationService.accept(
-                applicationId,
+        if (!application.hasManagementAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+
+        application = applicationService.accept(
                 authenticatedUser,
-                payload.thesisTitle(),
-                payload.advisorIds(),
-                payload.supervisorIds(),
-                payload.comment(),
-                payload.notifyUser(),
-                payload.closeTopic()
+                application,
+                RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateNotNull(payload.advisorIds()),
+                RequestValidator.validateNotNull(payload.supervisorIds()),
+                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.notifyUser()),
+                RequestValidator.validateNotNull(payload.closeTopic())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 
     @PutMapping("/{applicationId}/reject")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<ApplicationDto> rejectApplication(
             @PathVariable UUID applicationId,
             @RequestBody RejectApplicationPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
-        Application application =  applicationService.reject(
-                applicationId,
+        Application application = applicationService.findById(applicationId);
+
+        if (!application.hasManagementAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to this application");
+        }
+
+        application =  applicationService.reject(
                 authenticatedUser,
-                payload.comment(),
-                payload.notifyUser()
+                application,
+                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.notifyUser())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application));
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 }

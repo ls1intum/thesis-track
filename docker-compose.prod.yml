@@ -37,6 +37,7 @@ services:
       - "traefik.http.middlewares.api-ratelimit.ratelimit.average=300"
       - "traefik.http.middlewares.api-ratelimit.ratelimit.burst=100"
       - "traefik.http.routers.server.middlewares=api-ratelimit"
+      - "traefik.http.routers.server.priority=10"
     depends_on:
       db:
         condition: service_healthy
@@ -86,6 +87,7 @@ services:
       - "traefik.http.routers.client.tls.certresolver=letsencrypt"
       - "traefik.http.middlewares.client-compress.compress=true"
       - "traefik.http.routers.client.middlewares=client-compress"
+      - "traefik.http.routers.client.priority=1"
     expose:
       - "80"
     depends_on:

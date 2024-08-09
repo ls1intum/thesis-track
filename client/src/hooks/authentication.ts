@@ -53,3 +53,9 @@ export function getAuthenticationTokens(): IAuthenticationTokens | undefined {
     return undefined
   }
 }
+
+export function useHasGroupAccess(...groups: string[]) {
+  const user = useUser()
+
+  return user?.groups.some((group) => groups.includes(group)) ?? false
+}

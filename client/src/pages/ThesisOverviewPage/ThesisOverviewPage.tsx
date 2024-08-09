@@ -1,34 +1,74 @@
-import React from 'react'
-import { Container, Space } from '@mantine/core'
-import chartData from './mock/chart-data.json'
-import CustomThesisProgressChart from './components/CustomThesisProgressChart/CustomThesisProgressChart'
-import ThesisProgressFilter from './components/ThesisProgressFilter/ThesisProgressFilter'
-import ThesisOverviewChartProvider from './components/ThesisOverviewChartProvider/ThesisOverviewChartProvider'
-import { IThesisProgressChartDataElement } from './types/chart'
+import React, { useState } from 'react'
+import ThesesFilters from './components/ThesesFilters/ThesesFilters'
+import ThesesProvider from '../../contexts/ThesesProvider/ThesesProvider'
 import { usePageTitle } from '../../hooks/theme'
+import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
+import ThesesTable from '../../components/ThesesTable/ThesesTable'
+import ThesesGanttChart from '../../components/ThesesGanttChart/ThesesGanttChart'
+import { Button, Group, Space, Title } from '@mantine/core'
+import { ThesisState } from '../../requests/responses/thesis'
+import CreateThesisModal from './components/CreateThesisModal/CreateThesisModal'
+import { Plus } from 'phosphor-react'
+import { useHasGroupAccess } from '../../hooks/authentication'
 
 const ThesisOverviewPage = () => {
   usePageTitle('Theses Overview')
 
+  const [openCreateThesisModal, setOpenCreateThesisModal] = useState(false)
+
+  const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
+
   return (
-    <Container size='xl'>
-      <ThesisOverviewChartProvider
-        mockData={{
-          thesisData: chartData.data as IThesisProgressChartDataElement[],
-          advisors: chartData.advisors,
-        }}
+    <ContentContainer>
+      <CreateThesisModal
+        opened={openCreateThesisModal}
+        onClose={() => setOpenCreateThesisModal(false)}
+      />
+      <ThesesProvider
+        fetchAll={true}
+        defaultStates={
+          managementAccess
+            ? [
+                ThesisState.PROPOSAL,
+                ThesisState.WRITING,
+                ThesisState.SUBMITTED,
+                ThesisState.ASSESSED,
+                ThesisState.GRADED,
+              ]
+            : [ThesisState.FINISHED]
+        }
       >
-        <center>
-          <h1>Thesis Overview Chart</h1>
-        </center>
-        <ThesisProgressFilter />
-        <Space h='md' />
-        <div>
-          <CustomThesisProgressChart width='100%' height={700} />
-        </div>
-        <Space h='md' />
-      </ThesisOverviewChartProvider>
-    </Container>
+        <Group>
+          <Title mb='md'>Theses Overview</Title>
+          {managementAccess && (
+            <Button
+              ml='auto'
+              leftSection={<Plus />}
+              onClick={() => setOpenCreateThesisModal(true)}
+              visibleFrom='md'
+            >
+              Create Thesis
+            </Button>
+          )}
+        </Group>
+        <ThesesFilters />
+        <Space my='md' />
+        {managementAccess && <ThesesGanttChart />}
+        {managementAccess && (
+          <Group mb='md'>
+            <Button
+              ml='auto'
+              leftSection={<Plus />}
+              onClick={() => setOpenCreateThesisModal(true)}
+              hiddenFrom='md'
+            >
+              Create Thesis
+            </Button>
+          </Group>
+        )}
+        <ThesesTable />
+      </ThesesProvider>
+    </ContentContainer>
   )
 }
 
