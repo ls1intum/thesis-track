@@ -48,6 +48,6 @@ public class ThesisComment {
     private User createdBy;
 
     public boolean hasManagementAccess(User user) {
-        return user.hasAnyGroup("admin") || createdBy.equals(user);
+        return user.hasAnyGroup("admin") || createdBy.getId().equals(user.getId());
     }
 }
