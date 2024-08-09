@@ -18,8 +18,9 @@ import java.util.UUID;
 @Repository
 public interface ThesisCommentRepository extends JpaRepository<ThesisComment, UUID> {
     @Query("SELECT DISTINCT c FROM ThesisComment c WHERE " +
-            "(c.thesis.id = :thesisId) AND " +
-            "(c.type = :commentType)")
+            "c.thesis.id = :thesisId AND c.type = :commentType " +
+            "ORDER BY c.createdAt DESC"
+    )
     Page<ThesisComment> searchComments(
             @Param("thesisId") UUID thesisId,
             @Param("commentType") ThesisCommentType commentType,

@@ -2,6 +2,7 @@ import { Button, Group, Stack, Textarea } from '@mantine/core'
 import { useState } from 'react'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { useThesisCommentsContext } from '../../../../contexts/ThesisCommentsProvider/hooks'
+import { Upload } from 'phosphor-react'
 
 const ThesisCommentsForm = () => {
   const { postComment, posting } = useThesisCommentsContext()
@@ -19,19 +20,28 @@ const ThesisCommentsForm = () => {
         onClose={() => setUploadModal(false)}
         onUpload={setFile}
       />
-      <Group grow>
-        <Textarea
-          placeholder='Add a comment'
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <Button onClick={() => setUploadModal(true)}>Attach PDF</Button>
-      </Group>
+      <Textarea
+        placeholder='Add a comment'
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        rightSection={
+          <Button size='xs' onClick={() => setUploadModal(true)}>
+            <Upload />
+          </Button>
+        }
+        rightSectionWidth={70}
+        minRows={5}
+      />
       <Button
         ml='auto'
         disabled={!message}
         loading={posting}
-        onClick={() => postComment(message, file)}
+        onClick={() => {
+          postComment(message, file)
+
+          setMessage('')
+          setFile(undefined)
+        }}
       >
         Post Comment
       </Button>

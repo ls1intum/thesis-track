@@ -15,6 +15,7 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
   const { children, thesis, commentType, limit = 10 } = props
 
   const [submitting, setSubmitting] = useState(false)
+  const [page, setPage] = useState(0)
   const [comments, setComments] = useState<PaginationResponse<IThesisComment>>()
 
   useEffect(() => {
@@ -26,6 +27,8 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
         method: 'GET',
         requiresAuth: true,
         params: {
+          page,
+          limit,
           commentType,
         },
       },
@@ -47,7 +50,7 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
         }
       },
     )
-  }, [thesis.thesisId, commentType])
+  }, [thesis.thesisId, commentType, page, limit])
 
   const contextState = useMemo<IThesisCommentsContext>(() => {
     return {
@@ -55,6 +58,8 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
       comments,
       posting: submitting,
       limit,
+      page,
+      setPage,
       postComment: async (message: string, file: File | undefined) => {
         setSubmitting(true)
 
@@ -100,6 +105,7 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
                 ...prev,
                 content: [...prev.content, response.data].slice(-limit),
                 totalElements: prev.totalElements + 1,
+                totalPages: Math.ceil((prev.totalElements + 1) / limit),
               }
             })
           } else {
@@ -135,7 +141,7 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
         }
       },
     }
-  }, [thesis, comments, submitting, commentType, limit])
+  }, [thesis, comments, submitting, commentType, limit, page, setPage])
 
   return (
     <ThesisCommentsContext.Provider value={contextState} key={thesis.thesisId}>

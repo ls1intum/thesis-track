@@ -1,12 +1,25 @@
 import { useThesisCommentsContext } from '../../../../contexts/ThesisCommentsProvider/hooks'
-import { Button, Group, Modal, Stack, Text } from '@mantine/core'
+import {
+  Button, Card,
+  Center,
+  Grid,
+  Group,
+  Modal,
+  Pagination,
+  Paper,
+  Skeleton,
+  Stack,
+  Text,
+} from '@mantine/core'
 import { IThesisComment } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 import { useLoggedInUser } from '../../../../hooks/authentication'
+import { formatDate, formatUser } from '../../../../utils/format'
+import { Download } from 'phosphor-react'
 
 const ThesisCommentsList = () => {
-  const { thesis, comments, deleteComment } = useThesisCommentsContext()
+  const { thesis, comments, deleteComment, limit, page, setPage } = useThesisCommentsContext()
 
   const user = useLoggedInUser()
 
@@ -23,15 +36,55 @@ const ThesisCommentsList = () => {
           />
         )}
       </Modal>
+      {!comments &&
+        Array.from(Array(limit).keys()).map((index) => <Skeleton key={index} height={50} />)}
       {comments?.content.map((comment) => (
-        <Group key={comment.commentId}>
-          <Text>{comment.message}</Text>
-          {(user.groups.includes('admin') || user.userId === comment.createdBy.userId) && (
-            <Button onClick={() => deleteComment(comment)}>Delete</Button>
-          )}
-          {comment.hasFile && <Button onClick={() => setOpenedComment(comment)}>Open file</Button>}
-        </Group>
+        <Stack gap={0} key={comment.commentId}>
+          <Card p='md' radius='sm'>
+            <Group style={{ width: '100%' }}>
+              <Text>{comment.message}</Text>
+              {comment.hasFile && (
+                <Button onClick={() => setOpenedComment(comment)} ml='auto'>
+                  <Download />
+                </Button>
+              )}
+            </Group>
+          </Card>
+          <Group ml='auto'>
+            <Text size='xs' c='dimmed'>
+              {formatDate(comment.createdAt)}
+            </Text>
+            <Text size='xs' c='dimmed'>
+              {formatUser(comment.createdBy)}
+            </Text>
+            {(user.groups.includes('admin') || user.userId === comment.createdBy.userId) && (
+              <Text
+                component='a'
+                href='#'
+                size='xs'
+                c='dimmed'
+                style={{ textDecoration: 'underline' }}
+                onClick={(e) => {
+                  e.preventDefault()
+                  deleteComment(comment)
+                }}
+              >
+                Delete
+              </Text>
+            )}
+          </Group>
+        </Stack>
       ))}
+      {comments && comments.totalPages > 1 && (
+        <Center>
+          <Pagination
+            value={page + 1}
+            onChange={(x) => setPage(x - 1)}
+            total={comments.totalPages}
+            siblings={2}
+          />
+        </Center>
+      )}
     </Stack>
   )
 }
