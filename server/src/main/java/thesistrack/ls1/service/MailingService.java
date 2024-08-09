@@ -100,7 +100,7 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = createMailMessage();
+            MimeMessage message = createMailMessage(true);
 
             for (Address recipient : chairMemberRecipientsList) {
                 message.addRecipient(MimeMessage.RecipientType.TO, recipient);
@@ -126,7 +126,7 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = createMailMessage();
+            MimeMessage message = createMailMessage(false);
 
             message.setSubject("Thesis Application Confirmation");
 
@@ -150,7 +150,7 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = createMailMessage();
+            MimeMessage message = createMailMessage(true);
 
             message.setSubject("Thesis Application Acceptance");
 
@@ -175,7 +175,7 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = createMailMessage();
+            MimeMessage message = createMailMessage(true);
 
             message.setSubject("Thesis Application Rejection");
 
@@ -209,13 +209,15 @@ public class MailingService {
         }
     }
 
-    private MimeMessage createMailMessage() throws MessagingException {
+    private MimeMessage createMailMessage(boolean includeBcc) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
 
         message.setSender(sender);
 
-        for (Address bccRecipient : bccRecipientsList) {
-            message.addRecipient(MimeMessage.RecipientType.BCC, bccRecipient);
+        if (includeBcc) {
+            for (Address bccRecipient : bccRecipientsList) {
+                message.addRecipient(MimeMessage.RecipientType.BCC, bccRecipient);
+            }
         }
 
         return message;
@@ -225,7 +227,7 @@ public class MailingService {
         return template
                 .replace("{{" + placeholder + ".firstName}}", user.getFirstName())
                 .replace("{{" + placeholder + ".lastName}}", user.getLastName())
-                .replace("{{" + placeholder + ".email}}", user.getEmail().toString())
+                .replace("{{" + placeholder + ".email}}", user.getEmail() != null ? user.getEmail().toString() : "")
                 .replace("{{" + placeholder + ".tumId}}", user.getUniversityId())
                 .replace("{{" + placeholder + ".matriculationNumber}}", user.getMatriculationNumber())
                 .replace("{{" + placeholder + ".gender}}", user.getGender())

@@ -10,7 +10,7 @@ public record UserDto (
         UUID userId,
         String universityId,
         String matriculationNumber,
-        InternetAddress email,
+        String email,
         String firstName,
         String lastName,
         String gender,
@@ -37,7 +37,7 @@ public record UserDto (
         }
 
         return new UserDto(
-                user.getId(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail(),
+                user.getId(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
                 user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(), user.getIsExchangeStudent(),
                 user.getFocusTopics(), user.getResearchAreas(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
