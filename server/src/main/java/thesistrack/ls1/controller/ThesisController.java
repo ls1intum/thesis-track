@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.StringLimits;
+import thesistrack.ls1.constants.ThesisCommentType;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
 import thesistrack.ls1.controller.payload.*;
@@ -22,8 +23,10 @@ import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisCommentDto;
 import thesistrack.ls1.dto.ThesisDto;
 import thesistrack.ls1.entity.Thesis;
+import thesistrack.ls1.entity.ThesisComment;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.AuthenticationService;
+import thesistrack.ls1.service.ThesisCommentService;
 import thesistrack.ls1.service.ThesisService;
 import thesistrack.ls1.utility.RequestValidator;
 
@@ -36,11 +39,13 @@ import java.util.UUID;
 public class ThesisController {
     private final ThesisService thesisService;
     private final AuthenticationService authenticationService;
+    private final ThesisCommentService thesisCommentService;
 
     @Autowired
-    public ThesisController(ThesisService thesisService, AuthenticationService authenticationService) {
+    public ThesisController(ThesisService thesisService, AuthenticationService authenticationService, ThesisCommentService thesisCommentService) {
         this.thesisService = thesisService;
         this.authenticationService = authenticationService;
+        this.thesisCommentService = thesisCommentService;
     }
 
     @GetMapping
@@ -345,23 +350,97 @@ public class ThesisController {
     }
 
     @GetMapping("/{thesisId}/comments")
-    public ResponseEntity<PaginationDto<ThesisCommentDto>> getComments(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<PaginationDto<ThesisCommentDto>> getComments(
+            @PathVariable UUID thesisId,
+            @RequestParam(required = false, defaultValue = "THESIS") ThesisCommentType commentType,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "50") Integer limit,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (commentType == ThesisCommentType.ADVISOR && !thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+        }
+
+        if (!thesis.hasReadAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
+        }
+
+        Page<ThesisComment> comments = thesisCommentService.getComments(thesis, commentType, page, limit);
+
+        return ResponseEntity.ok(PaginationDto.fromSpringPage(comments.map(ThesisCommentDto::fromCommentEntity)));
     }
 
     @PostMapping("/{thesisId}/comments")
-    public ResponseEntity<ThesisCommentDto> createComment(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisCommentDto> createComment(
+            @PathVariable UUID thesisId,
+            @RequestPart("data") PostThesisCommentPayload payload,
+            @RequestPart(value = "file", required = false) MultipartFile file,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (payload.commentType() == ThesisCommentType.ADVISOR && !thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+        }
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+        }
+
+        ThesisComment comment = thesisCommentService.postComment(
+                authenticatedUser,
+                thesis,
+                RequestValidator.validateNotNull(payload.commentType()),
+                RequestValidator.validateStringMaxLength(payload.message(), StringLimits.LONGTEXT.getLimit()),
+                file
+        );
+
+        return ResponseEntity.ok(ThesisCommentDto.fromCommentEntity(comment));
     }
 
-    @GetMapping("/{thesisId}/comments/{commentId}")
-    public ResponseEntity<Resource> getCommentFile(@PathVariable UUID thesisId, @PathVariable UUID commentId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    @GetMapping("/{thesisId}/comments/{commentId}/file")
+    public ResponseEntity<Resource> getCommentFile(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID commentId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        ThesisComment comment = thesisCommentService.findById(thesisId, commentId);
+
+        if (comment.getType() == ThesisCommentType.ADVISOR && !comment.getThesis().hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+        }
+
+        if (!comment.getThesis().hasReadAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=comment_%s.pdf", commentId))
+                .body(thesisCommentService.getCommentFile(comment));
     }
 
     @DeleteMapping("/{thesisId}/comments/{commentId}")
-    public ResponseEntity<ThesisCommentDto> deleteComment(@PathVariable UUID thesisId, @PathVariable UUID commentId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisCommentDto> deleteComment(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID commentId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        ThesisComment comment = thesisCommentService.findById(thesisId, commentId);
+
+        if (!comment.hasManagementAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You are not allowed to delete this comment");
+        }
+
+        comment = thesisCommentService.deleteComment(comment);
+
+        return ResponseEntity.ok(ThesisCommentDto.fromCommentEntity(comment));
     }
 
     /* ASSESSMENT ENDPOINTS */

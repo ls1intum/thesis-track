@@ -85,6 +85,8 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
 
     keycloak.onTokenExpired = () => refreshAccessToken()
     keycloak.onAuthRefreshSuccess = () => storeTokens()
+    keycloak.onAuthRefreshError = () => setAuthenticationTokens(undefined)
+    keycloak.onAuthLogout = () => setAuthenticationTokens(undefined)
 
     console.log('Initializing keycloak...')
 
@@ -123,6 +125,8 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
 
       keycloak.onAuthRefreshSuccess = undefined
       keycloak.onTokenExpired = undefined
+      keycloak.onAuthRefreshError = undefined
+      keycloak.onAuthLogout = undefined
     }
   }, [])
 
