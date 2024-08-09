@@ -1,4 +1,4 @@
-import { Button, Modal, Stack, TextInput } from '@mantine/core'
+import { Button, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import React, { useState } from 'react'
@@ -21,6 +21,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
 
   const form = useForm<{
     title: string
+    type: string | null
     students: string[]
     advisors: string[]
     supervisors: string[]
@@ -28,13 +29,15 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
     mode: 'controlled',
     initialValues: {
       title: '',
+      type: null,
       students: [],
       advisors: [],
       supervisors: GLOBAL_CONFIG.default_supervisors,
     },
     validateInputOnBlur: true,
     validate: {
-      title: isNotEmpty('Title must not be empty'),
+      title: isNotEmpty('Thesis title must not be empty'),
+      type: isNotEmpty('Thesis type must not be empty'),
       students: isNotEmptyUserList('student'),
       advisors: isNotEmptyUserList('advisor'),
       supervisors: isNotEmptyUserList('supervisor'),
@@ -55,6 +58,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
               requiresAuth: true,
               data: {
                 thesisTitle: values.title,
+                thesisType: values.type,
                 studentIds: values.students,
                 advisorIds: values.advisors,
                 supervisorIds: values.supervisors,
@@ -78,6 +82,15 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
             placeholder='Thesis Title'
             label='Thesis Title'
             {...form.getInputProps('title')}
+          />
+          <Select
+            label='Thesis Type'
+            required={true}
+            data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+              value: key,
+              label: value,
+            }))}
+            {...form.getInputProps('type')}
           />
           <UserMultiSelect
             label='Student'

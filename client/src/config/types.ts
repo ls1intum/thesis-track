@@ -8,6 +8,7 @@ export interface IGlobalConfig {
   genders: Record<string, string>
   study_programs: Record<string, string>
   study_degrees: Record<string, string>
+  thesis_types: Record<string, string>
 
   default_supervisors: string[]
 

@@ -1,11 +1,10 @@
 package thesistrack.ls1.service;
 
+import jakarta.mail.Address;
 import jakarta.mail.BodyPart;
 import jakarta.mail.MessagingException;
 import jakarta.mail.Multipart;
-import jakarta.mail.internet.MimeBodyPart;
-import jakarta.mail.internet.MimeMessage;
-import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.internet.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -29,10 +28,14 @@ public class MailingService {
     private final UploadService uploadService;
 
     private final boolean enabled;
+
     private final String mailFooter;
     private final String workspaceUrl;
-    private final String sender;
-    private final List<String> chairMemberRecipientsList;
+
+    private final InternetAddress sender;
+    private final List<InternetAddress> chairMemberRecipientsList;
+    private final List<InternetAddress> bccRecipientsList;
+
     private final Path mailTemplateLocation;
 
     @Autowired
@@ -41,8 +44,9 @@ public class MailingService {
             UploadService uploadService,
             @Value("${thesis-track.mail.enabled}") boolean enabled,
             @Value("${thesis-track.mail.mail-template-location}") String mailTemplateLocation,
-            @Value("${thesis-track.mail.sender}") String sender,
+            @Value("${thesis-track.mail.sender}") InternetAddress sender,
             @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList,
+            @Value("${thesis-track.mail.bcc-recipients}") String bccRecipientsList,
             @Value("${thesis-track.mail.footer}") String mailFooter,
             @Value("${thesis-track.mail.workspace-url}") String workspaceUrl
     ) {
@@ -56,10 +60,33 @@ public class MailingService {
         this.mailTemplateLocation = Paths.get(mailTemplateLocation);
 
         if (chairMemberRecipientsList != null && !chairMemberRecipientsList.isEmpty()) {
-            this.chairMemberRecipientsList = Arrays.asList(chairMemberRecipientsList.split(";"));
-            this.chairMemberRecipientsList.removeIf(String::isEmpty);
+            List<String> addresses = Arrays.asList(chairMemberRecipientsList.split(";"));
+            addresses.removeIf(String::isEmpty);
+
+            this.chairMemberRecipientsList = addresses.stream().map(address -> {
+                try {
+                    return new InternetAddress(address);
+                } catch (AddressException e) {
+                    throw new IllegalArgumentException("Invalid email address", e);
+                }
+            }).toList();
         } else {
             this.chairMemberRecipientsList = new ArrayList<>();
+        }
+
+        if (bccRecipientsList != null && !bccRecipientsList.isEmpty()) {
+            List<String> addresses = Arrays.asList(bccRecipientsList.split(";"));
+            addresses.removeIf(String::isEmpty);
+
+            this.bccRecipientsList = addresses.stream().map(address -> {
+                try {
+                    return new InternetAddress(address);
+                } catch (AddressException e) {
+                    throw new IllegalArgumentException("Invalid email address", e);
+                }
+            }).toList();
+        } else {
+            this.bccRecipientsList = new ArrayList<>();
         }
     }
 
@@ -73,12 +100,10 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessage message = createMailMessage(true);
 
-            message.setFrom(sender);
-
-            for (String recipient : chairMemberRecipientsList) {
-                message.addRecipients(MimeMessage.RecipientType.TO, recipient);
+            for (Address recipient : chairMemberRecipientsList) {
+                message.addRecipient(MimeMessage.RecipientType.TO, recipient);
             }
 
             message.setSubject("New Thesis Application");
@@ -101,12 +126,11 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessage message = createMailMessage(false);
 
             message.setSubject("Thesis Application Confirmation");
 
-            message.setFrom(sender);
-            message.setRecipients(MimeMessage.RecipientType.TO, application.getUser().getEmail());
+            message.addRecipient(MimeMessage.RecipientType.TO, application.getUser().getEmail());
 
             String template = getMailTemplate("application-created-student");
             template = fillUserPlaceholders(template, "student", application.getUser());
@@ -126,13 +150,12 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessage message = createMailMessage(true);
 
             message.setSubject("Thesis Application Acceptance");
 
-            message.setFrom(sender);
-            message.setRecipients(MimeMessage.RecipientType.TO, application.getUser().getEmail());
-            message.addRecipients(MimeMessage.RecipientType.CC, advisor.getEmail());
+            message.addRecipient(MimeMessage.RecipientType.TO, application.getUser().getEmail());
+            message.addRecipient(MimeMessage.RecipientType.CC, advisor.getEmail());
 
             String template = getMailTemplate("application-acceptance");
             template = fillUserPlaceholders(template, "advisor", advisor);
@@ -152,12 +175,11 @@ public class MailingService {
         }
 
         try {
-            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessage message = createMailMessage(true);
 
             message.setSubject("Thesis Application Rejection");
 
-            message.setFrom(sender);
-            message.setRecipients(MimeMessage.RecipientType.TO, application.getUser().getEmail());
+            message.addRecipient(MimeMessage.RecipientType.TO, application.getUser().getEmail());
 
             String content = getMailTemplate("application-rejection");
             content = fillUserPlaceholders(content, "student", application.getUser());
@@ -187,11 +209,25 @@ public class MailingService {
         }
     }
 
+    private MimeMessage createMailMessage(boolean includeBcc) throws MessagingException {
+        MimeMessage message = javaMailSender.createMimeMessage();
+
+        message.setSender(sender);
+
+        if (includeBcc) {
+            for (Address bccRecipient : bccRecipientsList) {
+                message.addRecipient(MimeMessage.RecipientType.BCC, bccRecipient);
+            }
+        }
+
+        return message;
+    }
+
     private String fillUserPlaceholders(String template, String placeholder, User user) {
         return template
                 .replace("{{" + placeholder + ".firstName}}", user.getFirstName())
                 .replace("{{" + placeholder + ".lastName}}", user.getLastName())
-                .replace("{{" + placeholder + ".email}}", user.getEmail())
+                .replace("{{" + placeholder + ".email}}", user.getEmail() != null ? user.getEmail().toString() : "")
                 .replace("{{" + placeholder + ".tumId}}", user.getUniversityId())
                 .replace("{{" + placeholder + ".matriculationNumber}}", user.getMatriculationNumber())
                 .replace("{{" + placeholder + ".gender}}", user.getGender())

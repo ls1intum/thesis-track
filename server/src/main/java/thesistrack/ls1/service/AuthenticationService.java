@@ -1,5 +1,7 @@
 package thesistrack.ls1.service;
 
+import jakarta.mail.internet.AddressException;
+import jakarta.mail.internet.InternetAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -10,7 +12,6 @@ import thesistrack.ls1.entity.key.UserGroupId;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.UserGroupRepository;
 import thesistrack.ls1.repository.UserRepository;
-import thesistrack.ls1.security.JwtAuthConfig;
 
 import java.time.Instant;
 import java.util.*;

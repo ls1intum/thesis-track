@@ -14,9 +14,11 @@ import {
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
 import { formatThesisState } from '../../../../utils/format'
+import { GLOBAL_CONFIG } from '../../../../config/global'
 
 interface IThesisConfigSectionFormValues {
   title: string
+  type: string
   visibility: string
   startDate: DateValue | undefined
   endDate: DateValue | undefined
@@ -53,6 +55,7 @@ const ThesisConfigSection = () => {
     mode: 'controlled',
     initialValues: {
       title: thesis.title,
+      type: thesis.type,
       visibility: thesis.visibility,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
       endDate: thesis.endDate ? new Date(thesis.endDate) : undefined,
@@ -67,6 +70,7 @@ const ThesisConfigSection = () => {
     validateInputOnBlur: true,
     validate: {
       title: isNotEmpty('Title must not be empty'),
+      type: isNotEmpty('Type must not be empty'),
       visibility: isNotEmpty('Visibility must not be empty'),
       students: isNotEmptyUserList('student'),
       advisors: isNotEmptyUserList('advisor'),
@@ -98,6 +102,7 @@ const ThesisConfigSection = () => {
   useEffect(() => {
     form.setValues({
       title: thesis.title,
+      type: thesis.type,
       visibility: thesis.visibility,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
       endDate: thesis.endDate ? new Date(thesis.endDate) : undefined,
@@ -134,6 +139,7 @@ const ThesisConfigSection = () => {
       requiresAuth: true,
       data: {
         thesisTitle: values.title,
+        thesisType: values.type,
         visibility: values.visibility,
         startDate: values.startDate,
         endDate: values.endDate,
@@ -170,6 +176,16 @@ const ThesisConfigSection = () => {
                 required={true}
                 disabled={!access.advisor}
                 {...form.getInputProps('title')}
+              />
+              <Select
+                label='Thesis Type'
+                required={true}
+                disabled={!access.advisor}
+                data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+                  value: key,
+                  label: value,
+                }))}
+                {...form.getInputProps('type')}
               />
               <Select
                 label='Visibility'

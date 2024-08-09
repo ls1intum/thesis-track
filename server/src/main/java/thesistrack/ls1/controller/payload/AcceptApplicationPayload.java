@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public record AcceptApplicationPayload (
         String thesisTitle,
+        String thesisType,
         Set<UUID> advisorIds,
         Set<UUID> supervisorIds,
         String comment,

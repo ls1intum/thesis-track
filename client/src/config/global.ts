@@ -82,6 +82,11 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     OTHER: 'Other',
   },
 
+  thesis_types: getEnvironmentVariable<Record<string, string>>('THESIS_TYPES', true) || {
+    BACHELOR: 'Bachelor Thesis',
+    MASTER: 'Master Thesis',
+  },
+
   default_supervisors: getEnvironmentVariable('DEFAULT_SUPERVISOR_UUID')?.split(';') || [],
 
   server_host: getEnvironmentVariable('SERVER_HOST') || 'http://localhost:8080',

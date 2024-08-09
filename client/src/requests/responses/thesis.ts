@@ -13,6 +13,7 @@ export enum ThesisState {
 export interface IThesis {
   thesisId: string
   title: string
+  type: string
   visibility: string
   infoText: string
   abstractText: string
