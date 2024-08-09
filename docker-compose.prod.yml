@@ -67,6 +67,7 @@ services:
       - MAIL_SENDER
       - MAIL_FOOTER
       - MAIL_CHAIR_RECIPIENTS
+      - MAIL_BCC_RECIPIENTS
     networks:
       - thesis-track-network
 
