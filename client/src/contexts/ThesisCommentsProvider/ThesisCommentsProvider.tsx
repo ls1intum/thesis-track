@@ -134,6 +134,7 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
               ...prev,
               content: prev.content.filter((c) => c.commentId !== comment.commentId),
               totalElements: prev.totalElements - 1,
+              totalPages: Math.ceil((prev.totalElements - 1) / limit),
             }
           })
         } else {
