@@ -349,6 +349,7 @@ public class ThesisService {
         }
 
         thesisRoleRepository.deleteByThesisId(thesis.getId());
+        thesis.setRoles(new HashSet<>());
 
         for (User supervisor : supervisors) {
             if (!supervisor.hasAnyGroup("supervisor")) {
