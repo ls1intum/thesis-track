@@ -65,7 +65,7 @@ services:
       - KEYCLOAK_CLIENT_ID
       - MAIL_WORKSPACE_URL
       - MAIL_SENDER
-      - MAIL_FOOTER
+      - MAIL_SIGNATURE
       - MAIL_CHAIR_RECIPIENTS
       - MAIL_BCC_RECIPIENTS
     networks:

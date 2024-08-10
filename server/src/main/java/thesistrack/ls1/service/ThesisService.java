@@ -185,7 +185,9 @@ public class ThesisService {
 
         List<ThesisProposal> proposals = thesis.getProposals() == null ? new ArrayList<>() : thesis.getProposals();
         proposals.addFirst(proposal);
+
         thesis.setProposals(proposals);
+        thesis.setState(ThesisState.PROPOSAL);
 
         thesisProposalRepository.save(proposal);
 

@@ -27,6 +27,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       accessor: 'state',
       title: 'State',
       textAlign: 'center',
+      width: 100,
       render: (application) => {
         return (
           <Badge color={ApplicationStateColor[application.state]}>
@@ -37,7 +38,8 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
     },
     user: {
       accessor: 'user.firstName',
-      title: 'Full name',
+      title: 'Student',
+      width: 200,
       render: (application) => formatUser(application.user),
     },
     thesis_title: {
@@ -56,6 +58,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       accessor: 'createdAt',
       title: 'Created At',
       sortable: true,
+      width: 130,
       render: (application) => formatDate(application.createdAt),
     },
   }

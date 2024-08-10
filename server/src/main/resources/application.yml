@@ -55,7 +55,7 @@ thesis-track:
   mail:
     enabled: ${MAIL_ENABLED:false}
     sender: ${MAIL_SENDER:test@ios.ase.cit.tum.de}
-    footer: ${MAIL_FOOTER:}
+    signature: ${MAIL_SIGNATURE:}
     workspace-url: ${MAIL_WORKSPACE_URL:https://slack.com}
     chair-member-recipients: ${MAIL_CHAIR_RECIPIENTS:}
     bcc-recipients: ${MAIL_BCC_RECIPIENTS:}
