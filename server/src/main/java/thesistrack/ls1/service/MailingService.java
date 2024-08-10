@@ -47,7 +47,7 @@ public class MailingService {
             @Value("${thesis-track.mail.sender}") InternetAddress sender,
             @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList,
             @Value("${thesis-track.mail.bcc-recipients}") String bccRecipientsList,
-            @Value("${thesis-track.mail.signature}") String mailFooter,
+            @Value("${thesis-track.mail.signature}") String mailSignature,
             @Value("${thesis-track.mail.workspace-url}") String workspaceUrl
     ) {
         this.javaMailSender = javaMailSender;
@@ -56,7 +56,7 @@ public class MailingService {
         this.enabled = enabled;
         this.sender = sender;
         this.workspaceUrl = workspaceUrl;
-        this.mailSignature = mailFooter;
+        this.mailSignature = mailSignature;
         this.mailTemplateLocation = Paths.get(mailTemplateLocation);
 
         if (chairMemberRecipientsList != null && !chairMemberRecipientsList.isEmpty()) {
