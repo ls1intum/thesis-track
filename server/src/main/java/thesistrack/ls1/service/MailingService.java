@@ -266,16 +266,21 @@ public class MailingService {
         messageBodyPart.setContent(text, "text/html; charset=utf-8");
         multipart.addBodyPart(messageBodyPart);
 
-        MimeBodyPart examinationReportAttachment = new MimeBodyPart();
-        examinationReportAttachment.attachFile(uploadService.load(application.getUser().getExaminationFilename()).getFile());
-        multipart.addBodyPart(examinationReportAttachment);
+        String cvFilename = application.getUser().getCvFilename();
+        if (cvFilename != null && !cvFilename.isBlank()) {
+            MimeBodyPart cvAttachment = new MimeBodyPart();
+            cvAttachment.attachFile(uploadService.load(cvFilename).getFile());
+            multipart.addBodyPart(cvAttachment);
+        }
 
-        MimeBodyPart cvAttachment = new MimeBodyPart();
-        cvAttachment.attachFile(uploadService.load(application.getUser().getCvFilename()).getFile());
-        multipart.addBodyPart(cvAttachment);
+        String examinationReportFilename = application.getUser().getExaminationFilename();
+        if (examinationReportFilename != null && !examinationReportFilename.isBlank()) {
+            MimeBodyPart examinationReportAttachment = new MimeBodyPart();
+            examinationReportAttachment.attachFile(uploadService.load(examinationReportFilename).getFile());
+            multipart.addBodyPart(examinationReportAttachment);
+        }
 
         String degreeReportFilename = application.getUser().getDegreeFilename();
-
         if (degreeReportFilename != null && !degreeReportFilename.isBlank()) {
             MimeBodyPart degreeReportAttachment = new MimeBodyPart();
             degreeReportAttachment.attachFile(uploadService.load(degreeReportFilename).getFile());
