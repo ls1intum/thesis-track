@@ -21,4 +21,6 @@ export interface IDecodedAccessToken extends JwtPayload {
   [key: string]: any
 }
 
-export interface IDecodedRefreshToken extends JwtPayload {}
+export interface IDecodedRefreshToken extends JwtPayload {
+  [key: string]: any
+}

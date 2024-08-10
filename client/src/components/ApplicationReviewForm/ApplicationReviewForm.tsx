@@ -5,7 +5,17 @@ import { GLOBAL_CONFIG } from '../../config/global'
 import React, { useEffect, useState } from 'react'
 import { useDebouncedValue } from '@mantine/hooks'
 import { doRequest } from '../../requests/request'
-import { Button, Checkbox, Divider, Group, Select, Stack, Text, Textarea, TextInput } from '@mantine/core'
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Group,
+  Select,
+  Stack,
+  Text,
+  Textarea,
+  TextInput,
+} from '@mantine/core'
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
