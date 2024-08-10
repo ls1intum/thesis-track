@@ -1,1 +1,3 @@
-export interface ITopic {}
+export interface ITopic {
+  topicId: string
+}

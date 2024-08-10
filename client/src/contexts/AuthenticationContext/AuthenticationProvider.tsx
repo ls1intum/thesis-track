@@ -13,15 +13,13 @@ import { useSignal } from '../../hooks/utility'
 import { IUser } from '../../requests/responses/user'
 import { doRequest } from '../../requests/request'
 
-interface IAuthenticationProviderProps {}
-
 export const keycloak = new Keycloak({
   realm: GLOBAL_CONFIG.keycloak.realm,
   url: GLOBAL_CONFIG.keycloak.host,
   clientId: GLOBAL_CONFIG.keycloak.client_id,
 })
 
-const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProviderProps>) => {
+const AuthenticationProvider = (props: PropsWithChildren) => {
   const { children } = props
 
   const [universityId, setUniversityId] = useState<string>()
@@ -172,7 +170,9 @@ const AuthenticationProvider = (props: PropsWithChildren<IAuthenticationProvider
       groups: [],
       login: () =>
         readySignal.then(() => {
-          !keycloak.authenticated && keycloak.login()
+          if (!keycloak.authenticated) {
+            return keycloak.login()
+          }
         }),
       logout: (redirectUri: string) => {
         setAuthenticationTokens(undefined)
