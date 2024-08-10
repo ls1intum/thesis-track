@@ -121,7 +121,7 @@ public class ApplicationController {
                 authenticatedUser,
                 application,
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TYPE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.advisorIds()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),

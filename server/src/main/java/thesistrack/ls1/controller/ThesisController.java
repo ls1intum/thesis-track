@@ -22,6 +22,7 @@ import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisCommentDto;
 import thesistrack.ls1.dto.ThesisDto;
 import thesistrack.ls1.entity.Thesis;
+import thesistrack.ls1.entity.ThesisPresentation;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.ThesisService;
@@ -111,7 +112,7 @@ public class ThesisController {
         Thesis thesis = thesisService.createThesis(
                 authenticatedUser,
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TYPE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateNotNull(payload.advisorIds()),
                 RequestValidator.validateNotNull(payload.studentIds()),
@@ -138,7 +139,7 @@ public class ThesisController {
                 authenticatedUser,
                 thesis,
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TYPE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.visibility()),
                 payload.startDate(),
                 payload.endDate(),
@@ -337,13 +338,46 @@ public class ThesisController {
     }
 
     @PostMapping("/{thesisId}/presentations")
-    public ResponseEntity<ThesisDto> createPresentation(@PathVariable UUID thesisId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> createPresentation(
+            @PathVariable UUID thesisId,
+            @RequestBody CreatePresentationPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+        }
+
+        thesis = thesisService.createPresentation(
+                authenticatedUser,
+                thesis,
+                RequestValidator.validateNotNull(payload.type()),
+                RequestValidator.validateStringMaxLength(payload.location(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.streamUrl(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.date())
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @DeleteMapping("/{thesisId}/presentations/{presentationId}")
-    public ResponseEntity<ThesisDto> deletePresentation(@PathVariable UUID thesisId, @PathVariable UUID presentationId) {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    public ResponseEntity<ThesisDto> deletePresentation(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID presentationId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        ThesisPresentation presentation = thesisService.findPresentationById(thesisId, presentationId);
+
+        if (!presentation.hasManagementAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You are not allowed to delete this presentation");
+        }
+
+        Thesis thesis = thesisService.deletePresentation(presentation.getThesis(), presentationId);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @GetMapping("/{thesisId}/comments")

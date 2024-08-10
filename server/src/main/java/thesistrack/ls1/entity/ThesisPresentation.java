@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ThesisPresentationType;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -25,8 +26,9 @@ public class ThesisPresentation {
     private Thesis thesis;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false, length = 100)
-    private String type;
+    private ThesisPresentationType type;
 
     @Column(name = "location", length = 200)
     private String location;
@@ -35,7 +37,7 @@ public class ThesisPresentation {
     private String streamUrl;
 
     @NotNull
-    @Column(name = "scheduledAt", nullable = false)
+    @Column(name = "scheduled_at", nullable = false)
     private Instant scheduledAt;
 
     @CreationTimestamp
@@ -48,4 +50,7 @@ public class ThesisPresentation {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
+    public boolean hasManagementAccess(User user) {
+        return thesis.hasStudentAccess(user);
+    }
 }
