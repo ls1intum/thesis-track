@@ -47,6 +47,8 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
           fetchAll: fetchAll ? 'true' : 'false',
           search: debouncedSearch,
           state: filters.states?.join(',') ?? '',
+          page,
+          limit,
           sortBy: sort.column,
           sortOrder: sort.direction,
         },

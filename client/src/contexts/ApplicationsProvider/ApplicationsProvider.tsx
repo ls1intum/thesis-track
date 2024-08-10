@@ -58,6 +58,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
           fetchAll: fetchAll ? 'true' : 'false',
           search: debouncedSearch,
           state: filters.states?.join(',') ?? '',
+          limit,
           page,
           sortBy: sort.column,
           sortOrder: sort.direction,
