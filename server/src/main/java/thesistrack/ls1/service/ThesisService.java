@@ -299,8 +299,9 @@ public class ThesisService {
     }
 
     /* GRADING */
-    public Thesis gradeThesis(Thesis thesis, String finalGrade, String finalFeedback) {
+    public Thesis gradeThesis(Thesis thesis, String finalGrade, String finalFeedback, ThesisVisibility visibility) {
         thesis.setState(ThesisState.GRADED);
+        thesis.setVisibility(visibility);
         thesis.setFinalGrade(finalGrade);
         thesis.setFinalFeedback(finalFeedback);
 

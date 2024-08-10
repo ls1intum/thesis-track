@@ -411,7 +411,8 @@ public class ThesisController {
         thesis = thesisService.gradeThesis(
                 thesis,
                 RequestValidator.validateStringMaxLength(payload.finalGrade(), StringLimits.THESIS_GRADE.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.finalFeedback(), StringLimits.LONGTEXT.getLimit())
+                RequestValidator.validateStringMaxLength(payload.finalFeedback(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.visibility())
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
