@@ -25,7 +25,8 @@ interface IThesesTableProps {
 }
 
 const ThesesTable = (props: IThesesTableProps) => {
-  const { columns = ['state', 'advisors', 'students', 'type', 'title', 'start_date', 'end_date'] } = props
+  const { columns = ['state', 'advisors', 'students', 'type', 'title', 'start_date', 'end_date'] } =
+    props
 
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
