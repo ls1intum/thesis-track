@@ -8,10 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import thesistrack.ls1.constants.ThesisPresentationType;
-import thesistrack.ls1.constants.ThesisRoleName;
-import thesistrack.ls1.constants.ThesisState;
-import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.constants.*;
 import thesistrack.ls1.controller.payload.ThesisStatePayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.entity.key.ThesisRoleId;
@@ -269,11 +266,12 @@ public class ThesisService {
         return uploadService.load(filename);
     }
 
-    public Thesis createPresentation(User creator, Thesis thesis, ThesisPresentationType type, String location, String streamUrl, Instant date) {
+    public Thesis createPresentation(User creator, Thesis thesis, ThesisPresentationType type, ThesisPresentationVisibility visibility, String location, String streamUrl, Instant date) {
         ThesisPresentation presentation = new ThesisPresentation();
 
         presentation.setThesis(thesis);
         presentation.setType(type);
+        presentation.setVisibility(visibility);
         presentation.setLocation(location);
         presentation.setStreamUrl(streamUrl);
         presentation.setScheduledAt(date);
@@ -293,11 +291,11 @@ public class ThesisService {
     public Thesis deletePresentation(Thesis thesis, UUID presentationId) {
         thesisPresentationRepository.deleteById(presentationId);
 
-        thesis.setPresentations(
-                thesis.getPresentations().stream()
-                        .filter(presentation -> !presentation.getId().equals(presentationId))
-                        .toList()
-        );
+        List<ThesisPresentation> presentations = new ArrayList<>(thesis.getPresentations().stream()
+                .filter(presentation -> !presentation.getId().equals(presentationId))
+                .toList());
+
+        thesis.setPresentations(presentations);
 
         return thesisRepository.save(thesis);
     }

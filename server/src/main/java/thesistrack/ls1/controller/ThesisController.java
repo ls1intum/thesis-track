@@ -346,14 +346,15 @@ public class ThesisController {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.findById(thesisId);
 
-        if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
         }
 
         thesis = thesisService.createPresentation(
                 authenticatedUser,
                 thesis,
                 RequestValidator.validateNotNull(payload.type()),
+                RequestValidator.validateNotNull(payload.visibility()),
                 RequestValidator.validateStringMaxLength(payload.location(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.streamUrl(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.date())

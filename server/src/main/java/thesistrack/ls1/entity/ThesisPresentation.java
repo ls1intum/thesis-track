@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import thesistrack.ls1.constants.ThesisPresentationType;
+import thesistrack.ls1.constants.ThesisPresentationVisibility;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -30,6 +31,11 @@ public class ThesisPresentation {
     @Column(name = "type", nullable = false, length = 100)
     private ThesisPresentationType type;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "visibility", nullable = false, length = 100)
+    private ThesisPresentationVisibility visibility;
+
     @Column(name = "location", length = 200)
     private String location;
 
@@ -51,6 +57,6 @@ public class ThesisPresentation {
     private User createdBy;
 
     public boolean hasManagementAccess(User user) {
-        return thesis.hasStudentAccess(user);
+        return thesis.hasAdvisorAccess(user) || createdBy.getId().equals(user.getId());
     }
 }
