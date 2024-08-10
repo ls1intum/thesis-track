@@ -113,7 +113,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         breakpoint: 'md',
         collapsed: { mobile: !opened, desktop: !opened && collapseNavigation },
       }}
-      padding='md'
+      padding={0}
     >
       <AppShell.Header>
         <Group h='100%' px='md'>

@@ -105,7 +105,7 @@ jobs:
             echo "DEFAULT_SUPERVISOR_UUID=${{ vars.DEFAULT_SUPERVISOR_UUID }}" >> .env.prod
 
             echo "MAIL_SENDER=${{ vars.MAIL_SENDER }}" >> .env.prod
-            echo "MAIL_FOOTER=${{ vars.MAIL_FOOTER }}" >> .env.prod
+            echo "MAIL_SIGNATURE=${{ vars.MAIL_SIGNATURE }}" >> .env.prod
             echo "MAIL_CHAIR_RECIPIENTS=${{ vars.MAIL_CHAIR_RECIPIENTS }}" >> .env.prod
             echo "MAIL_BCC_RECIPIENTS=${{ vars.MAIL_BCC_RECIPIENTS }}" >> .env.prod
             echo "MAIL_WORKSPACE_URL=${{ vars.MAIL_WORKSPACE_URL }}" >> .env.prod

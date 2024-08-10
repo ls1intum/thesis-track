@@ -107,7 +107,9 @@ const ThesisWritingSection = () => {
                     height={400}
                   />
                 ) : (
-                  <Text ta='center'>No thesis uploaded yet</Text>
+                  <Text ta='center' mb='md'>
+                    No thesis uploaded yet
+                  </Text>
                 )}
                 {access.student && thesis.state === ThesisState.WRITING && (
                   <Center>
@@ -131,7 +133,9 @@ const ThesisWritingSection = () => {
                     height={400}
                   />
                 ) : (
-                  <Text ta='center'>No presentation uploaded yet</Text>
+                  <Text ta='center' mb='md'>
+                    No presentation uploaded yet
+                  </Text>
                 )}
                 {access.student && thesis.state === ThesisState.WRITING && (
                   <Center>

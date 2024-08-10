@@ -157,7 +157,7 @@ const LegacyCreateApplicationForm = () => {
   })
 
   return (
-    <ContentContainer size='xl' px='md'>
+    <ContentContainer size='xl'>
       <Box mx='auto' pos='relative'>
         <LoadingOverlay visible={loadingOverlayVisible} overlayProps={{ blur: 2 }} />
         {applicationSuccessfullySubmitted ? (
