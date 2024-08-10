@@ -96,6 +96,11 @@ const ThesisProposalSection = () => {
                   Upload Proposal
                 </Button>
               )}
+              {access.student && thesis.state === ThesisState.WRITING && (
+                <Button ml='auto' onClick={() => setUploadModal(true)}>
+                  Upload New Proposal (Needs Approval)
+                </Button>
+              )}
             </Group>
           </Stack>
         </Accordion.Panel>

@@ -8,12 +8,14 @@ import { IThesesSort } from '../../contexts/ThesesProvider/context'
 import { ThesisStateColor } from '../../config/colors'
 import { useNavigate } from 'react-router-dom'
 import { IThesis } from '../../requests/responses/thesis'
+import { GLOBAL_CONFIG } from '../../config/global'
 
 type ThesisColumn =
   | 'state'
   | 'supervisors'
   | 'advisors'
   | 'students'
+  | 'type'
   | 'title'
   | 'start_date'
   | 'end_date'
@@ -23,7 +25,7 @@ interface IThesesTableProps {
 }
 
 const ThesesTable = (props: IThesesTableProps) => {
-  const { columns = ['state', 'advisors', 'students', 'title', 'start_date', 'end_date'] } = props
+  const { columns = ['state', 'advisors', 'students', 'type', 'title', 'start_date', 'end_date'] } = props
 
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
@@ -63,23 +65,28 @@ const ThesesTable = (props: IThesesTableProps) => {
       title: 'Student',
       render: (thesis: IThesis) => thesis.students.map((user) => formatUser(user)).join(', '),
     },
+    type: {
+      accessor: 'type',
+      title: 'Type',
+      render: (thesis: IThesis) => GLOBAL_CONFIG.thesis_types[thesis.type] ?? thesis.type,
+    },
     title: {
       accessor: 'title',
       title: 'Thesis Title',
       ellipsis: true,
-      width: 300,
+      width: 200,
     },
     start_date: {
       accessor: 'startDate',
       title: 'Start Date',
       sortable: true,
-      render: (thesis: IThesis) => formatDate(thesis.startDate),
+      render: (thesis: IThesis) => formatDate(thesis.startDate, { withTime: false }),
     },
     end_date: {
       accessor: 'endDate',
       title: 'End Date',
       sortable: true,
-      render: (thesis: IThesis) => formatDate(thesis.endDate),
+      render: (thesis: IThesis) => formatDate(thesis.endDate, { withTime: false }),
     },
   }
 

@@ -3,14 +3,13 @@ import { Container } from '@mantine/core'
 
 interface IContentContainerProps {
   size?: 'xl'
-  px?: string | number
 }
 
 const ContentContainer = (props: PropsWithChildren<IContentContainerProps>) => {
-  const { size, px = 0, children } = props
+  const { size, children } = props
 
   return (
-    <Container my='md' px={px} size={size}>
+    <Container my='md' size={size}>
       {children}
     </Container>
   )

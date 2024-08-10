@@ -29,7 +29,7 @@ public class MailingService {
 
     private final boolean enabled;
 
-    private final String mailFooter;
+    private final String mailSignature;
     private final String workspaceUrl;
 
     private final InternetAddress sender;
@@ -47,7 +47,7 @@ public class MailingService {
             @Value("${thesis-track.mail.sender}") InternetAddress sender,
             @Value("${thesis-track.mail.chair-member-recipients}") String chairMemberRecipientsList,
             @Value("${thesis-track.mail.bcc-recipients}") String bccRecipientsList,
-            @Value("${thesis-track.mail.footer}") String mailFooter,
+            @Value("${thesis-track.mail.signature}") String mailSignature,
             @Value("${thesis-track.mail.workspace-url}") String workspaceUrl
     ) {
         this.javaMailSender = javaMailSender;
@@ -56,7 +56,7 @@ public class MailingService {
         this.enabled = enabled;
         this.sender = sender;
         this.workspaceUrl = workspaceUrl;
-        this.mailFooter = mailFooter;
+        this.mailSignature = mailSignature;
         this.mailTemplateLocation = Paths.get(mailTemplateLocation);
 
         if (chairMemberRecipientsList != null && !chairMemberRecipientsList.isEmpty()) {
@@ -202,7 +202,7 @@ public class MailingService {
             String template = new String(fileBytes, StandardCharsets.UTF_8);
 
             return template
-                    .replace("{{config.footer}}", mailFooter)
+                    .replace("{{config.signature}}", mailSignature)
                     .replace("{{config.workspaceUrl}}", workspaceUrl);
         } catch (IOException e) {
             throw new MailingException("Mail template not found", e);
