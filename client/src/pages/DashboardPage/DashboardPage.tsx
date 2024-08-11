@@ -7,10 +7,10 @@ import ApplicationsProvider from '../../contexts/ApplicationsProvider/Applicatio
 import ThesesProvider from '../../contexts/ThesesProvider/ThesesProvider'
 import { Button, Center, Space, Stack, Title } from '@mantine/core'
 import { IApplication } from '../../requests/responses/application'
-import ApplicationReviewModal from '../../components/ApplicationReviewModal/ApplicationReviewModal'
 import ThesesGanttChart from '../../components/ThesesGanttChart/ThesesGanttChart'
 import { useHasGroupAccess } from '../../hooks/authentication'
 import { Link } from 'react-router-dom'
+import ApplicationModal from '../../components/ApplicationModal/ApplicationModal'
 
 const DashboardPage = () => {
   usePageTitle('Dashboard')
@@ -54,7 +54,7 @@ const DashboardPage = () => {
           onApplicationClick={setApplication}
           columns={['state', 'user', 'reviewed_at', 'created_at']}
         />
-        <ApplicationReviewModal
+        <ApplicationModal
           application={application}
           onClose={() => setApplication(undefined)}
           allowReviews={false}

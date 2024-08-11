@@ -5,24 +5,14 @@ import { GLOBAL_CONFIG } from '../../config/global'
 import React, { useEffect, useState } from 'react'
 import { useDebouncedValue } from '@mantine/hooks'
 import { doRequest } from '../../requests/request'
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Group,
-  Select,
-  Stack,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core'
+import { Button, Checkbox, Group, Select, Stack, Text, Textarea, TextInput } from '@mantine/core'
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 
 interface IApplicationReviewFormProps {
   application: IApplication
-  onUpdate: () => unknown
+  onUpdate: (application: IApplication) => unknown
 }
 
 const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
@@ -91,9 +81,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   return (
     <form>
       {application?.state === ApplicationState.NOT_ASSESSED && (
-        <Stack gap='md'>
-          <Divider my='md' />
-
+        <Stack gap='sm'>
           <TextInput
             type='text'
             required={true}
@@ -171,7 +159,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
                   showSimpleSuccess('Application rejected successfully')
 
                   updateApplication(response.data)
-                  onUpdate()
+                  onUpdate(response.data)
                 } else {
                   showSimpleError(`Failed to reject application: ${response.status}`)
                 }
@@ -210,7 +198,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
                   showSimpleSuccess('Application accepted successfully')
 
                   updateApplication(response.data)
-                  onUpdate()
+                  onUpdate(response.data)
                 } else {
                   showSimpleError(`Failed to accept application: ${response.status}`)
                 }

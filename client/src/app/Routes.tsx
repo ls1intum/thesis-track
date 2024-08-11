@@ -91,7 +91,7 @@ const AppRoutes = () => {
           />
           <Route path='/applications/thesis' element={<LegacyThesisApplicationForm />} />
           <Route
-            path='/applications/:application_id?'
+            path='/applications/:applicationId?'
             element={
               <AuthenticatedArea
                 collapseNavigation={true}

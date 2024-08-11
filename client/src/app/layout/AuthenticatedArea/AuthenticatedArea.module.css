@@ -3,14 +3,14 @@
   align-items: center;
   text-decoration: none;
   font-size: var(--mantine-font-size-sm);
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-2));
   padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
   border-radius: var(--mantine-radius-sm);
   font-weight: 500;
   margin-bottom: 5px;
 
   &[data-active], &:hover {
-    background-color: var(--mantine-primary-color-filled);
+    background-color: var(--mantine-primary-color-5);
     color: var(--mantine-primary-color-0);
 
     .linkIcon {
@@ -20,7 +20,7 @@
 }
 
 .linkIcon {
-  color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+  color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-2));
   margin-right: var(--mantine-spacing-sm);
   width: 25px;
   height: 25px;

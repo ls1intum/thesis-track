@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { doRequest } from '../../requests/request'
 import { ApplicationState, IApplication } from '../../requests/responses/application'
-import ApplicationReviewModal from '../../components/ApplicationReviewModal/ApplicationReviewModal'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
-import ApplicationsFilters from './components/ApplicationsFilters/ApplicationsFilters'
+import ApplicationsFilters from '../../components/ApplicationsFilters/ApplicationsFilters'
 import ApplicationsTable from '../../components/ApplicationsTable/ApplicationsTable'
 import ApplicationsProvider from '../../contexts/ApplicationsProvider/ApplicationsProvider'
 import { Space, Title } from '@mantine/core'
+import ApplicationModal from '../../components/ApplicationModal/ApplicationModal'
 
 const LegacyApplicationReviewPage = () => {
   const navigate = useNavigate()
@@ -51,7 +51,7 @@ const LegacyApplicationReviewPage = () => {
             setOpenedApplication(application)
           }}
         />
-        <ApplicationReviewModal
+        <ApplicationModal
           application={openedApplication}
           onClose={() => {
             navigate('/management/thesis-applications', { replace: true })

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import ThesesFilters from './components/ThesesFilters/ThesesFilters'
+import ThesesFilters from '../../components/ThesesFilters/ThesesFilters'
 import ThesesProvider from '../../contexts/ThesesProvider/ThesesProvider'
 import { usePageTitle } from '../../hooks/theme'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
