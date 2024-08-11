@@ -1,6 +1,6 @@
 import { Center, Pagination, Stack, Text } from '@mantine/core'
 import ApplicationsFilters from '../../../../components/ApplicationsFilters/ApplicationsFilters'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { IApplication } from '../../../../requests/responses/application'
 import { useApplicationsContext } from '../../../../contexts/ApplicationsProvider/hooks'
 import ApplicationListItem from '../ApplicationListItem/ApplicationListItem'
@@ -18,6 +18,8 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
   const selectedIndex =
     applications?.content.findIndex((x) => x.applicationId === selected?.applicationId) || 0
 
+  const [startAtLastApplication, setStartAtLastApplication] = useState(false)
+
   useEffect(() => {
     window.onkeydown = (e) => {
       let newIndex = selectedIndex
@@ -30,11 +32,13 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
       }
 
       if (applications && newIndex < 0) {
-        setPage((prev) => (prev > 0 ? prev - 1 : 0))
+        setStartAtLastApplication(page > 0)
+        setPage(page > 0 ? page - 1 : 0)
       }
 
       if (applications && newIndex >= applications.content.length && !applications.last) {
-        setPage((prev) => prev + 1)
+        setStartAtLastApplication(false)
+        setPage(page + 1)
       }
 
       if (applications?.content[newIndex]) {
@@ -45,13 +49,17 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
     return () => {
       window.onkeydown = null
     }
-  }, [applications, selectedIndex])
+  }, [applications, page, selectedIndex])
 
   useEffect(() => {
     if (applications) {
-      onSelect(applications?.content[0])
+      onSelect(
+        startAtLastApplication
+          ? applications.content[applications.content.length - 1]
+          : applications.content[0],
+      )
     }
-  }, [page, applications?.content[0]?.applicationId])
+  }, [page, startAtLastApplication, applications?.content.map((x) => x.applicationId).join(',')])
 
   return (
     <Stack gap='sm'>
