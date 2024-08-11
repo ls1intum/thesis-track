@@ -25,7 +25,7 @@ const DashboardPage = () => {
         Dashboard
       </Title>
       <ThesesProvider hideIfEmpty={!managementAccess}>
-        <Title order={2}>My Theses</Title>
+        <Title order={2} mb='xs'>My Theses</Title>
         {managementAccess && <ThesesGanttChart />}
         <ThesesTable />
         <Space mb='md' />
@@ -47,7 +47,7 @@ const DashboardPage = () => {
           ) : undefined
         }
       >
-        <Title order={2} mb='sm'>
+        <Title order={2} mb='xs'>
           My Applications
         </Title>
         <ApplicationsTable

@@ -1,6 +1,6 @@
-import { Center, Pagination, Stack } from '@mantine/core'
+import { Center, Pagination, Stack, Text } from '@mantine/core'
 import ApplicationsFilters from '../../../../components/ApplicationsFilters/ApplicationsFilters'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IApplication } from '../../../../requests/responses/application'
 import { useApplicationsContext } from '../../../../contexts/ApplicationsProvider/hooks'
 import ApplicationListItem from '../ApplicationListItem/ApplicationListItem'
@@ -15,6 +15,44 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
 
   const { page, setPage, applications } = useApplicationsContext()
 
+  const selectedIndex =
+    applications?.content.findIndex((x) => x.applicationId === selected?.applicationId) || 0
+
+  useEffect(() => {
+    window.onkeydown = (e) => {
+      let newIndex = selectedIndex
+
+      newIndex += e.key === 'ArrowRight' ? 1 : 0
+      newIndex += e.key === 'ArrowLeft' ? -1 : 0
+
+      if (newIndex === selectedIndex) {
+        return
+      }
+
+      if (applications && newIndex < 0) {
+        setPage((prev) => (prev > 0 ? prev - 1 : 0))
+      }
+
+      if (applications && newIndex >= applications.content.length && !applications.last) {
+        setPage((prev) => prev + 1)
+      }
+
+      if (applications?.content[newIndex]) {
+        onSelect(applications.content[newIndex])
+      }
+    }
+
+    return () => {
+      window.onkeydown = null
+    }
+  }, [applications, selectedIndex])
+
+  useEffect(() => {
+    if (applications) {
+      onSelect(applications?.content[0])
+    }
+  }, [page, applications?.content[0]?.applicationId])
+
   return (
     <Stack gap='sm'>
       <ApplicationsFilters size='sm' />
@@ -26,6 +64,9 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
           onClick={() => onSelect(application)}
         />
       ))}
+      <Text c='dimmed' ta='center' size='xs'>
+        Hint: Navigate with arrow left and right keys
+      </Text>
       <Center>
         <Pagination
           size='sm'

@@ -59,6 +59,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
           search: debouncedSearch,
           state: filters.states?.join(',') ?? '',
           page,
+          limit,
           sortBy: sort.column,
           sortOrder: sort.direction,
         },

@@ -6,10 +6,14 @@ import ApplicationsProvider from '../../contexts/ApplicationsProvider/Applicatio
 import { Grid, Text, Center } from '@mantine/core'
 import ApplicationsSidebar from './components/ApplicationsSidebar/ApplicationsSidebar'
 import ApplicationReviewBody from './components/ApplicationReviewBody/ApplicationReviewBody'
+import { useIsSmallerBreakpoint } from '../../hooks/theme'
+import ApplicationModal from '../../components/ApplicationModal/ApplicationModal'
 
 const ReviewApplicationPage = () => {
   const navigate = useNavigate()
   const { applicationId } = useParams<{ applicationId: string }>()
+
+  const isMobile = useIsSmallerBreakpoint('md')
 
   const [application, setApplication] = useState<IApplication>()
 
@@ -33,9 +37,20 @@ const ReviewApplicationPage = () => {
   return (
     <ApplicationsProvider
       fetchAll={true}
-      limit={20}
+      limit={10}
       defaultStates={[ApplicationState.NOT_ASSESSED]}
     >
+      {isMobile && (
+        <ApplicationModal
+          application={application}
+          onClose={() => {
+            navigate('/applications', { replace: true })
+
+            setApplication(undefined)
+          }}
+          allowReviews={true}
+        />
+      )}
       <Grid p='md'>
         <Grid.Col span={{ md: 3 }}>
           <ApplicationsSidebar
@@ -49,17 +64,19 @@ const ReviewApplicationPage = () => {
             }}
           />
         </Grid.Col>
-        <Grid.Col span={{ md: 9 }}>
-          {application ? (
-            <ApplicationReviewBody application={application} onChange={setApplication} />
-          ) : (
-            <Center h='80vh'>
-              <Text ta='center' fw='bold'>
-                No Application selected
-              </Text>
-            </Center>
-          )}
-        </Grid.Col>
+        {!isMobile && (
+          <Grid.Col span={{ md: 9 }}>
+            {application ? (
+              <ApplicationReviewBody application={application} onChange={setApplication} />
+            ) : (
+              <Center h='80vh'>
+                <Text ta='center' fw='bold'>
+                  No Application selected
+                </Text>
+              </Center>
+            )}
+          </Grid.Col>
+        )}
       </Grid>
     </ApplicationsProvider>
   )

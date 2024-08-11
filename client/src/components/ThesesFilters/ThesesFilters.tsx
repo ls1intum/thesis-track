@@ -9,7 +9,7 @@ const ThesesFilters = () => {
   const { filters, setFilters, sort, setSort } = useThesesContext()
 
   return (
-    <Grid justify='center'>
+    <Grid gutter='xs'>
       <Grid.Col span={12}>
         <TextInput
           placeholder='Search theses...'
