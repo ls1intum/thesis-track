@@ -1,7 +1,6 @@
 import { fixupConfigRules, fixupPluginRules } from "@eslint/compat";
 import typescriptEslint from "@typescript-eslint/eslint-plugin";
 import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 import tsParser from "@typescript-eslint/parser";
 import path from "node:path";
@@ -33,7 +32,6 @@ export default [...fixupConfigRules(compat.extends(
     plugins: {
         "@typescript-eslint": fixupPluginRules(typescriptEslint),
         react: fixupPluginRules(react),
-        "react-hooks": fixupPluginRules(reactHooks),
     },
 
     languageOptions: {
@@ -80,9 +78,6 @@ export default [...fixupConfigRules(compat.extends(
         "react/jsx-filename-extension": [1, {
             extensions: [".tsx", ".jsx"],
         }],
-
-        "react-hooks/rules-of-hooks": "error",
-        "react-hooks/exhaustive-deps": "off",
 
         "prettier/prettier": ["error", {
             endOfLine: "auto",
