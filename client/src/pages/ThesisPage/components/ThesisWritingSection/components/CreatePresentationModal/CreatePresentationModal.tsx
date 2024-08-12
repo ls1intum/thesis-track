@@ -38,6 +38,16 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
     validate: {
       type: isNotEmpty('Type is required'),
       visibility: isNotEmpty('Visibility is required'),
+      location: (_value, values) => {
+        if (!values.location && !values.streamUrl) {
+          return 'Location or Stream URL is required'
+        }
+      },
+      streamUrl: (_value, values) => {
+        if (!values.location && !values.streamUrl) {
+          return 'Location or Stream URL is required'
+        }
+      },
       date: (value) => {
         if (!value) {
           return 'Date is required'
@@ -51,14 +61,15 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
   })
 
   useEffect(() => {
+    form.validateField('location')
+    form.validateField('streamUrl')
+  }, [form.values.streamUrl, form.values.location])
+
+  useEffect(() => {
     form.reset()
   }, [opened])
 
   const [creating, onCreatePresentation] = useThesisUpdateAction(async () => {
-    if (!form.values.location && !form.values.streamUrl) {
-      throw new Error('Location or Stream URL is required')
-    }
-
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/presentations`, {
       method: 'POST',
       requiresAuth: true,

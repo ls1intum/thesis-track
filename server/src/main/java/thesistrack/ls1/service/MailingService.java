@@ -266,27 +266,20 @@ public class MailingService {
         messageBodyPart.setContent(text, "text/html; charset=utf-8");
         multipart.addBodyPart(messageBodyPart);
 
-        String cvFilename = application.getUser().getCvFilename();
-        if (cvFilename != null && !cvFilename.isBlank()) {
-            MimeBodyPart cvAttachment = new MimeBodyPart();
-            cvAttachment.attachFile(uploadService.load(cvFilename).getFile());
-            multipart.addBodyPart(cvAttachment);
-        }
-
-        String examinationReportFilename = application.getUser().getExaminationFilename();
-        if (examinationReportFilename != null && !examinationReportFilename.isBlank()) {
-            MimeBodyPart examinationReportAttachment = new MimeBodyPart();
-            examinationReportAttachment.attachFile(uploadService.load(examinationReportFilename).getFile());
-            multipart.addBodyPart(examinationReportAttachment);
-        }
-
-        String degreeReportFilename = application.getUser().getDegreeFilename();
-        if (degreeReportFilename != null && !degreeReportFilename.isBlank()) {
-            MimeBodyPart degreeReportAttachment = new MimeBodyPart();
-            degreeReportAttachment.attachFile(uploadService.load(degreeReportFilename).getFile());
-            multipart.addBodyPart(degreeReportAttachment);
-        }
+        addAttachment(multipart, application.getUser().getCvFilename());
+        addAttachment(multipart, application.getUser().getExaminationFilename());
+        addAttachment(multipart, application.getUser().getDegreeFilename());
 
         return multipart;
+    }
+
+    private void addAttachment(Multipart multipart, String filename) throws MessagingException, IOException {
+        if (filename == null || filename.isBlank()) {
+            return;
+        }
+
+        MimeBodyPart attachment = new MimeBodyPart();
+        attachment.attachFile(uploadService.load(filename).getFile());
+        multipart.addBodyPart(attachment);
     }
 }
