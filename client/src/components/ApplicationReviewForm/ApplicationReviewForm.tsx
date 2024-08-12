@@ -200,6 +200,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
                       advisorIds: form.values.advisors,
                       supervisorIds: form.values.supervisors,
                       thesisTitle: form.values.title,
+                      thesisType: form.values.type,
                     },
                   },
                 )
