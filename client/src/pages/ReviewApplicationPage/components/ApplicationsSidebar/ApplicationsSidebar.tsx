@@ -16,7 +16,7 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
   const { page, setPage, applications } = useApplicationsContext()
 
   const selectedIndex =
-    applications?.content.findIndex((x) => x.applicationId === selected?.applicationId) || 0
+    applications?.content.findIndex((x) => x.applicationId === selected?.applicationId) ?? -1
 
   const [startAtLastApplication, setStartAtLastApplication] = useState(false)
 
@@ -52,6 +52,10 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
   }, [applications, page, selectedIndex])
 
   useEffect(() => {
+    if (page === 0 && !startAtLastApplication) {
+      return
+    }
+
     if (applications) {
       onSelect(
         startAtLastApplication

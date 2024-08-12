@@ -1,12 +1,13 @@
 import { IApplication } from '../../requests/responses/application'
-import { Stack, Group, Divider, Grid, Title } from '@mantine/core'
+import { Stack, Group, Divider, Grid, Title, Badge } from '@mantine/core'
 import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
 import React from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { formatDate, formatUser } from '../../utils/format'
+import { formatApplicationState, formatDate, formatUser } from '../../utils/format'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
+import { ApplicationStateColor } from '../../config/colors'
 
 interface IApplicationDataProps {
   application: IApplication
@@ -40,10 +41,10 @@ const ApplicationData = (props: IApplicationDataProps) => {
             value={<DocumentEditor value={application.user.specialSkills || ''} />}
           />
           <Grid>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem label='Email' value={application.user.email} />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Gender'
                 value={
@@ -51,7 +52,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 }
               />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Nationality'
                 value={
@@ -60,16 +61,16 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 }
               />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem label='University ID' value={application.user.universityId} />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Matriculation Number'
                 value={application.user.matriculationNumber}
               />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Study Degree'
                 value={
@@ -78,7 +79,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 }
               />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Study Program'
                 value={
@@ -87,22 +88,32 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 }
               />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Enrollment Date'
                 value={formatDate(application.user.enrolledAt, { withTime: false })}
               />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Desired Start Date'
                 value={formatDate(application.desiredStartDate, { withTime: false })}
               />
             </Grid.Col>
-            <Grid.Col span={{ xs: 4, sm: 3, md: 2 }}>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Submission Date'
                 value={formatDate(application.createdAt, { withTime: true })}
+              />
+            </Grid.Col>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
+              <LabeledItem
+                label='State'
+                value={
+                  <Badge color={ApplicationStateColor[application.state]}>
+                    {formatApplicationState(application.state)}
+                  </Badge>
+                }
               />
             </Grid.Col>
           </Grid>
