@@ -4,7 +4,7 @@ import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 import PageLoader from '../components/PageLoader/PageLoader'
 
 const LegacyThesisApplicationForm = lazy(
-  () => import('../pages/LegacySubmitApplicationPage/LegacyCreateApplicationForm'),
+  () => import('../pages/LegacySubmitApplicationPage/LegacySubmitApplicationPage'),
 )
 const LegacyApplicationReviewPage = lazy(
   () => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'),

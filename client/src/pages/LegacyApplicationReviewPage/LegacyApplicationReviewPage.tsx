@@ -59,6 +59,9 @@ const LegacyApplicationReviewPage = () => {
             setOpenedApplication(undefined)
           }}
           allowReviews={true}
+          onUpdate={(newApplication) => {
+            setOpenedApplication(newApplication)
+          }}
         />
       </ApplicationsProvider>
     </ContentContainer>

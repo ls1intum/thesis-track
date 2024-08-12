@@ -12,18 +12,22 @@ import { ApplicationStateColor } from '../../config/colors'
 interface IApplicationDataProps {
   application: IApplication
   bottomSection?: ReactNode
+  rightTitleSection?: ReactNode
 }
 
 const ApplicationData = (props: IApplicationDataProps) => {
-  const { application, bottomSection } = props
+  const { application, bottomSection, rightTitleSection } = props
 
   return (
     <Grid>
       <Grid.Col span={{ md: 8 }} py={0}>
         <Stack>
-          <Title>
-            {application.user.firstName} {application.user.lastName}
-          </Title>
+          <Group>
+            <Title>
+              {application.user.firstName} {application.user.lastName}
+            </Title>
+            {rightTitleSection}
+          </Group>
           <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
           <LabeledItem
             label='Motivation'
@@ -169,7 +173,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
                   url={`/v2/users/${application.user.userId}/cv`}
                   height={400}
                   filename={`cv-${application.user.universityId}`}
-                  key={application.applicationId}
+                  key={application.user.userId}
                 />
               }
             />
@@ -182,7 +186,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
                   url={`/v2/users/${application.user.userId}/examination-report`}
                   height={400}
                   filename={`examination-report-${application.user.universityId}`}
-                  key={application.applicationId}
+                  key={application.user.userId}
                 />
               }
             />
@@ -195,7 +199,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
                   url={`/v2/users/${application.user.userId}/degree-report`}
                   height={400}
                   filename={`degree-report-${application.user.universityId}`}
-                  key={application.applicationId}
+                  key={application.user.userId}
                 />
               }
             />

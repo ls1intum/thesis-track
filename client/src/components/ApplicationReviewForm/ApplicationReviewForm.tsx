@@ -1,5 +1,5 @@
 import { ApplicationState, IApplication } from '../../requests/responses/application'
-import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
+import { useApplicationsContextUpdater, useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { GLOBAL_CONFIG } from '../../config/global'
 import React, { useEffect, useState } from 'react'
@@ -9,6 +9,7 @@ import { Button, Checkbox, Group, Select, Stack, Text, Textarea, TextInput } fro
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
+import ApplicationRejectButton from '../ApplicationRejectButton/ApplicationRejectButton'
 
 interface IApplicationReviewFormProps {
   application: IApplication
@@ -18,7 +19,7 @@ interface IApplicationReviewFormProps {
 const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const { application, onUpdate } = props
 
-  const { updateApplication } = useApplicationsContext()
+  const updateApplication = useApplicationsContextUpdater()
 
   const form = useForm<{
     title: string
@@ -71,15 +72,48 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           if (res.ok) {
             application.comment = res.data.comment
 
-            updateApplication(res.data)
+            onUpdate(res.data)
           }
         },
       )
     }
   }, [debouncedComment, application?.applicationId])
 
+  const onSubmit = async () => {
+    setLoading(true)
+
+    try {
+      const response = await doRequest<IApplication>(
+        `/v2/applications/${application.applicationId}/accept`,
+        {
+          method: 'PUT',
+          requiresAuth: true,
+          data: {
+            thesisTitle: form.values.title,
+            thesisType: form.values.type,
+            advisorIds: form.values.advisors,
+            supervisorIds: form.values.supervisors,
+            notifyUser: form.values.notifyUser,
+            closeTopic: false,
+          },
+        },
+      )
+
+      if (response.ok) {
+        showSimpleSuccess('Application accepted successfully')
+
+        updateApplication(response.data)
+        onUpdate(response.data)
+      } else {
+        showSimpleError(`Failed to accept application: ${response.status}`)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <form>
+    <form onSubmit={form.onSubmit(onSubmit)}>
       {application?.state === ApplicationState.NOT_ASSESSED && (
         <Stack gap='sm'>
           <TextInput
@@ -133,76 +167,19 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           />
 
           <Group grow>
-            {/* REJECT Button */}
-            <Button
-              variant='outline'
-              loading={loading}
-              color='red'
-              onClick={async () => {
-                setLoading(true)
-
-                const response = await doRequest<IApplication>(
-                  `/v2/applications/${application.applicationId}/reject`,
-                  {
-                    method: 'PUT',
-                    requiresAuth: true,
-                    data: {
-                      comment: form.values.comment,
-                      notifyUser: form.values.notifyUser,
-                    },
-                  },
-                )
-
-                setLoading(false)
-
-                if (response.ok) {
-                  showSimpleSuccess('Application rejected successfully')
-
-                  updateApplication(response.data)
-                  onUpdate(response.data)
-                } else {
-                  showSimpleError(`Failed to reject application: ${response.status}`)
-                }
+            <ApplicationRejectButton
+              application={application}
+              notifyUser={form.values.notifyUser}
+              onUpdate={(newApplication) => {
+                onUpdate(newApplication)
               }}
-            >
-              Reject
-            </Button>
-            {/* ACCEPT Button */}
+            />
             <Button
+              type='submit'
               variant='outline'
               color='green'
               loading={loading}
               disabled={!form.isValid()}
-              onClick={async () => {
-                setLoading(true)
-
-                const response = await doRequest<IApplication>(
-                  `/v2/applications/${application.applicationId}/accept`,
-                  {
-                    method: 'PUT',
-                    requiresAuth: true,
-                    data: {
-                      notifyUser: form.values.notifyUser,
-                      closeTopic: false,
-                      comment: form.values.comment,
-                      advisorIds: form.values.advisors,
-                      supervisorIds: form.values.supervisors,
-                      thesisTitle: form.values.title,
-                    },
-                  },
-                )
-
-                setLoading(false)
-
-                if (response.ok) {
-                  showSimpleSuccess('Application accepted successfully')
-
-                  updateApplication(response.data)
-                  onUpdate(response.data)
-                } else {
-                  showSimpleError(`Failed to accept application: ${response.status}`)
-                }
-              }}
             >
               Accept
             </Button>

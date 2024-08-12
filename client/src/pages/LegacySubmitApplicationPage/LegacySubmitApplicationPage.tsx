@@ -20,7 +20,6 @@ import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataCons
 import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
 import { useDisclosure } from '@mantine/hooks'
-import { LegacyApplicationSuccessfulSubmission } from './components/LegacyApplicationSubmission/LegacyApplicationSuccessfulSubmission'
 import { useState } from 'react'
 import { Calendar } from 'phosphor-react'
 import { GLOBAL_CONFIG } from '../../config/global'
@@ -30,8 +29,9 @@ import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
+import { LegacySuccessfulSubmission } from './components/LegacySuccessfulSubmission/LegacySuccessfulSubmission'
 
-const LegacyCreateApplicationForm = () => {
+const LegacySubmitApplicationPage = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
   const [applicationSuccessfullySubmitted, setApplicationSuccessfullySubmitted] = useState(false)
 
@@ -161,7 +161,7 @@ const LegacyCreateApplicationForm = () => {
       <Box mx='auto' pos='relative'>
         <LoadingOverlay visible={loadingOverlayVisible} overlayProps={{ blur: 2 }} />
         {applicationSuccessfullySubmitted ? (
-          <LegacyApplicationSuccessfulSubmission
+          <LegacySuccessfulSubmission
             title='Your application was successfully submitted!'
             text='We will contact you as soon as we have reviewed your application.'
           />
@@ -497,4 +497,4 @@ const LegacyCreateApplicationForm = () => {
   )
 }
 
-export default LegacyCreateApplicationForm
+export default LegacySubmitApplicationPage

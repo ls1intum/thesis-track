@@ -49,6 +49,9 @@ const ReviewApplicationPage = () => {
             setApplication(undefined)
           }}
           allowReviews={true}
+          onUpdate={(newApplication) => {
+            setApplication(newApplication)
+          }}
         />
       )}
       <Grid p='md'>

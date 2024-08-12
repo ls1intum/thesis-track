@@ -139,12 +139,10 @@ public class ApplicationService {
             String thesisType,
             Set<UUID> advisorIds,
             Set<UUID> supervisorIds,
-            String comment,
             boolean notifyUser,
             boolean closeTopic
     ) {
         application.setState(ApplicationState.ACCEPTED);
-        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 
@@ -174,9 +172,8 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application reject(User reviewer, Application application, String comment, boolean notifyUser) {
+    public Application reject(User reviewer, Application application, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
-        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 

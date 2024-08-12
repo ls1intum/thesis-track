@@ -124,7 +124,6 @@ public class ApplicationController {
                 RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TYPE.getLimit()),
                 RequestValidator.validateNotNull(payload.advisorIds()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
-                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.notifyUser()),
                 RequestValidator.validateNotNull(payload.closeTopic())
         );
@@ -148,7 +147,6 @@ public class ApplicationController {
         application =  applicationService.reject(
                 authenticatedUser,
                 application,
-                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.notifyUser())
         );
 

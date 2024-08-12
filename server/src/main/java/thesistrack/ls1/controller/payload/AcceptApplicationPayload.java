@@ -8,7 +8,6 @@ public record AcceptApplicationPayload (
         String thesisType,
         Set<UUID> advisorIds,
         Set<UUID> supervisorIds,
-        String comment,
         Boolean notifyUser,
         Boolean closeTopic
 ) { }
