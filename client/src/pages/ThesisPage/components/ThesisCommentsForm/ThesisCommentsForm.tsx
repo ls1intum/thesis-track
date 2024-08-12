@@ -21,6 +21,7 @@ const ThesisCommentsForm = () => {
         onUpload={setFile}
       />
       <Textarea
+        label='Comment'
         placeholder='Add a comment'
         value={message}
         onChange={(e) => setMessage(e.target.value)}

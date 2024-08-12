@@ -37,43 +37,45 @@ const ThesisCommentsList = () => {
       </Modal>
       {!comments &&
         Array.from(Array(limit).keys()).map((index) => <Skeleton key={index} height={50} />)}
-      {comments?.content.map((comment) => (
-        <Stack gap={0} key={comment.commentId}>
-          <Card p='md' radius='sm'>
-            <Group style={{ width: '100%' }}>
-              <Text>{comment.message}</Text>
-              {comment.hasFile && (
-                <Button onClick={() => setOpenedComment(comment)} ml='auto'>
-                  <Download />
-                </Button>
+      {comments && comments.content.length === 0 && <Text ta='center'>No comments added yet</Text>}
+      {comments &&
+        comments.content.map((comment) => (
+          <Stack gap={0} key={comment.commentId}>
+            <Card p='md' radius='sm'>
+              <Group style={{ width: '100%' }}>
+                <Text>{comment.message}</Text>
+                {comment.hasFile && (
+                  <Button onClick={() => setOpenedComment(comment)} ml='auto'>
+                    <Download />
+                  </Button>
+                )}
+              </Group>
+            </Card>
+            <Group ml='auto'>
+              <Text size='xs' c='dimmed'>
+                {formatDate(comment.createdAt)}
+              </Text>
+              <Text size='xs' c='dimmed'>
+                {formatUser(comment.createdBy)}
+              </Text>
+              {(user.groups.includes('admin') || user.userId === comment.createdBy.userId) && (
+                <Text
+                  component='a'
+                  href='#'
+                  size='xs'
+                  c='dimmed'
+                  style={{ textDecoration: 'underline' }}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    deleteComment(comment)
+                  }}
+                >
+                  Delete
+                </Text>
               )}
             </Group>
-          </Card>
-          <Group ml='auto'>
-            <Text size='xs' c='dimmed'>
-              {formatDate(comment.createdAt)}
-            </Text>
-            <Text size='xs' c='dimmed'>
-              {formatUser(comment.createdBy)}
-            </Text>
-            {(user.groups.includes('admin') || user.userId === comment.createdBy.userId) && (
-              <Text
-                component='a'
-                href='#'
-                size='xs'
-                c='dimmed'
-                style={{ textDecoration: 'underline' }}
-                onClick={(e) => {
-                  e.preventDefault()
-                  deleteComment(comment)
-                }}
-              >
-                Delete
-              </Text>
-            )}
-          </Group>
-        </Stack>
-      ))}
+          </Stack>
+        ))}
       {comments && comments.totalPages > 1 && (
         <Center>
           <Pagination

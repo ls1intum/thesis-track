@@ -129,7 +129,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           <Stack gap='0'>
             <Textarea
               label='Comment'
-              placeholder='Comment'
+              placeholder='Add a comment'
               autosize={true}
               minRows={5}
               {...form.getInputProps('comment')}

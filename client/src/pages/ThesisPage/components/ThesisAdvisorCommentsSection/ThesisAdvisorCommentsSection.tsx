@@ -11,7 +11,7 @@ const ThesisAdvisorCommentsSection = () => {
   const [opened, setOpened] = useState(false)
 
   if (!access.advisor) {
-    return <></>
+    return null
   }
 
   return (
