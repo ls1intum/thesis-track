@@ -40,15 +40,15 @@ const links: Array<{
     icon: PaperPlaneTilt,
     groups: undefined,
   },*/
-  {
+  /*{
     link: '/management/thesis-applications',
     label: 'Review Applications v1',
     icon: Scroll,
     groups: ['admin', 'advisor', 'supervisor'],
-  },
+  },*/
   {
     link: '/applications',
-    label: 'Review Applications v2',
+    label: 'Review Applications',
     icon: Scroll,
     groups: ['admin', 'advisor', 'supervisor'],
   },
