@@ -21,11 +21,17 @@ const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
 
   return (
     <Stack>
-      <ApplicationData application={application} />
-      <Divider />
-      <ApplicationReviewForm
+      <ApplicationData
         application={application}
-        onUpdate={(newApplication) => onChange(newApplication)}
+        bottomSection={
+          <Stack>
+            <Divider />
+            <ApplicationReviewForm
+              application={application}
+              onUpdate={(newApplication) => onChange(newApplication)}
+            />
+          </Stack>
+        }
       />
     </Stack>
   )

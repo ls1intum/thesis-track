@@ -13,7 +13,7 @@ const ReviewApplicationPage = () => {
   const navigate = useNavigate()
   const { applicationId } = useParams<{ applicationId: string }>()
 
-  const isMobile = useIsSmallerBreakpoint('md')
+  const isSmallScreen = useIsSmallerBreakpoint('md')
 
   const [application, setApplication] = useState<IApplication>()
 
@@ -40,7 +40,7 @@ const ReviewApplicationPage = () => {
       limit={10}
       defaultStates={[ApplicationState.NOT_ASSESSED]}
     >
-      {isMobile && (
+      {isSmallScreen && (
         <ApplicationModal
           application={application}
           onClose={() => {
@@ -64,7 +64,7 @@ const ReviewApplicationPage = () => {
             }}
           />
         </Grid.Col>
-        {!isMobile && (
+        {!isSmallScreen && (
           <Grid.Col span={{ md: 9 }}>
             {application ? (
               <ApplicationReviewBody application={application} onChange={setApplication} />

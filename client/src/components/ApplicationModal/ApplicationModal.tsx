@@ -16,12 +16,18 @@ const ApplicationModal = (props: IApplicationModalProps) => {
   return (
     <Modal centered size='100vw' opened={!!application} onClose={onClose}>
       <Stack>
-        {application && <ApplicationData application={application} />}
-        {allowReviews && application && (
-          <>
-            <Divider />
-            <ApplicationReviewForm application={application} onUpdate={onClose} />
-          </>
+        {application && (
+          <ApplicationData
+            application={application}
+            bottomSection={
+              allowReviews ? (
+                <Stack>
+                  <Divider />
+                  <ApplicationReviewForm application={application} onUpdate={onClose} />
+                </Stack>
+              ) : undefined
+            }
+          />
         )}
       </Stack>
     </Modal>

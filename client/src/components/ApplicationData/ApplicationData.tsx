@@ -1,7 +1,7 @@
 import { IApplication } from '../../requests/responses/application'
 import { Stack, Group, Divider, Grid, Title, Badge } from '@mantine/core'
 import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
 import { formatApplicationState, formatDate, formatUser } from '../../utils/format'
@@ -11,10 +11,11 @@ import { ApplicationStateColor } from '../../config/colors'
 
 interface IApplicationDataProps {
   application: IApplication
+  bottomSection?: ReactNode
 }
 
 const ApplicationData = (props: IApplicationDataProps) => {
-  const { application } = props
+  const { application, bottomSection } = props
 
   return (
     <Grid>
@@ -155,6 +156,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               </Group>
             </Stack>
           )}
+          {bottomSection}
         </Stack>
       </Grid.Col>
       <Grid.Col span={{ md: 4 }}>
@@ -165,7 +167,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               value={
                 <AuthenticatedFilePreview
                   url={`/v2/users/${application.user.userId}/cv`}
-                  height={300}
+                  height={400}
                   filename={`cv-${application.user.universityId}`}
                   key={application.applicationId}
                 />
@@ -178,7 +180,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               value={
                 <AuthenticatedFilePreview
                   url={`/v2/users/${application.user.userId}/examination-report`}
-                  height={300}
+                  height={400}
                   filename={`examination-report-${application.user.universityId}`}
                   key={application.applicationId}
                 />
@@ -191,7 +193,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               value={
                 <AuthenticatedFilePreview
                   url={`/v2/users/${application.user.userId}/degree-report`}
-                  height={300}
+                  height={400}
                   filename={`degree-report-${application.user.universityId}`}
                   key={application.applicationId}
                 />

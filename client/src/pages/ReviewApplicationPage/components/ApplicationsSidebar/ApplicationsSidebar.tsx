@@ -77,7 +77,7 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
         />
       ))}
       <Text c='dimmed' ta='center' size='xs'>
-        Hint: Navigate with arrow left and right keys
+        Tip: Navigate with arrow left and right keys
       </Text>
       <Center>
         <Pagination
