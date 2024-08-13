@@ -8,6 +8,7 @@ import {
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
 import { useNavigate } from 'react-router-dom'
+import { ApiError } from '../../../../requests/handler'
 
 const ThesisInfoSection = () => {
   const { thesis, access } = useLoadedThesisContext()
@@ -40,7 +41,7 @@ const ThesisInfoSection = () => {
 
       return response.data
     } else {
-      throw new Error(`Failed to update thesis ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Thesis info updated successfully')
 

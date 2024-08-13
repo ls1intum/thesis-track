@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, ReactNode, useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
-import { Pageable } from '../../requests/responses/pageable'
+import { PaginationResponse } from '../../requests/responses/pagination'
 import {
   ApplicationsContext,
   IApplicationsContext,
@@ -10,6 +10,7 @@ import {
 import { ApplicationState, IApplication } from '../../requests/responses/application'
 import { useDebouncedValue } from '@mantine/hooks'
 import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IApplicationsProviderProps {
   fetchAll?: boolean
@@ -29,7 +30,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
     emptyComponent,
   } = props
 
-  const [applications, setApplications] = useState<Pageable<IApplication>>()
+  const [applications, setApplications] = useState<PaginationResponse<IApplication>>()
   const [page, setPage] = useState(0)
 
   const [filters, setFilters] = useState<IApplicationsFilters>({
@@ -49,7 +50,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
   useEffect(() => {
     setApplications(undefined)
 
-    return doRequest<Pageable<IApplication>>(
+    return doRequest<PaginationResponse<IApplication>>(
       `/v2/applications`,
       {
         method: 'GET',
@@ -65,7 +66,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
       },
       (res) => {
         if (!res.ok) {
-          showSimpleError(`Could not fetch applications: ${res.status}`)
+          showSimpleError(getApiResponseErrorMessage(res))
 
           return setApplications({
             content: [],

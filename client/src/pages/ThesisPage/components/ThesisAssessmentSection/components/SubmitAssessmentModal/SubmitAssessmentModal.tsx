@@ -4,6 +4,7 @@ import DocumentEditor from '../../../../../../components/DocumentEditor/Document
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
 import { useThesisUpdateAction } from '../../../../../../contexts/ThesisProvider/hooks'
+import { ApiError } from '../../../../../../requests/handler'
 
 interface ISubmitAssessmentModalProps {
   opened: boolean
@@ -37,7 +38,7 @@ const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
 
       return response.data
     } else {
-      throw new Error(`Failed to submit assessment: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Assessment submitted successfully')
 

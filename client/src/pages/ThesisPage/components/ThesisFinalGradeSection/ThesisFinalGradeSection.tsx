@@ -9,6 +9,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
+import { ApiError } from '../../../../requests/handler'
 
 const ThesisFinalGradeSection = () => {
   const { thesis, access } = useLoadedThesisContext()
@@ -25,7 +26,7 @@ const ThesisFinalGradeSection = () => {
     if (response.ok) {
       return response.data
     } else {
-      throw new Error(`Failed to complete thesis: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Thesis successfully marked as finished')
 

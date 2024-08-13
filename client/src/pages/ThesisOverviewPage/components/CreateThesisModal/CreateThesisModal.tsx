@@ -8,6 +8,7 @@ import { doRequest } from '../../../../requests/request'
 import { IThesis } from '../../../../requests/responses/thesis'
 import { isNotEmptyUserList } from '../../../../utils/validation'
 import { showSimpleError } from '../../../../utils/notification'
+import { getApiResponseErrorMessage } from '../../../../requests/handler'
 
 interface ICreateThesisModalProps {
   opened: boolean
@@ -68,7 +69,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
             if (response.ok) {
               navigate(`/theses/${response.data.thesisId}`)
             } else {
-              showSimpleError(`Failed to create thesis: ${response.status}`)
+              showSimpleError(getApiResponseErrorMessage(response))
             }
           } finally {
             setLoading(false)
