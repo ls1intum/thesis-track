@@ -20,7 +20,7 @@ const SubmitApplicationStepOnePage = lazy(
 const SubmitApplicationStepTwoPage = lazy(
   () => import('../pages/SubmitApplicationPage/SubmitApplicationStepTwoPage'),
 )
-const CreateTopicPage = lazy(() => import('../pages/CreateTopicPage/CreateTopicPage'))
+const ManageTopicPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicPage'))
 const TopicPage = lazy(() => import('../pages/TopicPage/TopicPage'))
 const ReviewApplicationPage = lazy(
   () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
@@ -66,18 +66,10 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path='/topics/create'
+            path='/topics'
             element={
               <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
-                <CreateTopicPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/topics/edit/:topic_id'
-            element={
-              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
-                <CreateTopicPage />
+                <ManageTopicPage />
               </AuthenticatedArea>
             }
           />

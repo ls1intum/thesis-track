@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.entity.key.TopicReviewerId;
 
 import java.time.Instant;
@@ -12,8 +13,8 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
-@Table(name = "topic_reviewers")
-public class TopicReviewer {
+@Table(name = "topic_roles")
+public class TopicRole {
     @EmbeddedId
     private TopicReviewerId id;
 
@@ -26,6 +27,10 @@ public class TopicReviewer {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role", nullable = false)
+    private ThesisRoleName role;
 
     @CreationTimestamp
     @NotNull

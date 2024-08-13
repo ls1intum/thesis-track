@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useAuthenticationContext } from '../../hooks/authentication'
+import PageLoader from '../../components/PageLoader/PageLoader'
 
 const LogoutPage = () => {
   const auth = useAuthenticationContext()
@@ -8,7 +9,7 @@ const LogoutPage = () => {
     auth.logout('/')
   })
 
-  return <></>
+  return <PageLoader />
 }
 
 export default LogoutPage

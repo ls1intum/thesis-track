@@ -13,7 +13,7 @@ import {
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
-import { Kanban, Moon, NewspaperClipping, Scroll, SignOut, Sun } from 'phosphor-react'
+import { Kanban, Moon, NewspaperClipping, Scroll, SignOut, Sun, FolderSimplePlus } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
 import Logo from '../../../static/logo'
@@ -51,13 +51,13 @@ const links: Array<{
     label: 'Review Applications v2',
     icon: Scroll,
     roles: ['admin', 'advisor', 'supervisor'],
-  },
-  {
-    link: '/topics/create',
-    label: 'Create Topic',
-    icon: FolderSimplePlus,
-    roles: ['admin', 'advisor', 'supervisor'],
   },*/
+  {
+    link: '/topics',
+    label: 'Manage Topics',
+    icon: FolderSimplePlus,
+    groups: ['admin', 'advisor', 'supervisor'],
+  },
   {
     link: '/theses',
     label: 'Theses Overview',
