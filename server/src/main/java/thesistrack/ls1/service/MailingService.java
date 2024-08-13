@@ -202,8 +202,8 @@ public class MailingService {
             String template = new String(fileBytes, StandardCharsets.UTF_8);
 
             return template
-                    .replace("{{config.signature}}", mailSignature)
-                    .replace("{{config.workspaceUrl}}", workspaceUrl);
+                    .replace("{{config.signature}}", Objects.requireNonNullElse(mailSignature, ""))
+                    .replace("{{config.workspaceUrl}}", Objects.requireNonNullElse(workspaceUrl, ""));
         } catch (IOException e) {
             throw new MailingException("Mail template not found", e);
         }
@@ -225,14 +225,14 @@ public class MailingService {
 
     private String fillUserPlaceholders(String template, String placeholder, User user) {
         return template
-                .replace("{{" + placeholder + ".firstName}}", user.getFirstName())
-                .replace("{{" + placeholder + ".lastName}}", user.getLastName())
-                .replace("{{" + placeholder + ".email}}", user.getEmail() != null ? user.getEmail().toString() : "")
-                .replace("{{" + placeholder + ".tumId}}", user.getUniversityId())
-                .replace("{{" + placeholder + ".matriculationNumber}}", user.getMatriculationNumber())
-                .replace("{{" + placeholder + ".gender}}", user.getGender())
-                .replace("{{" + placeholder + ".nationality}}", user.getNationality())
-                .replace("{{" + placeholder + ".isExchangeStudent}}", user.getIsExchangeStudent().toString());
+                .replace("{{" + placeholder + ".firstName}}", Objects.requireNonNullElse(user.getFirstName(), ""))
+                .replace("{{" + placeholder + ".lastName}}", Objects.requireNonNullElse(user.getLastName(), ""))
+                .replace("{{" + placeholder + ".email}}", Objects.requireNonNullElse(user.getEmail() != null ? user.getEmail().toString() : "", ""))
+                .replace("{{" + placeholder + ".tumId}}", Objects.requireNonNullElse(user.getUniversityId(), ""))
+                .replace("{{" + placeholder + ".matriculationNumber}}", Objects.requireNonNullElse(user.getMatriculationNumber(), ""))
+                .replace("{{" + placeholder + ".gender}}", Objects.requireNonNullElse(user.getGender(), ""))
+                .replace("{{" + placeholder + ".nationality}}", Objects.requireNonNullElse(user.getNationality(), ""))
+                .replace("{{" + placeholder + ".isExchangeStudent}}", Objects.requireNonNullElse(user.getIsExchangeStudent(), false).toString());
     }
 
     private String fillApplicationPlaceholders(String template, Application application) {
@@ -241,22 +241,22 @@ public class MailingService {
 
         User student = application.getUser();
 
-        return template.replace("{{application.studyProgram}}", student.getStudyProgram())
-                .replace("{{application.studyDegree}}", student.getStudyDegree())
+        return template.replace("{{application.studyProgram}}", Objects.requireNonNullElse(student.getStudyProgram(), ""))
+                .replace("{{application.studyDegree}}", Objects.requireNonNullElse(student.getStudyDegree(), ""))
                 .replace("{{application.enrolledAt}}", simpleDateFormat.format(
                         Date.from(Objects.requireNonNullElse(student.getEnrolledAt(), Instant.now())
                 )))
                 .replace("{{application.desiredThesisStart}}", simpleDateFormat.format(
                         Date.from(Objects.requireNonNullElse(application.getDesiredStartDate(), Instant.now())
                 )))
-                .replace("{{application.specialSkills}}", student.getSpecialSkills())
-                .replace("{{application.motivation}}", application.getMotivation())
-                .replace("{{application.interests}}", student.getInterests())
-                .replace("{{application.projects}}", student.getProjects())
-                .replace("{{application.specialSkills}}", student.getSpecialSkills())
-                .replace("{{application.thesisTitle}}", application.getThesisTitle())
-                .replace("{{application.researchAreas}}", String.join(", ", student.getResearchAreas()))
-                .replace("{{application.focusTopics}}", String.join(", ", student.getFocusTopics()));
+                .replace("{{application.specialSkills}}", Objects.requireNonNullElse(student.getSpecialSkills(), ""))
+                .replace("{{application.motivation}}", Objects.requireNonNullElse(application.getMotivation(), ""))
+                .replace("{{application.interests}}", Objects.requireNonNullElse(student.getInterests(), ""))
+                .replace("{{application.projects}}", Objects.requireNonNullElse(student.getProjects(), ""))
+                .replace("{{application.specialSkills}}", Objects.requireNonNullElse(student.getSpecialSkills(), ""))
+                .replace("{{application.thesisTitle}}", Objects.requireNonNullElse(application.getThesisTitle(), ""))
+                .replace("{{application.researchAreas}}", String.join(", ", Objects.requireNonNullElse(student.getResearchAreas(), new HashSet<>())))
+                .replace("{{application.focusTopics}}", String.join(", ", Objects.requireNonNullElse(student.getFocusTopics(), new HashSet<>())));
     }
 
     private Multipart createApplicationFilesMailContent(String text, Application application) throws MessagingException, IOException {
