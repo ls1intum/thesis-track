@@ -136,7 +136,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be an advisor of this thesis to update the thesis");
         }
 
         thesis = thesisService.updateThesis(
@@ -183,7 +183,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a student of this thesis to update the abstract and info");
         }
 
         thesis = thesisService.updateThesisInfo(
@@ -225,7 +225,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a student of this thesis to add a proposal");
         }
 
         thesis = thesisService.uploadProposal(authenticatedUser, thesis, RequestValidator.validateNotNull(proposalFile));
@@ -242,7 +242,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be an advisor of this thesis to accept a proposal");
         }
 
         thesis = thesisService.acceptProposal(authenticatedUser, thesis);
@@ -260,8 +260,8 @@ public class ThesisController {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.findById(thesisId);
 
-        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be advisor to perform this action");
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of the thesis to do the final submission");
         }
 
         thesis = thesisService.submitThesis(thesis);
@@ -297,7 +297,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a student of this thesis to upload a presentation");
         }
 
         thesis = thesisService.uploadPresentation(thesis, RequestValidator.validateNotNull(presentationFile));
@@ -333,7 +333,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a student of this thesis to upload a thesis");
         }
 
         thesis = thesisService.uploadThesis(thesis, RequestValidator.validateNotNull(thesisFile));
@@ -363,11 +363,11 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (commentType == ThesisCommentType.ADVISOR && !thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be an advisor of this thesis to view advisor comments");
         }
 
         if (!thesis.hasReadAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
+            throw new AccessDeniedException("You do not have the required permissions to view comments on this thesis");
         }
 
         Page<ThesisComment> comments = thesisCommentService.getComments(thesis, commentType, page, limit);
@@ -386,11 +386,11 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (payload.commentType() == ThesisCommentType.ADVISOR && !thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be an advisor of this thesis to add an advisor comment");
         }
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a student of this thesis to add a comment");
         }
 
         ThesisComment comment = thesisCommentService.postComment(
@@ -414,11 +414,11 @@ public class ThesisController {
         ThesisComment comment = thesisCommentService.findById(thesisId, commentId);
 
         if (comment.getType() == ThesisCommentType.ADVISOR && !comment.getThesis().hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a advisor of this thesis to view an advisor file");
         }
 
         if (!comment.getThesis().hasReadAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
+            throw new AccessDeniedException("You do not have the required permissions to view this comment");
         }
 
         return ResponseEntity.ok()
@@ -457,7 +457,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a advisor of this thesis to add an assessment");
         }
 
         thesis = thesisService.submitAssessment(
@@ -484,7 +484,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasSupervisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a supervisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a supervisor of this thesis to add a final grade");
         }
 
         thesis = thesisService.gradeThesis(
@@ -505,7 +505,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasSupervisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a supervisor of this thesis to perform this action");
+            throw new AccessDeniedException("You need to be a supervisor of this thesis to close the thesis");
         }
 
         thesis = thesisService.completeThesis(thesis);

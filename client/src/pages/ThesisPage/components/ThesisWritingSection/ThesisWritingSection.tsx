@@ -14,6 +14,7 @@ import { showSimpleError, showSimpleSuccess } from '../../../../utils/notificati
 import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
+import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -35,7 +36,7 @@ const ThesisWritingSection = () => {
     if (response.ok) {
       return response.data
     } else {
-      throw new Error(`Failed to submit thesis: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Thesis submitted successfully')
 
@@ -55,7 +56,7 @@ const ThesisWritingSection = () => {
 
       updateThesis(response.data)
     } else {
-      showSimpleError(`Failed to upload thesis: ${response.status}`)
+      showSimpleError(getApiResponseErrorMessage(response))
     }
   }
 
@@ -75,7 +76,7 @@ const ThesisWritingSection = () => {
 
       updateThesis(response.data)
     } else {
-      showSimpleError(`Failed to upload presentation: ${response.status}`)
+      showSimpleError(getApiResponseErrorMessage(response))
     }
   }
 

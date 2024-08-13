@@ -7,6 +7,8 @@ import { useDebouncedValue } from '@mantine/hooks'
 import { GetInputPropsReturnType } from '@mantine/form/lib/types'
 import { formatUser } from '../../utils/format'
 import { arrayUnique } from '../../utils/array'
+import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IUserMultiSelectProps extends GetInputPropsReturnType {
   maxValues?: number
@@ -66,6 +68,8 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
             ),
           )
           setLoading(false)
+        } else {
+          showSimpleError(getApiResponseErrorMessage(res))
         }
       },
     )

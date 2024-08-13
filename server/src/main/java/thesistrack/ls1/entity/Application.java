@@ -60,7 +60,7 @@ public class Application {
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
 
-    public boolean hasAccess(User user) {
+    public boolean hasReadAccess(User user) {
         if (user.hasAnyGroup("admin", "advisor", "supervisor")) {
             return true;
         }

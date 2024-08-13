@@ -4,6 +4,7 @@ import { IThesisCommentsContext, ThesisCommentsContext } from './context'
 import { PaginationResponse } from '../../requests/responses/pagination'
 import { doRequest } from '../../requests/request'
 import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IThesisCommentsProviderProps {
   thesis: IThesis
@@ -39,6 +40,8 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
             content: res.data.content.reverse(),
           })
         } else {
+          showSimpleError(getApiResponseErrorMessage(res))
+
           setComments({
             content: [],
             totalPages: 0,
@@ -109,7 +112,7 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
               }
             })
           } else {
-            showSimpleError(`Could not post comment: ${response.status}`)
+            showSimpleError(getApiResponseErrorMessage(response))
           }
         } finally {
           setSubmitting(false)
@@ -138,7 +141,7 @@ const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProvider
             }
           })
         } else {
-          showSimpleError(`Could not delete comment: ${response.status}`)
+          showSimpleError(getApiResponseErrorMessage(response))
         }
       },
     }

@@ -5,6 +5,7 @@ import { doRequest } from '../../requests/request'
 import { PaginationResponse } from '../../requests/responses/pagination'
 import { useDebouncedValue } from '@mantine/hooks'
 import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IThesesProviderProps {
   fetchAll?: boolean
@@ -53,7 +54,7 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
       },
       (res) => {
         if (!res.ok) {
-          showSimpleError(`Could not fetch theses: ${res.status}`)
+          showSimpleError(getApiResponseErrorMessage(res))
 
           return setTheses({
             content: [],

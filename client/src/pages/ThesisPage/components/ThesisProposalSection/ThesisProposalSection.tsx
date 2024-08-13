@@ -10,6 +10,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
+import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -27,7 +28,7 @@ const ThesisProposalSection = () => {
     if (response.ok) {
       return response.data
     } else {
-      throw new Error(`Failed to accept proposal: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Proposal accepted successfully')
 
@@ -47,7 +48,7 @@ const ThesisProposalSection = () => {
 
       updateThesis(response.data)
     } else {
-      showSimpleError(`Failed to upload proposal: ${response.status}`)
+      showSimpleError(getApiResponseErrorMessage(response))
     }
   }
 

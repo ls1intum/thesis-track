@@ -46,7 +46,11 @@ export function useThesisUpdateAction(
           showSimpleSuccess(successMessage)
         }
       } catch (e) {
-        showSimpleError(String(e))
+        if (e instanceof Error) {
+          showSimpleError(e.message)
+        } else {
+          showSimpleError(String(e))
+        }
       } finally {
         setLoading(false)
       }
