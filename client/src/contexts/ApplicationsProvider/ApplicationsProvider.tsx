@@ -61,7 +61,6 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
           state: filters.states?.join(',') ?? '',
           limit,
           page,
-          limit,
           sortBy: sort.column,
           sortOrder: sort.direction,
         },

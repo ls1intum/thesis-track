@@ -108,7 +108,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
         updateApplication(response.data)
         onUpdate(response.data)
       } else {
-        showSimpleError(getApiResponseErrorMessage(res))
+        showSimpleError(getApiResponseErrorMessage(response))
       }
     } finally {
       setLoading(false)

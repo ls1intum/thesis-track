@@ -5,6 +5,7 @@ import { Button } from '@mantine/core'
 import React, { useState } from 'react'
 import { ButtonProps } from '@mantine/core/lib/components/Button/Button'
 import { useApplicationsContextUpdater } from '../../contexts/ApplicationsProvider/hooks'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IApplicationRejectButtonProps extends ButtonProps {
   application: IApplication
@@ -40,7 +41,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
         updateApplication(response.data)
         onUpdate(response.data)
       } else {
-        showSimpleError(`Failed to reject application: ${response.status}`)
+        showSimpleError(getApiResponseErrorMessage(response))
       }
     } finally {
       setLoading(false)
