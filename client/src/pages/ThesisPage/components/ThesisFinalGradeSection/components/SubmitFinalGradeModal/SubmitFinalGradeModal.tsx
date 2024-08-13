@@ -56,7 +56,7 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
         <InputLabel required>Feedback</InputLabel>
         <DocumentEditor value={feedback} onChange={setFeedback} editMode={true} />
         <Checkbox
-          label='Make thesis public'
+          label='Publish Thesis'
           checked={publishThesis}
           onChange={(e) => setPublishThesis(e.target.checked)}
         />
