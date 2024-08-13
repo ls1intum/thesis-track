@@ -15,6 +15,8 @@ import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
+import PresentationsTable from './components/PresentationsTable/PresentationsTable'
+import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -23,6 +25,7 @@ const ThesisWritingSection = () => {
 
   const [uploadThesisModal, setUploadThesisModal] = useState(false)
   const [uploadPresentationModal, setUploadPresentationModal] = useState(false)
+  const [createPresentationModal, setCreatePresentationModal] = useState(false)
 
   const [submitting, onFinalSubmission] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(
@@ -176,6 +179,20 @@ const ThesisWritingSection = () => {
                   </Stack>
                 )}
             </Group>
+            <Stack>
+              <Divider />
+              <CreatePresentationModal
+                opened={createPresentationModal}
+                onClose={() => setCreatePresentationModal(false)}
+              />
+              <PresentationsTable />
+              {access.advisor &&
+                [ThesisState.WRITING, ThesisState.SUBMITTED].includes(thesis.state) && (
+                  <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
+                    Schedule Presentation
+                  </Button>
+                )}
+            </Stack>
           </Stack>
         </Accordion.Panel>
       </Accordion.Item>

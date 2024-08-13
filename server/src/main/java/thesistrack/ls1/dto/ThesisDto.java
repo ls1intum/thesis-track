@@ -1,5 +1,6 @@
 package thesistrack.ls1.dto;
 
+import thesistrack.ls1.constants.ThesisPresentationType;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
@@ -83,7 +84,7 @@ public record ThesisDto (
 
     record ThesisPresentationDto(
             UUID presentationId,
-            String type,
+            ThesisPresentationType type,
             String location,
             String streamUrl,
             Instant scheduledAt,

@@ -300,7 +300,7 @@ const LegacyCreateApplicationForm = () => {
                   />
                 </Group>
                 <TextInput
-                  type='text'
+                  type='email'
                   required={true}
                   placeholder='your@email.com'
                   label='Email (preferrably a TUM email address)'
