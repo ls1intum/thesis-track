@@ -10,6 +10,7 @@ import { Button, Group } from '@mantine/core'
 import { Trash } from 'phosphor-react'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
+import { ApiError } from '../../../../../../requests/handler'
 
 const PresentationsTable = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -29,7 +30,7 @@ const PresentationsTable = () => {
       if (response.ok) {
         return response.data
       } else {
-        throw new Error(`Failed to delete presentation: ${response.status}`)
+        throw new ApiError(response)
       }
     },
     'Presentation deleted successfully',

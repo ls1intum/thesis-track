@@ -8,6 +8,7 @@ import {
 import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
+import { ApiError } from '../../../../../../requests/handler'
 
 interface ICreatePresentationModalProps {
   opened: boolean
@@ -87,7 +88,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
 
       return response.data
     } else {
-      throw new Error(`Failed to schedule presentation: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Presentation successfully scheduled')
 
