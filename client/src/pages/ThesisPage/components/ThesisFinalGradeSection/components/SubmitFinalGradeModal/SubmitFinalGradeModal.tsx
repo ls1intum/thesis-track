@@ -1,5 +1,5 @@
 import { IThesis } from '../../../../../../requests/responses/thesis'
-import { Button, InputLabel, Modal, Stack, TextInput } from '@mantine/core'
+import { Button, Checkbox, InputLabel, Modal, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { useState } from 'react'
 import DocumentEditor from '../../../../../../components/DocumentEditor/DocumentEditor'
@@ -7,6 +7,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
+import { ApiError } from '../../../../../../requests/handler'
 
 interface ISubmitFinalGradeModalProps {
   opened: boolean
@@ -20,6 +21,7 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
 
   const [finalGrade, setFinalGrade] = useState('')
   const [feedback, setFeedback] = useState('')
+  const [publishThesis, setPublishThesis] = useState(false)
 
   const isEmpty = !finalGrade || !feedback
 
@@ -30,6 +32,7 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
       data: {
         finalGrade,
         finalFeedback: feedback,
+        visibility: publishThesis ? 'PUBLIC' : thesis.visibility,
       },
     })
 
@@ -38,7 +41,7 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
 
       return response.data
     } else {
-      throw new Error(`Failed to submit assessment: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Final Grade submitted successfully')
 
@@ -53,6 +56,11 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
         />
         <InputLabel required>Feedback</InputLabel>
         <DocumentEditor value={feedback} onChange={setFeedback} editMode={true} />
+        <Checkbox
+          label='Publish Thesis'
+          checked={publishThesis}
+          onChange={(e) => setPublishThesis(e.target.checked)}
+        />
         <Button loading={submitting} onClick={onGradeSubmit} disabled={isEmpty}>
           Submit Grade
         </Button>

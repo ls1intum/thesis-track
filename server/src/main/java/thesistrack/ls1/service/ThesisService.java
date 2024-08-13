@@ -8,9 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import thesistrack.ls1.constants.ThesisRoleName;
-import thesistrack.ls1.constants.ThesisState;
-import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.constants.*;
 import thesistrack.ls1.controller.payload.ThesisStatePayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.entity.key.ThesisRoleId;
@@ -21,6 +19,7 @@ import thesistrack.ls1.repository.*;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ThesisService {
@@ -31,6 +30,7 @@ public class ThesisService {
     private final UploadService uploadService;
     private final ThesisProposalRepository thesisProposalRepository;
     private final ThesisAssessmentRepository thesisAssessmentRepository;
+    private final ThesisPresentationRepository thesisPresentationRepository;
 
     @Autowired
     public ThesisService(
@@ -40,8 +40,8 @@ public class ThesisService {
             UserRepository userRepository,
             ThesisProposalRepository thesisProposalRepository,
             ThesisAssessmentRepository thesisAssessmentRepository,
-            UploadService uploadService
-    ) {
+            UploadService uploadService,
+            ThesisPresentationRepository thesisPresentationRepository) {
         this.thesisRoleRepository = thesisRoleRepository;
         this.thesisRepository = thesisRepository;
         this.thesisStateChangeRepository = thesisStateChangeRepository;
@@ -49,6 +49,7 @@ public class ThesisService {
         this.uploadService = uploadService;
         this.thesisProposalRepository = thesisProposalRepository;
         this.thesisAssessmentRepository = thesisAssessmentRepository;
+        this.thesisPresentationRepository = thesisPresentationRepository;
     }
 
     public Page<Thesis> getAll(
@@ -265,6 +266,40 @@ public class ThesisService {
         return uploadService.load(filename);
     }
 
+    public Thesis createPresentation(User creator, Thesis thesis, ThesisPresentationType type, ThesisPresentationVisibility visibility, String location, String streamUrl, Instant date) {
+        ThesisPresentation presentation = new ThesisPresentation();
+
+        presentation.setThesis(thesis);
+        presentation.setType(type);
+        presentation.setVisibility(visibility);
+        presentation.setLocation(location);
+        presentation.setStreamUrl(streamUrl);
+        presentation.setScheduledAt(date);
+        presentation.setCreatedBy(creator);
+        presentation.setCreatedAt(Instant.now());
+
+        presentation = thesisPresentationRepository.save(presentation);
+
+        List<ThesisPresentation> presentations = thesis.getPresentations();
+        presentations.add(presentation);
+        presentations.sort(Comparator.comparing(ThesisPresentation::getScheduledAt));
+        thesis.setPresentations(presentations);
+
+        return thesisRepository.save(thesis);
+    }
+
+    public Thesis deletePresentation(Thesis thesis, UUID presentationId) {
+        thesisPresentationRepository.deleteById(presentationId);
+
+        List<ThesisPresentation> presentations = new ArrayList<>(thesis.getPresentations().stream()
+                .filter(presentation -> !presentation.getId().equals(presentationId))
+                .toList());
+
+        thesis.setPresentations(presentations);
+
+        return thesisRepository.save(thesis);
+    }
+
     /* ASSESSMENT */
     @Transactional
     public Thesis submitAssessment(
@@ -299,8 +334,9 @@ public class ThesisService {
     }
 
     /* GRADING */
-    public Thesis gradeThesis(Thesis thesis, String finalGrade, String finalFeedback) {
+    public Thesis gradeThesis(Thesis thesis, String finalGrade, String finalFeedback, ThesisVisibility visibility) {
         thesis.setState(ThesisState.GRADED);
+        thesis.setVisibility(visibility);
         thesis.setFinalGrade(finalGrade);
         thesis.setFinalFeedback(finalFeedback);
 
@@ -322,6 +358,17 @@ public class ThesisService {
     public Thesis findById(UUID thesisId) {
         return thesisRepository.findById(thesisId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Thesis with id %s not found.", thesisId)));
+    }
+
+    public ThesisPresentation findPresentationById(UUID thesisId, UUID presentationId) {
+        ThesisPresentation presentation = thesisPresentationRepository.findById(presentationId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("Presentation with id %s not found.", presentationId)));
+
+        if (!presentation.getThesis().getId().equals(thesisId)) {
+            throw new ResourceNotFoundException(String.format("Presentation with id %s not found for thesis with id %s.", presentationId, thesisId));
+        }
+
+        return presentation;
     }
 
     private void assignThesisRoles(
@@ -348,6 +395,7 @@ public class ThesisService {
         }
 
         thesisRoleRepository.deleteByThesisId(thesis.getId());
+        thesis.setRoles(new HashSet<>());
 
         for (User supervisor : supervisors) {
             if (!supervisor.hasAnyGroup("supervisor")) {

@@ -11,6 +11,12 @@ import {
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
+import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
+import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
+import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
+import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
+import PresentationsTable from './components/PresentationsTable/PresentationsTable'
+import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -19,6 +25,7 @@ const ThesisWritingSection = () => {
 
   const [uploadThesisModal, setUploadThesisModal] = useState(false)
   const [uploadPresentationModal, setUploadPresentationModal] = useState(false)
+  const [createPresentationModal, setCreatePresentationModal] = useState(false)
 
   const [submitting, onFinalSubmission] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(
@@ -32,7 +39,7 @@ const ThesisWritingSection = () => {
     if (response.ok) {
       return response.data
     } else {
-      throw new Error(`Failed to submit thesis: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Thesis submitted successfully')
 
@@ -52,7 +59,7 @@ const ThesisWritingSection = () => {
 
       updateThesis(response.data)
     } else {
-      showSimpleError(`Failed to upload thesis: ${response.status}`)
+      showSimpleError(getApiResponseErrorMessage(response))
     }
   }
 
@@ -72,7 +79,7 @@ const ThesisWritingSection = () => {
 
       updateThesis(response.data)
     } else {
-      showSimpleError(`Failed to upload presentation: ${response.status}`)
+      showSimpleError(getApiResponseErrorMessage(response))
     }
   }
 
@@ -146,6 +153,13 @@ const ThesisWritingSection = () => {
                 )}
               </Grid.Col>
             </Grid>
+            <Divider />
+            <Stack>
+              <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
+                <ThesisCommentsList />
+                {access.student && <ThesisCommentsForm />}
+              </ThesisCommentsProvider>
+            </Stack>
             <Group grow>
               {access.student &&
                 thesis.state === ThesisState.WRITING &&
@@ -165,6 +179,20 @@ const ThesisWritingSection = () => {
                   </Stack>
                 )}
             </Group>
+            <Stack>
+              <Divider />
+              <CreatePresentationModal
+                opened={createPresentationModal}
+                onClose={() => setCreatePresentationModal(false)}
+              />
+              <PresentationsTable />
+              {access.advisor &&
+                [ThesisState.WRITING, ThesisState.SUBMITTED].includes(thesis.state) && (
+                  <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
+                    Schedule Presentation
+                  </Button>
+                )}
+            </Stack>
           </Stack>
         </Accordion.Panel>
       </Accordion.Item>

@@ -30,6 +30,7 @@ import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 const LegacyCreateApplicationForm = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -228,9 +229,7 @@ const LegacyCreateApplicationForm = () => {
 
                     setApplicationSuccessfullySubmitted(true)
                   } else {
-                    showSimpleError(
-                      `Failed to submit the application. Server responded with ${response.status}`,
-                    )
+                    showSimpleError(getApiResponseErrorMessage(response))
                   }
                 } finally {
                   loadingOverlayHandlers.close()
@@ -301,7 +300,7 @@ const LegacyCreateApplicationForm = () => {
                   />
                 </Group>
                 <TextInput
-                  type='text'
+                  type='email'
                   required={true}
                   placeholder='your@email.com'
                   label='Email (preferrably a TUM email address)'

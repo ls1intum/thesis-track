@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
 import { Button, Space, Stack, Text } from '@mantine/core'
 import { downloadPdf } from '../../utils/blob'
+import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IAuthenticatedIframeProps {
   url: string
@@ -29,6 +31,8 @@ const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
       (res) => {
         if (res.ok) {
           setFile(res.data)
+        } else {
+          showSimpleError(getApiResponseErrorMessage(res))
         }
       },
     )

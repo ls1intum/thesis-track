@@ -20,7 +20,7 @@ import java.text.ParseException;
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ ResourceNotFoundException.class })
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorDto.fromRuntimeError(ex), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+        return handleExceptionInternal(ex, ErrorDto.fromRuntimeException(ex), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 
     @ExceptionHandler({
@@ -30,16 +30,16 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             JsonProcessingException.class,
     })
     protected ResponseEntity<Object> handleBadRequest(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorDto.fromRuntimeError(ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return handleExceptionInternal(ex, ErrorDto.fromRuntimeException(ex), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     @ExceptionHandler({ AccessDeniedException.class })
     protected ResponseEntity<Object> handleAccessDenied(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorDto.fromRuntimeError(ex), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
+        return handleExceptionInternal(ex, ErrorDto.fromRuntimeException(ex), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler({ MailingException.class, UploadException.class })
     protected ResponseEntity<Object> handleServerError(RuntimeException ex, WebRequest request) {
-        return handleExceptionInternal(ex, ErrorDto.fromRuntimeError(ex), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
+        return handleExceptionInternal(ex, ErrorDto.fromRuntimeException(ex), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
     }
 }
