@@ -19,6 +19,7 @@ import {
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IApplicationReviewFormProps {
   application: IApplication
@@ -82,6 +83,8 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             application.comment = res.data.comment
 
             updateApplication(res.data)
+          } else {
+            showSimpleError(getApiResponseErrorMessage(res))
           }
         },
       )
@@ -129,7 +132,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           <Stack gap='0'>
             <Textarea
               label='Comment'
-              placeholder='Comment'
+              placeholder='Add a comment'
               autosize={true}
               minRows={5}
               {...form.getInputProps('comment')}
@@ -173,7 +176,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
                   updateApplication(response.data)
                   onUpdate()
                 } else {
-                  showSimpleError(`Failed to reject application: ${response.status}`)
+                  showSimpleError(getApiResponseErrorMessage(response))
                 }
               }}
             >
@@ -213,7 +216,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
                   updateApplication(response.data)
                   onUpdate()
                 } else {
-                  showSimpleError(`Failed to accept application: ${response.status}`)
+                  showSimpleError(getApiResponseErrorMessage(response))
                 }
               }}
             >

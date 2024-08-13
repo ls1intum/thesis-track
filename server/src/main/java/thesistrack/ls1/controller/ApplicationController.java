@@ -76,7 +76,7 @@ public class ApplicationController {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Application application = applicationService.findById(applicationId);
 
-        if (!application.hasAccess(authenticatedUser)) {
+        if (!application.hasReadAccess(authenticatedUser)) {
             throw new AccessDeniedException("You do not have access to this application");
         }
 
@@ -93,7 +93,7 @@ public class ApplicationController {
         Application application = applicationService.findById(applicationId);
 
         if (!application.hasManagementAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have access to this application");
+            throw new AccessDeniedException("You do not have access to comment this application");
         }
 
         application =  applicationService.updateComment(
@@ -114,7 +114,7 @@ public class ApplicationController {
         Application application = applicationService.findById(applicationId);
 
         if (!application.hasManagementAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have access to this application");
+            throw new AccessDeniedException("You do not have access to accept this application");
         }
 
         application = applicationService.accept(
@@ -142,7 +142,7 @@ public class ApplicationController {
         Application application = applicationService.findById(applicationId);
 
         if (!application.hasManagementAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have access to this application");
+            throw new AccessDeniedException("You do not have access to reject this application");
         }
 
         application =  applicationService.reject(

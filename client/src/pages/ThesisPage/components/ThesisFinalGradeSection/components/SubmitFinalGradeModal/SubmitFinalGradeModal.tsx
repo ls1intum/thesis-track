@@ -7,6 +7,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
+import { ApiError } from '../../../../../../requests/handler'
 
 interface ISubmitFinalGradeModalProps {
   opened: boolean
@@ -40,7 +41,7 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
 
       return response.data
     } else {
-      throw new Error(`Failed to submit assessment: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Final Grade submitted successfully')
 

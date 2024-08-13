@@ -8,6 +8,8 @@ import ApplicationsFilters from './components/ApplicationsFilters/ApplicationsFi
 import ApplicationsTable from '../../components/ApplicationsTable/ApplicationsTable'
 import ApplicationsProvider from '../../contexts/ApplicationsProvider/ApplicationsProvider'
 import { Space, Title } from '@mantine/core'
+import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 const LegacyApplicationReviewPage = () => {
   const navigate = useNavigate()
@@ -26,6 +28,8 @@ const LegacyApplicationReviewPage = () => {
         (res) => {
           if (res.ok) {
             setOpenedApplication(res.data)
+          } else {
+            showSimpleError(getApiResponseErrorMessage(res))
           }
         },
       )

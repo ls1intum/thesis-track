@@ -15,6 +15,7 @@ import {
 } from '../../../../contexts/ThesisProvider/hooks'
 import { formatThesisState } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
+import { ApiError } from '../../../../requests/handler'
 
 interface IThesisConfigSectionFormValues {
   title: string
@@ -156,7 +157,7 @@ const ThesisConfigSection = () => {
     if (response.ok) {
       return response.data
     } else {
-      throw new Error(`Failed to update thesis: ${response.status}`)
+      throw new ApiError(response)
     }
   }, 'Thesis updated successfully')
 
