@@ -63,3 +63,11 @@ export interface IThesis {
     endedAt: string | null
   }>
 }
+
+export interface IThesisComment {
+  commentId: string
+  message: string
+  hasFile: boolean
+  createdAt: string
+  createdBy: ILightUser
+}

@@ -9,6 +9,7 @@ import { Button, Checkbox, Group, Select, Stack, Text, Textarea, TextInput } fro
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 import ApplicationRejectButton from '../ApplicationRejectButton/ApplicationRejectButton'
 
 interface IApplicationReviewFormProps {
@@ -73,6 +74,8 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             application.comment = res.data.comment
 
             onUpdate(res.data)
+          } else {
+            showSimpleError(getApiResponseErrorMessage(res))
           }
         },
       )
@@ -105,7 +108,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
         updateApplication(response.data)
         onUpdate(response.data)
       } else {
-        showSimpleError(`Failed to accept application: ${response.status}`)
+        showSimpleError(getApiResponseErrorMessage(res))
       }
     } finally {
       setLoading(false)
@@ -151,7 +154,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           <Stack gap='0'>
             <Textarea
               label='Comment'
-              placeholder='Comment'
+              placeholder='Add a comment'
               autosize={true}
               minRows={5}
               {...form.getInputProps('comment')}

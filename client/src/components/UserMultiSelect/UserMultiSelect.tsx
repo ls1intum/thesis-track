@@ -1,12 +1,14 @@
 import { MultiSelect } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { doRequest } from '../../requests/request'
-import { Pageable } from '../../requests/responses/pageable'
+import { PaginationResponse } from '../../requests/responses/pagination'
 import { ILightUser } from '../../requests/responses/user'
 import { useDebouncedValue } from '@mantine/hooks'
 import { GetInputPropsReturnType } from '@mantine/form/lib/types'
 import { formatUser } from '../../utils/format'
 import { arrayUnique } from '../../utils/array'
+import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IUserMultiSelectProps extends GetInputPropsReturnType {
   maxValues?: number
@@ -39,7 +41,7 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
   useEffect(() => {
     setLoading(true)
 
-    return doRequest<Pageable<ILightUser>>(
+    return doRequest<PaginationResponse<ILightUser>>(
       '/v2/users',
       {
         method: 'GET',
@@ -66,6 +68,8 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
             ),
           )
           setLoading(false)
+        } else {
+          showSimpleError(getApiResponseErrorMessage(res))
         }
       },
     )

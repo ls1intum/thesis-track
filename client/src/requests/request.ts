@@ -70,10 +70,21 @@ export function doRequest<T>(
         data: options.responseType === 'blob' ? await result.blob() : await result.json(),
       }
     } else {
+      let errorMessage: string | undefined = undefined
+
+      if (result.headers.get('content-type') === 'application/json') {
+        const json = await result.json()
+
+        if (json.message) {
+          errorMessage = json.message
+        }
+      }
+
       return {
         ok: false,
         status: result.status,
         data: undefined,
+        error: errorMessage ? new Error(errorMessage) : undefined,
       }
     }
   }

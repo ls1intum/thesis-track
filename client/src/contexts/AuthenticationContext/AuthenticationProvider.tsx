@@ -12,6 +12,8 @@ import { getAuthenticationTokens, useAuthenticationTokens } from '../../hooks/au
 import { useSignal } from '../../hooks/utility'
 import { IUser } from '../../requests/responses/user'
 import { doRequest } from '../../requests/request'
+import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 export const keycloak = new Keycloak({
   realm: GLOBAL_CONFIG.keycloak.realm,
@@ -83,6 +85,8 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
 
     keycloak.onTokenExpired = () => refreshAccessToken()
     keycloak.onAuthRefreshSuccess = () => storeTokens()
+    keycloak.onAuthRefreshError = () => setAuthenticationTokens(undefined)
+    keycloak.onAuthLogout = () => setAuthenticationTokens(undefined)
 
     console.log('Initializing keycloak...')
 
@@ -121,6 +125,8 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
 
       keycloak.onAuthRefreshSuccess = undefined
       keycloak.onTokenExpired = undefined
+      keycloak.onAuthRefreshError = undefined
+      keycloak.onAuthLogout = undefined
     }
   }, [])
 
@@ -153,6 +159,8 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
         (res) => {
           if (res.ok) {
             setUser(res.data)
+          } else {
+            showSimpleError(getApiResponseErrorMessage(res))
           }
         },
       )
