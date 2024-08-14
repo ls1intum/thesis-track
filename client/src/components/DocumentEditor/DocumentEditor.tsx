@@ -86,7 +86,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
         onBlur={onBlur}
         onFocus={onFocus}
         style={{
-          minHeight: '170px',
+          minHeight: editMode ? '170px' : undefined,
           borderColor: wrapperProps.error ? 'var(--mantine-color-error)' : undefined,
         }}
       >
