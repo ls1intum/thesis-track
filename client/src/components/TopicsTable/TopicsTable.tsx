@@ -5,6 +5,7 @@ import { formatDate, formatUser } from '../../utils/format'
 import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
 import { ITopic } from '../../requests/responses/topic'
 import { useNavigate } from 'react-router-dom'
+import { Badge } from '@mantine/core'
 
 type TopicColumn = 'title' | 'advisor' | 'supervisor' | 'actions' | 'state' | 'createdAt'
 
@@ -22,17 +23,19 @@ const TopicsTable = (props: ITopicsTableProps) => {
   const { topics, page, setPage, limit } = useTopicsContext()
 
   const columnConfig: Record<TopicColumn, DataTableColumn<ITopic>> = {
+    state: {
+      accessor: 'state',
+      title: 'State',
+      textAlign: 'center',
+      width: 80,
+      render: (topic) =>
+        topic.closedAt ? <Badge color='red'>Closed</Badge> : <Badge color='gray'>Open</Badge>,
+    },
     title: {
       accessor: 'title',
       title: 'Title',
       ellipsis: true,
       width: 300,
-    },
-    actions: {
-      accessor: 'actions',
-      title: 'Actions',
-      textAlign: 'center',
-      render: (topic) => actions?.(topic),
     },
     supervisor: {
       accessor: 'supervisor',
@@ -44,16 +47,18 @@ const TopicsTable = (props: ITopicsTableProps) => {
       title: 'Advisor',
       render: (topic) => topic.advisors.map((user) => formatUser(user)).join(','),
     },
-    state: {
-      accessor: 'state',
-      title: 'State',
-      sortable: true,
-      render: () => <></>,
-    },
     createdAt: {
       accessor: 'createdAt',
       title: 'Created At',
       render: (record) => formatDate(record.createdAt),
+    },
+    actions: {
+      accessor: 'actions',
+      title: 'Actions',
+      textAlign: 'center',
+      noWrap: true,
+      width: 120,
+      render: (topic) => actions?.(topic),
     },
   }
 

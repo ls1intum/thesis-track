@@ -35,18 +35,20 @@ const ManageTopicsPage = () => {
             Create Topic
           </Button>
           <TopicsTable
-            columns={['title', 'supervisor', 'advisor', 'createdAt', 'actions']}
+            columns={['state', 'title', 'supervisor', 'advisor', 'createdAt', 'actions']}
             actions={(topic) => (
-              <Center onClick={(e) => e.stopPropagation()}>
-                <Group>
-                  {!topic.closedAt && (
-                    <Button size='xs' onClick={() => setEditingTopic(topic)}>
-                      <Pencil />
-                    </Button>
-                  )}
-                  <CloseTopicButton size='xs' topic={topic} />
-                </Group>
-              </Center>
+              <Group
+                preventGrowOverflow={false}
+                justify='center'
+                onClick={(e) => e.stopPropagation()}
+              >
+                {!topic.closedAt && (
+                  <Button size='xs' onClick={() => setEditingTopic(topic)}>
+                    <Pencil />
+                  </Button>
+                )}
+                <CloseTopicButton size='xs' topic={topic} />
+              </Group>
             )}
           />
         </Stack>

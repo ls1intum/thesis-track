@@ -43,6 +43,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
         }
 
         inputRef.current.value = newValue
+
         onChangeRef.current?.({
           target: inputRef.current,
           currentTarget: inputRef.current,
@@ -84,10 +85,13 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
         editor={editor}
         onBlur={onBlur}
         onFocus={onFocus}
-        style={{ minHeight: '170px' }}
+        style={{
+          minHeight: '170px',
+          borderColor: wrapperProps.error ? 'var(--mantine-color-error)' : undefined,
+        }}
       >
         {editMode && (
-          <RichTextEditor.Toolbar sticky stickyOffset={60}>
+          <RichTextEditor.Toolbar>
             <RichTextEditor.ControlsGroup>
               <RichTextEditor.Bold />
               <RichTextEditor.Italic />

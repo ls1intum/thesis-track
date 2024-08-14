@@ -52,13 +52,14 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       accessor: 'reviewedAt',
       title: 'Reviewed At',
       sortable: true,
+      width: 140,
       render: (application) => formatDate(application.reviewedAt),
     },
     created_at: {
       accessor: 'createdAt',
       title: 'Created At',
       sortable: true,
-      width: 130,
+      width: 140,
       render: (application) => formatDate(application.createdAt),
     },
   }
