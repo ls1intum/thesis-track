@@ -40,12 +40,12 @@ const TopicsTable = (props: ITopicsTableProps) => {
     supervisor: {
       accessor: 'supervisor',
       title: 'Supervisor',
-      render: (topic) => topic.supervisors.map((user) => formatUser(user)).join(','),
+      render: (topic) => topic.supervisors.map((user) => formatUser(user)).join(', '),
     },
     advisor: {
       accessor: 'advisor',
       title: 'Advisor',
-      render: (topic) => topic.advisors.map((user) => formatUser(user)).join(','),
+      render: (topic) => topic.advisors.map((user) => formatUser(user)).join(', '),
     },
     createdAt: {
       accessor: 'createdAt',

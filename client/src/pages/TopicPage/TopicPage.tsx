@@ -39,7 +39,7 @@ const TopicPage = () => {
               label='Supervisor'
               value={topic.supervisors
                 .map((user) => formatUser(user, { withUniversityId: false }))
-                .join(',')}
+                .join(', ')}
             />
           </Grid.Col>
           <Grid.Col span={{ md: 3 }}>
@@ -47,7 +47,7 @@ const TopicPage = () => {
               label='Advisor'
               value={topic.advisors
                 .map((user) => formatUser(user, { withUniversityId: false }))
-                .join(',')}
+                .join(', ')}
             />
           </Grid.Col>
           <Grid.Col span={{ md: 3 }}>
