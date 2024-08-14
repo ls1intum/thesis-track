@@ -13,7 +13,16 @@ import {
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
-import { Kanban, Moon, NewspaperClipping, Scroll, SignOut, Sun, FolderSimplePlus } from 'phosphor-react'
+import {
+  Kanban,
+  Moon,
+  NewspaperClipping,
+  Scroll,
+  SignOut,
+  Sun,
+  FolderSimplePlus,
+  PaperPlaneTilt,
+} from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
 import Logo from '../../../static/logo'
@@ -34,24 +43,18 @@ const links: Array<{
   groups: string[] | undefined
 }> = [
   { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
-  /*{
-    link: '/submit-application/pick-topic',
+  {
+    link: '/submit-application',
     label: 'Submit Application',
     icon: PaperPlaneTilt,
-    roles: undefined,
-  },*/
+    groups: undefined,
+  },
   {
     link: '/management/thesis-applications',
     label: 'Review Applications',
     icon: Scroll,
     groups: ['admin', 'advisor', 'supervisor'],
   },
-  /*{
-    link: '/applications',
-    label: 'Review Applications v2',
-    icon: Scroll,
-    roles: ['admin', 'advisor', 'supervisor'],
-  },*/
   {
     link: '/topics',
     label: 'Manage Topics',

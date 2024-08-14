@@ -14,13 +14,10 @@ const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/Thesis
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
 const LogoutPage = lazy(() => import('../pages/LogoutPage/LogoutPage'))
 const MyInformationPage = lazy(() => import('../pages/MyInformationPage/MyInformationPage'))
-const SubmitApplicationStepOnePage = lazy(
-  () => import('../pages/SubmitApplicationPage/SubmitApplicationStepOnePage'),
+const SubmitApplicationPage = lazy(
+  () => import('../pages/SubmitApplicationPage/SubmitApplicationPage'),
 )
-const SubmitApplicationStepTwoPage = lazy(
-  () => import('../pages/SubmitApplicationPage/SubmitApplicationStepTwoPage'),
-)
-const ManageTopicPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicsPage'))
+const ManageTopicsPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicsPage'))
 const TopicPage = lazy(() => import('../pages/TopicPage/TopicPage'))
 const ReviewApplicationPage = lazy(
   () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
@@ -50,18 +47,10 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path='/submit-application/pick-topic'
+            path='/submit-application/:topicId?'
             element={
               <AuthenticatedArea>
-                <SubmitApplicationStepOnePage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/submit-application/apply/:topic_id?'
-            element={
-              <AuthenticatedArea>
-                <SubmitApplicationStepTwoPage />
+                <SubmitApplicationPage />
               </AuthenticatedArea>
             }
           />
@@ -69,7 +58,7 @@ const AppRoutes = () => {
             path='/topics'
             element={
               <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
-                <ManageTopicPage />
+                <ManageTopicsPage />
               </AuthenticatedArea>
             }
           />
