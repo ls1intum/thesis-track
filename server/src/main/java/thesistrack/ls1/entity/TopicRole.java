@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
-import thesistrack.ls1.constants.ThesisRoleName;
-import thesistrack.ls1.entity.key.TopicReviewerId;
+import thesistrack.ls1.entity.key.TopicRoleId;
 
 import java.time.Instant;
 
@@ -16,7 +14,7 @@ import java.time.Instant;
 @Table(name = "topic_roles")
 public class TopicRole {
     @EmbeddedId
-    private TopicReviewerId id;
+    private TopicRoleId id;
 
     @MapsId("topicId")
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -28,11 +26,6 @@ public class TopicRole {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false)
-    private ThesisRoleName role;
-
-    @CreationTimestamp
     @NotNull
     @Column(name = "assigned_at", nullable = false)
     private Instant assignedAt;

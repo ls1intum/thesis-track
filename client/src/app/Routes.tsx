@@ -20,7 +20,7 @@ const SubmitApplicationStepOnePage = lazy(
 const SubmitApplicationStepTwoPage = lazy(
   () => import('../pages/SubmitApplicationPage/SubmitApplicationStepTwoPage'),
 )
-const ManageTopicPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicPage'))
+const ManageTopicPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicsPage'))
 const TopicPage = lazy(() => import('../pages/TopicPage/TopicPage'))
 const ReviewApplicationPage = lazy(
   () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
@@ -74,7 +74,7 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path='/topics/:topic_id'
+            path='/topics/:topicId'
             element={
               <AuthenticatedArea requireAuthentication={false}>
                 <TopicPage />

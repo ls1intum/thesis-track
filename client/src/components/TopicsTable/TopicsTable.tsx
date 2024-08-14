@@ -1,12 +1,12 @@
 import React, { ReactNode } from 'react'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { formatUser } from '../../utils/format'
+import { formatDate, formatUser } from '../../utils/format'
 import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
 import { ITopic } from '../../requests/responses/topic'
 import { useNavigate } from 'react-router-dom'
 
-type TopicColumn = 'title' | 'advisor' | 'supervisor' | 'actions' | 'state'
+type TopicColumn = 'title' | 'advisor' | 'supervisor' | 'actions' | 'state' | 'createdAt'
 
 interface ITopicsTableProps {
   columns?: TopicColumn[]
@@ -37,13 +37,11 @@ const TopicsTable = (props: ITopicsTableProps) => {
     supervisor: {
       accessor: 'supervisor',
       title: 'Supervisor',
-      sortable: true,
       render: (topic) => topic.supervisors.map((user) => formatUser(user)).join(','),
     },
     advisor: {
-      accessor: 'supervisor',
-      title: 'Supervisor',
-      sortable: true,
+      accessor: 'advisor',
+      title: 'Advisor',
       render: (topic) => topic.advisors.map((user) => formatUser(user)).join(','),
     },
     state: {
@@ -51,6 +49,11 @@ const TopicsTable = (props: ITopicsTableProps) => {
       title: 'State',
       sortable: true,
       render: () => <></>,
+    },
+    createdAt: {
+      accessor: 'createdAt',
+      title: 'Created At',
+      render: (record) => formatDate(record.createdAt),
     },
   }
 
@@ -70,7 +73,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
       onPageChange={(x) => setPage(x - 1)}
       bodyRef={bodyRef}
       records={topics?.content}
-      idAccessor='applicationId'
+      idAccessor='topicId'
       columns={columns.map((column) => columnConfig[column])}
       onRowClick={({ record }) => navigate(`/topics/${record.topicId}`)}
     />

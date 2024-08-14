@@ -1,9 +1,9 @@
 import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
-import { Pageable } from '../../requests/responses/pageable'
 import { showSimpleError } from '../../utils/notification'
 import { ITopic } from '../../requests/responses/topic'
 import { ITopicsContext, TopicsContext } from './context'
+import { PaginationResponse } from '../../requests/responses/pagination'
 
 interface ITopicsProviderProps {
   includeClosedTopics?: boolean
@@ -14,13 +14,13 @@ interface ITopicsProviderProps {
 const TopicsProvider = (props: PropsWithChildren<ITopicsProviderProps>) => {
   const { children, includeClosedTopics = false, limit = 50, hideIfEmpty = false } = props
 
-  const [topics, setTopics] = useState<Pageable<ITopic>>()
+  const [topics, setTopics] = useState<PaginationResponse<ITopic>>()
   const [page, setPage] = useState(0)
 
   useEffect(() => {
     setTopics(undefined)
 
-    return doRequest<Pageable<ITopic>>(
+    return doRequest<PaginationResponse<ITopic>>(
       `/v2/topics`,
       {
         method: 'GET',
@@ -56,17 +56,30 @@ const TopicsProvider = (props: PropsWithChildren<ITopicsProviderProps>) => {
       page,
       setPage,
       limit,
-      updateTopic: (newThesis) => {
+      updateTopic: (newTopic) => {
         setTopics((prev) => {
           if (!prev) {
             return undefined
           }
 
-          const index = prev.content.findIndex((x) => x.topicId === newThesis.topicId)
+          const index = prev.content.findIndex((x) => x.topicId === newTopic.topicId)
 
           if (index >= 0) {
-            prev.content[index] = newThesis
+            prev.content[index] = newTopic
           }
+
+          return { ...prev }
+        })
+      },
+      addTopic: (newTopic) => {
+        setTopics((prev) => {
+          if (!prev) {
+            return undefined
+          }
+
+          prev.content = [newTopic, ...prev.content].slice(-limit)
+          prev.totalElements += 1
+          prev.totalPages = Math.ceil(prev.totalElements / limit)
 
           return { ...prev }
         })

@@ -8,6 +8,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -36,8 +38,7 @@ public class Topic {
     @Column(name = "\"references\"", nullable = false, length = 2000)
     private String references;
 
-    @NotNull
-    @Column(name = "required_degree", nullable = false, length = 2000)
+    @Column(name = "required_degree", length = 100)
     private String requiredDegree;
 
     @Column(name = "closed_at")
@@ -58,4 +59,6 @@ public class Topic {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
+    @OneToMany(mappedBy = "topic", fetch = FetchType.EAGER)
+    private Set<TopicRole> roles = new HashSet<>();
 }

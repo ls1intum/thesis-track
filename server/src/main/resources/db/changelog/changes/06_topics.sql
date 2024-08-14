@@ -14,3 +14,6 @@ CREATE TABLE topic_roles
     FOREIGN KEY (user_id) REFERENCES users (user_id),
     FOREIGN KEY (assigned_by) REFERENCES users (user_id)
 );
+
+--changeset emilius:06-topics-2
+ALTER TABLE topics ALTER COLUMN required_degree DROP NOT NULL;
