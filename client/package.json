@@ -27,7 +27,7 @@
     "@tiptap/extension-superscript": "2.5.9",
     "@tiptap/extension-text-align": "2.5.9",
     "@tiptap/extension-underline": "2.5.9",
-    "@tiptap/starter-kit": "2.5.9",
+    "@tiptap/starter-kit": "2.6.3",
     "i18n-iso-countries": "7.11.3",
     "jwt-decode": "4.0.0",
     "keycloak-js": "25.0.2",
