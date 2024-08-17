@@ -28,6 +28,7 @@ public class ApplicationService {
     private final TopicRepository topicRepository;
     private final ThesisService thesisService;
     private final UserService userService;
+    private final TopicService topicService;
 
     @Autowired
     public ApplicationService(
@@ -37,8 +38,8 @@ public class ApplicationService {
             MailingService mailingService,
             TopicRepository topicRepository,
             ThesisService thesisService,
-            UserService userService
-    ) {
+            UserService userService,
+            TopicService topicService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
 
@@ -47,6 +48,7 @@ public class ApplicationService {
         this.topicRepository = topicRepository;
         this.thesisService = thesisService;
         this.userService = userService;
+        this.topicService = topicService;
     }
 
     public Page<Application> getAll(
@@ -124,6 +126,24 @@ public class ApplicationService {
         application.setState(ApplicationState.NOT_ASSESSED);
         application.setDesiredStartDate(payload.desiredStartDate());
         application.setCreatedAt(currentTime);
+
+        mailingService.sendApplicationCreatedMailToChair(application);
+        mailingService.sendApplicationCreatedMailToStudent(application);
+
+        return applicationRepository.save(application);
+    }
+
+    @Transactional
+    public Application createApplication(User user, UUID topicId, String thesisTitle, Instant desiredStartDate, String motivation) {
+        Application application = new Application();
+        application.setUser(user);
+
+        application.setTopic(topicId == null ? null : topicService.findById(topicId));
+        application.setThesisTitle(thesisTitle);
+        application.setMotivation(motivation);
+        application.setState(ApplicationState.NOT_ASSESSED);
+        application.setDesiredStartDate(desiredStartDate);
+        application.setCreatedAt(Instant.now());
 
         mailingService.sendApplicationCreatedMailToChair(application);
         mailingService.sendApplicationCreatedMailToStudent(application);

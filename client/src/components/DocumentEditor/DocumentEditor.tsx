@@ -7,17 +7,18 @@ import TextAlign from '@tiptap/extension-text-align'
 import Superscript from '@tiptap/extension-superscript'
 import SubScript from '@tiptap/extension-subscript'
 import { ChangeEvent, useEffect, useRef } from 'react'
-import { Input } from '@mantine/core'
+import { Group, Input, Text } from '@mantine/core'
 import { InputWrapperProps } from '@mantine/core/lib/components/Input/InputWrapper/InputWrapper'
 
 interface IDocumentEditorProps extends InputWrapperProps {
   value?: string
   onChange?: (e: ChangeEvent<HTMLInputElement>) => unknown
   editMode?: boolean
+  maxLength?: number
 }
 
 const DocumentEditor = (props: IDocumentEditorProps) => {
-  const { value, onChange, editMode = false, onBlur, onFocus, ...wrapperProps } = props
+  const { value, maxLength, onChange, editMode = false, onBlur, onFocus, ...wrapperProps } = props
 
   const onChangeRef = useRef(onChange)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -80,7 +81,23 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
   }, [value, editMode, editor])
 
   return (
-    <Input.Wrapper {...wrapperProps}>
+    <Input.Wrapper
+      {...wrapperProps}
+      error={
+        <Group mt={2}>
+          {wrapperProps.error && (
+            <Text ta='right' c='error' fz='xs'>
+              {wrapperProps.error}
+            </Text>
+          )}
+          {maxLength && (
+            <Text ta='right' c='dimmed' fz='xs' ml='auto'>
+              {editor?.getText().length || 0} / {maxLength}
+            </Text>
+          )}
+        </Group>
+      }
+    >
       <RichTextEditor
         editor={editor}
         onBlur={onBlur}

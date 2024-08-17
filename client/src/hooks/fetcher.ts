@@ -58,3 +58,31 @@ export function useTopic(topicId: string | undefined) {
 
   return topic
 }
+
+export function useApiFile(
+  url: string | undefined,
+  filename: string,
+  onLoad: (data: File | undefined) => unknown,
+) {
+  useEffect(() => {
+    onLoad(undefined)
+
+    if (url) {
+      return doRequest<Blob>(
+        url,
+        {
+          method: 'GET',
+          requiresAuth: true,
+          responseType: 'blob',
+        },
+        (response) => {
+          if (response.ok) {
+            onLoad(new File([response.data], filename, { type: 'application/pdf' }))
+          } else {
+            showSimpleError(getApiResponseErrorMessage(response))
+          }
+        },
+      )
+    }
+  }, [url, filename])
+}

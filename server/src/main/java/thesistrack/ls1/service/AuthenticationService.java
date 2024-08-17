@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.entity.UserGroup;
 import thesistrack.ls1.entity.key.UserGroupId;
@@ -20,15 +21,17 @@ import java.util.*;
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
+    private final UploadService uploadService;
 
     @Autowired
-    public AuthenticationService(UserRepository userRepository, UserGroupRepository userGroupRepository) {
+    public AuthenticationService(UserRepository userRepository, UserGroupRepository userGroupRepository, UploadService uploadService) {
         this.userRepository = userRepository;
         this.userGroupRepository = userGroupRepository;
+        this.uploadService = uploadService;
     }
 
     public User getAuthenticatedUser(JwtAuthenticationToken jwt) {
-        return this.userRepository.findByUniversityId(getUniversityId(jwt))
+        return userRepository.findByUniversityId(getUniversityId(jwt))
                 .orElseThrow(() -> new ResourceNotFoundException("Authenticated user not found"));
     }
 
@@ -87,7 +90,47 @@ public class AuthenticationService {
 
         user.setGroups(userGroups);
 
-        return this.userRepository.save(user);
+        return userRepository.save(user);
+    }
+
+    public User updateUserInformation(
+            User user,
+            String matriculationNumber,
+            boolean isExchangeStudent,
+            String firstName,
+            String lastName,
+            String gender,
+            String nationality,
+            String email,
+            String studyDegree,
+            String studyProgram,
+            Instant enrolledAt,
+            String specialSkills,
+            String interests,
+            String projects,
+            MultipartFile examinationReport,
+            MultipartFile cv,
+            MultipartFile degreeReport
+    ) {
+        user.setMatriculationNumber(matriculationNumber);
+        user.setIsExchangeStudent(isExchangeStudent);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setGender(gender);
+        user.setNationality(nationality);
+        user.setEmail(email);
+        user.setStudyDegree(studyDegree);
+        user.setStudyProgram(studyProgram);
+        user.setEnrolledAt(enrolledAt);
+        user.setSpecialSkills(specialSkills);
+        user.setInterests(interests);
+        user.setProjects(projects);
+
+        user.setExaminationFilename(examinationReport == null ? null : uploadService.store(examinationReport, 3 * 1024 * 1024));
+        user.setCvFilename(cv == null ? null : uploadService.store(cv, 3 * 1024 * 1024));
+        user.setDegreeFilename(degreeReport == null ? null : uploadService.store(degreeReport, 3 * 1024 * 1024));
+
+        return userRepository.save(user);
     }
 
     private String getUniversityId(JwtAuthenticationToken jwt) {

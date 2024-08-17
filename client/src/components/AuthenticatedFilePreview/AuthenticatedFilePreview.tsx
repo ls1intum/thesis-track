@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
 import { Button, Space, Stack, Text } from '@mantine/core'
-import { downloadPdf } from '../../utils/blob'
+import { downloadFile } from '../../utils/blob'
 import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
+import { useApiFile } from '../../hooks/fetcher'
 
 interface IAuthenticatedIframeProps {
   url: string
@@ -16,27 +17,9 @@ interface IAuthenticatedIframeProps {
 const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
   const { url, filename, allowDownload = true, title, height } = props
 
-  const [file, setFile] = useState<Blob>()
+  const [file, setFile] = useState<File>()
 
-  useEffect(() => {
-    setFile(undefined)
-
-    return doRequest<Blob>(
-      url,
-      {
-        method: 'GET',
-        requiresAuth: true,
-        responseType: 'blob',
-      },
-      (res) => {
-        if (res.ok) {
-          setFile(res.data)
-        } else {
-          showSimpleError(getApiResponseErrorMessage(res))
-        }
-      },
-    )
-  }, [url])
+  useApiFile(url, filename, setFile)
 
   const iframeUrl = useMemo(() => {
     return file ? `${URL.createObjectURL(file)}#toolbar=0&navpanes=0` : undefined
@@ -49,7 +32,7 @@ const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
       {allowDownload && (
         <>
           <Space mb='md' />
-          <Button variant='outline' mx='auto' onClick={() => file && downloadPdf(file, filename)}>
+          <Button variant='outline' mx='auto' onClick={() => file && downloadFile(file)}>
             Download
           </Button>
         </>

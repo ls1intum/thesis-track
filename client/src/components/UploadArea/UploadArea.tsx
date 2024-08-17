@@ -1,16 +1,8 @@
-import {
-  ActionIcon,
-  Card,
-  Group,
-  InputLabel,
-  rem,
-  Stack,
-  Text,
-  useMantineTheme,
-} from '@mantine/core'
+import { ActionIcon, Card, Center, Group, Input, rem, Stack, Text, useMantineTheme } from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { showSimpleError } from '../../utils/notification'
+import { useMemo, useState } from 'react'
 
 interface IUploadAreaProps {
   value: File | undefined
@@ -25,28 +17,34 @@ const UploadArea = (props: IUploadAreaProps) => {
 
   const theme = useMantineTheme()
 
+  const iframeUrl = useMemo(() => {
+    return value ? `${URL.createObjectURL(value)}#toolbar=0&navpanes=0` : undefined
+  }, [value])
+
   return (
-    <Stack gap='0'>
-      {label && (
-        <Group align='left'>
-          <InputLabel required={required}>{label}</InputLabel>
-        </Group>
-      )}
+    <Input.Wrapper label={label} required={required}>
       {value ? (
         <Card shadow='sm' withBorder>
-          <Group align='apart'>
-            <Text c='dimmed' fz='sm'>
-              {value.name}
-            </Text>
-            <ActionIcon onClick={() => onChange(undefined)}>
-              <X />
-            </ActionIcon>
-          </Group>
+          <Center>
+            <Stack>
+              <iframe style={{ border: 0 }} height={400} src={iframeUrl} />
+              <ActionIcon
+                mx='auto'
+                onClick={() => {
+                  onChange(undefined)
+                }}
+              >
+                <X />
+              </ActionIcon>
+            </Stack>
+          </Center>
         </Card>
       ) : (
         <Dropzone
           name={label}
-          onDrop={(files) => onChange(files[0])}
+          onDrop={(files) => {
+            onChange(files[0])
+          }}
           onReject={() => {
             showSimpleError(`Failed upload file. Max file size is ${Math.floor(maxSize / 1024)}MB`)
           }}
@@ -63,7 +61,6 @@ const UploadArea = (props: IUploadAreaProps) => {
             <Dropzone.Idle>
               <ImageSquare size='3.2rem' />
             </Dropzone.Idle>
-
             <Stack>
               <Text size='xl' inline>
                 Drag the file here or click to select file
@@ -75,7 +72,7 @@ const UploadArea = (props: IUploadAreaProps) => {
           </Group>
         </Dropzone>
       )}
-    </Stack>
+    </Input.Wrapper>
   )
 }
 

@@ -1,11 +1,19 @@
 import { createContext } from 'react'
 import { JwtPayload } from 'jwt-decode'
 import { IUser } from '../../requests/responses/user'
+import { IUpdateUserInformationPayload } from '../../requests/payloads/user'
+import { PartialNull } from '../../utils/validation'
 
 export interface IAuthenticationContext {
   isAuthenticated: boolean
   user: IUser | undefined
   groups: string[]
+  updateInformation: (
+    data: PartialNull<IUpdateUserInformationPayload>,
+    examinationReport: File | undefined,
+    cv: File | undefined,
+    degreeReport: File | undefined,
+  ) => Promise<unknown>
   login: () => unknown
   logout: (redirectUrl: string) => unknown
 }
