@@ -1,7 +1,7 @@
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React, { useState } from 'react'
 import { usePageTitle } from '../../hooks/theme'
-import { Button, Group, Stack, Title, Center } from '@mantine/core'
+import { Button, Group, Stack, Title, Center, ActionIcon } from '@mantine/core'
 import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
 import TopicsTable from '../../components/TopicsTable/TopicsTable'
 import { ITopic } from '../../requests/responses/topic'
@@ -36,20 +36,29 @@ const ManageTopicsPage = () => {
           </Button>
           <TopicsTable
             columns={['state', 'title', 'supervisor', 'advisor', 'createdAt', 'actions']}
-            actions={(topic) => (
-              <Group
-                preventGrowOverflow={false}
-                justify='center'
-                onClick={(e) => e.stopPropagation()}
-              >
-                {!topic.closedAt && (
-                  <Button size='xs' onClick={() => setEditingTopic(topic)}>
-                    <Pencil />
-                  </Button>
-                )}
-                <CloseTopicButton size='xs' topic={topic} />
-              </Group>
-            )}
+            extraColumns={{
+              actions: {
+                accessor: 'actions',
+                title: 'Actions',
+                textAlign: 'center',
+                noWrap: true,
+                width: 100,
+                render: (topic) => (
+                  <Group
+                    preventGrowOverflow={false}
+                    justify='center'
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {!topic.closedAt && (
+                      <ActionIcon size='md' onClick={() => setEditingTopic(topic)}>
+                        <Pencil />
+                      </ActionIcon>
+                    )}
+                    <CloseTopicButton size='md' topic={topic} />
+                  </Group>
+                ),
+              },
+            }}
           />
         </Stack>
       </TopicsProvider>

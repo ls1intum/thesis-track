@@ -1,4 +1,3 @@
-import React, { ReactNode } from 'react'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { formatDate, formatUser } from '../../utils/format'
@@ -7,15 +6,15 @@ import { ITopic } from '../../requests/responses/topic'
 import { useNavigate } from 'react-router-dom'
 import { Badge } from '@mantine/core'
 
-type TopicColumn = 'title' | 'advisor' | 'supervisor' | 'actions' | 'state' | 'createdAt'
+type TopicColumn = 'title' | 'advisor' | 'supervisor' | 'state' | 'createdAt' | string
 
 interface ITopicsTableProps {
   columns?: TopicColumn[]
-  actions?: (topic: ITopic) => ReactNode
+  extraColumns?: Record<string, DataTableColumn<ITopic>>
 }
 
 const TopicsTable = (props: ITopicsTableProps) => {
-  const { actions, columns = ['title', 'supervisor', 'advisor'] } = props
+  const { extraColumns, columns = ['title', 'supervisor', 'advisor'] } = props
 
   const navigate = useNavigate()
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -35,30 +34,24 @@ const TopicsTable = (props: ITopicsTableProps) => {
       accessor: 'title',
       title: 'Title',
       ellipsis: true,
-      width: 300,
+      width: 350,
     },
     supervisor: {
       accessor: 'supervisor',
       title: 'Supervisor',
-      render: (topic) => topic.supervisors.map((user) => formatUser(user)).join(', '),
+      render: (topic) =>
+        topic.supervisors.map((user) => formatUser(user, { withUniversityId: false })).join(', '),
     },
     advisor: {
       accessor: 'advisor',
       title: 'Advisor',
-      render: (topic) => topic.advisors.map((user) => formatUser(user)).join(', '),
+      render: (topic) =>
+        topic.advisors.map((user) => formatUser(user, { withUniversityId: false })).join(', '),
     },
     createdAt: {
       accessor: 'createdAt',
       title: 'Created At',
       render: (record) => formatDate(record.createdAt),
-    },
-    actions: {
-      accessor: 'actions',
-      title: 'Actions',
-      textAlign: 'center',
-      noWrap: true,
-      width: 120,
-      render: (topic) => actions?.(topic),
     },
   }
 
@@ -79,7 +72,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
       bodyRef={bodyRef}
       records={topics?.content}
       idAccessor='topicId'
-      columns={columns.map((column) => columnConfig[column])}
+      columns={columns.map((column) => columnConfig[column] || extraColumns?.[column])}
       onRowClick={({ record }) => navigate(`/topics/${record.topicId}`)}
     />
   )

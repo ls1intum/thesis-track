@@ -1,6 +1,6 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { Trash } from 'phosphor-react'
-import { Button } from '@mantine/core'
+import { ActionIcon, Button } from '@mantine/core'
 import React from 'react'
 import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
 import { doRequest } from '../../../../requests/request'
@@ -37,9 +37,9 @@ const CloseTopicButton = (props: ICloseTopicButtonProps) => {
   }
 
   return (
-    <Button onClick={onClose} size={size}>
+    <ActionIcon onClick={onClose} size={size}>
       <Trash />
-    </Button>
+    </ActionIcon>
   )
 }
 

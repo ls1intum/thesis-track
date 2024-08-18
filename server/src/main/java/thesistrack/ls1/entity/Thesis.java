@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.dto.LightUserDto;
 
 import java.time.Instant;
 import java.util.*;
@@ -93,6 +94,42 @@ public class Thesis {
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     private Set<ThesisStateChange> states = new HashSet<>();
 
+    public List<User> getStudents() {
+        List<User> result = new ArrayList<>();
+
+        for (ThesisRole role : getRoles()) {
+            if (role.getId().getRole() == ThesisRoleName.STUDENT) {
+                result.add(role.getUser());
+            }
+        }
+
+        return result;
+    }
+
+    public List<User> getAdvisors() {
+        List<User> result = new ArrayList<>();
+
+        for (ThesisRole role : getRoles()) {
+            if (role.getId().getRole() == ThesisRoleName.ADVISOR) {
+                result.add(role.getUser());
+            }
+        }
+
+        return result;
+    }
+
+    public List<User> getSupervisors() {
+        List<User> result = new ArrayList<>();
+
+        for (ThesisRole role : getRoles()) {
+            if (role.getId().getRole() == ThesisRoleName.SUPERVISOR) {
+                result.add(role.getUser());
+            }
+        }
+
+        return result;
+    }
+
     public boolean hasSupervisorAccess(User user) {
         if (user == null) {
             return false;
@@ -156,7 +193,7 @@ public class Thesis {
     }
 
     public boolean hasReadAccess(User user) {
-        if (user == null && visibility == ThesisVisibility.PUBLIC) {
+        if (user == null && visibility == ThesisVisibility.PUBLIC && state == ThesisState.FINISHED) {
             return true;
         }
 
