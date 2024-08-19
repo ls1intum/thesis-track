@@ -1,6 +1,6 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { Trash } from 'phosphor-react'
-import { ActionIcon, Button } from '@mantine/core'
+import { ActionIcon } from '@mantine/core'
 import React from 'react'
 import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
 import { doRequest } from '../../../../requests/request'

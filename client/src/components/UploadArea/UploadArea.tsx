@@ -1,8 +1,18 @@
-import { ActionIcon, Card, Center, Group, Input, rem, Stack, Text, useMantineTheme } from '@mantine/core'
+import {
+  ActionIcon,
+  Card,
+  Center,
+  Group,
+  Input,
+  rem,
+  Stack,
+  Text,
+  useMantineTheme,
+} from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { showSimpleError } from '../../utils/notification'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 interface IUploadAreaProps {
   value: File | undefined

@@ -22,6 +22,7 @@ import {
   Sun,
   FolderSimplePlus,
   User,
+  PaperPlaneTilt,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'

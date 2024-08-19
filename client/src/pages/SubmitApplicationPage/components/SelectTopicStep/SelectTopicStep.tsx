@@ -1,8 +1,8 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { Accordion, Button, Center, Space } from '@mantine/core'
 import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
-import TopicData from '../../../../components/TopicData/TopicData'
 import React from 'react'
+import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
 
 interface ISelectTopicStepProps {
   onComplete: (topic: ITopic | undefined) => unknown
@@ -24,16 +24,12 @@ const SelectTopicStep = (props: ISelectTopicStepProps) => {
         </Accordion.Panel>
       </Accordion.Item>
       {topics?.content.map((topic) => (
-        <Accordion.Item key={topic.topicId} value={topic.topicId}>
-          <Accordion.Control>{topic.title}</Accordion.Control>
-          <Accordion.Panel>
-            <TopicData topic={topic} />
-            <Space mb='md' />
-            <Center>
-              <Button onClick={() => onComplete(topic)}>Apply for this Topic</Button>
-            </Center>
-          </Accordion.Panel>
-        </Accordion.Item>
+        <TopicAccordionItem key={topic.topicId} topic={topic}>
+          <Space mb='md' />
+          <Center>
+            <Button onClick={() => onComplete(topic)}>Apply for this Topic</Button>
+          </Center>
+        </TopicAccordionItem>
       ))}
     </Accordion>
   )

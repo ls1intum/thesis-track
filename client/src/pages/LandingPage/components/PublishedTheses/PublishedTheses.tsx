@@ -93,7 +93,13 @@ const PublishedTheses = () => {
             accessor: 'actions',
             title: 'Actions',
             textAlign: 'center',
-            render: () => <Center><ActionIcon><Eye /></ActionIcon></Center>
+            render: () => (
+              <Center>
+                <ActionIcon>
+                  <Eye />
+                </ActionIcon>
+              </Center>
+            ),
           },
         ]}
         onRowClick={({ record }) => setOpenedThesis(record)}

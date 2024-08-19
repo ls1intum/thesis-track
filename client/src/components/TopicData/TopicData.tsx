@@ -1,5 +1,5 @@
 import { ITopic } from '../../requests/responses/topic'
-import { Grid, Stack, Title } from '@mantine/core'
+import { Grid, Stack } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import { formatDate, formatUser } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
@@ -35,11 +35,7 @@ const TopicData = (props: ITopicDataProps) => {
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
             label='Type'
-            value={
-              topic.requiredDegree
-                ? (GLOBAL_CONFIG.study_degrees[topic.requiredDegree] ?? topic.requiredDegree)
-                : 'Any'
-            }
+            value={topic.type ? (GLOBAL_CONFIG.thesis_types[topic.type] ?? topic.type) : 'Any'}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>

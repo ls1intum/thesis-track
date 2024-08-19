@@ -1,6 +1,6 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { isNotEmpty, useForm } from '@mantine/form'
-import { Accordion, Button, Paper, Stack, TextInput } from '@mantine/core'
+import { Accordion, Button, Stack, TextInput } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import TopicData from '../../../../components/TopicData/TopicData'
 import { useState } from 'react'

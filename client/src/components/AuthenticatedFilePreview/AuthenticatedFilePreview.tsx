@@ -1,9 +1,6 @@
-import { useEffect, useMemo, useState } from 'react'
-import { doRequest } from '../../requests/request'
+import { useMemo, useState } from 'react'
 import { Button, Space, Stack, Text } from '@mantine/core'
 import { downloadFile } from '../../utils/blob'
-import { showSimpleError } from '../../utils/notification'
-import { getApiResponseErrorMessage } from '../../requests/handler'
 import { useApiFile } from '../../hooks/fetcher'
 
 interface IAuthenticatedIframeProps {
