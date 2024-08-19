@@ -54,20 +54,20 @@ public class TopicService {
     public Topic createTopic(
             User creator,
             String title,
+            String type,
             String problemStatement,
             String goals,
             String references,
-            String requiredDegree,
             Set<UUID> supervisorIds,
             Set<UUID> advisorIds
     ) {
         Topic topic = new Topic();
 
         topic.setTitle(title);
+        topic.setType(type);
         topic.setProblemStatement(problemStatement);
         topic.setGoals(goals);
         topic.setReferences(references);
-        topic.setRequiredDegree(requiredDegree);
         topic.setUpdatedAt(Instant.now());
         topic.setCreatedAt(Instant.now());
         topic.setCreatedBy(creator);
@@ -84,28 +84,21 @@ public class TopicService {
             User updater,
             Topic topic,
             String title,
+            String type,
             String problemStatement,
             String goals,
             String references,
-            String requiredDegree,
             Set<UUID> supervisorIds,
             Set<UUID> advisorIds
     ) {
         topic.setTitle(title);
+        topic.setType(type);
         topic.setProblemStatement(problemStatement);
         topic.setGoals(goals);
         topic.setReferences(references);
-        topic.setRequiredDegree(requiredDegree);
         topic.setUpdatedAt(Instant.now());
 
         assignTopicRoles(topic, updater, advisorIds, supervisorIds);
-
-        return topicRepository.save(topic);
-    }
-
-    @Transactional
-    public Topic closeTopic(Topic topic) {
-        topic.setClosedAt(Instant.now());
 
         return topicRepository.save(topic);
     }

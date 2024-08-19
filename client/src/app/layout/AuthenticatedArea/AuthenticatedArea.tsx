@@ -13,7 +13,15 @@ import {
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
-import { Kanban, Moon, NewspaperClipping, Scroll, SignOut, Sun, FolderSimplePlus } from 'phosphor-react'
+import {
+  Kanban,
+  Moon,
+  NewspaperClipping,
+  Scroll,
+  SignOut,
+  Sun,
+  FolderSimplePlus,
+} from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
 import Logo from '../../../static/logo'

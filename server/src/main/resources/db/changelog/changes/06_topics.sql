@@ -17,3 +17,6 @@ CREATE TABLE topic_roles
 
 --changeset emilius:06-topics-2
 ALTER TABLE topics ALTER COLUMN required_degree DROP NOT NULL;
+
+--changeset emilius:06-topics-3
+ALTER TABLE topics ADD COLUMN type TEXT;

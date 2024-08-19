@@ -3,10 +3,10 @@ import { ILightUser } from './user'
 export interface ITopic {
   topicId: string
   title: string
+  type: string | null
   problemStatement: string
   goals: string
   references: string
-  requiredDegree: string | null
   closedAt: string | null
   updatedAt: string
   createdAt: string

@@ -1,7 +1,7 @@
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React, { useState } from 'react'
 import { usePageTitle } from '../../hooks/theme'
-import { Button, Group, Stack, Title, Center } from '@mantine/core'
+import { Button, Group, Stack, Title } from '@mantine/core'
 import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
 import TopicsTable from '../../components/TopicsTable/TopicsTable'
 import { ITopic } from '../../requests/responses/topic'

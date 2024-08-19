@@ -5,10 +5,10 @@ import java.util.UUID;
 
 public record ReplaceTopicPayload(
         String title,
+        String type,
         String problemStatement,
         String goals,
         String references,
-        String requiredDegree,
         Set<UUID> supervisorIds,
         Set<UUID> advisorIds
 ) { }
