@@ -1,0 +1,108 @@
+$data-column-width: rem(7rem);
+$chart-timeline-height: rem(1.3rem);
+$chart-row-spacing: rem(0.5rem);
+
+.chartContainer {
+    width: 100%;
+    overflow-y: scroll;
+}
+
+.chartBox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 700px;
+}
+
+.headers {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid var(--mantine-color-text);
+}
+
+.dataHeader {
+    width: $data-column-width;
+    padding: 3px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: center;
+
+    border-right: 1px solid var(--mantine-color-text);
+}
+
+.timelineHeader {
+    display: flex;
+    flex-grow: 1;
+    position: relative;
+}
+
+.timelineTick {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    margin-bottom: 5px;
+}
+
+.timelineTick::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    height: 5px;
+    background-color: var(--mantine-color-text);
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.groupRow {
+    display: flex;
+    flex-direction: column;
+}
+
+.groupContent {
+    display: flex;
+    flex-direction: column;
+}
+
+.groupContentRow {
+    display: flex;
+    flex-direction: row;
+    border-radius: 2px;
+}
+
+.groupContentRow:hover {
+    background-color: var(--mantine-color-default-hover)
+}
+
+.dataColumn {
+    width: $data-column-width;
+    line-height: calc($chart-timeline-height + 2 * $chart-row-spacing);
+    padding: 0 3px;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+
+    border-right: 1px solid var(--mantine-color-dimmed);
+}
+
+.timelineColumn {
+    display: flex;
+    position: relative;
+    height: calc($chart-timeline-height + 2 * $chart-row-spacing);
+    flex-grow: 1;
+    margin-left: var(--mantine-spacing-xs);
+}
+
+.timelinePart {
+    position: absolute;
+    top: $chart-row-spacing;
+    height: $chart-timeline-height;
+}

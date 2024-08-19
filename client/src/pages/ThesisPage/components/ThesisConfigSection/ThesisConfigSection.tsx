@@ -1,10 +1,9 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { Accordion, Badge, Button, Group, Select, Stack, Text, TextInput } from '@mantine/core'
+import { Accordion, Button, Group, Select, Stack, Text, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { DateInput, DateTimePicker, DateValue } from '@mantine/dates'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
-import { ThesisStateColor } from '../../../../config/colors'
 import { isNotEmptyUserList } from '../../../../utils/validation'
 import { isThesisClosed } from '../../../../utils/thesis'
 import { doRequest } from '../../../../requests/request'
@@ -13,9 +12,9 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
-import { formatThesisState } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { ApiError } from '../../../../requests/handler'
+import ThesisStateBadge from '../../../../components/ThesisStateBadge/ThesisStateBadge'
 
 interface IThesisConfigSectionFormValues {
   title: string
@@ -242,9 +241,7 @@ const ThesisConfigSection = () => {
                     <Text ta='center' fw='bold'>
                       State changed to
                     </Text>
-                    <Badge color={ThesisStateColor[item.state]}>
-                      {formatThesisState(item.state)}
-                    </Badge>
+                    <ThesisStateBadge state={item.state} />
                     <Text ta='center' fw='bold'>
                       at
                     </Text>

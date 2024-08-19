@@ -60,7 +60,7 @@ export interface IThesis {
   states: Array<{
     state: ThesisState
     startedAt: string
-    endedAt: string | null
+    endedAt: string
   }>
 }
 

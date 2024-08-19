@@ -54,6 +54,7 @@ const ThesisOverviewPage = () => {
         <ThesesFilters />
         <Space my='md' />
         {managementAccess && <ThesesGanttChart />}
+        <Space my='md' />
         {managementAccess && (
           <Group mb='md'>
             <Button

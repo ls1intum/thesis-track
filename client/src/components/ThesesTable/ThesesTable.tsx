@@ -1,14 +1,13 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { Badge } from '@mantine/core'
-import { formatDate, formatThesisState, formatUser } from '../../utils/format'
+import { formatDate, formatUser } from '../../utils/format'
 import React from 'react'
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
 import { IThesesSort } from '../../contexts/ThesesProvider/context'
-import { ThesisStateColor } from '../../config/colors'
 import { useNavigate } from 'react-router-dom'
 import { IThesis } from '../../requests/responses/thesis'
 import { GLOBAL_CONFIG } from '../../config/global'
+import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 
 type ThesisColumn =
   | 'state'
@@ -44,11 +43,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       title: 'State',
       textAlign: 'center',
       render: (thesis: IThesis) => {
-        return (
-          <Badge color={ThesisStateColor[thesis.state] ?? 'gray'}>
-            {formatThesisState(thesis.state)}
-          </Badge>
-        )
+        return <ThesisStateBadge state={thesis.state} />
       },
     },
     supervisors: {

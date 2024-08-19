@@ -26,7 +26,12 @@ const DashboardPage = () => {
       </Title>
       <ThesesProvider hideIfEmpty={!managementAccess}>
         <Title order={2}>My Theses</Title>
-        {managementAccess && <ThesesGanttChart />}
+        {managementAccess && (
+          <>
+            <ThesesGanttChart />
+            <Space mb='md' />
+          </>
+        )}
         <ThesesTable />
         <Space mb='md' />
       </ThesesProvider>

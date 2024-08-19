@@ -56,9 +56,17 @@ const ThesisInfoSection = () => {
         <Accordion.Panel>
           <Stack>
             <Title order={3}>Abstract</Title>
-            <DocumentEditor value={abstractText} editMode={editMode} onChange={setAbstractText} />
+            <DocumentEditor
+              value={abstractText}
+              editMode={editMode}
+              onChange={(e) => setAbstractText(e.target.value)}
+            />
             <Title order={3}>Info</Title>
-            <DocumentEditor value={infoText} editMode={editMode} onChange={setInfoText} />
+            <DocumentEditor
+              value={infoText}
+              editMode={editMode}
+              onChange={(e) => setInfoText(e.target.value)}
+            />
             <Grid>
               <Grid.Col>
                 {access.advisor && thesis.applicationId && (

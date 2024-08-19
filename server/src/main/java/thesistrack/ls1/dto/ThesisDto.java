@@ -168,7 +168,7 @@ public record ThesisDto (
             Instant endedAt = i + 1 < stateChanges.size() ? stateChanges.get(i + 1).getChangedAt() : Instant.now();
 
             if (stateChange.getId().getState() == ThesisState.FINISHED || stateChange.getId().getState() == ThesisState.DROPPED_OUT) {
-                endedAt = null;
+                endedAt = stateChange.getChangedAt();
             }
 
             states.add(ThesisStateChangeDto.fromStateChangeEntity(stateChange, endedAt));
