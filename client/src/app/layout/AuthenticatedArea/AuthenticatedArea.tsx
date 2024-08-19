@@ -21,7 +21,7 @@ import {
   SignOut,
   Sun,
   FolderSimplePlus,
-  PaperPlaneTilt, User,
+  User,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
@@ -50,7 +50,7 @@ const links: Array<{
     groups: undefined,
   },
   {
-    link: '/management/thesis-applications',
+    link: '/applications',
     label: 'Review Applications',
     icon: Scroll,
     groups: ['admin', 'advisor', 'supervisor'],

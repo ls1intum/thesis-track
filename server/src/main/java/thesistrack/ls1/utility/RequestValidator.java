@@ -27,20 +27,6 @@ public class RequestValidator {
         return validateStringMaxLength(value, maxLength);
     }
 
-    public static Set<String> validateStringSetItemMaxLength(Set<String> value, int maxLength) {
-        if (value == null) {
-            throw new ResourceInvalidParametersException("Required set is null");
-        }
-
-        for (String s : value) {
-            if (s.length() > maxLength) {
-                throw new ResourceInvalidParametersException("String exceeds maximum length of " + maxLength + " characters");
-            }
-        }
-
-        return value;
-    }
-
     public static String validateEmail(String value) {
         if (value == null || value.length() > 200) {
             throw new ResourceInvalidParametersException("Required email is missing");

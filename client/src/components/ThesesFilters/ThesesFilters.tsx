@@ -1,15 +1,15 @@
 import React from 'react'
 import { Grid, MultiSelect, Select, TextInput } from '@mantine/core'
-import { useThesesContext } from '../../../../contexts/ThesesProvider/hooks'
-import { ThesisState } from '../../../../requests/responses/thesis'
+import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
+import { ThesisState } from '../../requests/responses/thesis'
 import { MagnifyingGlass } from 'phosphor-react'
-import { formatThesisState } from '../../../../utils/format'
+import { formatThesisState } from '../../utils/format'
 
 const ThesesFilters = () => {
   const { filters, setFilters, sort, setSort } = useThesesContext()
 
   return (
-    <Grid justify='center'>
+    <Grid gutter='xs'>
       <Grid.Col span={12}>
         <TextInput
           placeholder='Search theses...'

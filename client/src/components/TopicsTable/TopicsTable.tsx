@@ -26,7 +26,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
       accessor: 'state',
       title: 'State',
       textAlign: 'center',
-      width: 80,
+      width: 100,
       render: (topic) =>
         topic.closedAt ? <Badge color='red'>Closed</Badge> : <Badge color='gray'>Open</Badge>,
     },

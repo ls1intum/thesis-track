@@ -12,10 +12,10 @@ import java.util.UUID;
 public record TopicDto (
         UUID topicId,
         String title,
+        String type,
         String problemStatement,
         String goals,
         String references,
-        String requiredDegree,
         Instant closedAt,
         Instant updatedAt,
         Instant createdAt,
@@ -43,10 +43,10 @@ public record TopicDto (
         return new TopicDto(
                 topic.getId(),
                 topic.getTitle(),
+                topic.getType(),
                 topic.getProblemStatement(),
                 topic.getGoals(),
                 topic.getReferences(),
-                topic.getRequiredDegree(),
                 topic.getClosedAt(),
                 topic.getUpdatedAt(),
                 topic.getCreatedAt(),

@@ -27,17 +27,17 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
     problemStatement: string
     goals: string
     references: string
-    requiredDegree: string | null
+    type: string | null
     supervisorIds: string[]
     advisorIds: string[]
   }>({
     mode: 'controlled',
     initialValues: {
       title: '',
+      type: '',
       problemStatement: '',
       goals: '',
       references: '',
-      requiredDegree: '',
       supervisorIds: GLOBAL_CONFIG.default_supervisors,
       advisorIds: [],
     },
@@ -54,18 +54,18 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
 
   useEffect(() => {
     if (opened && topic) {
-      form.setValues({
+      form.setInitialValues({
         title: topic.title,
+        type: topic.type || '',
         problemStatement: topic.problemStatement,
         goals: topic.goals,
         references: topic.references,
-        requiredDegree: topic.requiredDegree || '',
         supervisorIds: topic.supervisors.map((user) => user.userId),
         advisorIds: topic.advisors.map((user) => user.userId),
       })
-    } else if (opened) {
-      form.reset()
     }
+
+    form.reset()
   }, [topic, opened])
 
   const onSubmit = async () => {
@@ -77,10 +77,10 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
         requiresAuth: true,
         data: {
           title: form.values.title,
+          type: form.values.type || null,
           problemStatement: form.values.problemStatement,
           goals: form.values.goals,
           references: form.values.references,
-          requiredDegree: form.values.requiredDegree || null,
           supervisorIds: form.values.supervisorIds,
           advisorIds: form.values.advisorIds,
         },
@@ -115,16 +115,16 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
         <Stack gap='md'>
           <TextInput label='Title' required {...form.getInputProps('title')} />
           <Select
-            label='Required Degree'
+            label='Type'
             required
             data={[
               { value: '', label: 'Any' },
-              ...Object.entries(GLOBAL_CONFIG.study_degrees).map(([key, value]) => ({
+              ...Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
                 value: key,
                 label: value,
               })),
             ]}
-            {...form.getInputProps('requiredDegree')}
+            {...form.getInputProps('type')}
           />
           <UserMultiSelect
             label='Supervisor'

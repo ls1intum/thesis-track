@@ -13,6 +13,7 @@ import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.TopicDto;
 import thesistrack.ls1.entity.Topic;
 import thesistrack.ls1.entity.User;
+import thesistrack.ls1.service.ApplicationService;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.TopicService;
 import thesistrack.ls1.utility.RequestValidator;
@@ -25,11 +26,13 @@ import java.util.UUID;
 public class TopicController {
     private final TopicService topicService;
     private final AuthenticationService authenticationService;
+    private final ApplicationService applicationService;
 
     @Autowired
-    public TopicController(TopicService topicService, AuthenticationService authenticationService) {
+    public TopicController(TopicService topicService, AuthenticationService authenticationService, ApplicationService applicationService) {
         this.topicService = topicService;
         this.authenticationService = authenticationService;
+        this.applicationService = applicationService;
     }
 
     @GetMapping
@@ -71,10 +74,10 @@ public class TopicController {
         Topic topic = topicService.createTopic(
                 authenticatedUser,
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.type(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLengthAllowNull(payload.requiredDegree(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateNotNull(payload.advisorIds())
         );
@@ -96,10 +99,10 @@ public class TopicController {
                 authenticatedUser,
                 topic,
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.type(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLengthAllowNull(payload.requiredDegree(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateNotNull(payload.advisorIds())
         );
@@ -110,11 +113,13 @@ public class TopicController {
     @DeleteMapping("/{topicId}")
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<TopicDto> closeTopic(
-            @PathVariable UUID topicId
+            @PathVariable UUID topicId,
+            JwtAuthenticationToken jwt
     ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Topic topic = topicService.findById(topicId);
 
-        topic = topicService.closeTopic(topic);
+        topic = applicationService.closeTopic(authenticatedUser, topic, true);
 
         return ResponseEntity.ok(TopicDto.fromTopicEntity(topic));
     }

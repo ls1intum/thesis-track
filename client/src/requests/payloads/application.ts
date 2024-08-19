@@ -5,6 +5,4 @@ export interface ILegacyCreateApplicationPayload extends IUpdateUserInformationP
   motivation: string
   thesisTitle: string
   desiredStartDate: Date
-  researchAreas: string[]
-  focusTopics: string[]
 }

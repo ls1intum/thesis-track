@@ -26,6 +26,9 @@ public class Topic {
     @Column(name = "title", nullable = false, length = 500)
     private String title;
 
+    @Column(name = "type", length = 100)
+    private String type;
+
     @NotNull
     @Column(name = "problem_statement", nullable = false, length = 2000)
     private String problemStatement;
@@ -37,9 +40,6 @@ public class Topic {
     @NotNull
     @Column(name = "\"references\"", nullable = false, length = 2000)
     private String references;
-
-    @Column(name = "required_degree", length = 100)
-    private String requiredDegree;
 
     @Column(name = "closed_at")
     private Instant closedAt;
