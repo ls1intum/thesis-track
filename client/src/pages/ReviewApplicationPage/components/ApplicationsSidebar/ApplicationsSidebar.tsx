@@ -32,11 +32,13 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
       }
 
       if (applications && newIndex < 0) {
+        // start at last application if user navigates to a previous page with arrow keys
         setStartAtLastApplication(page > 0)
         setPage(page > 0 ? page - 1 : 0)
       }
 
       if (applications && newIndex >= applications.content.length && !applications.last) {
+        // make sure that state is reset when navigating to next page with arrow keys
         setStartAtLastApplication(false)
         setPage(page + 1)
       }

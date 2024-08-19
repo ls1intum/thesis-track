@@ -1,8 +1,9 @@
-import { Badge, Group, Stack, Title, Text, Paper, useMantineColorScheme } from '@mantine/core'
+import { Badge, Group, Stack, Title, Text, Paper } from '@mantine/core'
 import { IApplication } from '../../../../requests/responses/application'
 import { ApplicationStateColor } from '../../../../config/colors'
 import { formatApplicationState, formatDate } from '../../../../utils/format'
 import React from 'react'
+import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
 
 interface IApplicationListItemProps {
   application: IApplication
@@ -13,22 +14,16 @@ interface IApplicationListItemProps {
 const ApplicationListItem = (props: IApplicationListItemProps) => {
   const { application, selected, onClick } = props
 
-  const { colorScheme } = useMantineColorScheme()
+  const backgroundColor = useHighlightedBackgroundColor(selected)
 
   return (
     <Paper
       onClick={onClick}
       p='md'
-      style={(theme) => ({
-        backgroundColor: selected
-          ? colorScheme === 'dark'
-            ? theme.colors[theme.primaryColor][6]
-            : theme.colors[theme.primaryColor][4]
-          : colorScheme === 'dark'
-            ? theme.colors.dark[6]
-            : theme.colors.gray[1],
+      style={{
+        backgroundColor,
         cursor: 'pointer',
-      })}
+      }}
     >
       <Stack>
         <Group>

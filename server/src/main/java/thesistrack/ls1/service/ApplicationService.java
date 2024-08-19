@@ -104,9 +104,6 @@ public class ApplicationService {
         student.setIsExchangeStudent(payload.isExchangeStudent());
         student.setEnrolledAt(payload.enrolledAt());
 
-        student.setResearchAreas(RequestValidator.validateStringSetItemMaxLength(payload.researchAreas(), 100));
-        student.setFocusTopics(RequestValidator.validateStringSetItemMaxLength(payload.focusTopics(), 100));
-
         student.setUpdatedAt(currentTime);
 
         student.setExaminationFilename(uploadService.store(examinationReport, 3 * 1024 * 1024));

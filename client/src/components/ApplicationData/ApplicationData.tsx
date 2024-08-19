@@ -122,25 +122,6 @@ const ApplicationData = (props: IApplicationDataProps) => {
               />
             </Grid.Col>
           </Grid>
-          <Divider />
-          <Grid>
-            <Grid.Col span={{ sm: 6 }}>
-              <LabeledItem
-                label='Research Areas'
-                value={application.user.researchAreas
-                  ?.map((key) => GLOBAL_CONFIG.research_areas[key] ?? key)
-                  .join(', ')}
-              />
-            </Grid.Col>
-            <Grid.Col span={{ sm: 6 }}>
-              <LabeledItem
-                label='Focus Topics'
-                value={application.user.focusTopics
-                  ?.map((key) => GLOBAL_CONFIG.focus_topics[key] ?? key)
-                  .join(', ')}
-              />
-            </Grid.Col>
-          </Grid>
           {(application.reviewedBy || application.reviewedAt || application.comment) && (
             <Stack gap='md'>
               <Divider />

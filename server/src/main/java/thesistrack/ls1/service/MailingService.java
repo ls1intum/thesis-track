@@ -254,9 +254,7 @@ public class MailingService {
                 .replace("{{application.interests}}", Objects.requireNonNullElse(student.getInterests(), ""))
                 .replace("{{application.projects}}", Objects.requireNonNullElse(student.getProjects(), ""))
                 .replace("{{application.specialSkills}}", Objects.requireNonNullElse(student.getSpecialSkills(), ""))
-                .replace("{{application.thesisTitle}}", Objects.requireNonNullElse(application.getThesisTitle(), ""))
-                .replace("{{application.researchAreas}}", String.join(", ", Objects.requireNonNullElse(student.getResearchAreas(), new HashSet<>())))
-                .replace("{{application.focusTopics}}", String.join(", ", Objects.requireNonNullElse(student.getFocusTopics(), new HashSet<>())));
+                .replace("{{application.thesisTitle}}", Objects.requireNonNullElse(application.getThesisTitle(), ""));
     }
 
     private Multipart createApplicationFilesMailContent(String text, Application application) throws MessagingException, IOException {

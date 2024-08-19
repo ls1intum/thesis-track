@@ -57,14 +57,6 @@ public class User {
     @Column(name = "examination_filename", length = 200)
     private String examinationFilename;
 
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "focus_topics", columnDefinition = "text[]")
-    private Set<String> focusTopics;
-
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "research_areas", columnDefinition = "text[]")
-    private Set<String> researchAreas;
-
     @Column(name = "study_degree", length = 100)
     private String studyDegree;
 

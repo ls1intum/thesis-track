@@ -23,6 +23,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const updateApplication = useApplicationsContextUpdater()
 
   const form = useForm<{
+    applicationId: string | null
     title: string
     type: string | null
     comment: string
@@ -32,11 +33,12 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   }>({
     mode: 'controlled',
     initialValues: {
-      title: application?.thesisTitle || '',
+      applicationId: null,
+      title: '',
       type: null,
       comment: '',
       advisors: [],
-      supervisors: GLOBAL_CONFIG.default_supervisors,
+      supervisors: [],
       notifyUser: true,
     },
     validateInputOnBlur: true,
@@ -49,9 +51,21 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   })
 
   useEffect(() => {
+    if (application) {
+      form.setInitialValues({
+        applicationId: application.applicationId,
+        title: application.thesisTitle || '',
+        comment: application.comment || '',
+        type: GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
+          ? application.user.studyDegree
+          : null,
+        advisors: [],
+        supervisors: GLOBAL_CONFIG.default_supervisors,
+        notifyUser: true,
+      })
+    }
+
     form.reset()
-    form.setFieldValue('title', application?.thesisTitle || '')
-    form.setFieldValue('comment', application?.comment || '')
   }, [application?.applicationId])
 
   const [loading, setLoading] = useState(false)
@@ -59,6 +73,10 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const [debouncedComment] = useDebouncedValue(form.values.comment, 1000)
 
   useEffect(() => {
+    if (form.values.applicationId !== application.applicationId) {
+      return
+    }
+
     if (application && debouncedComment !== application.comment) {
       doRequest<IApplication>(
         `/v2/applications/${application.applicationId}/comment`,

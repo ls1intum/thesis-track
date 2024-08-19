@@ -10,10 +10,8 @@ import {
   Select,
   Stack,
   Text,
-  Textarea,
   Title,
   TextInput,
-  MultiSelect,
   Grid,
 } from '@mantine/core'
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
@@ -31,6 +29,7 @@ import { AVAILABLE_COUNTRIES } from '../../config/countries'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 import { LegacySuccessfulSubmission } from './components/LegacySuccessfulSubmission/LegacySuccessfulSubmission'
 import { getApiResponseErrorMessage } from '../../requests/handler'
+import DocumentEditor from '../../components/DocumentEditor/DocumentEditor'
 
 const LegacySubmitApplicationPage = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -59,8 +58,6 @@ const LegacySubmitApplicationPage = () => {
       studyDegree: undefined,
       studyProgram: undefined,
       specialSkills: '',
-      researchAreas: [],
-      focusTopics: [],
       motivation: '',
       projects: '',
       interests: '',
@@ -88,28 +85,28 @@ const LegacySubmitApplicationPage = () => {
       motivation: (value) => {
         if (!value || !isNotEmpty(value)) {
           return 'Please state your motivation for the thesis.'
-        } else if (value.length > 500) {
+        } else if (value.length > 1000) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
       specialSkills: (value) => {
         if (!value) {
           return 'Please state your special skills.'
-        } else if (value.length > 500) {
+        } else if (value.length > 1000) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
       interests: (value) => {
         if (!value) {
           return 'Please state your interests.'
-        } else if (value.length > 500) {
+        } else if (value.length > 1000) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
       projects: (value) => {
         if (!value) {
           return 'Please state your projects.'
-        } else if (value.length > 500) {
+        } else if (value.length > 1000) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
@@ -124,16 +121,6 @@ const LegacySubmitApplicationPage = () => {
       studyProgram: isNotEmpty('Please state your study program.'),
       enrolledAt: isNotEmpty('Please state your enrollment date.'),
       desiredStartDate: isNotEmpty('Please state your desired start date.'),
-      focusTopics: (value) => {
-        if (!value || value.length === 0) {
-          return 'Please specify at least one focus topic.'
-        }
-      },
-      researchAreas: (value) => {
-        if (!value || value.length === 0) {
-          return 'Please specify at least one research area.'
-        }
-      },
       declarationOfConsentAccepted: (value) => !value,
       examinationReport: (value) => {
         if (!value) {
@@ -200,8 +187,6 @@ const LegacySubmitApplicationPage = () => {
                     projects: values.projects!,
                     thesisTitle: values.thesisTitle!,
                     desiredStartDate: values.desiredStartDate!,
-                    researchAreas: values.researchAreas!,
-                    focusTopics: values.focusTopics!,
                   }
 
                   const formData = new FormData()
@@ -342,72 +327,46 @@ const LegacySubmitApplicationPage = () => {
                 </Group>
                 <Grid grow align='flex-start'>
                   <Grid.Col span={{ md: 6 }}>
-                    <Textarea
-                      autosize
-                      minRows={5}
-                      label='Special Skills'
-                      placeholder='Programming languages, certificates, etc.'
+                    <DocumentEditor
+                      editMode={true}
+                      label='Special Skills (Programming languages, certificates, etc.)'
                       required={true}
+                      maxLength={500}
                       {...form.getInputProps('specialSkills')}
                     />
-                    {!form.errors.specialSkills && (
-                      <Text fz='xs' ta='right'>{`${
-                        form.values.specialSkills?.length ?? 0
-                      } / 500`}</Text>
-                    )}
                   </Grid.Col>
                   <Grid.Col span={{ md: 6 }}>
-                    <Textarea
-                      autosize
-                      minRows={5}
-                      label='Motivation'
-                      placeholder='What are you looking for?'
+                    <DocumentEditor
+                      editMode={true}
+                      label='Motivation (What are you looking for?)'
                       required={true}
+                      maxLength={500}
                       {...form.getInputProps('motivation')}
                     />
-                    {!form.errors.motivation && (
-                      <Text
-                        fz='xs'
-                        ta='right'
-                      >{`${form.values.motivation?.length ?? 0} / 500`}</Text>
-                    )}
                   </Grid.Col>
                 </Grid>
                 <Grid grow align='flex-start'>
                   <Grid.Col span={{ md: 6 }}>
-                    <Textarea
-                      autosize
-                      minRows={5}
-                      label='Interests'
-                      placeholder='What are you interested in?'
+                    <DocumentEditor
+                      editMode={true}
+                      label='Interests (What are you interested in?)'
                       required={true}
+                      maxLength={500}
                       {...form.getInputProps('interests')}
                     />
-                    {!form.errors.interests && (
-                      <Text
-                        fz='xs'
-                        ta='right'
-                      >{`${form.values.interests?.length ?? 0} / 500`}</Text>
-                    )}
                   </Grid.Col>
                   <Grid.Col span={{ md: 6 }}>
-                    <Textarea
-                      autosize
-                      minRows={5}
-                      label='Projects'
-                      placeholder='What projects have you worked on?'
+                    <DocumentEditor
+                      editMode={true}
+                      label='Projects (What projects have you worked on?)'
                       required={true}
+                      maxLength={500}
                       {...form.getInputProps('projects')}
                     />
-                    {!form.errors.projects && (
-                      <Text fz='xs' ta='right'>{`${form.values.projects?.length ?? 0} / 500`}</Text>
-                    )}
                   </Grid.Col>
                 </Grid>
                 <Stack gap='0'>
-                  <Textarea
-                    autosize
-                    minRows={1}
+                  <TextInput
                     label='Thesis Title Suggestion'
                     placeholder='Thesis Title Suggestion'
                     required={true}
@@ -426,34 +385,6 @@ const LegacySubmitApplicationPage = () => {
                   required={true}
                   {...form.getInputProps('desiredStartDate')}
                 />
-                <Group grow>
-                  <MultiSelect
-                    hidePickedOptions
-                    label='Research Areas'
-                    placeholder='Research Areas'
-                    data={Object.keys(GLOBAL_CONFIG.research_areas).map((key) => {
-                      return {
-                        label: GLOBAL_CONFIG.research_areas[key] ?? key,
-                        value: key,
-                      }
-                    })}
-                    required={true}
-                    {...form.getInputProps('researchAreas')}
-                  />
-                  <MultiSelect
-                    hidePickedOptions
-                    label='Focus Topics'
-                    placeholder='Focus Topics'
-                    data={Object.keys(GLOBAL_CONFIG.focus_topics).map((key) => {
-                      return {
-                        label: GLOBAL_CONFIG.focus_topics[key] ?? key,
-                        value: key,
-                      }
-                    })}
-                    required={true}
-                    {...form.getInputProps('focusTopics')}
-                  />
-                </Group>
                 <UploadArea
                   label='Examination Report'
                   required={true}

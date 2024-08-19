@@ -47,15 +47,27 @@ const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
       <Stack gap='md'>
         <Stack gap={0}>
           <InputLabel required>Summary</InputLabel>
-          <DocumentEditor value={summary} editMode={true} onChange={setSummary} />
+          <DocumentEditor
+            value={summary}
+            editMode={true}
+            onChange={(e) => setSummary(e.target.value)}
+          />
         </Stack>
         <Stack gap={0}>
           <InputLabel required>Positives</InputLabel>
-          <DocumentEditor value={positives} editMode={true} onChange={setPositives} />
+          <DocumentEditor
+            value={positives}
+            editMode={true}
+            onChange={(e) => setPositives(e.target.value)}
+          />
         </Stack>
         <Stack gap={0}>
           <InputLabel required>Negatives</InputLabel>
-          <DocumentEditor value={negatives} editMode={true} onChange={setNegatives} />
+          <DocumentEditor
+            value={negatives}
+            editMode={true}
+            onChange={(e) => setNegatives(e.target.value)}
+          />
         </Stack>
         <TextInput
           label='Grade Suggestion'
