@@ -1,37 +1,29 @@
 import { ApplicationState, IApplication } from '../../requests/responses/application'
-import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
+import { useApplicationsContextUpdater } from '../../contexts/ApplicationsProvider/hooks'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { GLOBAL_CONFIG } from '../../config/global'
 import React, { useEffect, useState } from 'react'
 import { useDebouncedValue } from '@mantine/hooks'
 import { doRequest } from '../../requests/request'
-import {
-  Button,
-  Checkbox,
-  Divider,
-  Group,
-  Select,
-  Stack,
-  Text,
-  Textarea,
-  TextInput,
-} from '@mantine/core'
+import { Button, Checkbox, Group, Select, Stack, Text, Textarea, TextInput } from '@mantine/core'
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
+import ApplicationRejectButton from '../ApplicationRejectButton/ApplicationRejectButton'
 
 interface IApplicationReviewFormProps {
   application: IApplication
-  onUpdate: () => unknown
+  onUpdate: (application: IApplication) => unknown
 }
 
 const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const { application, onUpdate } = props
 
-  const { updateApplication } = useApplicationsContext()
+  const updateApplication = useApplicationsContextUpdater()
 
   const form = useForm<{
+    applicationId: string | null
     title: string
     type: string | null
     comment: string
@@ -41,11 +33,12 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   }>({
     mode: 'controlled',
     initialValues: {
-      title: application?.thesisTitle || '',
+      applicationId: null,
+      title: '',
       type: null,
       comment: '',
       advisors: [],
-      supervisors: GLOBAL_CONFIG.default_supervisors,
+      supervisors: [],
       notifyUser: true,
     },
     validateInputOnBlur: true,
@@ -58,9 +51,21 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   })
 
   useEffect(() => {
+    if (application) {
+      form.setInitialValues({
+        applicationId: application.applicationId,
+        title: application.thesisTitle || '',
+        comment: application.comment || '',
+        type: GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
+          ? application.user.studyDegree
+          : null,
+        advisors: [],
+        supervisors: GLOBAL_CONFIG.default_supervisors,
+        notifyUser: true,
+      })
+    }
+
     form.reset()
-    form.setFieldValue('title', application?.thesisTitle || '')
-    form.setFieldValue('comment', application?.comment || '')
   }, [application?.applicationId])
 
   const [loading, setLoading] = useState(false)
@@ -68,6 +73,10 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const [debouncedComment] = useDebouncedValue(form.values.comment, 1000)
 
   useEffect(() => {
+    if (form.values.applicationId !== application.applicationId) {
+      return
+    }
+
     if (application && debouncedComment !== application.comment) {
       doRequest<IApplication>(
         `/v2/applications/${application.applicationId}/comment`,
@@ -82,7 +91,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           if (res.ok) {
             application.comment = res.data.comment
 
-            updateApplication(res.data)
+            onUpdate(res.data)
           } else {
             showSimpleError(getApiResponseErrorMessage(res))
           }
@@ -91,12 +100,43 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     }
   }, [debouncedComment, application?.applicationId])
 
-  return (
-    <form>
-      {application?.state === ApplicationState.NOT_ASSESSED && (
-        <Stack gap='md'>
-          <Divider my='md' />
+  const onSubmit = async () => {
+    setLoading(true)
 
+    try {
+      const response = await doRequest<IApplication>(
+        `/v2/applications/${application.applicationId}/accept`,
+        {
+          method: 'PUT',
+          requiresAuth: true,
+          data: {
+            thesisTitle: form.values.title,
+            thesisType: form.values.type,
+            advisorIds: form.values.advisors,
+            supervisorIds: form.values.supervisors,
+            notifyUser: form.values.notifyUser,
+            closeTopic: false,
+          },
+        },
+      )
+
+      if (response.ok) {
+        showSimpleSuccess('Application accepted successfully')
+
+        updateApplication(response.data)
+        onUpdate(response.data)
+      } else {
+        showSimpleError(getApiResponseErrorMessage(response))
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      {application?.state === ApplicationState.NOT_ASSESSED && (
+        <Stack gap='sm'>
           <TextInput
             type='text'
             required={true}
@@ -148,77 +188,19 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           />
 
           <Group grow>
-            {/* REJECT Button */}
-            <Button
-              variant='outline'
-              loading={loading}
-              color='red'
-              onClick={async () => {
-                setLoading(true)
-
-                const response = await doRequest<IApplication>(
-                  `/v2/applications/${application.applicationId}/reject`,
-                  {
-                    method: 'PUT',
-                    requiresAuth: true,
-                    data: {
-                      comment: form.values.comment,
-                      notifyUser: form.values.notifyUser,
-                    },
-                  },
-                )
-
-                setLoading(false)
-
-                if (response.ok) {
-                  showSimpleSuccess('Application rejected successfully')
-
-                  updateApplication(response.data)
-                  onUpdate()
-                } else {
-                  showSimpleError(getApiResponseErrorMessage(response))
-                }
+            <ApplicationRejectButton
+              application={application}
+              notifyUser={form.values.notifyUser}
+              onUpdate={(newApplication) => {
+                onUpdate(newApplication)
               }}
-            >
-              Reject
-            </Button>
-            {/* ACCEPT Button */}
+            />
             <Button
+              type='submit'
               variant='outline'
               color='green'
               loading={loading}
               disabled={!form.isValid()}
-              onClick={async () => {
-                setLoading(true)
-
-                const response = await doRequest<IApplication>(
-                  `/v2/applications/${application.applicationId}/accept`,
-                  {
-                    method: 'PUT',
-                    requiresAuth: true,
-                    data: {
-                      notifyUser: form.values.notifyUser,
-                      closeTopic: false,
-                      comment: form.values.comment,
-                      advisorIds: form.values.advisors,
-                      supervisorIds: form.values.supervisors,
-                      thesisTitle: form.values.title,
-                      thesisType: form.values.type,
-                    },
-                  },
-                )
-
-                setLoading(false)
-
-                if (response.ok) {
-                  showSimpleSuccess('Application accepted successfully')
-
-                  updateApplication(response.data)
-                  onUpdate()
-                } else {
-                  showSimpleError(getApiResponseErrorMessage(response))
-                }
-              }}
             >
               Accept
             </Button>

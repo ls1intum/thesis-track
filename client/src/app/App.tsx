@@ -17,7 +17,7 @@ import * as buttonClasses from './styles/Buttons.module.css'
 const theme = createTheme({
   respectReducedMotion: false,
   colors: {
-    'pale-purple': [
+    primary: [
       '#f2f0ff',
       '#e0dff2',
       '#bfbdde',
@@ -30,7 +30,7 @@ const theme = createTheme({
       '#3b3979',
     ],
   },
-  primaryColor: 'pale-purple',
+  primaryColor: 'primary',
   primaryShade: 7,
   components: {
     Button: Button.extend({

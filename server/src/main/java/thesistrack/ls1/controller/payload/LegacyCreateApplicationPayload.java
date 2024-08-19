@@ -20,9 +20,7 @@ public record LegacyCreateApplicationPayload (
         String interests,
         String projects,
         String thesisTitle,
-        Instant desiredStartDate,
-        Set<String> researchAreas,
-        Set<String> focusTopics
+        Instant desiredStartDate
 ) {
 
 }

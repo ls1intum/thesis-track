@@ -15,8 +15,6 @@ export interface IUser extends ILightUser {
   gender: string | null
   nationality: string | null
   isExchangeStudent: boolean | null
-  focusTopics: string[] | null
-  researchAreas: string[] | null
   projects: string | null
   interests: string | null
   specialSkills: string | null

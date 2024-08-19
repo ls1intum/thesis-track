@@ -34,24 +34,12 @@ const links: Array<{
   groups: string[] | undefined
 }> = [
   { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
-  /*{
-    link: '/submit-application/pick-topic',
-    label: 'Submit Application',
-    icon: PaperPlaneTilt,
-    roles: undefined,
-  },*/
   {
-    link: '/management/thesis-applications',
+    link: '/applications',
     label: 'Review Applications',
     icon: Scroll,
     groups: ['admin', 'advisor', 'supervisor'],
   },
-  /*{
-    link: '/applications',
-    label: 'Review Applications v2',
-    icon: Scroll,
-    roles: ['admin', 'advisor', 'supervisor'],
-  },*/
   {
     link: '/topics',
     label: 'Manage Topics',
