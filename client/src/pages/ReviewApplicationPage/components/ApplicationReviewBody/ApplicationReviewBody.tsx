@@ -15,7 +15,7 @@ interface IApplicationReviewBodyProps {
 const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
   const { application, onChange } = props
 
-  const {updateApplication} = useApplicationsContext()
+  const { updateApplication } = useApplicationsContext()
 
   const [, scrollTo] = useWindowScroll()
 

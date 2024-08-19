@@ -3,7 +3,6 @@ import { Modal, Stack, Divider } from '@mantine/core'
 import React from 'react'
 import ApplicationReviewForm from '../ApplicationReviewForm/ApplicationReviewForm'
 import ApplicationData from '../ApplicationData/ApplicationData'
-import { useApplicationsContextUpdater } from '../../contexts/ApplicationsProvider/hooks'
 
 interface IApplicationModalProps {
   application: IApplication | undefined
