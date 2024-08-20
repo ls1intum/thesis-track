@@ -145,7 +145,7 @@ const GanttChart = (props: IGanttChartProps) => {
     if (e.ctrlKey) {
       e.preventDefault()
 
-      zoomRange(e.deltaY < 0 ? 1.1 : 0.9)
+      zoomRange(e.deltaY < 0 ? 1.05 : 0.95)
     }
   }
 
