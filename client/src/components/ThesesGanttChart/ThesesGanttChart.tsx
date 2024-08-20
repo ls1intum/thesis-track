@@ -4,10 +4,12 @@ import { useMemo, useState } from 'react'
 import { formatDate, formatUser } from '../../utils/format'
 import { ThesisStateColor } from '../../config/colors'
 import ThesisPreviewModal from '../ThesisPreviewModal/ThesisPreviewModal'
-import { IThesis } from '../../requests/responses/thesis'
-import { Group, Stack } from '@mantine/core'
+import { IThesis, ThesisState } from '../../requests/responses/thesis'
+import { Center, Group, Stack, Text } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
+import { Presentation } from 'phosphor-react'
+import { arrayUnique } from '../../utils/array'
 
 const ThesesGanttChart = () => {
   const { theses } = useThesesContext()
@@ -22,6 +24,20 @@ const ThesesGanttChart = () => {
     const result: IGanttChartDataElement[] = []
 
     for (const thesis of theses.content) {
+      const getAdjustedEndDate = (state: ThesisState, startDate: Date, endDate: Date) => {
+        if (state === ThesisState.PROPOSAL && state === thesis.state) {
+          // Proposal phase should be at least 4 weeks long if not completed yet
+          return new Date(Math.max(endDate.getTime(), startDate.getTime() + 3600 * 24 * 28 * 1000))
+        }
+
+        if (state === ThesisState.WRITING && state === thesis.state && thesis.endDate) {
+          // Writing phase should end at endDate if not completed yet
+          return new Date(thesis.endDate)
+        }
+
+        return endDate
+      }
+
       result.push(
         ...thesis.advisors.map((advisor) => ({
           id: thesis.thesisId,
@@ -34,8 +50,16 @@ const ThesesGanttChart = () => {
           ],
           timeline: thesis.states.map((state) => ({
             startDate: new Date(state.startedAt),
-            endDate: new Date(state.endedAt),
+            endDate: getAdjustedEndDate(
+              state.state,
+              new Date(state.startedAt),
+              new Date(state.endedAt),
+            ),
             color: ThesisStateColor[state.state],
+          })),
+          events: thesis.presentations.map((presentation) => ({
+            icon: <Presentation />,
+            time: new Date(presentation.scheduledAt),
           })),
         })),
       )
@@ -44,8 +68,20 @@ const ThesesGanttChart = () => {
     return result
   }, [theses])
 
+  const visibleStates: ThesisState[] = theses
+    ? arrayUnique<ThesisState>([
+        ...theses.content.reduce<ThesisState[]>(
+          (prev, curr) => [
+            ...prev,
+            ...curr.states.filter((row) => row.startedAt !== row.endedAt).map((row) => row.state),
+          ],
+          [],
+        ),
+      ])
+    : []
+
   return (
-    <>
+    <div>
       <GanttChart
         columns={['Title', 'Target Start', 'Target End']}
         data={data}
@@ -95,12 +131,20 @@ const ThesesGanttChart = () => {
           setOpenedThesis(theses?.content.find((thesis) => thesis.thesisId === item.id))
         }
       />
+      <Center mt='md'>
+        <Group>
+          <Text>Legend:</Text>
+          {visibleStates.map((state) => (
+            <ThesisStateBadge key={state} state={state} />
+          ))}
+        </Group>
+      </Center>
       <ThesisPreviewModal
         opened={!!openedThesis}
         onClose={() => setOpenedThesis(undefined)}
         thesis={openedThesis}
       />
-    </>
+    </div>
   )
 }
 

@@ -33,7 +33,6 @@ $chart-row-spacing: rem(0.5rem);
 }
 
 .timelineHeader {
-    display: flex;
     flex-grow: 1;
     position: relative;
 }
@@ -89,12 +88,12 @@ $chart-row-spacing: rem(0.5rem);
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    text-align: center;
 
     border-right: 1px solid var(--mantine-color-dimmed);
 }
 
 .timelineColumn {
-    display: flex;
     position: relative;
     height: calc($chart-timeline-height + 2 * $chart-row-spacing);
     flex-grow: 1;
@@ -105,4 +104,12 @@ $chart-row-spacing: rem(0.5rem);
     position: absolute;
     top: $chart-row-spacing;
     height: $chart-timeline-height;
+}
+
+.timelineEvent {
+    position: absolute;
+    top: $chart-row-spacing;
+    height: $chart-timeline-height;
+    transform: translateX(-50%);
+    color: var(--mantine-color-text);
 }

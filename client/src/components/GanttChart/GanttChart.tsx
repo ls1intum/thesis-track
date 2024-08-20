@@ -1,6 +1,6 @@
 import * as classes from './GanttChart.module.css'
 import { arrayUnique } from '../../utils/array'
-import { ReactNode, useState } from 'react'
+import { ReactNode, TouchEvent, Touch, WheelEvent, useMemo, useState } from 'react'
 import { Button, Collapse, Popover, RangeSlider } from '@mantine/core'
 import { formatDate } from '../../utils/format'
 import { CaretDown, CaretUp } from 'phosphor-react'
@@ -11,6 +11,7 @@ interface IGanttChartProps {
   itemPopover: (item: IGanttChartDataElement) => ReactNode
   onItemClick?: (item: IGanttChartDataElement) => unknown
   defaultRange?: number
+  maxTicks?: number
 }
 
 export interface IGanttChartDataElement {
@@ -22,6 +23,10 @@ export interface IGanttChartDataElement {
     startDate: Date
     endDate: Date
     color: string
+  }>
+  events: Array<{
+    icon: ReactNode
+    time: Date
   }>
 }
 
@@ -41,31 +46,45 @@ const GanttChart = (props: IGanttChartProps) => {
     itemPopover,
     onItemClick,
     defaultRange = 3600 * 24 * 30 * 3 * 1000,
+    maxTicks = 6,
   } = props
 
   const [range, setRange] = useState<DateRange>()
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([])
   const [popover, setPopover] = useState<string>()
+  const [initialTouchDistance, setInitialTouchDistance] = useState<number>()
+
+  const currentTime = useMemo(() => Date.now(), [])
 
   if (!data || data.length === 0) {
     return null
   }
 
+  // Calculate total range based on the provided data
   const totalRange: DateRange = [
     Math.min(
       ...data.map((item) =>
-        Math.min(...item.timeline.map((timelineItem) => timelineItem.startDate.getTime())),
+        Math.min(
+          ...item.timeline.map((timelineItem) => timelineItem.startDate.getTime()),
+          ...item.events.map((timelineEvent) => timelineEvent.time.getTime()),
+        ),
       ),
     ),
     Math.max(
       ...data.map((item) =>
-        Math.max(...item.timeline.map((timelineItem) => timelineItem.endDate.getTime())),
+        Math.max(
+          ...item.timeline.map((timelineItem) => timelineItem.endDate.getTime()),
+          ...item.events.map((timelineEvent) => timelineEvent.time.getTime()),
+        ),
       ),
     ),
   ]
+
+  // Default filtered range to currentTime if there are elements larger than current Time
+  const initialEndTime = Math.min(currentTime, totalRange[1])
   const filteredRange: DateRange = [
-    Math.max(totalRange[0], range?.[0] ?? totalRange[1] - defaultRange),
-    Math.min(totalRange[1], range?.[1] ?? totalRange[1]),
+    Math.max(totalRange[0], range?.[0] ?? initialEndTime - defaultRange),
+    Math.min(totalRange[1], range?.[1] ?? initialEndTime),
   ]
   const filteredRangeDuration = filteredRange[1] - filteredRange[0]
 
@@ -77,46 +96,98 @@ const GanttChart = (props: IGanttChartProps) => {
     (a, b) => a.groupId === b.groupId,
   )
 
+  // touch events for pinch to zoom
+  const zoomRange = (zoomFactor: number) => {
+    const center = (filteredRange[0] + filteredRange[1]) / 2
+
+    setRange([
+      Math.max(center - (center - filteredRange[0]) * zoomFactor, totalRange[0]),
+      Math.min(center + (filteredRange[1] - center) * zoomFactor, totalRange[1]),
+    ])
+  }
+
+  const getTouchDistance = (touch1: Touch, touch2: Touch): number => {
+    return Math.sqrt(
+      Math.pow(touch2.clientX - touch1.clientX, 2) + Math.pow(touch2.clientY - touch1.clientY, 2),
+    )
+  }
+
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2) {
+      setInitialTouchDistance(getTouchDistance(e.touches[0], e.touches[1]))
+    }
+  }
+
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length === 2 && initialTouchDistance) {
+      const currentDistance = getTouchDistance(e.touches[0], e.touches[1])
+
+      zoomRange(currentDistance / initialTouchDistance)
+    }
+  }
+
+  const handleWheel = (e: WheelEvent<HTMLDivElement>) => {
+    if (e.ctrlKey) {
+      e.preventDefault()
+
+      zoomRange(e.deltaY < 0 ? 1.1 : 0.9)
+    }
+  }
+
   const generateTicks = () => {
     const timeOffset = 0.05 * filteredRangeDuration
     const startDate = new Date(filteredRange[0] + timeOffset)
     const endDate = new Date(filteredRange[1] - timeOffset)
 
-    const maxTicks = 7
-
     let calculatedTicks: Array<{ label: string; type: string; value: number }> = []
+
+    // Add Now tick if currentTime is in filtered range
+    if (currentTime >= startDate.getTime() && currentTime <= endDate.getTime()) {
+      calculatedTicks.push({
+        type: 'now',
+        value: currentTime,
+        label: 'Now',
+      })
+    }
+
     let lastYear = startDate.getFullYear()
     let lastMonth = startDate.getMonth()
 
     for (let time = startDate.getTime(); time <= endDate.getTime(); time += 3600 * 24 * 1000) {
-      const currentDate = new Date(time)
+      const iterationDate = new Date(time)
 
-      if (currentDate.getFullYear() !== lastYear) {
+      // Don't add tick if it's close to the "Now" tick
+      if (Math.abs(time - currentTime) <= 0.1 * filteredRangeDuration) {
+        continue
+      }
+
+      if (iterationDate.getFullYear() !== lastYear) {
         calculatedTicks.push({
-          label: `${currentDate.toLocaleString('default', { year: 'numeric' })}`,
+          label: `${iterationDate.toLocaleString('default', { year: 'numeric' })}`,
           type: 'year',
           value: time,
         })
-      } else if (currentDate.getMonth() !== lastMonth) {
+      } else if (iterationDate.getMonth() !== lastMonth) {
         calculatedTicks.push({
-          label: `${currentDate.toLocaleString('default', { month: 'long' })}`,
+          label: `${iterationDate.toLocaleString('default', { month: 'long' })}`,
           type: 'month',
           value: time,
         })
       } else {
         calculatedTicks.push({
-          label: `${currentDate.toLocaleString('default', { day: '2-digit' })}.`,
+          label: `${iterationDate.toLocaleString('default', { day: '2-digit' })}.`,
           type: 'day',
           value: time,
         })
       }
 
-      lastYear = currentDate.getFullYear()
-      lastMonth = currentDate.getMonth()
+      lastYear = iterationDate.getFullYear()
+      lastMonth = iterationDate.getMonth()
     }
 
-    const priorityTicks = ['year', 'month']
+    const priorityTicks = ['now', 'year', 'month']
 
+    // clear non priority items if there are too many ticks and ticks include priority items
     if (
       calculatedTicks.length > maxTicks &&
       calculatedTicks.some((row) => priorityTicks.includes(row.type))
@@ -124,6 +195,7 @@ const GanttChart = (props: IGanttChartProps) => {
       calculatedTicks = calculatedTicks.filter((row) => priorityTicks.includes(row.type))
     }
 
+    // reduce ticks until smaller than maxTicks
     let lastTickCount = calculatedTicks.length
     while (calculatedTicks.length > maxTicks) {
       calculatedTicks = calculatedTicks.filter(
@@ -176,7 +248,13 @@ const GanttChart = (props: IGanttChartProps) => {
             ))}
           </div>
         </div>
-        <div className={classes.content}>
+        <div
+          className={classes.content}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onWheel={handleWheel}
+          style={{ touchAction: 'none' }}
+        >
           {groups.map((group) => (
             <div key={group.groupId} className={classes.groupRow}>
               <div>
@@ -264,6 +342,28 @@ const GanttChart = (props: IGanttChartProps) => {
                                       backgroundColor: timelineItem.color,
                                     }}
                                   />
+                                ))}
+                              {item.events
+                                .filter((timelineEvent) =>
+                                  isInDateRange(
+                                    [timelineEvent.time.getTime(), timelineEvent.time.getTime()],
+                                    filteredRange,
+                                  ),
+                                )
+                                .map((timelineEvent) => (
+                                  <div
+                                    key={timelineEvent.time.getTime()}
+                                    className={classes.timelineEvent}
+                                    style={{
+                                      left: `${Math.max(
+                                        (100 * (timelineEvent.time.getTime() - filteredRange[0])) /
+                                          filteredRangeDuration,
+                                        0,
+                                      )}%`,
+                                    }}
+                                  >
+                                    {timelineEvent.icon}
+                                  </div>
                                 ))}
                             </div>
                           </div>
