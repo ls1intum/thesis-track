@@ -1,6 +1,6 @@
 import * as classes from './GanttChart.module.css'
 import { arrayUnique } from '../../utils/array'
-import { ReactNode, TouchEvent, Touch, WheelEvent, useMemo, useState } from 'react'
+import { ReactNode, TouchEvent, Touch, WheelEvent, useMemo, useState, useEffect } from 'react'
 import { Button, Collapse, Popover, RangeSlider } from '@mantine/core'
 import { formatDate } from '../../utils/format'
 import { CaretDown, CaretUp } from 'phosphor-react'
@@ -56,6 +56,21 @@ const GanttChart = (props: IGanttChartProps) => {
 
   const currentTime = useMemo(() => Date.now(), [])
 
+  // Disable page zooming to prevent that page zooms on pinch gesture
+  useEffect(() => {
+    const handleWheelGlobal = (e: globalThis.WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault()
+      }
+    }
+
+    window.addEventListener('wheel', handleWheelGlobal, { passive: false })
+
+    return () => {
+      window.removeEventListener('wheel', handleWheelGlobal)
+    }
+  }, [])
+
   if (!data || data.length === 0) {
     return null
   }
@@ -96,7 +111,7 @@ const GanttChart = (props: IGanttChartProps) => {
     (a, b) => a.groupId === b.groupId,
   )
 
-  // touch events for pinch to zoom
+  // Touch events for pinch to zoom
   const zoomRange = (zoomFactor: number) => {
     const center = (filteredRange[0] + filteredRange[1]) / 2
 
