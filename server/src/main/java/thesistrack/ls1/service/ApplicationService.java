@@ -125,8 +125,7 @@ public class ApplicationService {
         application.setDesiredStartDate(payload.desiredStartDate());
         application.setCreatedAt(currentTime);
 
-        mailingService.sendApplicationCreatedMailToChair(application);
-        mailingService.sendApplicationCreatedMailToStudent(application);
+        mailingService.sendApplicationCreatedEmail(application);
 
         return applicationRepository.save(application);
     }
@@ -148,7 +147,7 @@ public class ApplicationService {
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 
-        thesisService.createThesis(
+        Thesis thesis = thesisService.createThesis(
                 reviewer,
                 thesisTitle,
                 thesisType,
@@ -167,7 +166,7 @@ public class ApplicationService {
         }
 
         if (notifyUser) {
-            mailingService.sendApplicationAcceptanceEmail(application, userService.findById(advisorIds.iterator().next()));
+            mailingService.sendApplicationAcceptanceEmail(application, thesis);
         }
 
         return applicationRepository.save(application);

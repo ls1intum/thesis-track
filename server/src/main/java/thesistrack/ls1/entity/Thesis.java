@@ -93,6 +93,42 @@ public class Thesis {
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     private Set<ThesisStateChange> states = new HashSet<>();
 
+    public List<User> getStudents() {
+        List<User> result = new ArrayList<>();
+
+        for (ThesisRole role : getRoles()) {
+            if (role.getId().getRole() == ThesisRoleName.STUDENT) {
+                result.add(role.getUser());
+            }
+        }
+
+        return result;
+    }
+
+    public List<User> getAdvisors() {
+        List<User> result = new ArrayList<>();
+
+        for (ThesisRole role : getRoles()) {
+            if (role.getId().getRole() == ThesisRoleName.ADVISOR) {
+                result.add(role.getUser());
+            }
+        }
+
+        return result;
+    }
+
+    public List<User> getSupervisors() {
+        List<User> result = new ArrayList<>();
+
+        for (ThesisRole role : getRoles()) {
+            if (role.getId().getRole() == ThesisRoleName.SUPERVISOR) {
+                result.add(role.getUser());
+            }
+        }
+
+        return result;
+    }
+
     public boolean hasSupervisorAccess(User user) {
         if (user == null) {
             return false;

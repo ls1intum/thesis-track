@@ -20,10 +20,12 @@ import java.util.UUID;
 public class ThesisCommentService {
     private final ThesisCommentRepository thesisCommentRepository;
     private final UploadService uploadService;
+    private final MailingService mailingService;
 
-    public ThesisCommentService(ThesisCommentRepository thesisCommentRepository, UploadService uploadService) {
+    public ThesisCommentService(ThesisCommentRepository thesisCommentRepository, UploadService uploadService, MailingService mailingService) {
         this.thesisCommentRepository = thesisCommentRepository;
         this.uploadService = uploadService;
+        this.mailingService = mailingService;
     }
 
     public Page<ThesisComment> getComments(Thesis thesis, ThesisCommentType commentType, Integer page, Integer limit) {
@@ -47,7 +49,11 @@ public class ThesisCommentService {
             comment.setFilename(uploadService.store(file, 3 * 1024 * 1024));
         }
 
-        return thesisCommentRepository.save(comment);
+        comment = thesisCommentRepository.save(comment);
+
+        mailingService.sendNewCommentEmail(comment);
+
+        return comment;
     }
 
     public Resource getCommentFile(ThesisComment comment) {
