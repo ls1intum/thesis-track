@@ -7,7 +7,8 @@ import {
   Divider,
   Group,
   Stack,
-  Text, Tooltip,
+  Text,
+  Tooltip,
   useMantineColorScheme,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
