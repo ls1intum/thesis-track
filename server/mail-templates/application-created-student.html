@@ -1,46 +1,52 @@
-<p>Dear {{student.firstName}},</p>
+<p>Dear {{recipientName}},</p>
 <p>With this email we confirm your successful thesis application submission.</p>
 <p>We received the following thesis application details:</p>
 
 <hr>
 
-<p><strong>Name:</strong>&nbsp;</p>
-<p>{{student.firstName}}&nbsp;{{student.lastName}}</p>
-<br/>
-<p><strong>Email:</strong>&nbsp;</p>
-<p>{{student.email}}</p>
-<br/>
-<p><strong>University ID:</strong>&nbsp;</p>
-<p>{{student.universityId}}</p>
-<br/>
-<p><strong>Matriculation Number:</strong>&nbsp;</p>
-<p>{{student.matriculationNumber}}</p>
-<br/>
-<p><strong>Study program:</strong>&nbsp;</p>
-<p>{{application.studyProgram}}&nbsp;{{application.studyDegree}}&nbsp;(Enrolled at {{application.enrolledAt}})</p>
-<br/>
-<p><br><strong>Desired Thesis Start Date:</strong>&nbsp;</p>
-<p>{{application.desiredThesisStart}}</p>
-<br/>
-<p><strong>Special Skills:</strong>&nbsp;</p>
-<p>{{application.specialSkills}}</p>
-<br/>
-<p><strong>Motivation:</strong>&nbsp;</p>
-<p>{{application.motivation}}</p>
-<br/>
-<p><strong>Interests:</strong>&nbsp;</p>
-<p>{{application.interests}}</p>
-<br/>
-<p><strong>Projects:</strong>&nbsp;</p>
-<p>{{application.projects}}</p>
-<br/>
-<p><strong>Thesis Title Suggestion:</strong>&nbsp;</p>
-<p>{{application.thesisTitle}}</p>
-<br/>
-<p><strong>Research Areas:</strong>&nbsp;</p>
-<p>{{application.researchAreas}}</p>
-<br/>
-<p><strong>Focus Topics:</strong>&nbsp;</p>
-<p>{{application.focusTopics}}</p>
-<br/>
+<p>
+  <strong>Name:</strong><br/>
+  {{application.user.firstName}}&nbsp;{{application.user.lastName}}
+</p>
+<p>
+  <strong>Email:</strong><br/>
+  {{application.user.email}}
+</p>
+<p>
+  <strong>University ID:</strong><br/>
+  {{application.user.universityId}}
+</p>
+<p>
+  <strong>Matriculation Number:</strong><br/>
+  {{application.user.matriculationNumber}}
+</p>
+<p>
+  <strong>Study program:</strong><br/>
+  {{application.user.studyProgram}}&nbsp;{{application.user.studyDegree}}&nbsp;(Enrolled at {{application.user.enrolledAt}})
+</p>
+<p>
+  <strong>Thesis Title Suggestion:</strong><br/>
+  {{application.thesisTitle}}
+</p>
+<p>
+  <strong>Desired Thesis Start Date:</strong><br/>
+  {{application.desiredThesisStart}}
+</p>
+<p>
+  <strong>Motivation:</strong><br/>
+  {{application.motivation}}
+</p>
+<p>
+  <strong>Special Skills:</strong><br/>
+  {{application.user.specialSkills}}
+</p>
+<p>
+  <strong>Interests:</strong><br/>
+  {{application.user.interests}}
+</p>
+<p>
+  <strong>Projects:</strong><br/>
+  {{application.user.projects}}
+</p>
+
 <p><strong>You can find the submitted files in the attachment part of this email.</strong></p>

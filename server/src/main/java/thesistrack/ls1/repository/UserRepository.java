@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import thesistrack.ls1.entity.User;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -24,4 +25,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
             "LOWER(u.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(u.universityId) LIKE %:searchQuery%)")
     Page<User> searchUsers(@Param("searchQuery") String searchQuery, @Param("groups") Set<String> groups, Pageable page);
+
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN UserGroup g ON (u.id = g.id.userId) WHERE g.id.group IN (\"supervisor\", \"advisor\", \"admin\")")
+    List<User> getChairMembers();
 }

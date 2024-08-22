@@ -2,13 +2,13 @@ package thesistrack.ls1.utility;
 
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
 import lombok.Getter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import thesistrack.ls1.entity.User;
 import thesistrack.ls1.exception.MailingException;
+import thesistrack.ls1.repository.UserRepository;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -20,81 +20,70 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-@Data
-@Validated
-@Configuration
-@ConfigurationProperties(prefix = "thesis-track.mail")
+@Component
 public class MailConfig {
-    @NotBlank
-    private Boolean enabled;
+    private final UserRepository userRepository;
 
-    @NotBlank
-    private String sender;
+    private final Boolean enabled;
 
-    @NotBlank
-    private String signature;
+    @Getter
+    private final InternetAddress sender;
 
-    @NotBlank
-    private String workspaceUrl;
+    @Getter
+    private final String signature;
 
-    @NotBlank
-    private String chairMemberRecipients;
+    @Getter
+    private final String workspaceUrl;
 
-    @NotBlank
-    private String bccRecipients;
+    @Getter
+    private final List<InternetAddress> defaultBccRecipients;
 
-    @NotBlank
-    private String mailTemplateLocation;
+    private final Path templateLocation;
+
+    @Autowired
+    public MailConfig(
+            @Value("${thesis-track.mail.enabled}") boolean enabled,
+            @Value("${thesis-track.mail.mail-template-location}") String mailTemplateLocation,
+            @Value("${thesis-track.mail.sender}") InternetAddress sender,
+            @Value("${thesis-track.mail.bcc-recipients}") String bccRecipientsList,
+            @Value("${thesis-track.mail.signature}") String mailSignature,
+            @Value("${thesis-track.mail.workspace-url}") String workspaceUrl,
+            UserRepository userRepository
+    ) {
+        this.enabled = enabled;
+        this.sender = sender;
+        this.workspaceUrl = workspaceUrl;
+        this.signature = mailSignature;
+
+        this.userRepository = userRepository;
+        this.templateLocation = Paths.get(mailTemplateLocation);
+
+        if (bccRecipientsList != null && !bccRecipientsList.isEmpty()) {
+            List<String> addresses = Arrays.asList(bccRecipientsList.split(";"));
+            addresses.removeIf(String::isEmpty);
+
+            this.defaultBccRecipients = addresses.stream().map(address -> {
+                try {
+                    return new InternetAddress(address);
+                } catch (AddressException e) {
+                    throw new IllegalArgumentException("Invalid email address", e);
+                }
+            }).toList();
+        } else {
+            this.defaultBccRecipients = new ArrayList<>();
+        }
+    }
 
     public boolean isEnabled() {
         return enabled;
     }
 
-    public InternetAddress getSender() {
-        try {
-            return new InternetAddress(sender);
-        } catch (AddressException e) {
-            throw new MailingException("Invalid email for sender");
-        }
-    }
-
-    public List<InternetAddress> getChairMemberRecipients() {
-        if (chairMemberRecipients != null && !chairMemberRecipients.isEmpty()) {
-            List<String> addresses = Arrays.asList(chairMemberRecipients.split(";"));
-            addresses.removeIf(String::isEmpty);
-
-            return addresses.stream().map(address -> {
-                try {
-                    return new InternetAddress(address);
-                } catch (AddressException e) {
-                    throw new IllegalArgumentException("Invalid email address", e);
-                }
-            }).toList();
-        } else {
-            return new ArrayList<>();
-        }
-    }
-
-    public List<InternetAddress> getBccRecipients() {
-        if (bccRecipients != null && !bccRecipients.isEmpty()) {
-            List<String> addresses = Arrays.asList(bccRecipients.split(";"));
-            addresses.removeIf(String::isEmpty);
-
-            return addresses.stream().map(address -> {
-                try {
-                    return new InternetAddress(address);
-                } catch (AddressException e) {
-                    throw new IllegalArgumentException("Invalid email address", e);
-                }
-            }).toList();
-        } else {
-            return new ArrayList<>();
-        }
+    public List<User> getChairMembers() {
+        return userRepository.getChairMembers();
     }
 
     public String getTemplate(String name) {
-        Path folder = Paths.get(mailTemplateLocation);
-        Path filePath = folder.resolve(name + ".html");
+        Path filePath = templateLocation.resolve(name + ".html");
 
         try {
             byte[] fileBytes = Files.readAllBytes(filePath);

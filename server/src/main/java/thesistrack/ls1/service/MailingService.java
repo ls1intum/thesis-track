@@ -1,6 +1,5 @@
 package thesistrack.ls1.service;
 
-import jakarta.mail.internet.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -28,21 +27,21 @@ public class MailingService {
     }
 
     public void sendApplicationCreatedEmail(Application application) throws MailingException {
-        MailBuilder chairMailBuilder = new MailBuilder(this.config, "New Thesis Application", "application-created-chair");
+        MailBuilder chairMailBuilder = new MailBuilder(config, "New Thesis Application", "application-created-chair");
         chairMailBuilder
-                .addChairMemberRecipients()
-                .addAttachment(application.getUser().getCvFilename())
-                .addAttachment(application.getUser().getExaminationFilename())
-                .addAttachment(application.getUser().getDegreeFilename())
+                .sendToChairMembers()
+                .addAttachmentFile(application.getUser().getCvFilename())
+                .addAttachmentFile(application.getUser().getExaminationFilename())
+                .addAttachmentFile(application.getUser().getDegreeFilename())
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
 
-        MailBuilder studentMailBuilder = new MailBuilder(this.config, "Thesis Application Confirmation", "application-created-student");
+        MailBuilder studentMailBuilder = new MailBuilder(config, "Thesis Application Confirmation", "application-created-student");
         studentMailBuilder
-                .addRecipient(MimeMessage.RecipientType.TO, application.getUser().getEmail())
-                .addAttachment(application.getUser().getCvFilename())
-                .addAttachment(application.getUser().getExaminationFilename())
-                .addAttachment(application.getUser().getDegreeFilename())
+                .addPrimaryRecipient(application.getUser())
+                .addAttachmentFile(application.getUser().getCvFilename())
+                .addAttachmentFile(application.getUser().getExaminationFilename())
+                .addAttachmentFile(application.getUser().getDegreeFilename())
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
     }
@@ -53,53 +52,54 @@ public class MailingService {
 
         String template = advisor.getId().equals(supervisor.getId()) ? "application-accepted-no-advisor" : "application-accepted";
 
-        MailBuilder builder = new MailBuilder(this.config, "Thesis Application Acceptance", template);
+        MailBuilder builder = new MailBuilder(config, "Thesis Application Acceptance", template);
         builder
-                .addBccRecipients()
-                .addRecipient(MimeMessage.RecipientType.TO, application.getUser().getEmail())
-                .addRecipient(MimeMessage.RecipientType.CC, advisor.getEmail())
+                .addPrimaryRecipient(application.getUser())
+                .addSecondaryRecipient(advisor.getEmail())
+                .addDefaultBccRecipients()
                 .fillUserPlaceholders(advisor, "advisor")
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
     }
 
     public void sendApplicationRejectionEmail(Application application) throws MailingException {
-        MailBuilder builder = new MailBuilder(this.config, "Thesis Application Rejection", "application-rejected");
+        MailBuilder builder = new MailBuilder(config, "Thesis Application Rejection", "application-rejected");
         builder
-                .addBccRecipients()
-                .addRecipient(MimeMessage.RecipientType.TO, application.getUser().getEmail())
+                .addPrimaryRecipient(application.getUser())
+                .addDefaultBccRecipients()
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
     }
 
     public void sendThesisCreatedEmail(Thesis thesis) {
-        MailBuilder builder = new MailBuilder(this.config, "Thesis Created", "thesis-created");
+        MailBuilder builder = new MailBuilder(config, "Thesis Created", "thesis-created");
         builder
-                .addBccRecipients()
                 .sendToThesisStudents(thesis)
+                .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
     }
 
     public void sendThesisClosedEmail(Thesis thesis) {
-        MailBuilder builder = new MailBuilder(this.config, "Thesis Closed", "thesis-closed");
+        MailBuilder builder = new MailBuilder(config, "Thesis Closed", "thesis-closed");
         builder
-                .addBccRecipients()
                 .sendToThesisStudents(thesis)
+                .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
     }
 
     public void sendProposalUploadedEmail(ThesisProposal proposal) {
-        MailBuilder builder = new MailBuilder(this.config, "Thesis Proposal Added", "thesis-proposal-uploaded");
+        MailBuilder builder = new MailBuilder(config, "Thesis Proposal Added", "thesis-proposal-uploaded");
         builder
                 .sendToThesisAdvisors(proposal.getThesis())
                 .fillThesisProposalPlaceholders(proposal)
+                .addAttachmentFile(proposal.getProposalFilename())
                 .send(javaMailSender, uploadService);
     }
 
     public void sendProposalAcceptedEmail(Thesis thesis) {
-        MailBuilder builder = new MailBuilder(this.config, "Thesis Proposal Accepted", "thesis-proposal-accepted");
+        MailBuilder builder = new MailBuilder(config, "Thesis Proposal Accepted", "thesis-proposal-accepted");
         builder
                 .sendToThesisStudents(thesis)
                 .fillThesisPlaceholders(thesis)
@@ -107,7 +107,7 @@ public class MailingService {
     }
 
     public void sendNewCommentEmail(ThesisComment comment) {
-        MailBuilder builder = new MailBuilder(this.config, "New Thesis Comment", "thesis-comment-posted");
+        MailBuilder builder = new MailBuilder(config, "New Thesis Comment", "thesis-comment-posted");
 
         if (comment.getType() == ThesisCommentType.ADVISOR) {
             builder.sendToThesisAdvisors(comment.getThesis());
@@ -117,49 +117,52 @@ public class MailingService {
 
         builder
                 .fillThesisCommentPlaceholders(comment)
+                .addAttachmentFile(comment.getFilename())
                 .send(javaMailSender, uploadService);
     }
 
     public void sendNewScheduledPresentationEmail(ThesisPresentation presentation) {
-        MailBuilder builder = new MailBuilder(this.config, "New Presentation scheduled", "thesis-presentation-scheduled");
+        MailBuilder builder = new MailBuilder(config, "New Presentation scheduled", "thesis-presentation-scheduled");
         builder
-                .addBccRecipients()
                 .sendToThesisStudents(presentation.getThesis())
+                .addDefaultBccRecipients()
                 .fillThesisPresentationPlaceholders(presentation)
                 .send(javaMailSender, uploadService);
     }
 
     public void sendPresentationDeletedEmail(ThesisPresentation presentation) {
-        MailBuilder builder = new MailBuilder(this.config, "Presentation deleted", "thesis-presentation-deleted");
+        MailBuilder builder = new MailBuilder(config, "Presentation deleted", "thesis-presentation-deleted");
         builder
-                .addBccRecipients()
                 .sendToThesisStudents(presentation.getThesis())
+                .addDefaultBccRecipients()
                 .fillThesisPresentationPlaceholders(presentation)
                 .send(javaMailSender, uploadService);
     }
 
     public void sendFinalSubmissionEmail(Thesis thesis) {
-        MailBuilder builder = new MailBuilder(this.config, "Thesis Submitted", "thesis-final-submission");
+        MailBuilder builder = new MailBuilder(config, "Thesis Submitted", "thesis-final-submission");
         builder
-                .addBccRecipients()
                 .sendToThesisAdvisors(thesis)
+                .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
+                .addAttachmentFile(thesis.getFinalThesisFilename())
+                .addAttachmentFile(thesis.getFinalPresentationFilename())
                 .send(javaMailSender, uploadService);
     }
 
     public void sendAssessmentAddedEmail(ThesisAssessment assessment) {
-        MailBuilder builder = new MailBuilder(this.config, "Assessment added", "thesis-assessment-added");
+        MailBuilder builder = new MailBuilder(config, "Assessment added", "thesis-assessment-added");
         builder
-                .sendToThesisAdvisors(assessment.getThesis())
+                .sendToThesisSupervisors(assessment.getThesis())
                 .fillThesisAssessmentPlaceholders(assessment)
                 .send(javaMailSender, uploadService);
     }
 
     public void sendFinalGradeEmail(Thesis thesis) {
-        MailBuilder builder = new MailBuilder(this.config, "Final Grade available for Thesis", "thesis-final-grade");
+        MailBuilder builder = new MailBuilder(config, "Final Grade available for Thesis", "thesis-final-grade");
         builder
-                .addBccRecipients()
                 .sendToThesisStudents(thesis)
+                .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
     }
