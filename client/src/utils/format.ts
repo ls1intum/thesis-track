@@ -30,8 +30,23 @@ export function formatDate(
   })
 }
 
-export function formatUser(user: ILightUser) {
-  return `${user.firstName} ${user.lastName} (${user.universityId})`
+interface IFormatUserOptions {
+  withUniversityId: boolean
+}
+
+export function formatUser(user: ILightUser, options: Partial<IFormatUserOptions> = {}) {
+  const { withUniversityId } = {
+    withUniversityId: true,
+    ...options,
+  }
+
+  let text = `${user.firstName} ${user.lastName}`
+
+  if (withUniversityId) {
+    text += ` (${user.universityId})`
+  }
+
+  return text
 }
 
 export function formatThesisState(state: ThesisState) {

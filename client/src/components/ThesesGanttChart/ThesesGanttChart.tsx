@@ -44,9 +44,8 @@ const ThesesGanttChart = () => {
           groupId: advisor.userId,
           groupName: formatUser(advisor),
           columns: [
+            thesis.students.map((user) => formatUser(user, { withUniversityId: false })).join(', '),
             thesis.title,
-            formatDate(thesis.startDate, { withTime: false }),
-            formatDate(thesis.endDate, { withTime: false }),
           ],
           timeline: thesis.states.map((state) => ({
             startDate: new Date(state.startedAt),
@@ -83,7 +82,10 @@ const ThesesGanttChart = () => {
   return (
     <div>
       <GanttChart
-        columns={['Title', 'Target Start', 'Target End']}
+        columns={[
+          { label: 'Student', width: '120px', textAlign: 'center' },
+          { label: 'Title', width: '120px' },
+        ]}
         data={data}
         itemPopover={(item) => {
           const thesis = theses?.content.find((row) => row.thesisId === item.id)

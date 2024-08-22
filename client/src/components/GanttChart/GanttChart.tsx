@@ -1,12 +1,25 @@
 import * as classes from './GanttChart.module.css'
 import { arrayUnique } from '../../utils/array'
-import { ReactNode, TouchEvent, Touch, WheelEvent, useMemo, useState, useEffect } from 'react'
+import {
+  ReactNode,
+  TouchEvent,
+  Touch,
+  WheelEvent,
+  useMemo,
+  useState,
+  useEffect,
+  CSSProperties,
+} from 'react'
 import { Button, Collapse, Popover, RangeSlider } from '@mantine/core'
 import { formatDate } from '../../utils/format'
 import { CaretDown, CaretUp } from 'phosphor-react'
 
 interface IGanttChartProps {
-  columns: string[]
+  columns: Array<{
+    label: string
+    width: CSSProperties['width']
+    textAlign?: CSSProperties['textAlign']
+  }>
   data: Array<IGanttChartDataElement> | undefined
   itemPopover: (item: IGanttChartDataElement) => ReactNode
   onItemClick?: (item: IGanttChartDataElement) => unknown
@@ -245,8 +258,12 @@ const GanttChart = (props: IGanttChartProps) => {
         />
         <div className={classes.headers}>
           {columns.map((column) => (
-            <div key={column} className={classes.dataHeader}>
-              {column}
+            <div
+              key={column.label}
+              className={classes.dataHeader}
+              style={{ width: column.width, textAlign: column.textAlign }}
+            >
+              {column.label}
             </div>
           ))}
           <div className={classes.timelineHeader}>
@@ -313,9 +330,9 @@ const GanttChart = (props: IGanttChartProps) => {
                           >
                             {columns.map((column, index) => (
                               <div
-                                key={column}
+                                key={column.label}
                                 className={classes.dataColumn}
-                                title={item.columns[index]}
+                                style={{ width: column.width, textAlign: column.textAlign }}
                               >
                                 {item.columns[index]}
                               </div>
