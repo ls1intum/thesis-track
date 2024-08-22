@@ -92,7 +92,8 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     usingJson: true,
   })
   const [debouncedMinimized] = useDebouncedValue(minimizedState, minimizeAnimationDuration)
-  const minimized = minimizedState ? true : debouncedMinimized
+  // only use debounced State if value is false because otherwise the text is formatted weirdly if you expand the navigation
+  const minimized = minimizedState || debouncedMinimized
 
   const location = useLocation()
   const navigationType = useNavigationType()
