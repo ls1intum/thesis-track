@@ -148,7 +148,7 @@ public class MailBuilder {
 
             return Objects.requireNonNullElse(application.getThesisTitle(), "");
         });
-        formatters.put("application.desiredThesisStart", DataFormatter::formatDate);
+        formatters.put("application.desiredStartDate", DataFormatter::formatDate);
         formatters.put("application.user.enrolledAt", DataFormatter::formatDate);
 
         replaceDtoPlaceholders(ApplicationDto.fromApplicationEntity(application, false), "application", formatters);
