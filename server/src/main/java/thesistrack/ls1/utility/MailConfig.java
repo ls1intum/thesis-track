@@ -25,6 +25,10 @@ public class MailConfig {
     private final UserRepository userRepository;
 
     private final Boolean enabled;
+    private final Path templateLocation;
+
+    @Getter
+    private final String clientHost;
 
     @Getter
     private final InternetAddress sender;
@@ -38,8 +42,6 @@ public class MailConfig {
     @Getter
     private final List<InternetAddress> defaultBccRecipients;
 
-    private final Path templateLocation;
-
     @Autowired
     public MailConfig(
             @Value("${thesis-track.mail.enabled}") boolean enabled,
@@ -48,12 +50,14 @@ public class MailConfig {
             @Value("${thesis-track.mail.bcc-recipients}") String bccRecipientsList,
             @Value("${thesis-track.mail.signature}") String mailSignature,
             @Value("${thesis-track.mail.workspace-url}") String workspaceUrl,
+            @Value("${thesis-track.client.host}") String clientHost,
             UserRepository userRepository
     ) {
         this.enabled = enabled;
         this.sender = sender;
         this.workspaceUrl = workspaceUrl;
         this.signature = mailSignature;
+        this.clientHost = clientHost;
 
         this.userRepository = userRepository;
         this.templateLocation = Paths.get(mailTemplateLocation);

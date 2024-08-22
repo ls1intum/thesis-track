@@ -153,6 +153,8 @@ public class MailBuilder {
 
         replaceDtoPlaceholders(ApplicationDto.fromApplicationEntity(application, false), "application", formatters);
 
+        content = content.replace("{{applicationUrl}}", config.getClientHost() + "/applications/" + application.getId());
+
         return this;
     }
 
@@ -163,6 +165,8 @@ public class MailBuilder {
         formatters.put("thesis.endDate", DataFormatter::formatDate);
 
         replaceDtoPlaceholders(ThesisDto.fromThesisEntity(thesis, false), "thesis", formatters);
+
+        content = content.replace("{{thesisUrl}}", config.getClientHost() + "/theses/" + thesis.getId());
 
         return this;
     }
@@ -195,7 +199,7 @@ public class MailBuilder {
         return this;
     }
 
-    public void send(JavaMailSender mailSender, UploadService uploadService) {
+    public void send(JavaMailSender mailSender, UploadService uploadService) throws MailingException {
         if (!config.isEnabled()) {
             return;
         }
@@ -216,22 +220,22 @@ public class MailBuilder {
                     message.addRecipient(Message.RecipientType.BCC, address);
                 }
 
-                Multipart multipart = new MimeMultipart();
+                Multipart messageContent = new MimeMultipart();
 
                 BodyPart messageBody = new MimeBodyPart();
                 messageBody.setContent(
                         content.replace("{{recipientName}}", Objects.requireNonNullElse(recipient.getFirstName(), "")),
                         "text/html; charset=utf-8"
                 );
-                multipart.addBodyPart(messageBody);
+                messageContent.addBodyPart(messageBody);
 
                 for (String filename : attachments) {
                     MimeBodyPart attachment = new MimeBodyPart();
                     attachment.attachFile(uploadService.load(filename).getFile());
-                    multipart.addBodyPart(attachment);
+                    messageContent.addBodyPart(attachment);
                 }
 
-                message.setContent(multipart);
+                message.setContent(messageContent);
 
                 mailSender.send(message);
             } catch (MessagingException | IOException e) {
