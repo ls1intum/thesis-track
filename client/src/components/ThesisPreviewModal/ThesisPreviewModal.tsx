@@ -23,19 +23,19 @@ const ThesisPreviewModal = (props: IThesisPreviewModalProps) => {
             <Grid.Col span={{ md: 4 }}>
               <LabeledItem
                 label='Supervisor'
-                value={thesis.supervisors.map((user) => formatUser(user)).join(', ')}
+                value={thesis.supervisors.map((supervisor) => formatUser(supervisor)).join(', ')}
               />
             </Grid.Col>
             <Grid.Col span={{ md: 4 }}>
               <LabeledItem
                 label='Advisor'
-                value={thesis.advisors.map((user) => formatUser(user)).join(', ')}
+                value={thesis.advisors.map((advisor) => formatUser(advisor)).join(', ')}
               />
             </Grid.Col>
             <Grid.Col span={{ md: 4 }}>
               <LabeledItem
                 label='Student'
-                value={thesis.students.map((user) => formatUser(user)).join(', ')}
+                value={thesis.students.map((student) => formatUser(student)).join(', ')}
               />
             </Grid.Col>
             {thesis.startDate && (
