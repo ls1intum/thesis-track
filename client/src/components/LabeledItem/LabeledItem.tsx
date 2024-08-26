@@ -10,7 +10,7 @@ const LabeledItem = (props: ILabeledItemProps) => {
   const { label, value } = props
 
   return (
-    <Stack gap='xs'>
+    <Stack gap={2}>
       <Text c='dimmed' fz='xs' fw={700}>
         {label}
       </Text>

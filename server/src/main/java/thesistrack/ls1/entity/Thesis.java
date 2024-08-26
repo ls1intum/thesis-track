@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.dto.LightUserDto;
 
 import java.time.Instant;
 import java.util.*;
@@ -192,7 +193,7 @@ public class Thesis {
     }
 
     public boolean hasReadAccess(User user) {
-        if (user == null && visibility == ThesisVisibility.PUBLIC) {
+        if (user == null && visibility == ThesisVisibility.PUBLIC && state == ThesisState.FINISHED) {
             return true;
         }
 

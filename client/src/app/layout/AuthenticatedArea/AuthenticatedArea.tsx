@@ -13,7 +13,17 @@ import {
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
-import { Kanban, Moon, NewspaperClipping, Scroll, SignOut, Sun } from 'phosphor-react'
+import {
+  Kanban,
+  Moon,
+  NewspaperClipping,
+  Scroll,
+  SignOut,
+  Sun,
+  FolderSimplePlus,
+  User,
+  PaperPlaneTilt,
+} from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
 import Logo from '../../../static/logo'
@@ -34,30 +44,24 @@ const links: Array<{
   groups: string[] | undefined
 }> = [
   { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
-  /*{
-    link: '/submit-application/pick-topic',
+  {
+    link: '/submit-application',
     label: 'Submit Application',
     icon: PaperPlaneTilt,
-    roles: undefined,
-  },*/
+    groups: undefined,
+  },
   {
-    link: '/management/thesis-applications',
+    link: '/applications',
     label: 'Review Applications',
     icon: Scroll,
     groups: ['admin', 'advisor', 'supervisor'],
   },
-  /*{
-    link: '/applications',
-    label: 'Review Applications v2',
-    icon: Scroll,
-    roles: ['admin', 'advisor', 'supervisor'],
-  },
   {
-    link: '/topics/create',
-    label: 'Create Topic',
+    link: '/topics',
+    label: 'Manage Topics',
     icon: FolderSimplePlus,
-    roles: ['admin', 'advisor', 'supervisor'],
-  },*/
+    groups: ['admin', 'advisor', 'supervisor'],
+  },
   {
     link: '/theses',
     label: 'Theses Overview',
@@ -163,14 +167,14 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             ))}
         </AppShell.Section>
         <AppShell.Section>
-          {/*<Link
+          <Link
             to='/settings/my-information'
             className={classes.link}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
             <User className={classes.linkIcon} size={32} />
             <span>My Information</span>
-          </Link>*/}
+          </Link>
           <Link to='/logout' className={classes.link}>
             <SignOut className={classes.linkIcon} size={32} />
             <span>Logout</span>

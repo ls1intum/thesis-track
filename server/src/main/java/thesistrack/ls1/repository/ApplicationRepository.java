@@ -8,7 +8,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.entity.Application;
+import thesistrack.ls1.entity.Topic;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -28,4 +30,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             @Param("states") Set<ApplicationState> states,
             Pageable page
     );
+
+    List<Application> findAllByTopic(Topic topic);
 }

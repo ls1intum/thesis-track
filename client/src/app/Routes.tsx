@@ -4,7 +4,7 @@ import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 import PageLoader from '../components/PageLoader/PageLoader'
 
 const LegacyThesisApplicationForm = lazy(
-  () => import('../pages/LegacySubmitApplicationPage/LegacyCreateApplicationForm'),
+  () => import('../pages/LegacySubmitApplicationPage/LegacySubmitApplicationPage'),
 )
 const LegacyApplicationReviewPage = lazy(
   () => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'),
@@ -14,13 +14,10 @@ const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/Thesis
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
 const LogoutPage = lazy(() => import('../pages/LogoutPage/LogoutPage'))
 const MyInformationPage = lazy(() => import('../pages/MyInformationPage/MyInformationPage'))
-const SubmitApplicationStepOnePage = lazy(
-  () => import('../pages/SubmitApplicationPage/SubmitApplicationStepOnePage'),
+const SubmitApplicationPage = lazy(
+  () => import('../pages/SubmitApplicationPage/SubmitApplicationPage'),
 )
-const SubmitApplicationStepTwoPage = lazy(
-  () => import('../pages/SubmitApplicationPage/SubmitApplicationStepTwoPage'),
-)
-const CreateTopicPage = lazy(() => import('../pages/CreateTopicPage/CreateTopicPage'))
+const ManageTopicsPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicsPage'))
 const TopicPage = lazy(() => import('../pages/TopicPage/TopicPage'))
 const ReviewApplicationPage = lazy(
   () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
@@ -50,39 +47,23 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path='/submit-application/pick-topic'
+            path='/submit-application/:topicId?'
             element={
               <AuthenticatedArea>
-                <SubmitApplicationStepOnePage />
+                <SubmitApplicationPage />
               </AuthenticatedArea>
             }
           />
           <Route
-            path='/submit-application/apply/:topic_id?'
-            element={
-              <AuthenticatedArea>
-                <SubmitApplicationStepTwoPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/topics/create'
+            path='/topics'
             element={
               <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
-                <CreateTopicPage />
+                <ManageTopicsPage />
               </AuthenticatedArea>
             }
           />
           <Route
-            path='/topics/edit/:topic_id'
-            element={
-              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
-                <CreateTopicPage />
-              </AuthenticatedArea>
-            }
-          />
-          <Route
-            path='/topics/:topic_id'
+            path='/topics/:topicId'
             element={
               <AuthenticatedArea requireAuthentication={false}>
                 <TopicPage />
@@ -91,7 +72,7 @@ const AppRoutes = () => {
           />
           <Route path='/applications/thesis' element={<LegacyThesisApplicationForm />} />
           <Route
-            path='/applications/:application_id?'
+            path='/applications/:applicationId?'
             element={
               <AuthenticatedArea
                 collapseNavigation={true}

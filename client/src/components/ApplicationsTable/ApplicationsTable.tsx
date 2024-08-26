@@ -47,18 +47,20 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       title: 'Suggested Title',
       ellipsis: true,
       width: 300,
+      render: (application) => application.thesisTitle || application.topic?.title,
     },
     reviewed_at: {
       accessor: 'reviewedAt',
       title: 'Reviewed At',
       sortable: true,
+      width: 140,
       render: (application) => formatDate(application.reviewedAt),
     },
     created_at: {
       accessor: 'createdAt',
       title: 'Created At',
       sortable: true,
-      width: 130,
+      width: 140,
       render: (application) => formatDate(application.createdAt),
     },
   }

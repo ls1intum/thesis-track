@@ -13,12 +13,14 @@ import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.constants.StringLimits;
 import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
+import thesistrack.ls1.controller.payload.CreateApplicationPayload;
 import thesistrack.ls1.controller.payload.RejectApplicationPayload;
 import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
 import thesistrack.ls1.dto.ApplicationDto;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.User;
+import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.service.ApplicationService;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.utility.RequestValidator;
@@ -38,9 +40,26 @@ public class ApplicationController {
         this.authenticationService = authenticationService;
     }
 
-    @RequestMapping(method = RequestMethod.POST, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ApplicationDto> createApplication() {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    @PostMapping
+    public ResponseEntity<ApplicationDto> createApplication(
+            @RequestBody CreateApplicationPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+
+        if (payload.topicId() == null && payload.thesisTitle() == null) {
+            throw new ResourceInvalidParametersException("Either topic id or a thesis title must be provided");
+        }
+
+        Application application = applicationService.createApplication(
+                authenticatedUser,
+                payload.topicId(),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateNotNull(payload.desiredStartDate()),
+                RequestValidator.validateStringMaxLength(payload.motivation(), StringLimits.LONGTEXT.getLimit())
+        );
+
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }
 
     @GetMapping
@@ -124,7 +143,6 @@ public class ApplicationController {
                 RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.advisorIds()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
-                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.notifyUser()),
                 RequestValidator.validateNotNull(payload.closeTopic())
         );
@@ -148,7 +166,6 @@ public class ApplicationController {
         application =  applicationService.reject(
                 authenticatedUser,
                 application,
-                RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.notifyUser())
         );
 

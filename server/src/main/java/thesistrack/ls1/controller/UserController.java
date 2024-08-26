@@ -7,11 +7,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import thesistrack.ls1.dto.LightUserDto;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.entity.User;
+import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.UserService;
 
 import java.util.UUID;
@@ -21,10 +24,12 @@ import java.util.UUID;
 @RequestMapping("/v2/users")
 public class UserController {
     private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
     @GetMapping
@@ -43,29 +48,47 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/examination-report")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<Resource> getExaminationReport(@PathVariable UUID userId) {
+    public ResponseEntity<Resource> getExaminationReport(@PathVariable UUID userId, JwtAuthenticationToken jwt) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        User user = userService.findById(userId);
+
+        if (!user.hasFullAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You are not allowed to access data from this user");
+        }
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=examination_report_%s.pdf", userId))
-                .body(userService.getExaminationReport(userId));
+                .body(userService.getExaminationReport(user));
     }
 
     @GetMapping("/{userId}/cv")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<Resource> getCV(@PathVariable UUID userId) {
+    public ResponseEntity<Resource> getCV(@PathVariable UUID userId, JwtAuthenticationToken jwt) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        User user = userService.findById(userId);
+
+        if (!user.hasFullAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You are not allowed to access data from this user");
+        }
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=cv_%s.pdf", userId))
-                .body(userService.getCV(userId));
+                .body(userService.getCV(user));
     }
 
     @GetMapping("/{userId}/degree-report")
-    @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
-    public ResponseEntity<Resource> getDegreeReport(@PathVariable UUID userId) {
+    public ResponseEntity<Resource> getDegreeReport(@PathVariable UUID userId, JwtAuthenticationToken jwt) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        User user = userService.findById(userId);
+
+        if (!user.hasFullAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You are not allowed to access data from this user");
+        }
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=degree_report_%s.pdf", userId))
-                .body(userService.getDegreeReport(userId));
+                .body(userService.getDegreeReport(user));
     }
 }

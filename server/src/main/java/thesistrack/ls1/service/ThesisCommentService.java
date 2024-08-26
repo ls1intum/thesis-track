@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.constants.ThesisCommentType;
 import thesistrack.ls1.entity.Thesis;
@@ -36,6 +37,7 @@ public class ThesisCommentService {
         );
     }
 
+    @Transactional
     public ThesisComment postComment(User postingUser, Thesis thesis, ThesisCommentType commentType, String message, MultipartFile file) {
         ThesisComment comment = new ThesisComment();
 
@@ -60,6 +62,7 @@ public class ThesisCommentService {
         return uploadService.load(comment.getFilename());
     }
 
+    @Transactional
     public ThesisComment deleteComment(ThesisComment comment) {
         thesisCommentRepository.deleteById(comment.getId());
 

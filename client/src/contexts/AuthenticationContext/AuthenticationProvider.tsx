@@ -13,7 +13,7 @@ import { useSignal } from '../../hooks/utility'
 import { IUser } from '../../requests/responses/user'
 import { doRequest } from '../../requests/request'
 import { showSimpleError } from '../../utils/notification'
-import { getApiResponseErrorMessage } from '../../requests/handler'
+import { ApiError, getApiResponseErrorMessage } from '../../requests/handler'
 
 export const keycloak = new Keycloak({
   realm: GLOBAL_CONFIG.keycloak.realm,
@@ -172,6 +172,35 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
       isAuthenticated: !!authenticationTokens?.access_token,
       user: authenticationTokens?.access_token ? user : undefined,
       groups: [],
+      updateInformation: async (data, examinationReport, cv, degreeReport) => {
+        const formData = new FormData()
+
+        formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }))
+
+        if (examinationReport) {
+          formData.append('examinationReport', examinationReport!)
+        }
+
+        if (cv) {
+          formData.append('cv', cv)
+        }
+
+        if (degreeReport) {
+          formData.append('degreeReport', degreeReport)
+        }
+
+        const response = await doRequest<IUser>('/v2/user-info', {
+          method: 'PUT',
+          requiresAuth: true,
+          formData,
+        })
+
+        if (response.ok) {
+          setUser(response.data)
+        } else {
+          throw new ApiError(response)
+        }
+      },
       login: () =>
         readySignal.then(() => {
           if (!keycloak.authenticated) {

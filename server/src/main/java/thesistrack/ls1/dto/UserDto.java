@@ -16,8 +16,6 @@ public record UserDto (
         String gender,
         String nationality,
         Boolean isExchangeStudent,
-        Set<String> focusTopics,
-        Set<String> researchAreas,
         String studyDegree,
         String studyProgram,
         String projects,
@@ -39,7 +37,6 @@ public record UserDto (
         return new UserDto(
                 user.getId(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
                 user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(), user.getIsExchangeStudent(),
-                user.getFocusTopics(), user.getResearchAreas(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
                 user.getSpecialSkills(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
                 user.getGroups() == null ? Collections.emptySet() : new HashSet<>(user.getGroups().stream().map(x -> x.getId().getGroup()).toList()),

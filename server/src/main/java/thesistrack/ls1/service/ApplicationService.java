@@ -27,6 +27,8 @@ public class ApplicationService {
     private final MailingService mailingService;
     private final TopicRepository topicRepository;
     private final ThesisService thesisService;
+    private final UserService userService;
+    private final TopicService topicService;
 
     @Autowired
     public ApplicationService(
@@ -35,7 +37,9 @@ public class ApplicationService {
             UploadService storageService,
             MailingService mailingService,
             TopicRepository topicRepository,
-            ThesisService thesisService
+            ThesisService thesisService,
+            UserService userService,
+            TopicService topicService
     ) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
@@ -44,6 +48,8 @@ public class ApplicationService {
         this.mailingService = mailingService;
         this.topicRepository = topicRepository;
         this.thesisService = thesisService;
+        this.userService = userService;
+        this.topicService = topicService;
     }
 
     public Page<Application> getAll(
@@ -101,9 +107,6 @@ public class ApplicationService {
         student.setIsExchangeStudent(payload.isExchangeStudent());
         student.setEnrolledAt(payload.enrolledAt());
 
-        student.setResearchAreas(RequestValidator.validateStringSetItemMaxLength(payload.researchAreas(), 100));
-        student.setFocusTopics(RequestValidator.validateStringSetItemMaxLength(payload.focusTopics(), 100));
-
         student.setUpdatedAt(currentTime);
 
         student.setExaminationFilename(uploadService.store(examinationReport, 3 * 1024 * 1024));
@@ -128,6 +131,24 @@ public class ApplicationService {
     }
 
     @Transactional
+    public Application createApplication(User user, UUID topicId, String thesisTitle, Instant desiredStartDate, String motivation) {
+        Application application = new Application();
+        application.setUser(user);
+
+        application.setTopic(topicId == null ? null : topicService.findById(topicId));
+        application.setThesisTitle(thesisTitle);
+        application.setMotivation(motivation);
+        application.setState(ApplicationState.NOT_ASSESSED);
+        application.setDesiredStartDate(desiredStartDate);
+        application.setCreatedAt(Instant.now());
+
+        mailingService.sendApplicationCreatedMailToChair(application);
+        mailingService.sendApplicationCreatedMailToStudent(application);
+
+        return applicationRepository.save(application);
+    }
+
+    @Transactional
     public Application accept(
             User reviewingUser,
             Application application,
@@ -135,12 +156,10 @@ public class ApplicationService {
             String thesisType,
             Set<UUID> advisorIds,
             Set<UUID> supervisorIds,
-            String comment,
             boolean notifyUser,
             boolean closeTopic
     ) {
         application.setState(ApplicationState.ACCEPTED);
-        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
 
@@ -157,9 +176,7 @@ public class ApplicationService {
         Topic topic = application.getTopic();
 
         if (topic != null && closeTopic) {
-            topic.setClosedAt(Instant.now());
-
-            application.setTopic(topicRepository.save(topic));
+            application.setTopic(closeTopic(reviewingUser, topic, notifyUser));
         }
 
         if (notifyUser) {
@@ -170,9 +187,8 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application reject(User reviewingUser, Application application, String comment, boolean notifyUser) {
+    public Application reject(User reviewingUser, Application application, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
-        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
 
@@ -181,6 +197,24 @@ public class ApplicationService {
         }
 
         return applicationRepository.save(application);
+    }
+
+    @Transactional
+    public Topic closeTopic(User closer, Topic topic, boolean notifyStudent) {
+        topic.setClosedAt(Instant.now());
+
+        rejectApplicationsForTopic(closer, topic, notifyStudent);
+
+        return topicRepository.save(topic);
+    }
+
+    @Transactional
+    public void rejectApplicationsForTopic(User closer, Topic topic, boolean notifyUser) {
+        List<Application> applications = applicationRepository.findAllByTopic(topic);
+
+        for (Application application : applications) {
+            reject(closer, application, notifyUser);
+        }
     }
 
     @Transactional

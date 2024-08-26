@@ -3,13 +3,19 @@ package thesistrack.ls1.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import thesistrack.ls1.constants.StringLimits;
+import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
+import thesistrack.ls1.controller.payload.UpdateUserInformationPayload;
 import thesistrack.ls1.dto.UserDto;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.AuthenticationService;
+import thesistrack.ls1.utility.RequestValidator;
 
 @Slf4j
 @RestController
@@ -29,8 +35,36 @@ public class UserInfoController {
         return ResponseEntity.ok(UserDto.fromUserEntity(user));
     }
 
-    @PutMapping
-    public ResponseEntity<UserDto> updateInfo() {
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED, "This feature is not implemented yet");
+    @RequestMapping(method = RequestMethod.PUT, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<UserDto> updateInfo(
+            @RequestPart("data") UpdateUserInformationPayload payload,
+            @RequestPart(value = "examinationReport", required = false) MultipartFile examinationReport,
+            @RequestPart(value = "cv", required = false) MultipartFile cv,
+            @RequestPart(value = "degreeReport", required = false) MultipartFile degreeReport,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
+
+        authenticatedUser = this.authenticationService.updateUserInformation(
+                authenticatedUser,
+                RequestValidator.validateStringMaxLengthAllowNull(payload.matriculationNumber(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.isExchangeStudent()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.firstName(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.lastName(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.gender(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.nationality(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateEmailAllowNull(payload.email()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.studyDegree(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.studyProgram(), StringLimits.SHORTTEXT.getLimit()),
+                payload.enrolledAt(),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.specialSkills(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.interests(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.projects(), StringLimits.LONGTEXT.getLimit()),
+                examinationReport,
+                cv,
+                degreeReport
+        );
+
+        return ResponseEntity.ok(UserDto.fromUserEntity(authenticatedUser));
     }
 }

@@ -19,18 +19,12 @@ public class RequestValidator {
         return value;
     }
 
-    public static Set<String> validateStringSetItemMaxLength(Set<String> value, int maxLength) {
-        if (value == null) {
-            throw new ResourceInvalidParametersException("Required set is null");
+    public static String validateStringMaxLengthAllowNull(String value, int maxLength) {
+        if (value == null || value.isEmpty()) {
+            return null;
         }
 
-        for (String s : value) {
-            if (s.length() > maxLength) {
-                throw new ResourceInvalidParametersException("String exceeds maximum length of " + maxLength + " characters");
-            }
-        }
-
-        return value;
+        return validateStringMaxLength(value, maxLength);
     }
 
     public static String validateEmail(String value) {
@@ -47,6 +41,14 @@ public class RequestValidator {
         } catch (AddressException ex) {
             throw new ResourceInvalidParametersException("Invalid email address");
         }
+    }
+
+    public static String validateEmailAllowNull(String value) {
+        if (value == null || value.isEmpty()) {
+            return null;
+        }
+
+        return validateEmail(value);
     }
 
     public static <T> T validateNotNull(T value) {
