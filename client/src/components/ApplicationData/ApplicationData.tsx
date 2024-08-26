@@ -28,7 +28,10 @@ const ApplicationData = (props: IApplicationDataProps) => {
             </Title>
             {rightTitleSection}
           </Group>
-          <LabeledItem label='Thesis Title Suggestion' value={application.thesisTitle} />
+          <LabeledItem
+            label='Thesis Title'
+            value={application.topic?.title || application.thesisTitle}
+          />
           <LabeledItem
             label='Motivation'
             value={<DocumentEditor value={application.motivation} />}

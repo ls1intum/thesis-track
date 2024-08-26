@@ -266,6 +266,7 @@ public class ThesisService {
         return uploadService.load(filename);
     }
 
+    @Transactional
     public Thesis createPresentation(User creator, Thesis thesis, ThesisPresentationType type, ThesisPresentationVisibility visibility, String location, String streamUrl, Instant date) {
         ThesisPresentation presentation = new ThesisPresentation();
 
@@ -288,6 +289,7 @@ public class ThesisService {
         return thesisRepository.save(thesis);
     }
 
+    @Transactional
     public Thesis deletePresentation(Thesis thesis, UUID presentationId) {
         thesisPresentationRepository.deleteById(presentationId);
 
@@ -334,6 +336,7 @@ public class ThesisService {
     }
 
     /* GRADING */
+    @Transactional
     public Thesis gradeThesis(Thesis thesis, String finalGrade, String finalFeedback, ThesisVisibility visibility) {
         thesis.setState(ThesisState.GRADED);
         thesis.setVisibility(visibility);
@@ -345,6 +348,7 @@ public class ThesisService {
         return thesisRepository.save(thesis);
     }
 
+    @Transactional
     public Thesis completeThesis(Thesis thesis) {
         thesis.setState(ThesisState.FINISHED);
 

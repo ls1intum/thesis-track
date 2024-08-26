@@ -17,20 +17,23 @@ interface IApplicationReviewFormProps {
   onUpdate: (application: IApplication) => unknown
 }
 
+interface IApplicationReviewForm {
+  applicationId: string | null
+  title: string
+  type: string | null
+  comment: string
+  advisors: string[]
+  supervisors: string[]
+  notifyUser: boolean
+  closeTopic: boolean
+}
+
 const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const { application, onUpdate } = props
 
   const updateApplication = useApplicationsContextUpdater()
 
-  const form = useForm<{
-    applicationId: string | null
-    title: string
-    type: string | null
-    comment: string
-    advisors: string[]
-    supervisors: string[]
-    notifyUser: boolean
-  }>({
+  const form = useForm<IApplicationReviewForm>({
     mode: 'controlled',
     initialValues: {
       applicationId: null,
@@ -40,6 +43,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
       advisors: [],
       supervisors: [],
       notifyUser: true,
+      closeTopic: false,
     },
     validateInputOnBlur: true,
     validate: {
@@ -54,14 +58,18 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     if (application) {
       form.setInitialValues({
         applicationId: application.applicationId,
-        title: application.thesisTitle || '',
+        title: application.topic?.title || application.thesisTitle || '',
         comment: application.comment || '',
-        type: GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
-          ? application.user.studyDegree
-          : null,
-        advisors: [],
-        supervisors: GLOBAL_CONFIG.default_supervisors,
+        type:
+          application.topic?.type || GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
+            ? application.user.studyDegree
+            : null,
+        advisors: application.topic?.advisors.map((user) => user.userId) ?? [],
+        supervisors:
+          application.topic?.supervisors.map((user) => user.userId) ??
+          GLOBAL_CONFIG.default_supervisors,
         notifyUser: true,
+        closeTopic: false,
       })
     }
 
@@ -100,7 +108,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     }
   }, [debouncedComment, application?.applicationId])
 
-  const onSubmit = async () => {
+  const onSubmit = async (values: IApplicationReviewForm) => {
     setLoading(true)
 
     try {
@@ -110,12 +118,12 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           method: 'PUT',
           requiresAuth: true,
           data: {
-            thesisTitle: form.values.title,
-            thesisType: form.values.type,
-            advisorIds: form.values.advisors,
-            supervisorIds: form.values.supervisors,
-            notifyUser: form.values.notifyUser,
-            closeTopic: false,
+            thesisTitle: values.title,
+            thesisType: values.type,
+            advisorIds: values.advisors,
+            supervisorIds: values.supervisors,
+            notifyUser: values.notifyUser,
+            closeTopic: values.closeTopic,
           },
         },
       )
@@ -134,7 +142,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   }
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
+    <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
       {application?.state === ApplicationState.NOT_ASSESSED && (
         <Stack gap='sm'>
           <TextInput
@@ -186,6 +194,13 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             label='Notify Student'
             {...form.getInputProps('notifyUser', { type: 'checkbox' })}
           />
+
+          {application.topic && (
+            <Checkbox
+              label='Close Topic (This will reject all applications for this topic)'
+              {...form.getInputProps('closeTopic', { type: 'checkbox' })}
+            />
+          )}
 
           <Group grow>
             <ApplicationRejectButton

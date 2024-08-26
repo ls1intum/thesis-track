@@ -19,6 +19,18 @@ public class RequestValidator {
         return value;
     }
 
+    public static String validateStringMaxLengthAllowNull(String value, int maxLength) {
+        if (value == null) {
+            return null;
+        }
+
+        if (value.length() > maxLength) {
+            throw new ResourceInvalidParametersException("String exceeds maximum length of " + maxLength + " characters");
+        }
+
+        return value;
+    }
+
     public static String validateEmail(String value) {
         if (value == null || value.length() > 200) {
             throw new ResourceInvalidParametersException("Required email is missing");

@@ -28,6 +28,7 @@ public class ApplicationService {
     private final TopicRepository topicRepository;
     private final ThesisService thesisService;
     private final UserService userService;
+    private final TopicService topicService;
 
     @Autowired
     public ApplicationService(
@@ -37,8 +38,8 @@ public class ApplicationService {
             MailingService mailingService,
             TopicRepository topicRepository,
             ThesisService thesisService,
-            UserService userService
-    ) {
+            UserService userService,
+            TopicService topicService) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
 
@@ -47,6 +48,7 @@ public class ApplicationService {
         this.topicRepository = topicRepository;
         this.thesisService = thesisService;
         this.userService = userService;
+        this.topicService = topicService;
     }
 
     public Page<Application> getAll(
@@ -156,9 +158,7 @@ public class ApplicationService {
         Topic topic = application.getTopic();
 
         if (topic != null && closeTopic) {
-            topic.setClosedAt(Instant.now());
-
-            application.setTopic(topicRepository.save(topic));
+            application.setTopic(closeTopic(reviewer, topic, notifyUser));
         }
 
         if (notifyUser) {
@@ -179,6 +179,24 @@ public class ApplicationService {
         }
 
         return applicationRepository.save(application);
+    }
+
+    @Transactional
+    public Topic closeTopic(User closer, Topic topic, boolean notifyStudent) {
+        topic.setClosedAt(Instant.now());
+
+        rejectApplicationsForTopic(closer, topic, notifyStudent);
+
+        return topicRepository.save(topic);
+    }
+
+    @Transactional
+    public void rejectApplicationsForTopic(User closer, Topic topic, boolean notifyUser) {
+        List<Application> applications = applicationRepository.findAllByTopic(topic);
+
+        for (Application application : applications) {
+            reject(closer, application, notifyUser);
+        }
     }
 
     @Transactional
