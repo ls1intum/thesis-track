@@ -5,6 +5,7 @@ import { ApplicationState, IApplication } from '../../requests/responses/applica
 export interface IApplicationsFilters {
   search?: string
   states?: ApplicationState[]
+  topics?: string[]
 }
 
 export interface IApplicationsSort {

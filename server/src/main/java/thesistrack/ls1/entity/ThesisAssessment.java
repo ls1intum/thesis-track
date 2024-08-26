@@ -25,19 +25,19 @@ public class ThesisAssessment {
     private Thesis thesis;
 
     @NotNull
-    @Column(name = "summary", nullable = false, length = 2000)
+    @Column(name = "summary", nullable = false)
     private String summary;
 
     @NotNull
-    @Column(name = "positives", nullable = false, length = 2000)
+    @Column(name = "positives", nullable = false)
     private String positives;
 
     @NotNull
-    @Column(name = "negatives", nullable = false, length = 2000)
+    @Column(name = "negatives", nullable = false)
     private String negatives;
 
     @NotNull
-    @Column(name = "grade_suggestion", nullable = false, length = 10)
+    @Column(name = "grade_suggestion", nullable = false)
     private String gradeSuggestion;
 
     @CreationTimestamp

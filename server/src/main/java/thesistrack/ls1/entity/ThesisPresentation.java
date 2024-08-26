@@ -28,18 +28,18 @@ public class ThesisPresentation {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false, length = 100)
+    @Column(name = "type", nullable = false)
     private ThesisPresentationType type;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "visibility", nullable = false, length = 100)
+    @Column(name = "visibility", nullable = false)
     private ThesisPresentationVisibility visibility;
 
-    @Column(name = "location", length = 200)
+    @Column(name = "location")
     private String location;
 
-    @Column(name = "stream_url", length = 200)
+    @Column(name = "stream_url")
     private String streamUrl;
 
     @NotNull

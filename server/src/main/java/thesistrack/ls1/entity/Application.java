@@ -29,11 +29,11 @@ public class Application {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @Column(name = "thesis_title", length = 500)
+    @Column(name = "thesis_title")
     private String thesisTitle;
 
     @NotNull
-    @Column(name = "motivation", nullable = false, length = 1000)
+    @Column(name = "motivation", nullable = false)
     private String motivation;
 
     @NotNull
@@ -45,7 +45,8 @@ public class Application {
     @Column(name = "desired_start_date", nullable = false)
     private Instant desiredStartDate;
 
-    @Column(name = "comment", length = 1000)
+    @NotNull
+    @Column(name = "comment")
     private String comment;
 
     @CreationTimestamp

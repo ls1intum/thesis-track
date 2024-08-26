@@ -4,6 +4,7 @@ import { ApplicationState } from '../../requests/responses/application'
 import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
 import React from 'react'
 import { formatApplicationState } from '../../utils/format'
+import { useAllTopics } from '../../hooks/fetcher'
 
 interface IApplicationsFiltersProps {
   size?: 'xl' | 'sm'
@@ -13,6 +14,8 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
   const { size = 'xl' } = props
 
   const { filters, setFilters, sort, setSort } = useApplicationsContext()
+
+  const topics = useAllTopics()
 
   return (
     <Grid gutter='sm'>
@@ -24,6 +27,28 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
           onChange={(e) => {
             setFilters((prev) => ({ ...prev, search: e.currentTarget.value }))
           }}
+        />
+      </Grid.Col>
+      <Grid.Col span={size === 'sm' ? 12 : 6}>
+        <MultiSelect
+          hidePickedOptions
+          label='Topics'
+          data={
+            topics
+              ? Object.values(topics).map((topic) => ({
+                  value: topic.topicId,
+                  label: topic.title,
+                }))
+              : []
+          }
+          value={filters.topics || []}
+          onChange={(value) => {
+            setFilters((prev) => ({
+              ...prev,
+              topics: value.length > 0 ? value : undefined,
+            }))
+          }}
+          searchable
         />
       </Grid.Col>
       <Grid.Col span={size === 'sm' ? 12 : 6}>

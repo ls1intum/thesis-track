@@ -25,3 +25,8 @@ ALTER TABLE topics ADD COLUMN type TEXT;
 ALTER TABLE topics DROP COLUMN required_degree;
 ALTER TABLE users DROP COLUMN research_areas;
 ALTER TABLE users DROP COLUMN focus_topics;
+
+--changeset emilius:06-topics-5
+ALTER TABLE applications
+    ALTER COLUMN comment SET NOT NULL,
+    ALTER COLUMN comment SET DEFAULT '';

@@ -66,6 +66,7 @@ public class ApplicationController {
     public ResponseEntity<PaginationDto<ApplicationDto>> getApplications(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) ApplicationState[] state,
+            @RequestParam(required = false) String[] topic,
             @RequestParam(required = false, defaultValue = "false") Boolean fetchAll,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "50") Integer limit,
@@ -79,6 +80,7 @@ public class ApplicationController {
                 fetchAll && authenticatedUser.hasAnyGroup("admin", "supervisor", "advisor") ? null : authenticatedUser.getId(),
                 search,
                 state,
+                topic,
                 page,
                 limit,
                 sortBy,

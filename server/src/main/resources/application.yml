@@ -62,7 +62,7 @@ thesis-track:
     signature: ${MAIL_SIGNATURE:}
     workspace-url: ${MAIL_WORKSPACE_URL:https://slack.com}
     bcc-recipients: ${MAIL_BCC_RECIPIENTS:}
-    mail-template-location: ${MAIL_TEMPLATE_FOLDER:/default-mail-templates}
+    mail-template-location: ${MAIL_TEMPLATE_FOLDER:server/mail-templates}
   storage:
     upload-location: ${UPLOAD_FOLDER:uploads}
 

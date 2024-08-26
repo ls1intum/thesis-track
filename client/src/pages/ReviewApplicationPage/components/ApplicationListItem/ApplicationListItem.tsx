@@ -25,7 +25,7 @@ const ApplicationListItem = (props: IApplicationListItemProps) => {
         cursor: 'pointer',
       }}
     >
-      <Stack>
+      <Stack gap='xs'>
         <Group>
           <Title order={3}>
             {application.user.firstName} {application.user.lastName}
@@ -34,6 +34,11 @@ const ApplicationListItem = (props: IApplicationListItemProps) => {
             {formatApplicationState(application.state)}
           </Badge>
         </Group>
+        {application.topic && (
+          <Text size='sm' truncate>
+            Topic: {application.topic.title}
+          </Text>
+        )}
         <Text size='sm'>Submission Date: {formatDate(application.createdAt)}</Text>
       </Stack>
     </Paper>

@@ -31,10 +31,10 @@ public class ThesisComment {
     private ThesisCommentType type;
 
     @NotNull
-    @Column(name = "message", nullable = false, length = 1000)
+    @Column(name = "message", nullable = false)
     private String message;
 
-    @Column(name = "filename", length = 200)
+    @Column(name = "filename")
     private String filename;
 
     @CreationTimestamp

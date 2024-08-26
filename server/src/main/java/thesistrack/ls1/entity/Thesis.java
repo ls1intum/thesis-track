@@ -26,29 +26,29 @@ public class Thesis {
     private UUID id;
 
     @NotNull
-    @Column(name = "title", nullable = false, length = 500)
+    @Column(name = "title", nullable = false)
     private String title;
 
     @NotNull
-    @Column(name = "type", nullable = false, length = 100)
+    @Column(name = "type", nullable = false)
     private String type;
 
     @NotNull
-    @Column(name = "info", nullable = false, length = 1000)
+    @Column(name = "info", nullable = false)
     private String info;
 
     @NotNull
-    @Column(name = "abstract", nullable = false, length = 1000)
+    @Column(name = "abstract", nullable = false)
     private String abstractField;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false, length = 100)
+    @Column(name = "state", nullable = false)
     private ThesisState state;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "visibility", nullable = false, length = 100)
+    @Column(name = "visibility", nullable = false)
     private ThesisVisibility visibility;
 
     @JdbcTypeCode(SqlTypes.ARRAY)
@@ -59,16 +59,16 @@ public class Thesis {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    @Column(name = "final_thesis_filename", length = 200)
+    @Column(name = "final_thesis_filename")
     private String finalThesisFilename;
 
-    @Column(name = "final_presentation_filename", length = 200)
+    @Column(name = "final_presentation_filename")
     private String finalPresentationFilename;
 
-    @Column(name = "final_grade", length = 10)
+    @Column(name = "final_grade")
     private String finalGrade;
 
-    @Column(name = "final_feedback", length = 2000)
+    @Column(name = "final_feedback")
     private String finalFeedback;
 
     @Column(name = "start_date")

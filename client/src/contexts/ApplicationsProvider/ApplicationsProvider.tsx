@@ -59,6 +59,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
           fetchAll: fetchAll ? 'true' : 'false',
           search: debouncedSearch,
           state: filters.states?.join(',') ?? '',
+          topic: filters.topics?.join(',') ?? '',
           limit,
           page,
           sortBy: sort.column,
@@ -82,7 +83,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
         setApplications(res.data)
       },
     )
-  }, [fetchAll, page, limit, sort, filters.states?.join(','), debouncedSearch])
+  }, [fetchAll, page, limit, sort, filters.states?.join(','), filters.topics?.join(','), debouncedSearch])
 
   const contextState = useMemo<IApplicationsContext>(() => {
     return {
