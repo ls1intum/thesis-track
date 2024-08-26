@@ -3,8 +3,6 @@ export interface IGlobalConfig {
 
   server_host: string
 
-  focus_topics: Record<string, string>
-  research_areas: Record<string, string>
   genders: Record<string, string>
   study_programs: Record<string, string>
   study_degrees: Record<string, string>

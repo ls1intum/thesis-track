@@ -71,3 +71,15 @@ export interface IThesisComment {
   createdAt: string
   createdBy: ILightUser
 }
+
+export interface IPublishedThesis {
+  thesisId: string
+  title: string
+  type: string
+  startDate: string | null
+  endDate: string | null
+  abstractText: string
+  students: ILightUser[]
+  advisors: ILightUser[]
+  supervisors: ILightUser[]
+}

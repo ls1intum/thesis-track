@@ -13,7 +13,7 @@ import {
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
-import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
+import { useDisclosure } from '@mantine/hooks'
 import {
   CaretDoubleLeft,
   CaretDoubleRight,
@@ -23,6 +23,9 @@ import {
   Scroll,
   SignOut,
   Sun,
+  FolderSimplePlus,
+  User,
+  PaperPlaneTilt,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
@@ -45,30 +48,24 @@ const links: Array<{
   groups: string[] | undefined
 }> = [
   { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
-  /*{
-    link: '/submit-application/pick-topic',
+  {
+    link: '/submit-application',
     label: 'Submit Application',
     icon: PaperPlaneTilt,
-    roles: undefined,
-  },*/
+    groups: undefined,
+  },
   {
-    link: '/management/thesis-applications',
+    link: '/applications',
     label: 'Review Applications',
     icon: Scroll,
     groups: ['admin', 'advisor', 'supervisor'],
   },
-  /*{
-    link: '/applications',
-    label: 'Review Applications v2',
-    icon: Scroll,
-    roles: ['admin', 'advisor', 'supervisor'],
-  },
   {
-    link: '/topics/create',
-    label: 'Create Topic',
+    link: '/topics',
+    label: 'Manage Topics',
     icon: FolderSimplePlus,
-    roles: ['admin', 'advisor', 'supervisor'],
-  },*/
+    groups: ['admin', 'advisor', 'supervisor'],
+  },
   {
     link: '/theses',
     label: 'Theses Overview',
@@ -191,31 +188,31 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             ))}
         </AppShell.Section>
         <AppShell.Section>
-          {/*<Link
+          <Link
             to='/settings/my-information'
             className={classes.link}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
-            <User className={classes.linkIcon} size={32} />
-            <span>My Information</span>
-          </Link>*/}
+            <Tooltip label='My Information' disabled={!minimized} position='right' offset={15}>
+              <User className={classes.linkIcon} size={32} />
+            </Tooltip>
+            {!minimized && <span>My Information</span>}
+          </Link>
           <Link to='/logout' className={minimized ? classes.minimizedLink : classes.fullLink}>
             <Tooltip label='Logout' disabled={!minimized} position='right' offset={15}>
               <SignOut className={classes.linkIcon} size={32} />
             </Tooltip>
             {!minimized && <span>Logout</span>}
           </Link>
-          <Group>
-            <ActionIcon
-              visibleFrom='md'
-              ml='auto'
-              mr={minimized ? 'auto' : undefined}
-              variant='transparent'
-              onClick={() => setMinimized((prev) => !prev)}
-            >
-              {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
-            </ActionIcon>
-          </Group>
+          <ActionIcon
+            visibleFrom='md'
+            ml='auto'
+            mr={minimized ? 'auto' : undefined}
+            variant='transparent'
+            onClick={() => setMinimized((prev) => !prev)}
+          >
+            {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
+          </ActionIcon>
         </AppShell.Section>
       </AppShell.Navbar>
 

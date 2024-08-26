@@ -100,7 +100,7 @@ const ThesisConfigSection = () => {
   }, [form.values.startDate, form.values.endDate, form.values.states])
 
   useEffect(() => {
-    form.setValues({
+    form.setInitialValues({
       title: thesis.title,
       type: thesis.type,
       visibility: thesis.visibility,
@@ -114,7 +114,9 @@ const ThesisConfigSection = () => {
         changedAt: new Date(state.startedAt),
       })),
     })
-  }, [thesis])
+
+    form.reset()
+  }, [thesis.thesisId])
 
   const [opened, setOpened] = useState(false)
 

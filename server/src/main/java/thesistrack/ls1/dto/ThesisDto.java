@@ -142,23 +142,9 @@ public record ThesisDto (
             return null;
         }
 
-        List<LightUserDto> students = new ArrayList<>();
-        List<LightUserDto> advisors = new ArrayList<>();
-        List<LightUserDto> supervisors = new ArrayList<>();
-
-        for (ThesisRole role : thesis.getRoles()) {
-            if (role.getId().getRole() == ThesisRoleName.STUDENT) {
-                students.add(LightUserDto.fromUserEntity(role.getUser()));
-            }
-
-            if (role.getId().getRole() == ThesisRoleName.ADVISOR) {
-                advisors.add(LightUserDto.fromUserEntity(role.getUser()));
-            }
-
-            if (role.getId().getRole() == ThesisRoleName.SUPERVISOR) {
-                supervisors.add(LightUserDto.fromUserEntity(role.getUser()));
-            }
-        }
+        List<LightUserDto> students = thesis.getStudents().stream().map(LightUserDto::fromUserEntity).toList();
+        List<LightUserDto> advisors = thesis.getAdvisors().stream().map(LightUserDto::fromUserEntity).toList();
+        List<LightUserDto> supervisors = thesis.getSupervisors().stream().map(LightUserDto::fromUserEntity).toList();
 
         List<ThesisStateChangeDto> states = new ArrayList<>();
         List<ThesisStateChange> stateChanges = thesis.getStates().stream().sorted(Comparator.comparing(ThesisStateChange::getChangedAt)).toList();

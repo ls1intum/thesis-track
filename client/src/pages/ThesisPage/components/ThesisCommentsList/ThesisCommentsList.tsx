@@ -30,7 +30,7 @@ const ThesisCommentsList = () => {
         {openedComment && (
           <AuthenticatedFilePreview
             url={`/v2/theses/${thesis.thesisId}/comments/${openedComment.commentId}/file`}
-            filename={`comment-${openedComment.commentId}`}
+            filename={`comment-${openedComment.commentId}.pdf`}
             height={400}
           />
         )}

@@ -36,13 +36,13 @@ jobs:
 
       - name: Get changed files in the client folder
         id: changed-files-client-folder
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         with:
           files: client/**
 
       - name: Get changed files in the server folder
         id: changed-files-server-folder
-        uses: tj-actions/changed-files@v44
+        uses: tj-actions/changed-files@v45
         with:
           files: server/**
 

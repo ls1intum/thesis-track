@@ -1,15 +1,56 @@
-import { useNavigate } from 'react-router-dom'
-import { useEffect } from 'react'
+import HeroSection from './components/HeroSection/HeroSection'
+import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
+import TopicsTable from '../../components/TopicsTable/TopicsTable'
+import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
+import { Button, Group, Space, Title } from '@mantine/core'
+import React from 'react'
+import { Link } from 'react-router-dom'
+import PublishedTheses from './components/PublishedTheses/PublishedTheses'
 
 const LandingPage = () => {
-  // TODO: implement component
-  const navigate = useNavigate()
-
-  useEffect(() => {
-    navigate('/applications/thesis', { replace: true })
-  }, [])
-
-  return <></>
+  return (
+    <>
+      <HeroSection />
+      <ContentContainer>
+        <TopicsProvider limit={10}>
+          <Title order={2} mb='sm'>
+            Open Topics
+          </Title>
+          <TopicsTable
+            columns={['title', 'supervisor', 'advisor', 'actions']}
+            extraColumns={{
+              actions: {
+                accessor: 'actions',
+                title: 'Actions',
+                textAlign: 'center',
+                noWrap: true,
+                width: 120,
+                render: (topic) => (
+                  <Group
+                    preventGrowOverflow={false}
+                    justify='center'
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {!topic.closedAt && (
+                      <Button
+                        component={Link}
+                        to={`/submit-application/${topic.topicId}`}
+                        size='xs'
+                      >
+                        Apply
+                      </Button>
+                    )}
+                  </Group>
+                ),
+              },
+            }}
+          />
+        </TopicsProvider>
+        <Space my='md' />
+        <PublishedTheses />
+      </ContentContainer>
+    </>
+  )
 }
 
 export default LandingPage

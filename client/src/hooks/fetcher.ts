@@ -3,28 +3,86 @@ import { useEffect, useState } from 'react'
 import { doRequest } from '../requests/request'
 import { showSimpleError } from '../utils/notification'
 import { getApiResponseErrorMessage } from '../requests/handler'
+import { ITopic } from '../requests/responses/topic'
 
 export function useThesis(thesisId: string | undefined) {
   const [thesis, setThesis] = useState<IThesis | false>()
 
   useEffect(() => {
-    setThesis(undefined)
+    setThesis(thesisId ? undefined : false)
 
-    return doRequest<IThesis>(
-      `/v2/theses/${thesisId}`,
-      {
-        method: 'GET',
-        requiresAuth: true,
-      },
-      (res) => {
-        if (!res.ok) {
-          showSimpleError(getApiResponseErrorMessage(res))
-        }
+    if (thesisId) {
+      return doRequest<IThesis>(
+        `/v2/theses/${thesisId}`,
+        {
+          method: 'GET',
+          requiresAuth: true,
+        },
+        (res) => {
+          if (!res.ok) {
+            showSimpleError(getApiResponseErrorMessage(res))
+          }
 
-        setThesis(res.ok ? res.data : false)
-      },
-    )
+          setThesis(res.ok ? res.data : false)
+        },
+      )
+    }
   }, [thesisId])
 
   return thesis
+}
+
+export function useTopic(topicId: string | undefined) {
+  const [topic, setTopic] = useState<ITopic | false>()
+
+  useEffect(() => {
+    setTopic(topicId ? undefined : false)
+
+    if (topicId) {
+      return doRequest<ITopic>(
+        `/v2/topics/${topicId}`,
+        {
+          method: 'GET',
+          requiresAuth: false,
+        },
+        (res) => {
+          if (!res.ok) {
+            showSimpleError(getApiResponseErrorMessage(res))
+          }
+
+          setTopic(res.ok ? res.data : false)
+        },
+      )
+    }
+  }, [topicId])
+
+  return topic
+}
+
+export function useApiFile(
+  url: string | undefined,
+  filename: string,
+  onLoad: (data: File | undefined) => unknown,
+) {
+  useEffect(() => {
+    onLoad(undefined)
+
+    if (url) {
+      return doRequest<Blob>(
+        url,
+        {
+          method: 'GET',
+          requiresAuth: true,
+          responseType: 'blob',
+        },
+        (response) => {
+          if (response.ok) {
+            onLoad(new File([response.data], filename, { type: 'application/pdf' }))
+          } else {
+            showSimpleError(getApiResponseErrorMessage(response))
+          }
+        },
+      )
+    }
+  }, [url, filename])
 }

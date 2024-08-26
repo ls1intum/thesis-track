@@ -1,15 +1,21 @@
 import { Grid, MultiSelect, Select, TextInput } from '@mantine/core'
 import { MagnifyingGlass } from 'phosphor-react'
-import { ApplicationState } from '../../../../requests/responses/application'
-import { useApplicationsContext } from '../../../../contexts/ApplicationsProvider/hooks'
+import { ApplicationState } from '../../requests/responses/application'
+import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
 import React from 'react'
-import { formatApplicationState } from '../../../../utils/format'
+import { formatApplicationState } from '../../utils/format'
 
-const ApplicationsFilters = () => {
+interface IApplicationsFiltersProps {
+  size?: 'xl' | 'sm'
+}
+
+const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
+  const { size = 'xl' } = props
+
   const { filters, setFilters, sort, setSort } = useApplicationsContext()
 
   return (
-    <Grid>
+    <Grid gutter='sm'>
       <Grid.Col span={12}>
         <TextInput
           placeholder='Search applications...'
@@ -20,7 +26,7 @@ const ApplicationsFilters = () => {
           }}
         />
       </Grid.Col>
-      <Grid.Col span={6}>
+      <Grid.Col span={size === 'sm' ? 12 : 6}>
         <MultiSelect
           hidePickedOptions
           label='Application State'
@@ -29,19 +35,16 @@ const ApplicationsFilters = () => {
             label: formatApplicationState(value),
           }))}
           value={filters.states || []}
-          placeholder='Search status...'
           onChange={(value) => {
             setFilters((prev) => ({
               ...prev,
               states: value.length > 0 ? (value as ApplicationState[]) : undefined,
             }))
           }}
-          leftSection={<MagnifyingGlass size={16} />}
-          clearable
           searchable
         />
       </Grid.Col>
-      <Grid.Col span={6}>
+      <Grid.Col span={size === 'sm' ? 12 : 6}>
         <Select
           label='Sort By'
           data={[

@@ -1,14 +1,16 @@
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React from 'react'
 import { usePageTitle } from '../../hooks/theme'
+import { Title } from '@mantine/core'
+import UserInformationForm from '../../components/UserInformationForm/UserInformationForm'
 
 const MyInformationPage = () => {
-  // TODO: implement component
   usePageTitle('My Information')
 
   return (
     <ContentContainer>
-      <h1>My Information</h1>
+      <Title mb='md'>My Information</Title>
+      <UserInformationForm requireCompletion={false} />
     </ContentContainer>
   )
 }
