@@ -66,7 +66,6 @@ services:
       - MAIL_WORKSPACE_URL
       - MAIL_SENDER
       - MAIL_SIGNATURE
-      - MAIL_CHAIR_RECIPIENTS
       - MAIL_BCC_RECIPIENTS
     networks:
       - thesis-track-network
@@ -74,13 +73,6 @@ services:
   client:
     image: "ghcr.io/ls1intum/thesis-track/thesis-track-client:${CLIENT_IMAGE_TAG}"
     container_name: thesis-track-client
-    environment:
-      - TZ=Europe/Berlin
-      - SERVER_HOST
-      - KEYCLOAK_HOST
-      - KEYCLOAK_REALM_NAME
-      - KEYCLOAK_CLIENT_ID
-      - DEFAULT_SUPERVISOR_UUID
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.client.rule=Host(`${APP_HOSTNAME}`)"
@@ -91,6 +83,12 @@ services:
       - "traefik.http.routers.client.priority=1"
     expose:
       - "80"
+    environment:
+      - SERVER_HOST
+      - KEYCLOAK_HOST
+      - KEYCLOAK_REALM_NAME
+      - KEYCLOAK_CLIENT_ID
+      - DEFAULT_SUPERVISOR_UUID
     depends_on:
       - server
     networks:

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import { IThesis } from '../../requests/responses/thesis'
 import { GLOBAL_CONFIG } from '../../config/global'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
+import { Center } from '@mantine/core'
 
 type ThesisColumn =
   | 'state'
@@ -42,8 +43,13 @@ const ThesesTable = (props: IThesesTableProps) => {
       accessor: 'state',
       title: 'State',
       textAlign: 'center',
+      width: 100,
       render: (thesis: IThesis) => {
-        return <ThesisStateBadge state={thesis.state} />
+        return (
+          <Center>
+            <ThesisStateBadge state={thesis.state} />
+          </Center>
+        )
       },
     },
     supervisors: {

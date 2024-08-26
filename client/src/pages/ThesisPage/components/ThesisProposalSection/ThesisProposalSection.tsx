@@ -125,6 +125,7 @@ const ThesisProposalSection = () => {
                 onClose={() => setUploadModal(false)}
                 title='Upload Proposal'
                 onUpload={onUpload}
+                maxSize={20 * 1024 * 1024}
               />
               {access.advisor && thesis.state === ThesisState.PROPOSAL && (
                 <ConfirmationButton

@@ -27,7 +27,6 @@ public class ApplicationService {
     private final MailingService mailingService;
     private final TopicRepository topicRepository;
     private final ThesisService thesisService;
-    private final UserService userService;
     private final TopicService topicService;
 
     @Autowired
@@ -38,8 +37,8 @@ public class ApplicationService {
             MailingService mailingService,
             TopicRepository topicRepository,
             ThesisService thesisService,
-            UserService userService,
-            TopicService topicService) {
+            TopicService topicService
+    ) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
 
@@ -47,7 +46,6 @@ public class ApplicationService {
         this.mailingService = mailingService;
         this.topicRepository = topicRepository;
         this.thesisService = thesisService;
-        this.userService = userService;
         this.topicService = topicService;
     }
 
@@ -124,10 +122,11 @@ public class ApplicationService {
         application.setDesiredStartDate(payload.desiredStartDate());
         application.setCreatedAt(currentTime);
 
-        mailingService.sendApplicationCreatedMailToChair(application);
-        mailingService.sendApplicationCreatedMailToStudent(application);
+        application = applicationRepository.save(application);
 
-        return applicationRepository.save(application);
+        mailingService.sendApplicationCreatedEmail(application);
+
+        return application;
     }
 
     @Transactional
@@ -142,15 +141,16 @@ public class ApplicationService {
         application.setDesiredStartDate(desiredStartDate);
         application.setCreatedAt(Instant.now());
 
-        mailingService.sendApplicationCreatedMailToChair(application);
-        mailingService.sendApplicationCreatedMailToStudent(application);
+        application = applicationRepository.save(application);
 
-        return applicationRepository.save(application);
+        mailingService.sendApplicationCreatedEmail(application);
+
+        return application;
     }
 
     @Transactional
     public Application accept(
-            User reviewer,
+            User reviewingUser,
             Application application,
             String thesisTitle,
             String thesisType,
@@ -161,10 +161,10 @@ public class ApplicationService {
     ) {
         application.setState(ApplicationState.ACCEPTED);
         application.setReviewedAt(Instant.now());
-        application.setReviewedBy(reviewer);
+        application.setReviewedBy(reviewingUser);
 
-        thesisService.createThesis(
-                reviewer,
+        Thesis thesis = thesisService.createThesis(
+                reviewingUser,
                 thesisTitle,
                 thesisType,
                 supervisorIds,
@@ -176,21 +176,21 @@ public class ApplicationService {
         Topic topic = application.getTopic();
 
         if (topic != null && closeTopic) {
-            application.setTopic(closeTopic(reviewer, topic, notifyUser));
+            application.setTopic(closeTopic(reviewingUser, topic, notifyUser));
         }
 
         if (notifyUser) {
-            mailingService.sendApplicationAcceptanceEmail(application, userService.findById(advisorIds.iterator().next()));
+            mailingService.sendApplicationAcceptanceEmail(application, thesis);
         }
 
         return applicationRepository.save(application);
     }
 
     @Transactional
-    public Application reject(User reviewer, Application application, boolean notifyUser) {
+    public Application reject(User reviewingUser, Application application, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
         application.setReviewedAt(Instant.now());
-        application.setReviewedBy(reviewer);
+        application.setReviewedBy(reviewingUser);
 
         if (notifyUser) {
             mailingService.sendApplicationRejectionEmail(application);

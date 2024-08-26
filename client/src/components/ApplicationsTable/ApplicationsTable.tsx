@@ -2,7 +2,7 @@ import { useAutoAnimate } from '@formkit/auto-animate/react'
 import React from 'react'
 import { IApplication } from '../../requests/responses/application'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { Badge } from '@mantine/core'
+import { Badge, Center } from '@mantine/core'
 import { formatApplicationState, formatDate, formatUser } from '../../utils/format'
 import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
 import { IApplicationsSort } from '../../contexts/ApplicationsProvider/context'
@@ -30,9 +30,11 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       width: 100,
       render: (application) => {
         return (
-          <Badge color={ApplicationStateColor[application.state]}>
-            {formatApplicationState(application.state)}
-          </Badge>
+          <Center>
+            <Badge color={ApplicationStateColor[application.state]}>
+              {formatApplicationState(application.state)}
+            </Badge>
+          </Center>
         )
       },
     },

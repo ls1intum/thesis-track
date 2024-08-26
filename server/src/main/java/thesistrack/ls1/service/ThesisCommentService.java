@@ -21,10 +21,12 @@ import java.util.UUID;
 public class ThesisCommentService {
     private final ThesisCommentRepository thesisCommentRepository;
     private final UploadService uploadService;
+    private final MailingService mailingService;
 
-    public ThesisCommentService(ThesisCommentRepository thesisCommentRepository, UploadService uploadService) {
+    public ThesisCommentService(ThesisCommentRepository thesisCommentRepository, UploadService uploadService, MailingService mailingService) {
         this.thesisCommentRepository = thesisCommentRepository;
         this.uploadService = uploadService;
+        this.mailingService = mailingService;
     }
 
     public Page<ThesisComment> getComments(Thesis thesis, ThesisCommentType commentType, Integer page, Integer limit) {
@@ -36,20 +38,24 @@ public class ThesisCommentService {
     }
 
     @Transactional
-    public ThesisComment postComment(User creator, Thesis thesis, ThesisCommentType commentType, String message, MultipartFile file) {
+    public ThesisComment postComment(User postingUser, Thesis thesis, ThesisCommentType commentType, String message, MultipartFile file) {
         ThesisComment comment = new ThesisComment();
 
         comment.setType(commentType);
         comment.setThesis(thesis);
         comment.setMessage(message);
         comment.setCreatedAt(Instant.now());
-        comment.setCreatedBy(creator);
+        comment.setCreatedBy(postingUser);
 
         if (file != null) {
             comment.setFilename(uploadService.store(file, 3 * 1024 * 1024));
         }
 
-        return thesisCommentRepository.save(comment);
+        comment = thesisCommentRepository.save(comment);
+
+        mailingService.sendNewCommentEmail(comment);
+
+        return comment;
     }
 
     public Resource getCommentFile(ThesisComment comment) {

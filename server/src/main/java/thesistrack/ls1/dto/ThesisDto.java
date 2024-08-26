@@ -36,7 +36,7 @@ public record ThesisDto (
 
         List<ThesisStateChangeDto> states
 ) {
-    record ThesisAssessmentDto(
+    public record ThesisAssessmentDto(
             String summary,
             String positives,
             String negatives,
@@ -60,7 +60,7 @@ public record ThesisDto (
         }
     }
 
-    record ThesisProposalDto(
+    public record ThesisProposalDto(
             Instant createdAt,
             LightUserDto createdBy,
             Instant approvedAt,
@@ -80,7 +80,7 @@ public record ThesisDto (
         }
     }
 
-    record ThesisPresentationDto(
+    public record ThesisPresentationDto(
             UUID presentationId,
             ThesisPresentationType type,
             String location,
@@ -106,18 +106,18 @@ public record ThesisDto (
         }
     }
 
-    record ThesisFilesDto(
+    public record ThesisFilesDto(
             String thesis,
             String presentation,
             String proposal
     ) { }
 
-    record ThesisGradeDto(
+    public record ThesisGradeDto(
             String finalGrade,
             String feedback
     ) { }
 
-    record ThesisStateChangeDto(
+    public record ThesisStateChangeDto(
             ThesisState state,
             Instant startedAt,
             Instant endedAt
