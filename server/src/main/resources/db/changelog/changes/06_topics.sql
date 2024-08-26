@@ -27,6 +27,7 @@ ALTER TABLE users DROP COLUMN research_areas;
 ALTER TABLE users DROP COLUMN focus_topics;
 
 --changeset emilius:06-topics-5
+UPDATE applications SET comment = '' WHERE comment IS NULL;
 ALTER TABLE applications
-    ALTER COLUMN comment SET NOT NULL,
-    ALTER COLUMN comment SET DEFAULT '';
+    ALTER COLUMN comment SET DEFAULT '',
+    ALTER COLUMN comment SET NOT NULL;
