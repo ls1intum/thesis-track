@@ -5,7 +5,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
-import { formatDate } from '../../../../../../utils/format'
+import { formatDate, formatPresentationType } from '../../../../../../utils/format'
 import { Button, Group } from '@mantine/core'
 import { Trash } from 'phosphor-react'
 import { doRequest } from '../../../../../../requests/request'
@@ -53,6 +53,7 @@ const PresentationsTable = () => {
           accessor: 'type',
           title: 'Type',
           textAlign: 'center',
+          render: (presentation) => formatPresentationType(presentation.type),
         },
         {
           accessor: 'location',

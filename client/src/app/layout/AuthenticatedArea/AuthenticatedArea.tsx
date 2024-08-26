@@ -13,7 +13,7 @@ import {
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
-import { useDisclosure } from '@mantine/hooks'
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import {
   CaretDoubleLeft,
   CaretDoubleRight,
@@ -190,7 +190,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         <AppShell.Section>
           <Link
             to='/settings/my-information'
-            className={classes.link}
+            className={minimized ? classes.minimizedLink : classes.fullLink}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
             <Tooltip label='My Information' disabled={!minimized} position='right' offset={15}>
@@ -204,15 +204,17 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             </Tooltip>
             {!minimized && <span>Logout</span>}
           </Link>
-          <ActionIcon
-            visibleFrom='md'
-            ml='auto'
-            mr={minimized ? 'auto' : undefined}
-            variant='transparent'
-            onClick={() => setMinimized((prev) => !prev)}
-          >
-            {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
-          </ActionIcon>
+          <Group>
+            <ActionIcon
+              visibleFrom='md'
+              ml='auto'
+              mr={minimized ? 'auto' : undefined}
+              variant='transparent'
+              onClick={() => setMinimized((prev) => !prev)}
+            >
+              {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
+            </ActionIcon>
+          </Group>
         </AppShell.Section>
       </AppShell.Navbar>
 

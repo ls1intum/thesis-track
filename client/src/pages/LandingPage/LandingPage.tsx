@@ -11,7 +11,7 @@ const LandingPage = () => {
   return (
     <>
       <HeroSection />
-      <ContentContainer>
+      <ContentContainer size='md'>
         <TopicsProvider limit={10}>
           <Title order={2} mb='sm'>
             Open Topics

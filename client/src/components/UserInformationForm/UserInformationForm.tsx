@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { useApiFile } from '../../hooks/fetcher'
 import { showSimpleError } from '../../utils/notification'
+import { getHtmlTextLength } from '../../utils/validation'
 
 interface IUserInformationFormProps {
   requireCompletion: boolean
@@ -68,22 +69,22 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       specialSkills: (value) => {
         if (!value && requireCompletion) {
           return 'Please state your special skills.'
-        } else if (value && value.length > 1000) {
-          return 'The maximum allowed number of characters is 1000'
+        } else if (getHtmlTextLength(value) > 500) {
+          return 'The maximum allowed number of characters is 500'
         }
       },
       interests: (value) => {
         if (!value && requireCompletion) {
           return 'Please state your interests.'
-        } else if (value && value.length > 1000) {
-          return 'The maximum allowed number of characters is 1000'
+        } else if (getHtmlTextLength(value) > 500) {
+          return 'The maximum allowed number of characters is 500'
         }
       },
       projects: (value) => {
         if (!value && requireCompletion) {
           return 'Please state your projects.'
-        } else if (value && value.length > 1000) {
-          return 'The maximum allowed number of characters is 1000'
+        } else if (getHtmlTextLength(value) > 500) {
+          return 'The maximum allowed number of characters is 500'
         }
       },
       declarationOfConsentAccepted: (value) => !value,

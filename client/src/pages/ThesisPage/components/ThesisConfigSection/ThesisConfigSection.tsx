@@ -1,5 +1,5 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { Accordion, Button, Group, Select, Stack, Text, TextInput } from '@mantine/core'
+import { Accordion, Button, Group, Select, Stack, TagsInput, Text, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { DateInput, DateTimePicker, DateValue } from '@mantine/dates'
@@ -20,6 +20,7 @@ interface IThesisConfigSectionFormValues {
   title: string
   type: string
   visibility: string
+  keywords: string[]
   startDate: DateValue | undefined
   endDate: DateValue | undefined
   students: string[]
@@ -57,11 +58,12 @@ const ThesisConfigSection = () => {
       title: thesis.title,
       type: thesis.type,
       visibility: thesis.visibility,
+      keywords: thesis.keywords,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
       endDate: thesis.endDate ? new Date(thesis.endDate) : undefined,
-      students: thesis.students.map((user) => user.userId),
-      advisors: thesis.advisors.map((user) => user.userId),
-      supervisors: thesis.supervisors.map((user) => user.userId),
+      students: thesis.students.map((student) => student.userId),
+      advisors: thesis.advisors.map((advisor) => advisor.userId),
+      supervisors: thesis.supervisors.map((supervisor) => supervisor.userId),
       states: thesis.states.map((state) => ({
         state: state.state,
         changedAt: new Date(state.startedAt),
@@ -104,11 +106,12 @@ const ThesisConfigSection = () => {
       title: thesis.title,
       type: thesis.type,
       visibility: thesis.visibility,
+      keywords: thesis.keywords,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
       endDate: thesis.endDate ? new Date(thesis.endDate) : undefined,
-      students: thesis.students.map((user) => user.userId),
-      advisors: thesis.advisors.map((user) => user.userId),
-      supervisors: thesis.supervisors.map((user) => user.userId),
+      students: thesis.students.map((student) => student.userId),
+      advisors: thesis.advisors.map((advisor) => advisor.userId),
+      supervisors: thesis.supervisors.map((supervisor) => supervisor.userId),
       states: thesis.states.map((state) => ({
         state: state.state,
         changedAt: new Date(state.startedAt),
@@ -143,6 +146,7 @@ const ThesisConfigSection = () => {
         thesisTitle: values.title,
         thesisType: values.type,
         visibility: values.visibility,
+        keywords: values.keywords,
         startDate: values.startDate,
         endDate: values.endDate,
         studentIds: values.students,
@@ -199,6 +203,12 @@ const ThesisConfigSection = () => {
                   { value: 'PRIVATE', label: 'Private' },
                 ]}
                 {...form.getInputProps('visibility')}
+              />
+              <TagsInput
+                label='Keywords'
+                disabled={!access.advisor}
+                data={form.values.keywords}
+                {...form.getInputProps('keywords')}
               />
               <Group grow>
                 <DateInput

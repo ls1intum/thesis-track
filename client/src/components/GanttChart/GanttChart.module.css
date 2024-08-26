@@ -3,7 +3,7 @@ $chart-row-spacing: rem(0.5rem);
 
 .chartContainer {
     width: 100%;
-    overflow-y: scroll;
+    overflow-x: auto;
 }
 
 .chartBox {
@@ -20,7 +20,7 @@ $chart-row-spacing: rem(0.5rem);
 }
 
 .dataHeader {
-    padding: 3px 5px;
+    padding: rem(3);
 
     overflow: hidden;
     text-overflow: ellipsis;
@@ -80,7 +80,7 @@ $chart-row-spacing: rem(0.5rem);
 
 .dataColumn {
     line-height: calc($chart-timeline-height + 2 * $chart-row-spacing);
-    padding: 0 5px;
+    padding: 0 rem(5);
 
     text-overflow: ellipsis;
     white-space: nowrap;

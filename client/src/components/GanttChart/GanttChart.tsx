@@ -1,5 +1,5 @@
 import * as classes from './GanttChart.module.css'
-import { arrayUnique } from '../../utils/array'
+import { ArrayElement, arrayUnique } from '../../utils/array'
 import {
   ReactNode,
   TouchEvent,
@@ -10,7 +10,7 @@ import {
   useEffect,
   CSSProperties,
 } from 'react'
-import { Button, Collapse, Popover, RangeSlider } from '@mantine/core'
+import { Button, Collapse, Group, Popover, RangeSlider, Text } from '@mantine/core'
 import { formatDate } from '../../utils/format'
 import { CaretDown, CaretUp } from 'phosphor-react'
 
@@ -21,7 +21,11 @@ interface IGanttChartProps {
     textAlign?: CSSProperties['textAlign']
   }>
   data: Array<IGanttChartDataElement> | undefined
-  itemPopover: (item: IGanttChartDataElement) => ReactNode
+  itemPopover: (
+    item: IGanttChartDataElement,
+    timelineItem?: ArrayElement<IGanttChartDataElement['timeline']>,
+    timelineEvent?: ArrayElement<IGanttChartDataElement['events']>,
+  ) => ReactNode
   onItemClick?: (item: IGanttChartDataElement) => unknown
   defaultRange?: number
   maxTicks?: number
@@ -33,11 +37,13 @@ export interface IGanttChartDataElement {
   groupName: string
   columns: string[]
   timeline: Array<{
+    id: string
     startDate: Date
     endDate: Date
     color: string
   }>
   events: Array<{
+    id: string
     icon: ReactNode
     time: Date
   }>
@@ -64,7 +70,11 @@ const GanttChart = (props: IGanttChartProps) => {
 
   const [range, setRange] = useState<DateRange>()
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([])
+
   const [popover, setPopover] = useState<string>()
+  const [hoveredTimelineItem, setHoveredTimelineItem] = useState<string>()
+  const [hoveredEventItem, setHoveredEventItem] = useState<string>()
+
   const [initialTouchDistance, setInitialTouchDistance] = useState<number>()
 
   const currentTime = useMemo(() => Date.now(), [])
@@ -247,15 +257,19 @@ const GanttChart = (props: IGanttChartProps) => {
   return (
     <div className={classes.chartContainer}>
       <div className={classes.chartBox}>
-        <RangeSlider
-          min={totalRange[0]}
-          max={totalRange[1]}
-          step={3600 * 24 * 1000}
-          value={filteredRange}
-          onChange={setRange}
-          label={(value) => formatDate(new Date(value), { withTime: false })}
-          mb='md'
-        />
+        <Group mb='md' mt={30}>
+          <Text fw='bold'>Timeline Range Filter:</Text>
+          <RangeSlider
+            style={{ flex: 1 }}
+            labelAlwaysOn
+            min={totalRange[0]}
+            max={totalRange[1]}
+            step={3600 * 24 * 1000}
+            value={filteredRange}
+            onChange={setRange}
+            label={(value) => formatDate(new Date(value), { withTime: false })}
+          />
+        </Group>
         <div className={classes.headers}>
           {columns.map((column) => (
             <div
@@ -352,6 +366,8 @@ const GanttChart = (props: IGanttChartProps) => {
                                   <div
                                     key={timelineItem.startDate.getTime()}
                                     className={classes.timelinePart}
+                                    onMouseEnter={() => setHoveredTimelineItem(timelineItem.id)}
+                                    onMouseLeave={() => setHoveredTimelineItem(undefined)}
                                     style={{
                                       left: `${Math.max(
                                         (100 *
@@ -386,6 +402,8 @@ const GanttChart = (props: IGanttChartProps) => {
                                   <div
                                     key={timelineEvent.time.getTime()}
                                     className={classes.timelineEvent}
+                                    onMouseEnter={() => setHoveredEventItem(timelineEvent.id)}
+                                    onMouseLeave={() => setHoveredEventItem(undefined)}
                                     style={{
                                       left: `${Math.max(
                                         (100 * (timelineEvent.time.getTime() - filteredRange[0])) /
@@ -401,7 +419,11 @@ const GanttChart = (props: IGanttChartProps) => {
                           </div>
                         </Popover.Target>
                         <Popover.Dropdown style={{ pointerEvents: 'none' }}>
-                          {itemPopover(item)}
+                          {itemPopover(
+                            item,
+                            item.timeline.find((row) => row.id === hoveredTimelineItem),
+                            item.events.find((row) => row.id === hoveredEventItem),
+                          )}
                         </Popover.Dropdown>
                       </Popover>
                     ))}

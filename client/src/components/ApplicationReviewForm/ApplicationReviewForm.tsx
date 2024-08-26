@@ -64,9 +64,9 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           application.topic?.type || GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
             ? application.user.studyDegree
             : null,
-        advisors: application.topic?.advisors.map((user) => user.userId) ?? [],
+        advisors: application.topic?.advisors.map((advisor) => advisor.userId) ?? [],
         supervisors:
-          application.topic?.supervisors.map((user) => user.userId) ??
+          application.topic?.supervisors.map((supervisor) => supervisor.userId) ??
           GLOBAL_CONFIG.default_supervisors,
         notifyUser: true,
         closeTopic: false,

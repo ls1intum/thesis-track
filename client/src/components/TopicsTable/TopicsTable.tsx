@@ -40,13 +40,17 @@ const TopicsTable = (props: ITopicsTableProps) => {
       accessor: 'supervisor',
       title: 'Supervisor',
       render: (topic) =>
-        topic.supervisors.map((user) => formatUser(user, { withUniversityId: false })).join(', '),
+        topic.supervisors
+          .map((supervisor) => formatUser(supervisor, { withUniversityId: false }))
+          .join(', '),
     },
     advisor: {
       accessor: 'advisor',
       title: 'Advisor',
       render: (topic) =>
-        topic.advisors.map((user) => formatUser(user, { withUniversityId: false })).join(', '),
+        topic.advisors
+          .map((advisor) => formatUser(advisor, { withUniversityId: false }))
+          .join(', '),
     },
     createdAt: {
       accessor: 'createdAt',

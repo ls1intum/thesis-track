@@ -1,6 +1,6 @@
 import { IThesis } from '../../../../requests/responses/thesis'
 import React, { useEffect, useState } from 'react'
-import { Accordion, Button, Flex, Grid, Group, Stack, Title } from '@mantine/core'
+import { Accordion, Button, Flex, Grid, Group, Stack } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../requests/request'
 import {
@@ -55,14 +55,14 @@ const ThesisInfoSection = () => {
         <Accordion.Control>Info</Accordion.Control>
         <Accordion.Panel>
           <Stack>
-            <Title order={3}>Abstract</Title>
             <DocumentEditor
+              label='Abstract'
               value={abstractText}
               editMode={editMode}
               onChange={(e) => setAbstractText(e.target.value)}
             />
-            <Title order={3}>Info</Title>
             <DocumentEditor
+              label='Additional Information'
               value={infoText}
               editMode={editMode}
               onChange={(e) => setInfoText(e.target.value)}

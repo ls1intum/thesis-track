@@ -1,11 +1,11 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { Trash } from 'phosphor-react'
-import { ActionIcon } from '@mantine/core'
 import React from 'react'
 import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
+import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 
 interface ICloseTopicButtonProps {
   topic: ITopic
@@ -37,9 +37,14 @@ const CloseTopicButton = (props: ICloseTopicButtonProps) => {
   }
 
   return (
-    <ActionIcon onClick={onClose} size={size}>
+    <ConfirmationButton
+      onClick={onClose}
+      size={size}
+      confirmationTitle='Close Topic'
+      confirmationText='Are you sure you want to close this topic? This will reject all applications for it.'
+    >
       <Trash />
-    </ActionIcon>
+    </ConfirmationButton>
   )
 }
 

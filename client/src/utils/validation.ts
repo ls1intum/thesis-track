@@ -9,3 +9,13 @@ export function isNotEmptyUserList(group: 'student' | 'advisor' | 'supervisor') 
     }
   }
 }
+
+export function getHtmlTextLength(html: string | undefined) {
+  if (!html) {
+    return 0
+  }
+
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+
+  return doc.body.textContent?.length || 0
+}

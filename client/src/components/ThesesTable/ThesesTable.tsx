@@ -49,17 +49,18 @@ const ThesesTable = (props: IThesesTableProps) => {
     supervisors: {
       accessor: 'supervisors',
       title: 'Supervisor',
-      render: (thesis: IThesis) => thesis.supervisors.map((user) => formatUser(user)).join(', '),
+      render: (thesis: IThesis) =>
+        thesis.supervisors.map((supervisor) => formatUser(supervisor)).join(', '),
     },
     advisors: {
       accessor: 'advisors',
       title: 'Advisor',
-      render: (thesis: IThesis) => thesis.advisors.map((user) => formatUser(user)).join(', '),
+      render: (thesis: IThesis) => thesis.advisors.map((advisor) => formatUser(advisor)).join(', '),
     },
     students: {
       accessor: 'students',
       title: 'Student',
-      render: (thesis: IThesis) => thesis.students.map((user) => formatUser(user)).join(', '),
+      render: (thesis: IThesis) => thesis.students.map((student) => formatUser(student)).join(', '),
     },
     type: {
       accessor: 'type',

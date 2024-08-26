@@ -4,6 +4,7 @@ export interface ILightUser {
   matriculationNumber: string | null
   firstName: string | null
   lastName: string | null
+  email: string | null
   studyDegree: string | null
   studyProgram: string | null
   joinedAt: string
@@ -11,7 +12,6 @@ export interface ILightUser {
 }
 
 export interface IUser extends ILightUser {
-  email: string | null
   gender: string | null
   nationality: string | null
   isExchangeStudent: boolean | null

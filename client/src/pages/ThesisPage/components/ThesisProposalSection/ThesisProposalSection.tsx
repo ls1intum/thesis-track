@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Group, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Grid, Group, Stack, Text } from '@mantine/core'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
@@ -11,6 +11,9 @@ import {
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
+import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
+import { formatUser } from '../../../../utils/format'
+import { GLOBAL_CONFIG } from '../../../../config/global'
 
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -62,6 +65,50 @@ const ThesisProposalSection = () => {
         <Accordion.Control>Proposal</Accordion.Control>
         <Accordion.Panel>
           <Stack>
+            {access.advisor && (
+              <Stack gap='md'>
+                {thesis.students.map((student) => (
+                  <Grid key={student.userId}>
+                    <Grid.Col span={{ md: 2 }}>
+                      <LabeledItem
+                        label='Student'
+                        value={formatUser(student, { withUniversityId: false })}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={{ md: 2 }}>
+                      <LabeledItem label='University ID' value={student.universityId} />
+                    </Grid.Col>
+                    <Grid.Col span={{ md: 2 }}>
+                      <LabeledItem
+                        label='Matriculation Number'
+                        value={student.matriculationNumber}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={{ md: 2 }}>
+                      <LabeledItem label='E-Mail' value={student.email} />
+                    </Grid.Col>
+                    <Grid.Col span={{ md: 2 }}>
+                      <LabeledItem
+                        label='Study Degree'
+                        value={
+                          GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
+                          student.studyDegree
+                        }
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={{ md: 2 }}>
+                      <LabeledItem
+                        label='Study Program'
+                        value={
+                          GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
+                          student.studyProgram
+                        }
+                      />
+                    </Grid.Col>
+                  </Grid>
+                ))}
+              </Stack>
+            )}
             {thesis.proposal ? (
               <AuthenticatedFilePreview
                 url={`/v2/theses/${thesis.thesisId}/proposal`}
