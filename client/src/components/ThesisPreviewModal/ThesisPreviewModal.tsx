@@ -23,7 +23,7 @@ const ThesisPreviewModal = (props: IThesisPreviewModalProps) => {
             <Grid.Col span={{ md: 4 }}>
               <LabeledItem
                 label='Supervisor'
-                value={thesis.supervisors.map((user) => formatUser(user)).join(', ')}
+                value={thesis.supervisors.map((supervisor) => formatUser(supervisor)).join(', ')}
               />
             </Grid.Col>
             <Grid.Col span={{ md: 4 }}>
