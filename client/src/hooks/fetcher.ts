@@ -4,6 +4,7 @@ import { doRequest } from '../requests/request'
 import { showSimpleError } from '../utils/notification'
 import { getApiResponseErrorMessage } from '../requests/handler'
 import { ITopic } from '../requests/responses/topic'
+import { PaginationResponse } from '../requests/responses/pagination'
 
 export function useThesis(thesisId: string | undefined) {
   const [thesis, setThesis] = useState<IThesis | false>()
@@ -85,4 +86,33 @@ export function useApiFile(
       )
     }
   }, [url, filename])
+}
+
+export function useAllTopics() {
+  const [topics, setTopics] = useState<ITopic[]>()
+
+  useEffect(() => {
+    setTopics(undefined)
+
+    return doRequest<PaginationResponse<ITopic>>(
+      `/v2/topics`,
+      {
+        method: 'GET',
+        requiresAuth: false,
+        params: {
+          limit: 1000,
+          includeClosed: 'false',
+        },
+      },
+      (res) => {
+        if (!res.ok) {
+          showSimpleError(getApiResponseErrorMessage(res))
+        }
+
+        setTopics(res.ok ? res.data.content : [])
+      },
+    )
+  }, [])
+
+  return topics
 }

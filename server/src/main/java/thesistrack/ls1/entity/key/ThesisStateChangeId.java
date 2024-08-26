@@ -25,7 +25,7 @@ public class ThesisStateChangeId implements Serializable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "state", nullable = false, length = 100)
+    @Column(name = "state", nullable = false)
     private ThesisState state;
 
     @Override

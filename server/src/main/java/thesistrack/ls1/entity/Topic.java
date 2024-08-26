@@ -23,22 +23,22 @@ public class Topic {
     private UUID id;
 
     @NotNull
-    @Column(name = "title", nullable = false, length = 500)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "type", length = 100)
+    @Column(name = "type")
     private String type;
 
     @NotNull
-    @Column(name = "problem_statement", nullable = false, length = 2000)
+    @Column(name = "problem_statement", nullable = false)
     private String problemStatement;
 
     @NotNull
-    @Column(name = "goals", nullable = false, length = 2000)
+    @Column(name = "goals", nullable = false)
     private String goals;
 
     @NotNull
-    @Column(name = "\"references\"", nullable = false, length = 2000)
+    @Column(name = "\"references\"", nullable = false)
     private String references;
 
     @Column(name = "closed_at")

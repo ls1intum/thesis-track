@@ -27,7 +27,7 @@ public class TopicRoleId implements java.io.Serializable {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name = "role", nullable = false, length = 100)
+    @Column(name = "role", nullable = false)
     private ThesisRoleName role;
 
     @Override

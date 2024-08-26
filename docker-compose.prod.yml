@@ -53,6 +53,7 @@ services:
       - POSTFIX_HOST=postfix
       - POSTFIX_PORT=25
       - UPLOAD_FOLDER=/uploads
+      - MAIL_TEMPLATE_FOLDER=/default-mail-templates
       - DEBUG_MODE=false
       # take from docker environment
       - SPRING_DATASOURCE_USERNAME

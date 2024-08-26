@@ -19,7 +19,7 @@ public class UserGroupId implements java.io.Serializable {
     private UUID userId;
 
     @NotNull
-    @Column(name = "\"group\"", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "\"group\"", nullable = false)
     private String group;
 
     @Override

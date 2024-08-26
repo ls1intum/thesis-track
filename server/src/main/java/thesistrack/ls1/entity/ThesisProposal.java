@@ -25,7 +25,7 @@ public class ThesisProposal {
     private Thesis thesis;
 
     @NotNull
-    @Column(name = "proposal_filename", nullable = false, length = 200)
+    @Column(name = "proposal_filename", nullable = false)
     private String proposalFilename;
 
     @Column(name = "approved_at")

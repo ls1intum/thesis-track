@@ -53,6 +53,7 @@ public class ApplicationService {
             UUID userId,
             String searchQuery,
             ApplicationState[] states,
+            String[] topics,
             int page,
             int limit,
             String sortBy,
@@ -62,11 +63,13 @@ public class ApplicationService {
 
         String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
         Set<ApplicationState> statesFilter = states == null || states.length == 0 ? null : new HashSet<>(Arrays.asList(states));
+        Set<String> topicsFilter = topics == null || topics.length == 0 ? null : new HashSet<>(Arrays.asList(topics));
 
         return applicationRepository.searchApplications(
                 userId,
                 searchQueryFilter,
                 statesFilter,
+                topicsFilter,
                 PageRequest.of(page, limit, Sort.by(order))
         );
     }
@@ -118,6 +121,7 @@ public class ApplicationService {
 
         application.setThesisTitle(RequestValidator.validateStringMaxLength(payload.thesisTitle(), 500));
         application.setMotivation(RequestValidator.validateStringMaxLength(payload.motivation(), 1000));
+        application.setComment("");
         application.setState(ApplicationState.NOT_ASSESSED);
         application.setDesiredStartDate(payload.desiredStartDate());
         application.setCreatedAt(currentTime);
@@ -137,6 +141,7 @@ public class ApplicationService {
         application.setTopic(topicId == null ? null : topicService.findById(topicId));
         application.setThesisTitle(thesisTitle);
         application.setMotivation(motivation);
+        application.setComment("");
         application.setState(ApplicationState.NOT_ASSESSED);
         application.setDesiredStartDate(desiredStartDate);
         application.setCreatedAt(Instant.now());
