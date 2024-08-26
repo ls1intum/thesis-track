@@ -16,6 +16,4 @@ export interface ILegacyCreateApplicationPayload {
   projects: string
   thesisTitle: string
   desiredStartDate: Date
-  researchAreas: string[]
-  focusTopics: string[]
 }

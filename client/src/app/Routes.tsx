@@ -4,7 +4,7 @@ import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 import PageLoader from '../components/PageLoader/PageLoader'
 
 const LegacyThesisApplicationForm = lazy(
-  () => import('../pages/LegacySubmitApplicationPage/LegacyCreateApplicationForm'),
+  () => import('../pages/LegacySubmitApplicationPage/LegacySubmitApplicationPage'),
 )
 const LegacyApplicationReviewPage = lazy(
   () => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'),
@@ -91,7 +91,7 @@ const AppRoutes = () => {
           />
           <Route path='/applications/thesis' element={<LegacyThesisApplicationForm />} />
           <Route
-            path='/applications/:application_id?'
+            path='/applications/:applicationId?'
             element={
               <AuthenticatedArea
                 collapseNavigation={true}

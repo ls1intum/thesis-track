@@ -104,9 +104,6 @@ public class ApplicationService {
         student.setIsExchangeStudent(payload.isExchangeStudent());
         student.setEnrolledAt(payload.enrolledAt());
 
-        student.setResearchAreas(RequestValidator.validateStringSetItemMaxLength(payload.researchAreas(), 100));
-        student.setFocusTopics(RequestValidator.validateStringSetItemMaxLength(payload.focusTopics(), 100));
-
         student.setUpdatedAt(currentTime);
 
         student.setExaminationFilename(uploadService.store(examinationReport, 3 * 1024 * 1024));
@@ -139,12 +136,10 @@ public class ApplicationService {
             String thesisType,
             Set<UUID> advisorIds,
             Set<UUID> supervisorIds,
-            String comment,
             boolean notifyUser,
             boolean closeTopic
     ) {
         application.setState(ApplicationState.ACCEPTED);
-        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 
@@ -174,9 +169,8 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application reject(User reviewer, Application application, String comment, boolean notifyUser) {
+    public Application reject(User reviewer, Application application, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
-        application.setComment(comment);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewer);
 

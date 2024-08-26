@@ -5,7 +5,7 @@ interface ApplicationSuccessfulSubmissionProps {
   text: string
 }
 
-export const LegacyApplicationSuccessfulSubmission = ({
+export const LegacySuccessfulSubmission = ({
   title,
   text,
 }: ApplicationSuccessfulSubmissionProps) => {
