@@ -24,7 +24,7 @@
     "@mantine/tiptap": "7.12.1",
     "@tiptap/extension-highlight": "2.6.4",
     "@tiptap/extension-subscript": "2.6.4",
-    "@tiptap/extension-superscript": "2.6.4",
+    "@tiptap/extension-superscript": "2.6.6",
     "@tiptap/extension-text-align": "2.6.4",
     "@tiptap/extension-underline": "2.6.4",
     "@tiptap/starter-kit": "2.6.4",
