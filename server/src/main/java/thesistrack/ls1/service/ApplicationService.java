@@ -27,7 +27,6 @@ public class ApplicationService {
     private final MailingService mailingService;
     private final TopicRepository topicRepository;
     private final ThesisService thesisService;
-    private final UserService userService;
 
     @Autowired
     public ApplicationService(
@@ -36,8 +35,7 @@ public class ApplicationService {
             UploadService storageService,
             MailingService mailingService,
             TopicRepository topicRepository,
-            ThesisService thesisService,
-            UserService userService
+            ThesisService thesisService
     ) {
         this.applicationRepository = applicationRepository;
         this.userRepository = userRepository;
@@ -46,7 +44,6 @@ public class ApplicationService {
         this.mailingService = mailingService;
         this.topicRepository = topicRepository;
         this.thesisService = thesisService;
-        this.userService = userService;
     }
 
     public Page<Application> getAll(
@@ -132,7 +129,7 @@ public class ApplicationService {
 
     @Transactional
     public Application accept(
-            User reviewer,
+            User reviewingUser,
             Application application,
             String thesisTitle,
             String thesisType,
@@ -145,10 +142,10 @@ public class ApplicationService {
         application.setState(ApplicationState.ACCEPTED);
         application.setComment(comment);
         application.setReviewedAt(Instant.now());
-        application.setReviewedBy(reviewer);
+        application.setReviewedBy(reviewingUser);
 
         Thesis thesis = thesisService.createThesis(
-                reviewer,
+                reviewingUser,
                 thesisTitle,
                 thesisType,
                 supervisorIds,
@@ -173,11 +170,11 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application reject(User reviewer, Application application, String comment, boolean notifyUser) {
+    public Application reject(User reviewingUser, Application application, String comment, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
         application.setComment(comment);
         application.setReviewedAt(Instant.now());
-        application.setReviewedBy(reviewer);
+        application.setReviewedBy(reviewingUser);
 
         if (notifyUser) {
             mailingService.sendApplicationRejectionEmail(application);

@@ -1,13 +1,18 @@
 <p>Dear {{recipientName}},</p>
 
 <p>
-  <a target="_blank" rel="noopener noreferrer nofollow" href="{{thesisUrl}}">{{thesisUrl}}</a>
+  {{creatingUser.firstName}} {{creatingUser.lastName}} created and assigned a thesis to you: <a target="_blank" rel="noopener noreferrer nofollow" href="{{thesisUrl}}">{{thesisUrl}}</a>
 </p>
 
 <p>
-  A thesis has been created and assigned to you.
-  The title is "{{thesis.title}}".
-  The next step is that you write a proposal and submit it to thesis track on the above URL.
+  <strong>Title</strong>: {{thesis.title}}<br />
+  <strong>Supervisor</strong>: {{thesis.supervisors}}<br />
+  <strong>Advisor</strong>: {{thesis.advisors}}<br />
+  <strong>Student</strong>: {{thesis.students}}<br />
+</p>
+
+<p>
+  The next step is that you write a proposal and submit it on <a target="_blank" rel="noopener noreferrer nofollow" href="{{thesisUrl}}">{{thesisUrl}}</a>
 </p>
 
 {{config.signature}}

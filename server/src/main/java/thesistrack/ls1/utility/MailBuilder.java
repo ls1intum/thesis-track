@@ -25,7 +25,9 @@ import java.util.function.Function;
 public class MailBuilder {
     private final MailConfig config;
 
+    private final List<User> primarySenders;
     private final List<User> primaryRecipients;
+
     private final List<InternetAddress> secondaryRecipients;
     private final List<InternetAddress> bccRecipients;
 
@@ -41,6 +43,7 @@ public class MailBuilder {
     public MailBuilder(MailConfig config, String subject, String template) {
         this.config = config;
 
+        this.primarySenders = new ArrayList<>();
         this.primaryRecipients = new ArrayList<>();
         this.secondaryRecipients = new ArrayList<>();
         this.bccRecipients = new ArrayList<>();
@@ -56,6 +59,12 @@ public class MailBuilder {
         }
 
         attachments.add(filename);
+
+        return this;
+    }
+
+    public MailBuilder addPrimarySender(User user) {
+        this.primarySenders.add(user);
 
         return this;
     }
@@ -164,6 +173,10 @@ public class MailBuilder {
         formatters.put("thesis.startDate", DataFormatter::formatDate);
         formatters.put("thesis.endDate", DataFormatter::formatDate);
 
+        formatters.put("thesis.students", DataFormatter::formatUsers);
+        formatters.put("thesis.advisors", DataFormatter::formatUsers);
+        formatters.put("thesis.supervisors", DataFormatter::formatUsers);
+
         replaceDtoPlaceholders(ThesisDto.fromThesisEntity(thesis, false), "thesis", formatters);
 
         content = content.replace("{{thesisUrl}}", config.getClientHost() + "/theses/" + thesis.getId());
@@ -205,6 +218,10 @@ public class MailBuilder {
         }
 
         for (User recipient : primaryRecipients) {
+            if (primarySenders.contains(recipient)) {
+                continue;
+            }
+
             try {
                 MimeMessage message = mailSender.createMimeMessage();
 

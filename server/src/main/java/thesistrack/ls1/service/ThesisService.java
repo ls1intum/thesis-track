@@ -103,13 +103,13 @@ public class ThesisService {
         assignThesisRoles(thesis, creator, supervisorIds, advisorIds, studentIds);
         saveStateChange(thesis, ThesisState.PROPOSAL, Instant.now());
 
-        mailingService.sendThesisCreatedEmail(thesis);
+        mailingService.sendThesisCreatedEmail(creator, thesis);
 
         return thesis;
     }
 
     @Transactional
-    public Thesis closeThesis(Thesis thesis) {
+    public Thesis closeThesis(User closingUser, Thesis thesis) {
         if (thesis.getState() == ThesisState.DROPPED_OUT || thesis.getState() == ThesisState.FINISHED) {
             throw new ResourceInvalidParametersException("Thesis is already completed");
         }
@@ -119,14 +119,14 @@ public class ThesisService {
 
         thesis = thesisRepository.save(thesis);
 
-        mailingService.sendThesisClosedEmail(thesis);
+        mailingService.sendThesisClosedEmail(closingUser, thesis);
 
         return thesis;
     }
 
     @Transactional
     public Thesis updateThesis(
-            User updater,
+            User updatingUser,
             Thesis thesis,
             String thesisTitle,
             String thesisType,
@@ -149,7 +149,7 @@ public class ThesisService {
         thesis.setStartDate(startDate);
         thesis.setEndDate(endDate);
 
-        assignThesisRoles(thesis, updater, supervisorIds, advisorIds, studentIds);
+        assignThesisRoles(thesis, updatingUser, supervisorIds, advisorIds, studentIds);
 
         for (ThesisStatePayload state : states) {
             saveStateChange(thesis, state.state(), state.changedAt());
@@ -183,13 +183,13 @@ public class ThesisService {
     }
 
     @Transactional
-    public Thesis uploadProposal(User uploader, Thesis thesis, MultipartFile proposalFile) {
+    public Thesis uploadProposal(User uploadingUser, Thesis thesis, MultipartFile proposalFile) {
         ThesisProposal proposal = new ThesisProposal();
 
         proposal.setThesis(thesis);
         proposal.setProposalFilename(uploadService.store(proposalFile, 3 * 1024 * 1024));
         proposal.setCreatedAt(Instant.now());
-        proposal.setCreatedBy(uploader);
+        proposal.setCreatedBy(uploadingUser);
 
         List<ThesisProposal> proposals = thesis.getProposals() == null ? new ArrayList<>() : thesis.getProposals();
         proposals.addFirst(proposal);
@@ -205,7 +205,7 @@ public class ThesisService {
     }
 
     @Transactional
-    public Thesis acceptProposal(User reviewer, Thesis thesis) {
+    public Thesis acceptProposal(User reviewingUser, Thesis thesis) {
         List<ThesisProposal> proposals = thesis.getProposals();
 
         if (proposals == null || proposals.isEmpty()) {
@@ -215,7 +215,7 @@ public class ThesisService {
         ThesisProposal proposal = proposals.getFirst();
 
         proposal.setApprovedAt(Instant.now());
-        proposal.setApprovedBy(reviewer);
+        proposal.setApprovedBy(reviewingUser);
 
         thesisProposalRepository.save(proposal);
 
@@ -223,7 +223,7 @@ public class ThesisService {
 
         thesis.setState(ThesisState.WRITING);
 
-        mailingService.sendProposalAcceptedEmail(thesis);
+        mailingService.sendProposalAcceptedEmail(proposal);
 
         return thesisRepository.save(thesis);
     }
@@ -279,7 +279,15 @@ public class ThesisService {
         return uploadService.load(filename);
     }
 
-    public Thesis createPresentation(User creator, Thesis thesis, ThesisPresentationType type, ThesisPresentationVisibility visibility, String location, String streamUrl, Instant date) {
+    public Thesis createPresentation(
+            User creatingUser,
+            Thesis thesis,
+            ThesisPresentationType type,
+            ThesisPresentationVisibility visibility,
+            String location,
+            String streamUrl,
+            Instant date
+    ) {
         ThesisPresentation presentation = new ThesisPresentation();
 
         presentation.setThesis(thesis);
@@ -288,7 +296,7 @@ public class ThesisService {
         presentation.setLocation(location);
         presentation.setStreamUrl(streamUrl);
         presentation.setScheduledAt(date);
-        presentation.setCreatedBy(creator);
+        presentation.setCreatedBy(creatingUser);
         presentation.setCreatedAt(Instant.now());
 
         presentation = thesisPresentationRepository.save(presentation);
@@ -305,7 +313,7 @@ public class ThesisService {
         return thesis;
     }
 
-    public Thesis deletePresentation(ThesisPresentation presentation) {
+    public Thesis deletePresentation(User deletingUser, ThesisPresentation presentation) {
         Thesis thesis = presentation.getThesis();
 
         thesisPresentationRepository.deleteById(presentation.getId());
@@ -316,7 +324,7 @@ public class ThesisService {
 
         thesis.setPresentations(presentations);
 
-        mailingService.sendPresentationDeletedEmail(presentation);
+        mailingService.sendPresentationDeletedEmail(deletingUser, presentation);
 
         return thesisRepository.save(thesis);
     }
@@ -324,7 +332,7 @@ public class ThesisService {
     /* ASSESSMENT */
     @Transactional
     public Thesis submitAssessment(
-            User creator,
+            User creatingUser,
             Thesis thesis,
             String summary,
             String positives,
@@ -334,7 +342,7 @@ public class ThesisService {
         ThesisAssessment assessment = new ThesisAssessment();
 
         assessment.setThesis(thesis);
-        assessment.setCreatedBy(creator);
+        assessment.setCreatedBy(creatingUser);
         assessment.setCreatedAt(Instant.now());
         assessment.setSummary(summary);
         assessment.setPositives(positives);

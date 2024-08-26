@@ -169,7 +169,7 @@ public class ThesisController {
             throw new AccessDeniedException("You do not have the required permissions to view this thesis");
         }
 
-        thesis = thesisService.closeThesis(thesis);
+        thesis = thesisService.closeThesis(authenticatedUser, thesis);
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
@@ -381,7 +381,7 @@ public class ThesisController {
             throw new AccessDeniedException("You are not allowed to delete this presentation");
         }
 
-        Thesis thesis = thesisService.deletePresentation(presentation);
+        Thesis thesis = thesisService.deletePresentation(authenticatedUser, presentation);
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }

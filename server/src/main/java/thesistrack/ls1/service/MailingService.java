@@ -71,38 +71,42 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendThesisCreatedEmail(Thesis thesis) {
+    public void sendThesisCreatedEmail(User creatingUser, Thesis thesis) {
         MailBuilder builder = new MailBuilder(config, "Thesis Created", "thesis-created");
         builder
                 .sendToThesisStudents(thesis)
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
+                .fillUserPlaceholders(creatingUser, "creatingUser")
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendThesisClosedEmail(Thesis thesis) {
+    public void sendThesisClosedEmail(User deletingUser, Thesis thesis) {
         MailBuilder builder = new MailBuilder(config, "Thesis Closed", "thesis-closed");
         builder
                 .sendToThesisStudents(thesis)
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
+                .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
     }
 
     public void sendProposalUploadedEmail(ThesisProposal proposal) {
         MailBuilder builder = new MailBuilder(config, "Thesis Proposal Added", "thesis-proposal-uploaded");
         builder
+                .addPrimarySender(proposal.getCreatedBy())
                 .sendToThesisAdvisors(proposal.getThesis())
                 .fillThesisProposalPlaceholders(proposal)
                 .addAttachmentFile(proposal.getProposalFilename())
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendProposalAcceptedEmail(Thesis thesis) {
+    public void sendProposalAcceptedEmail(ThesisProposal proposal) {
         MailBuilder builder = new MailBuilder(config, "Thesis Proposal Accepted", "thesis-proposal-accepted");
         builder
-                .sendToThesisStudents(thesis)
-                .fillThesisPlaceholders(thesis)
+                .addPrimarySender(proposal.getApprovedBy())
+                .sendToThesisStudents(proposal.getThesis())
+                .fillThesisPlaceholders(proposal.getThesis())
                 .send(javaMailSender, uploadService);
     }
 
@@ -116,6 +120,7 @@ public class MailingService {
         }
 
         builder
+                .addPrimarySender(comment.getCreatedBy())
                 .fillThesisCommentPlaceholders(comment)
                 .addAttachmentFile(comment.getFilename())
                 .send(javaMailSender, uploadService);
@@ -124,18 +129,20 @@ public class MailingService {
     public void sendNewScheduledPresentationEmail(ThesisPresentation presentation) {
         MailBuilder builder = new MailBuilder(config, "New Presentation scheduled", "thesis-presentation-scheduled");
         builder
+                .addPrimarySender(presentation.getCreatedBy())
                 .sendToThesisStudents(presentation.getThesis())
                 .addDefaultBccRecipients()
                 .fillThesisPresentationPlaceholders(presentation)
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendPresentationDeletedEmail(ThesisPresentation presentation) {
+    public void sendPresentationDeletedEmail(User deletingUser, ThesisPresentation presentation) {
         MailBuilder builder = new MailBuilder(config, "Presentation deleted", "thesis-presentation-deleted");
         builder
                 .sendToThesisStudents(presentation.getThesis())
                 .addDefaultBccRecipients()
                 .fillThesisPresentationPlaceholders(presentation)
+                .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
     }
 
@@ -153,6 +160,7 @@ public class MailingService {
     public void sendAssessmentAddedEmail(ThesisAssessment assessment) {
         MailBuilder builder = new MailBuilder(config, "Assessment added", "thesis-assessment-added");
         builder
+                .addPrimarySender(assessment.getCreatedBy())
                 .sendToThesisSupervisors(assessment.getThesis())
                 .fillThesisAssessmentPlaceholders(assessment)
                 .send(javaMailSender, uploadService);

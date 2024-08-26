@@ -1,9 +1,11 @@
 <p>Dear {{recipientName}},</p>
 
-<p>The final grade has been added to your thesis "{{thesis.title}}"</p>
+<p>
+  {{thesis.supervisors}} added the final grade to your thesis "{{thesis.title}}"
+</p>
 
 <p>
-  <strong>Final Grade</strong> {{thesis.grade.finalGrade}}
+  <strong>Final Grade</strong>: {{thesis.grade.finalGrade}}
 </p>
 
 <p>

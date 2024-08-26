@@ -36,14 +36,14 @@ public class ThesisCommentService {
         );
     }
 
-    public ThesisComment postComment(User creator, Thesis thesis, ThesisCommentType commentType, String message, MultipartFile file) {
+    public ThesisComment postComment(User postingUser, Thesis thesis, ThesisCommentType commentType, String message, MultipartFile file) {
         ThesisComment comment = new ThesisComment();
 
         comment.setType(commentType);
         comment.setThesis(thesis);
         comment.setMessage(message);
         comment.setCreatedAt(Instant.now());
-        comment.setCreatedBy(creator);
+        comment.setCreatedBy(postingUser);
 
         if (file != null) {
             comment.setFilename(uploadService.store(file, 3 * 1024 * 1024));
