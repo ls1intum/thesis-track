@@ -35,7 +35,7 @@ const ThesisPreviewModal = (props: IThesisPreviewModalProps) => {
             <Grid.Col span={{ md: 4 }}>
               <LabeledItem
                 label='Student'
-                value={thesis.students.map((user) => formatUser(user)).join(', ')}
+                value={thesis.students.map((student) => formatUser(student)).join(', ')}
               />
             </Grid.Col>
             {thesis.startDate && (
