@@ -142,8 +142,7 @@ public class ApplicationService {
         application.setDesiredStartDate(desiredStartDate);
         application.setCreatedAt(Instant.now());
 
-        mailingService.sendApplicationCreatedMailToChair(application);
-        mailingService.sendApplicationCreatedMailToStudent(application);
+        mailingService.sendApplicationCreatedEmail(application);
 
         return applicationRepository.save(application);
     }
