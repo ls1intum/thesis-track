@@ -105,7 +105,7 @@ const ThesesGanttChart = () => {
               {timeline && (
                 <Group>
                   <Text fw='bold' fz='sm'>
-                    Phase Duration:
+                    Dates for state:
                   </Text>
                   <ThesisStateBadge state={timeline.id as ThesisState} />
                   <Text fw='bold' fz='sm'>

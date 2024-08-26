@@ -3,7 +3,10 @@ import { useState } from 'react'
 import DocumentEditor from '../../../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
-import { useThesisUpdateAction } from '../../../../../../contexts/ThesisProvider/hooks'
+import {
+  useLoadedThesisContext,
+  useThesisUpdateAction,
+} from '../../../../../../contexts/ThesisProvider/hooks'
 import { ApiError } from '../../../../../../requests/handler'
 
 interface ISubmitAssessmentModalProps {
@@ -14,6 +17,8 @@ interface ISubmitAssessmentModalProps {
 const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
   const { opened, onClose } = props
 
+  const { thesis } = useLoadedThesisContext()
+
   const [summary, setSummary] = useState('')
   const [positives, setPositives] = useState('')
   const [negatives, setNegatives] = useState('')
@@ -21,7 +26,7 @@ const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
 
   const isEmpty = !summary || !positives || !negatives || !gradeSuggestion
 
-  const [submitting, onSave] = useThesisUpdateAction(async (thesis) => {
+  const [submitting, onSave] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/assessment`, {
       method: 'POST',
       requiresAuth: true,

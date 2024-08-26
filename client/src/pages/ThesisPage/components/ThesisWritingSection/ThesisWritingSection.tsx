@@ -120,7 +120,7 @@ const ThesisWritingSection = () => {
                   </Text>
                 )}
                 {access.student && thesis.state === ThesisState.WRITING && (
-                  <Center>
+                  <Center mt='md'>
                     <Button onClick={() => setUploadThesisModal(true)}>Upload Thesis</Button>
                   </Center>
                 )}
@@ -147,7 +147,7 @@ const ThesisWritingSection = () => {
                   </Text>
                 )}
                 {access.student && thesis.state === ThesisState.WRITING && (
-                  <Center>
+                  <Center mt='md'>
                     <Button onClick={() => setUploadPresentationModal(true)}>
                       Upload Presentation
                     </Button>
