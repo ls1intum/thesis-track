@@ -20,3 +20,8 @@ ALTER TABLE topics ALTER COLUMN required_degree DROP NOT NULL;
 
 --changeset emilius:06-topics-3
 ALTER TABLE topics ADD COLUMN type TEXT;
+
+--changeset emilius:06-topics-4
+ALTER TABLE topics DROP COLUMN required_degree;
+ALTER TABLE users DROP COLUMN research_areas;
+ALTER TABLE users DROP COLUMN focus_topics;

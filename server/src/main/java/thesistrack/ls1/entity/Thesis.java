@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
@@ -48,6 +50,10 @@ public class Thesis {
     @Enumerated(EnumType.STRING)
     @Column(name = "visibility", nullable = false, length = 100)
     private ThesisVisibility visibility;
+
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "keywords", columnDefinition = "text[]")
+    private Set<String> keywords = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "application_id")

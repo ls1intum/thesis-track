@@ -15,6 +15,7 @@ export interface IThesis {
   title: string
   type: string
   visibility: string
+  keywords: string[]
   infoText: string
   abstractText: string
   state: ThesisState
@@ -60,7 +61,7 @@ export interface IThesis {
   states: Array<{
     state: ThesisState
     startedAt: string
-    endedAt: string | null
+    endedAt: string
   }>
 }
 
@@ -82,4 +83,8 @@ export interface IPublishedThesis {
   students: ILightUser[]
   advisors: ILightUser[]
   supervisors: ILightUser[]
+}
+
+export function isThesis(thesis: any): thesis is IThesis {
+  return thesis.thesisId && !!thesis.states
 }

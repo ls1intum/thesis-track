@@ -1,5 +1,5 @@
 import { DataTable } from 'mantine-datatable'
-import { ActionIcon, Center, Grid, Modal, Stack, Title } from '@mantine/core'
+import { ActionIcon, Center, Modal, Stack, Title } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { PaginationResponse } from '../../../../requests/responses/pagination'
 import { IPublishedThesis } from '../../../../requests/responses/thesis'
@@ -8,10 +8,9 @@ import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
-import { formatDate, formatUser } from '../../../../utils/format'
-import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
-import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
+import { formatUser } from '../../../../utils/format'
 import { Eye } from 'phosphor-react'
+import ThesisData from '../../../../components/ThesisData/ThesisData'
 
 const PublishedTheses = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -72,7 +71,7 @@ const PublishedTheses = () => {
             title: 'Student',
             render: (thesis) =>
               thesis.students
-                .map((user) => formatUser(user, { withUniversityId: false }))
+                .map((student) => formatUser(student, { withUniversityId: false }))
                 .join(', '),
           },
           {
@@ -80,7 +79,7 @@ const PublishedTheses = () => {
             title: 'Advisor',
             render: (thesis) =>
               thesis.advisors
-                .map((user) => formatUser(user, { withUniversityId: false }))
+                .map((advisor) => formatUser(advisor, { withUniversityId: false }))
                 .join(', '),
           },
           {
@@ -112,45 +111,7 @@ const PublishedTheses = () => {
       >
         {openedThesis && (
           <Stack gap='md'>
-            <Grid>
-              <Grid.Col span={{ md: 4 }}>
-                <LabeledItem
-                  label='Supervisor'
-                  value={openedThesis.supervisors
-                    .map((user) => formatUser(user, { withUniversityId: false }))
-                    .join(', ')}
-                />
-              </Grid.Col>
-              <Grid.Col span={{ md: 4 }}>
-                <LabeledItem
-                  label='Advisor'
-                  value={openedThesis.advisors
-                    .map((user) => formatUser(user, { withUniversityId: false }))
-                    .join(', ')}
-                />
-              </Grid.Col>
-              <Grid.Col span={{ md: 4 }}>
-                <LabeledItem
-                  label='Student'
-                  value={openedThesis.students
-                    .map((user) => formatUser(user, { withUniversityId: false }))
-                    .join(', ')}
-                />
-              </Grid.Col>
-              <Grid.Col span={{ md: 4 }}>
-                <LabeledItem
-                  label='Start Date'
-                  value={formatDate(openedThesis.startDate, { withTime: false })}
-                />
-              </Grid.Col>
-              <Grid.Col span={{ md: 4 }}>
-                <LabeledItem
-                  label='End Date'
-                  value={formatDate(openedThesis.endDate, { withTime: false })}
-                />
-              </Grid.Col>
-            </Grid>
-            <DocumentEditor label='Abstract' value={openedThesis.abstractText} />
+            <ThesisData thesis={openedThesis} additionalInformation={['abstract']} />
             <AuthenticatedFilePreview
               url={`/v2/published-theses/${openedThesis.thesisId}/thesis`}
               height={500}

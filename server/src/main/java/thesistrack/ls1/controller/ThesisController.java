@@ -146,6 +146,7 @@ public class ThesisController {
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.visibility()),
+                RequestValidator.validateNotNull(payload.keywords()),
                 payload.startDate(),
                 payload.endDate(),
                 RequestValidator.validateNotNull(payload.studentIds()),

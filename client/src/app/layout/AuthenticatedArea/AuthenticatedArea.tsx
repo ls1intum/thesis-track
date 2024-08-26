@@ -8,12 +8,15 @@ import {
   Group,
   Stack,
   Text,
+  Tooltip,
   useMantineColorScheme,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
-import { useDisclosure } from '@mantine/hooks'
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import {
+  CaretDoubleLeft,
+  CaretDoubleRight,
   Kanban,
   Moon,
   NewspaperClipping,
@@ -30,6 +33,7 @@ import Logo from '../../../static/logo'
 import { useNavigationType } from 'react-router'
 import ScrollToTop from '../ScrollToTop/ScrollToTop'
 import PageLoader from '../../../components/PageLoader/PageLoader'
+import { useLocalStorage } from '../../../hooks/local-storage'
 
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
@@ -81,6 +85,14 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
   const { colorScheme, toggleColorScheme } = useMantineColorScheme()
   const [opened, { toggle, close }] = useDisclosure()
 
+  const minimizeAnimationDuration = 200
+  const [minimizedState, setMinimized] = useLocalStorage<boolean>('navigation_minimized', {
+    usingJson: true,
+  })
+  const [debouncedMinimized] = useDebouncedValue(minimizedState, minimizeAnimationDuration)
+  // only use debounced State if value is false because otherwise the text is formatted weirdly if you expand the navigation
+  const minimized = minimizedState || debouncedMinimized
+
   const location = useLocation()
   const navigationType = useNavigationType()
 
@@ -114,9 +126,14 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     <AppShell
       header={{ collapsed: !showHeader, height: 60 }}
       navbar={{
-        width: 300,
+        width: minimizedState ? 70 : 300,
         breakpoint: 'md',
         collapsed: { mobile: !opened, desktop: !opened && collapseNavigation },
+      }}
+      styles={{
+        navbar: {
+          transition: `width ${minimizeAnimationDuration}ms ease-in-out`,
+        },
       }}
       padding={0}
     >
@@ -133,22 +150,24 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
       <AppShell.Navbar p='md'>
         <AppShell.Section grow mb='md'>
-          <Group preventGrowOverflow={false}>
-            <Logo className={classes.logo} />
-            <Text className={classes.siteName} fw='bold'>
-              ThesisTrack
-            </Text>
-            <ActionIcon
-              variant='outline'
-              color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}
-              onClick={() => toggleColorScheme()}
-              title='Toggle color scheme'
-              ml='auto'
-            >
-              {colorScheme === 'dark' ? <Sun size='1.1rem' /> : <Moon size='1.1rem' />}
-            </ActionIcon>
-          </Group>
-          <Divider my='sm' />
+          {!minimized && (
+            <Group preventGrowOverflow={false}>
+              <Logo className={classes.logo} />
+              <Text className={classes.siteName} fw='bold'>
+                ThesisTrack
+              </Text>
+              <ActionIcon
+                variant='outline'
+                color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}
+                onClick={() => toggleColorScheme()}
+                title='Toggle color scheme'
+                ml='auto'
+              >
+                {colorScheme === 'dark' ? <Sun size='1.1rem' /> : <Moon size='1.1rem' />}
+              </ActionIcon>
+            </Group>
+          )}
+          {!minimized && <Divider my='sm' />}
           {links
             .filter(
               (item) =>
@@ -156,29 +175,46 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             )
             .map((item) => (
               <Link
-                className={classes.link}
+                className={minimized ? classes.minimizedLink : classes.fullLink}
                 data-active={location.pathname.startsWith(item.link) || undefined}
                 key={item.label}
                 to={item.link}
               >
-                <item.icon className={classes.linkIcon} size={32} />
-                <span>{item.label}</span>
+                <Tooltip label={item.label} disabled={!minimized} position='right' offset={15}>
+                  <item.icon className={classes.linkIcon} size={32} />
+                </Tooltip>
+                {!minimized && <span>{item.label}</span>}
               </Link>
             ))}
         </AppShell.Section>
         <AppShell.Section>
           <Link
             to='/settings/my-information'
-            className={classes.link}
+            className={minimized ? classes.minimizedLink : classes.fullLink}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
-            <User className={classes.linkIcon} size={32} />
-            <span>My Information</span>
+            <Tooltip label='My Information' disabled={!minimized} position='right' offset={15}>
+              <User className={classes.linkIcon} size={32} />
+            </Tooltip>
+            {!minimized && <span>My Information</span>}
           </Link>
-          <Link to='/logout' className={classes.link}>
-            <SignOut className={classes.linkIcon} size={32} />
-            <span>Logout</span>
+          <Link to='/logout' className={minimized ? classes.minimizedLink : classes.fullLink}>
+            <Tooltip label='Logout' disabled={!minimized} position='right' offset={15}>
+              <SignOut className={classes.linkIcon} size={32} />
+            </Tooltip>
+            {!minimized && <span>Logout</span>}
           </Link>
+          <Group>
+            <ActionIcon
+              visibleFrom='md'
+              ml='auto'
+              mr={minimized ? 'auto' : undefined}
+              variant='transparent'
+              onClick={() => setMinimized((prev) => !prev)}
+            >
+              {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
+            </ActionIcon>
+          </Group>
         </AppShell.Section>
       </AppShell.Navbar>
 

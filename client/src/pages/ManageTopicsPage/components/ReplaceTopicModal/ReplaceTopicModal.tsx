@@ -60,8 +60,8 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
         problemStatement: topic.problemStatement,
         goals: topic.goals,
         references: topic.references,
-        supervisorIds: topic.supervisors.map((user) => user.userId),
-        advisorIds: topic.advisors.map((user) => user.userId),
+        supervisorIds: topic.supervisors.map((supervisor) => supervisor.userId),
+        advisorIds: topic.advisors.map((advisor) => advisor.userId),
       })
     }
 

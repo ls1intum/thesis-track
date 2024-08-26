@@ -24,3 +24,6 @@ DROP TABLE thesis_proposal_feedback;
 
 --changeset emilius:03-thesis-migration-4
 ALTER TABLE theses ADD type TEXT NOT NULL DEFAULT 'BACHELOR';
+
+--changeset emilius:03-thesis-migration-5
+ALTER TABLE theses ADD keywords TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];

@@ -11,6 +11,7 @@ public record UpdateThesisPayload(
         String thesisTitle,
         String thesisType,
         ThesisVisibility visibility,
+        Set<String> keywords,
         Instant startDate,
         Instant endDate,
         Set<UUID> studentIds,

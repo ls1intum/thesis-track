@@ -72,3 +72,15 @@ export function formatApplicationState(state: ApplicationState) {
 
   return stateMap[state]
 }
+
+export function formatPresentationType(type: string) {
+  if (type === 'INTERMEDIATE') {
+    return 'Intermediate'
+  }
+
+  if (type === 'FINAL') {
+    return 'Final'
+  }
+
+  return type
+}

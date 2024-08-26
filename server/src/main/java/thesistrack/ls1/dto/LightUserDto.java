@@ -12,6 +12,7 @@ public record LightUserDto (
     String matriculationNumber,
     String firstName,
     String lastName,
+    String email,
     String studyDegree,
     String studyProgram,
     Instant joinedAt,
@@ -24,7 +25,7 @@ public record LightUserDto (
 
         return new LightUserDto(
                 user.getId(), user.getUniversityId(), user.getMatriculationNumber(),
-                user.getFirstName(), user.getLastName(), user.getStudyDegree(), user.getStudyProgram(),
+                user.getFirstName(), user.getLastName(), user.getEmail().toString(), user.getStudyDegree(), user.getStudyProgram(),
                 user.getJoinedAt(), user.getGroups().stream().map(x -> x.getId().getGroup()).toList()
         );
     }

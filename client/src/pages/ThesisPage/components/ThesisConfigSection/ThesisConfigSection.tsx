@@ -1,10 +1,9 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { Accordion, Badge, Button, Group, Select, Stack, Text, TextInput } from '@mantine/core'
+import { Accordion, Button, Group, Select, Stack, TagsInput, Text, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { DateInput, DateTimePicker, DateValue } from '@mantine/dates'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
-import { ThesisStateColor } from '../../../../config/colors'
 import { isNotEmptyUserList } from '../../../../utils/validation'
 import { isThesisClosed } from '../../../../utils/thesis'
 import { doRequest } from '../../../../requests/request'
@@ -13,14 +12,15 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
-import { formatThesisState } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { ApiError } from '../../../../requests/handler'
+import ThesisStateBadge from '../../../../components/ThesisStateBadge/ThesisStateBadge'
 
 interface IThesisConfigSectionFormValues {
   title: string
   type: string
   visibility: string
+  keywords: string[]
   startDate: DateValue | undefined
   endDate: DateValue | undefined
   students: string[]
@@ -58,11 +58,12 @@ const ThesisConfigSection = () => {
       title: thesis.title,
       type: thesis.type,
       visibility: thesis.visibility,
+      keywords: thesis.keywords,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
       endDate: thesis.endDate ? new Date(thesis.endDate) : undefined,
-      students: thesis.students.map((user) => user.userId),
-      advisors: thesis.advisors.map((user) => user.userId),
-      supervisors: thesis.supervisors.map((user) => user.userId),
+      students: thesis.students.map((student) => student.userId),
+      advisors: thesis.advisors.map((advisor) => advisor.userId),
+      supervisors: thesis.supervisors.map((supervisor) => supervisor.userId),
       states: thesis.states.map((state) => ({
         state: state.state,
         changedAt: new Date(state.startedAt),
@@ -105,11 +106,12 @@ const ThesisConfigSection = () => {
       title: thesis.title,
       type: thesis.type,
       visibility: thesis.visibility,
+      keywords: thesis.keywords,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
       endDate: thesis.endDate ? new Date(thesis.endDate) : undefined,
-      students: thesis.students.map((user) => user.userId),
-      advisors: thesis.advisors.map((user) => user.userId),
-      supervisors: thesis.supervisors.map((user) => user.userId),
+      students: thesis.students.map((student) => student.userId),
+      advisors: thesis.advisors.map((advisor) => advisor.userId),
+      supervisors: thesis.supervisors.map((supervisor) => supervisor.userId),
       states: thesis.states.map((state) => ({
         state: state.state,
         changedAt: new Date(state.startedAt),
@@ -144,6 +146,7 @@ const ThesisConfigSection = () => {
         thesisTitle: values.title,
         thesisType: values.type,
         visibility: values.visibility,
+        keywords: values.keywords,
         startDate: values.startDate,
         endDate: values.endDate,
         studentIds: values.students,
@@ -201,6 +204,12 @@ const ThesisConfigSection = () => {
                 ]}
                 {...form.getInputProps('visibility')}
               />
+              <TagsInput
+                label='Keywords'
+                disabled={!access.advisor}
+                data={form.values.keywords}
+                {...form.getInputProps('keywords')}
+              />
               <Group grow>
                 <DateInput
                   label='Start Date'
@@ -244,9 +253,7 @@ const ThesisConfigSection = () => {
                     <Text ta='center' fw='bold'>
                       State changed to
                     </Text>
-                    <Badge color={ThesisStateColor[item.state]}>
-                      {formatThesisState(item.state)}
-                    </Badge>
+                    <ThesisStateBadge state={item.state} />
                     <Text ta='center' fw='bold'>
                       at
                     </Text>
