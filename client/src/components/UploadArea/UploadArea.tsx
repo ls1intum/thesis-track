@@ -17,13 +17,13 @@ import { useMemo } from 'react'
 interface IUploadAreaProps {
   value: File | undefined
   onChange: (file: File | undefined) => unknown
+  maxSize: number
   label?: string
   required?: boolean
-  maxSize?: number
 }
 
 const UploadArea = (props: IUploadAreaProps) => {
-  const { label, required, value, onChange, maxSize = 1024 } = props
+  const { label, required, value, onChange, maxSize } = props
 
   const theme = useMantineTheme()
 
@@ -56,9 +56,9 @@ const UploadArea = (props: IUploadAreaProps) => {
             onChange(files[0])
           }}
           onReject={() => {
-            showSimpleError(`Failed upload file. Max file size is ${Math.floor(maxSize / 1024)}MB`)
+            showSimpleError(`Failed upload file. Max file size is ${Math.floor(maxSize / 1024 / 1024)}MB`)
           }}
-          maxSize={maxSize * 1024}
+          maxSize={maxSize}
           accept={PDF_MIME_TYPE}
         >
           <Group align='center' gap='xl' style={{ minHeight: rem(150), pointerEvents: 'none' }}>
@@ -76,7 +76,7 @@ const UploadArea = (props: IUploadAreaProps) => {
                 Drag the file here or click to select file
               </Text>
               <Text size='sm' c='dimmed' inline>
-                The file should not exceed {Math.floor(maxSize / 1024)}MB
+                The file should not exceed {Math.floor(maxSize / 1024 / 1024)}MB
               </Text>
             </Stack>
           </Group>

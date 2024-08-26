@@ -27,7 +27,6 @@ public class ApplicationService {
     private final MailingService mailingService;
     private final TopicRepository topicRepository;
     private final ThesisService thesisService;
-    private final UserService userService;
     private final TopicService topicService;
 
     @Autowired
@@ -38,7 +37,6 @@ public class ApplicationService {
             MailingService mailingService,
             TopicRepository topicRepository,
             ThesisService thesisService,
-            UserService userService,
             TopicService topicService
     ) {
         this.applicationRepository = applicationRepository;
@@ -48,7 +46,6 @@ public class ApplicationService {
         this.mailingService = mailingService;
         this.topicRepository = topicRepository;
         this.thesisService = thesisService;
-        this.userService = userService;
         this.topicService = topicService;
     }
 
@@ -125,9 +122,11 @@ public class ApplicationService {
         application.setDesiredStartDate(payload.desiredStartDate());
         application.setCreatedAt(currentTime);
 
+        application = applicationRepository.save(application);
+
         mailingService.sendApplicationCreatedEmail(application);
 
-        return applicationRepository.save(application);
+        return application;
     }
 
     @Transactional
@@ -142,9 +141,11 @@ public class ApplicationService {
         application.setDesiredStartDate(desiredStartDate);
         application.setCreatedAt(Instant.now());
 
+        application = applicationRepository.save(application);
+
         mailingService.sendApplicationCreatedEmail(application);
 
-        return applicationRepository.save(application);
+        return application;
     }
 
     @Transactional

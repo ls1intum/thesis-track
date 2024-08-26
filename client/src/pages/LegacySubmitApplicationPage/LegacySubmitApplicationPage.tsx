@@ -126,20 +126,20 @@ const LegacySubmitApplicationPage = () => {
       examinationReport: (value) => {
         if (!value) {
           return 'Please upload your examination report.'
-        } else if (value.size > 1024 ** 3) {
-          return 'The examination report should not exceed 3mb'
+        } else if (value.size > 2 * 1024 ** 3) {
+          return 'The examination report should not exceed 2mb'
         }
       },
       cv: (value) => {
         if (!value) {
           return 'Please upload your CV.'
-        } else if (value.size > 1024 ** 3) {
-          return 'The CV should not exceed 3mb'
+        } else if (value.size > 2 * 1024 ** 3) {
+          return 'The CV should not exceed 2mb'
         }
       },
       degreeReport: (value) => {
-        if (value && value.size > 1024 ** 3) {
-          return 'The bachelor report should not exceed 3mb'
+        if (value && value.size > 2 * 1024 ** 3) {
+          return 'The bachelor report should not exceed 2mb'
         }
       },
     },
@@ -391,18 +391,21 @@ const LegacySubmitApplicationPage = () => {
                   required={true}
                   value={form.values.examinationReport}
                   onChange={(file) => form.setValues({ examinationReport: file })}
+                  maxSize={2 * 1024 * 1024}
                 />
                 <UploadArea
                   label='CV'
                   required={true}
                   value={form.values.cv}
                   onChange={(file) => form.setValues({ cv: file })}
+                  maxSize={2 * 1024 * 1024}
                 />
                 <UploadArea
                   label='Bachelor Report'
                   required={false}
                   value={form.values.degreeReport}
                   onChange={(file) => form.setValues({ degreeReport: file })}
+                  maxSize={2 * 1024 * 1024}
                 />
                 <Checkbox
                   mt='md'

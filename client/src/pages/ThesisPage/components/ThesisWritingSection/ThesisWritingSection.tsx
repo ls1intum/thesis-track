@@ -104,6 +104,7 @@ const ThesisWritingSection = () => {
                   opened={uploadThesisModal}
                   onClose={() => setUploadThesisModal(false)}
                   onUpload={onThesisUpload}
+                  maxSize={20 * 1024 * 1024}
                 />
                 {thesis.files.thesis ? (
                   <AuthenticatedFilePreview
@@ -130,6 +131,7 @@ const ThesisWritingSection = () => {
                   opened={uploadPresentationModal}
                   onClose={() => setUploadPresentationModal(false)}
                   onUpload={onPresentationUpload}
+                  maxSize={20 * 1024 * 1024}
                 />
                 {thesis.files.presentation ? (
                   <AuthenticatedFilePreview

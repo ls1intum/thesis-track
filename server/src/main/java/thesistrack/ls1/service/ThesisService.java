@@ -190,7 +190,7 @@ public class ThesisService {
         ThesisProposal proposal = new ThesisProposal();
 
         proposal.setThesis(thesis);
-        proposal.setProposalFilename(uploadService.store(proposalFile, 3 * 1024 * 1024));
+        proposal.setProposalFilename(uploadService.store(proposalFile, 20 * 1024 * 1024));
         proposal.setCreatedAt(Instant.now());
         proposal.setCreatedBy(uploadingUser);
 
@@ -250,14 +250,14 @@ public class ThesisService {
 
     @Transactional
     public Thesis uploadPresentation(Thesis thesis, MultipartFile presentationFile) {
-        thesis.setFinalPresentationFilename(uploadService.store(presentationFile, 3 * 1024 * 1024));
+        thesis.setFinalPresentationFilename(uploadService.store(presentationFile, 20 * 1024 * 1024));
 
         return thesisRepository.save(thesis);
     }
 
     @Transactional
     public Thesis uploadThesis(Thesis thesis, MultipartFile thesisFile) {
-        thesis.setFinalThesisFilename(uploadService.store(thesisFile, 3 * 1024 * 1024));
+        thesis.setFinalThesisFilename(uploadService.store(thesisFile, 20 * 1024 * 1024));
 
         return thesisRepository.save(thesis);
     }
