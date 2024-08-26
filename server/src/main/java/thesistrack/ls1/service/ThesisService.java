@@ -90,12 +90,13 @@ public class ThesisService {
 
         thesis.setTitle(thesisTitle);
         thesis.setType(thesisType);
+        thesis.setVisibility(ThesisVisibility.PRIVATE);
+        thesis.setKeywords(new HashSet<>());
         thesis.setInfo("");
         thesis.setAbstractField("");
         thesis.setState(ThesisState.PROPOSAL);
         thesis.setApplication(application);
         thesis.setCreatedAt(Instant.now());
-        thesis.setVisibility(ThesisVisibility.PRIVATE);
 
         thesis = thesisRepository.save(thesis);
 
@@ -124,6 +125,7 @@ public class ThesisService {
             String thesisTitle,
             String thesisType,
             ThesisVisibility visibility,
+            Set<String> keywords,
             Instant startDate,
             Instant endDate,
             Set<UUID> studentIds,
@@ -134,6 +136,7 @@ public class ThesisService {
         thesis.setTitle(thesisTitle);
         thesis.setType(thesisType);
         thesis.setVisibility(visibility);
+        thesis.setKeywords(keywords);
 
         if ((startDate == null && endDate != null) || (startDate != null && endDate == null)) {
             throw new ResourceInvalidParametersException("Both start and end date must be provided.");

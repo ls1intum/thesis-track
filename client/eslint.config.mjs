@@ -81,6 +81,9 @@ export default [...fixupConfigRules(compat.extends(
 
         "prettier/prettier": ["error", {
             endOfLine: "auto",
-        }]
+        }],
+
+        "react/prop-types": "off",
+        "react/display-name": "off"
     },
 }];

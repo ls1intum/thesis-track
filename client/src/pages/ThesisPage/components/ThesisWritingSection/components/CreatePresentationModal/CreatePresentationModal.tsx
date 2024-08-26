@@ -9,6 +9,7 @@ import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
 import { ApiError } from '../../../../../../requests/handler'
+import { formatPresentationType } from '../../../../../../utils/format'
 
 interface ICreatePresentationModalProps {
   opened: boolean
@@ -99,10 +100,10 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
           <Select
             label='Presentation Type'
             required
-            data={[
-              { label: 'Intermediate', value: 'INTERMEDIATE' },
-              { label: 'Final', value: 'FINAL' },
-            ]}
+            data={['INTERMEDIATE', 'FINAL'].map((type) => ({
+              label: formatPresentationType(type),
+              value: type,
+            }))}
             {...form.getInputProps('type')}
           />
           <Select

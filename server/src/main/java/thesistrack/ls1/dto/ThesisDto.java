@@ -7,16 +7,14 @@ import thesistrack.ls1.constants.ThesisVisibility;
 import thesistrack.ls1.entity.*;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public record ThesisDto (
         UUID thesisId,
         String title,
         String type,
         ThesisVisibility visibility,
+        Set<String> keywords,
         String infoText,
         String abstractText,
         ThesisState state,
@@ -154,7 +152,7 @@ public record ThesisDto (
             Instant endedAt = i + 1 < stateChanges.size() ? stateChanges.get(i + 1).getChangedAt() : Instant.now();
 
             if (stateChange.getId().getState() == ThesisState.FINISHED || stateChange.getId().getState() == ThesisState.DROPPED_OUT) {
-                endedAt = null;
+                endedAt = stateChange.getChangedAt();
             }
 
             states.add(ThesisStateChangeDto.fromStateChangeEntity(stateChange, endedAt));
@@ -169,6 +167,7 @@ public record ThesisDto (
                 thesis.getTitle(),
                 thesis.getType(),
                 thesis.getVisibility(),
+                thesis.getKeywords(),
                 thesis.getInfo(),
                 thesis.getAbstractField(),
                 thesis.getState(),

@@ -20,7 +20,7 @@ const TopicData = (props: ITopicDataProps) => {
           <LabeledItem
             label='Supervisor'
             value={topic.supervisors
-              .map((user) => formatUser(user, { withUniversityId: false }))
+              .map((supervisor) => formatUser(supervisor, { withUniversityId: false }))
               .join(', ')}
           />
         </Grid.Col>
@@ -28,7 +28,7 @@ const TopicData = (props: ITopicDataProps) => {
           <LabeledItem
             label='Advisor'
             value={topic.advisors
-              .map((user) => formatUser(user, { withUniversityId: false }))
+              .map((advisor) => formatUser(advisor, { withUniversityId: false }))
               .join(', ')}
           />
         </Grid.Col>

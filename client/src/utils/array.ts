@@ -8,3 +8,6 @@ export function arrayUnique<T>(
 ): T[] {
   return array.filter((v, i, a) => a.findIndex((x) => compare(v, x)) === i)
 }
+
+export type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never

@@ -27,7 +27,7 @@ const TopicPage = () => {
   }
 
   return (
-    <ContentContainer>
+    <ContentContainer size='md'>
       <Stack gap='md'>
         <Title>{topic.title}</Title>
         <TopicData topic={topic} />

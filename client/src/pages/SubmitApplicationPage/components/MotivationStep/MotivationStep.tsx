@@ -8,6 +8,7 @@ import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { DateInput, DateValue } from '@mantine/dates'
+import { getHtmlTextLength } from '../../../../utils/validation'
 
 interface IMotivationStepProps {
   topic: ITopic | undefined
@@ -44,8 +45,8 @@ const MotivationStep = (props: IMotivationStepProps) => {
       motivation: (value) => {
         if (!value) {
           return 'Please state your motivation'
-        } else if (value.length > 1000) {
-          return 'The maximum allowed number of characters is 1000'
+        } else if (getHtmlTextLength(value) > 500) {
+          return 'The maximum allowed number of characters is 500'
         }
       },
     },

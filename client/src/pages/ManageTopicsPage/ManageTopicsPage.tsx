@@ -1,7 +1,7 @@
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React, { useState } from 'react'
 import { usePageTitle } from '../../hooks/theme'
-import { Button, Group, Stack, Title, ActionIcon } from '@mantine/core'
+import { Button, Group, Stack, Title } from '@mantine/core'
 import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
 import TopicsTable from '../../components/TopicsTable/TopicsTable'
 import { ITopic } from '../../requests/responses/topic'
@@ -42,7 +42,7 @@ const ManageTopicsPage = () => {
                 title: 'Actions',
                 textAlign: 'center',
                 noWrap: true,
-                width: 100,
+                width: 120,
                 render: (topic) => (
                   <Group
                     preventGrowOverflow={false}
@@ -50,11 +50,11 @@ const ManageTopicsPage = () => {
                     onClick={(e) => e.stopPropagation()}
                   >
                     {!topic.closedAt && (
-                      <ActionIcon size='md' onClick={() => setEditingTopic(topic)}>
+                      <Button size='xs' onClick={() => setEditingTopic(topic)}>
                         <Pencil />
-                      </ActionIcon>
+                      </Button>
                     )}
-                    <CloseTopicButton size='md' topic={topic} />
+                    <CloseTopicButton size='xs' topic={topic} />
                   </Group>
                 ),
               },

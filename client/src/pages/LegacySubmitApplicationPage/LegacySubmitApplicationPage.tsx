@@ -30,6 +30,7 @@ import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 import { LegacySuccessfulSubmission } from './components/LegacySuccessfulSubmission/LegacySuccessfulSubmission'
 import { getApiResponseErrorMessage } from '../../requests/handler'
 import DocumentEditor from '../../components/DocumentEditor/DocumentEditor'
+import { getHtmlTextLength } from '../../utils/validation'
 
 const LegacySubmitApplicationPage = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -85,28 +86,28 @@ const LegacySubmitApplicationPage = () => {
       motivation: (value) => {
         if (!value || !isNotEmpty(value)) {
           return 'Please state your motivation for the thesis.'
-        } else if (value.length > 1000) {
+        } else if (getHtmlTextLength(value) > 500) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
       specialSkills: (value) => {
         if (!value) {
           return 'Please state your special skills.'
-        } else if (value.length > 1000) {
+        } else if (getHtmlTextLength(value) > 500) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
       interests: (value) => {
         if (!value) {
           return 'Please state your interests.'
-        } else if (value.length > 1000) {
+        } else if (getHtmlTextLength(value) > 500) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
       projects: (value) => {
         if (!value) {
           return 'Please state your projects.'
-        } else if (value.length > 1000) {
+        } else if (getHtmlTextLength(value) > 500) {
           return 'The maximum allowed number of characters is 500.'
         }
       },
