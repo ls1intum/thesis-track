@@ -131,6 +131,24 @@ public class ApplicationService {
     }
 
     @Transactional
+    public Application createApplication(User user, UUID topicId, String thesisTitle, Instant desiredStartDate, String motivation) {
+        Application application = new Application();
+        application.setUser(user);
+
+        application.setTopic(topicId == null ? null : topicService.findById(topicId));
+        application.setThesisTitle(thesisTitle);
+        application.setMotivation(motivation);
+        application.setState(ApplicationState.NOT_ASSESSED);
+        application.setDesiredStartDate(desiredStartDate);
+        application.setCreatedAt(Instant.now());
+
+        mailingService.sendApplicationCreatedMailToChair(application);
+        mailingService.sendApplicationCreatedMailToStudent(application);
+
+        return applicationRepository.save(application);
+    }
+
+    @Transactional
     public Application accept(
             User reviewer,
             Application application,

@@ -36,26 +36,20 @@ public class UserService {
                 .searchUsers(searchQueryFilter, groupsFilter, PageRequest.of(page, limit, Sort.by(order)));
     }
 
-    public User findById(UUID userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %s not found.", userId)));
-    }
-
-    public Resource getExaminationReport(UUID userId) {
-        User user = findById(userId);
-
+    public Resource getExaminationReport(User user) {
         return uploadService.load(user.getExaminationFilename());
     }
 
-    public Resource getCV(UUID userId) {
-        User user = findById(userId);
-
+    public Resource getCV(User user) {
         return uploadService.load(user.getCvFilename());
     }
 
-    public Resource getDegreeReport(UUID userId) {
-        User user = findById(userId);
-
+    public Resource getDegreeReport(User user) {
         return uploadService.load(user.getDegreeFilename());
+    }
+
+    public User findById(UUID userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(String.format("User with id %s not found.", userId)));
     }
 }

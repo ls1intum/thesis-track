@@ -107,4 +107,12 @@ public class User {
 
         return false;
     }
+
+    public boolean hasFullAccess(User user) {
+        if (user.hasAnyGroup("admin", "supervisor", "advisor")) {
+            return true;
+        }
+
+        return id.equals(user.getId());
+    }
 }

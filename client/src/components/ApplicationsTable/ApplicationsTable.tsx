@@ -47,6 +47,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       title: 'Suggested Title',
       ellipsis: true,
       width: 300,
+      render: (application) => application.thesisTitle || application.topic?.title,
     },
     reviewed_at: {
       accessor: 'reviewedAt',

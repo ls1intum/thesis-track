@@ -21,6 +21,8 @@ import {
   SignOut,
   Sun,
   FolderSimplePlus,
+  User,
+  PaperPlaneTilt,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
@@ -42,6 +44,12 @@ const links: Array<{
   groups: string[] | undefined
 }> = [
   { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
+  {
+    link: '/submit-application',
+    label: 'Submit Application',
+    icon: PaperPlaneTilt,
+    groups: undefined,
+  },
   {
     link: '/applications',
     label: 'Review Applications',
@@ -159,14 +167,14 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             ))}
         </AppShell.Section>
         <AppShell.Section>
-          {/*<Link
+          <Link
             to='/settings/my-information'
             className={classes.link}
             data-active={location.pathname.startsWith('/settings/my-information') || undefined}
           >
             <User className={classes.linkIcon} size={32} />
             <span>My Information</span>
-          </Link>*/}
+          </Link>
           <Link to='/logout' className={classes.link}>
             <SignOut className={classes.linkIcon} size={32} />
             <span>Logout</span>

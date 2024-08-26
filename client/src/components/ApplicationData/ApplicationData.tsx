@@ -1,5 +1,5 @@
 import { IApplication } from '../../requests/responses/application'
-import { Stack, Group, Divider, Grid, Title, Badge } from '@mantine/core'
+import { Stack, Group, Divider, Grid, Title, Badge, Accordion } from '@mantine/core'
 import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
@@ -8,6 +8,7 @@ import { formatApplicationState, formatDate, formatUser } from '../../utils/form
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
+import TopicAccordionItem from '../TopicAccordionItem/TopicAccordionItem'
 
 interface IApplicationDataProps {
   application: IApplication
@@ -28,10 +29,13 @@ const ApplicationData = (props: IApplicationDataProps) => {
             </Title>
             {rightTitleSection}
           </Group>
-          <LabeledItem
-            label='Thesis Title'
-            value={application.topic?.title || application.thesisTitle}
-          />
+          {application.topic ? (
+            <Accordion variant='separated'>
+              <TopicAccordionItem topic={application.topic} />
+            </Accordion>
+          ) : (
+            <LabeledItem label='Thesis Title' value={application.thesisTitle} />
+          )}
           <LabeledItem
             label='Motivation'
             value={<DocumentEditor value={application.motivation} />}
