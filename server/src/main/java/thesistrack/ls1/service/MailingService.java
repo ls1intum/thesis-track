@@ -107,6 +107,7 @@ public class MailingService {
                 .addPrimarySender(proposal.getApprovedBy())
                 .sendToThesisStudents(proposal.getThesis())
                 .fillThesisPlaceholders(proposal.getThesis())
+                .fillThesisProposalPlaceholders(proposal)
                 .send(javaMailSender, uploadService);
     }
 

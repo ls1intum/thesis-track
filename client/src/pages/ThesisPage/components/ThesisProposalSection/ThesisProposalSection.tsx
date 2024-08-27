@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Grid, Group, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Divider, Grid, Group, Stack, Text } from '@mantine/core'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
@@ -105,6 +105,9 @@ const ThesisProposalSection = () => {
                         }
                       />
                     </Grid.Col>
+                    <Grid.Col span={12}>
+                      <Divider />
+                    </Grid.Col>
                   </Grid>
                 ))}
               </Stack>
@@ -147,7 +150,7 @@ const ThesisProposalSection = () => {
               )}
               {access.student && thesis.state === ThesisState.WRITING && (
                 <Button ml='auto' onClick={() => setUploadModal(true)}>
-                  Upload New Proposal (Needs Approval)
+                  Upload New Proposal (Needs Re-Approval)
                 </Button>
               )}
             </Group>

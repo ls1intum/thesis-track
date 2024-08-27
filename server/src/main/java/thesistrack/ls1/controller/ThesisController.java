@@ -65,6 +65,7 @@ public class ThesisController {
         UUID userId = authenticatedUser.getId();
         Set<ThesisVisibility> visibilities = Set.of(
                 ThesisVisibility.PUBLIC,
+                ThesisVisibility.STUDENT,
                 ThesisVisibility.INTERNAL,
                 ThesisVisibility.PRIVATE
         );
@@ -75,7 +76,10 @@ public class ThesisController {
                 visibilities = null;
             } else if (authenticatedUser.hasAnyGroup("advisor", "supervisor")) {
                 userId = null;
-                visibilities = Set.of(ThesisVisibility.PUBLIC, ThesisVisibility.INTERNAL);
+                visibilities = Set.of(ThesisVisibility.PUBLIC, ThesisVisibility.STUDENT, ThesisVisibility.INTERNAL);
+            } else if (authenticatedUser.hasAnyGroup("student")) {
+                userId = null;
+                visibilities = Set.of(ThesisVisibility.PUBLIC, ThesisVisibility.STUDENT);
             }
         }
 
@@ -213,7 +217,7 @@ public class ThesisController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=proposal_%s.pdf", thesisId))
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=proposal_%s.pdf", thesisId))
                 .body(thesisService.getProposalFile(thesis));
     }
 
@@ -285,7 +289,7 @@ public class ThesisController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=presentation_%s.pdf", thesisId))
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=presentation_%s.pdf", thesisId))
                 .body(thesisService.getPresentationFile(thesis));
     }
 
@@ -321,7 +325,7 @@ public class ThesisController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=thesis_%s.pdf", thesisId))
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=thesis_%s.pdf", thesisId))
                 .body(thesisService.getThesisFile(thesis));
     }
 
@@ -459,7 +463,7 @@ public class ThesisController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=comment_%s.pdf", commentId))
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=comment_%s.pdf", commentId))
                 .body(thesisCommentService.getCommentFile(comment));
     }
 

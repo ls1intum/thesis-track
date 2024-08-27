@@ -306,6 +306,7 @@ const GanttChart = (props: IGanttChartProps) => {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onWheel={handleWheel}
+          style={{ touchAction: 'none' }}
         >
           {groups.map((group) => (
             <div key={group.groupId} className={classes.groupRow}>

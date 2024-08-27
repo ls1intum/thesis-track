@@ -1,6 +1,6 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { isNotEmpty, useForm } from '@mantine/form'
-import { Accordion, Button, Stack, TextInput } from '@mantine/core'
+import { Accordion, Button, MultiSelect, Select, Stack, TextInput } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import TopicData from '../../../../components/TopicData/TopicData'
 import { useState } from 'react'
@@ -9,6 +9,7 @@ import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { DateInput, DateValue } from '@mantine/dates'
 import { getHtmlTextLength } from '../../../../utils/validation'
+import { GLOBAL_CONFIG } from '../../../../config/global'
 
 interface IMotivationStepProps {
   topic: ITopic | undefined
@@ -17,6 +18,7 @@ interface IMotivationStepProps {
 
 interface IMotivationStepForm {
   thesisTitle: string
+  thesisType: string | null
   desiredStartDate: DateValue
   motivation: string
 }
@@ -31,6 +33,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
     mode: 'controlled',
     initialValues: {
       thesisTitle: '',
+      thesisType: null,
       desiredStartDate: new Date(),
       motivation: '',
     },
@@ -41,6 +44,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
           return 'Please state your suggested thesis title'
         }
       },
+      thesisType: isNotEmpty('Please state your thesis type'),
       desiredStartDate: isNotEmpty('Please state your desired start date'),
       motivation: (value) => {
         if (!value) {
@@ -62,6 +66,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
         data: {
           topicId: topic?.topicId,
           thesisTitle: values.thesisTitle || null,
+          thesisType: values.thesisType,
           desiredStartDate: values.desiredStartDate,
           motivation: values.motivation,
         },
@@ -100,6 +105,17 @@ const MotivationStep = (props: IMotivationStepProps) => {
             {...form.getInputProps('thesisTitle')}
           />
         )}
+        <Select
+          label='Thesis Type'
+          required={true}
+          data={(topic?.thesisTypes || Object.keys(GLOBAL_CONFIG.thesis_types)).map(
+            (thesisType) => ({
+              label: GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType,
+              value: thesisType,
+            }),
+          )}
+          {...form.getInputProps('thesisType')}
+        />
         <DateInput
           label='Desired Start Date'
           required={true}

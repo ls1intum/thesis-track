@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Button, Space, Stack, Text } from '@mantine/core'
+import { Button, Center, Group, Space, Stack, Text } from '@mantine/core'
 import { downloadFile } from '../../utils/blob'
 import { useApiFile } from '../../hooks/fetcher'
+import { Link } from 'react-router-dom'
+import { GLOBAL_CONFIG } from '../../config/global'
 
 interface IAuthenticatedIframeProps {
   url: string
@@ -9,10 +11,11 @@ interface IAuthenticatedIframeProps {
   title?: string
   height?: number
   allowDownload?: boolean
+  includeLink?: boolean
 }
 
 const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
-  const { url, filename, allowDownload = true, title, height } = props
+  const { url, filename, allowDownload = true, includeLink = false, title, height } = props
 
   const [file, setFile] = useState<File>()
 
@@ -27,12 +30,23 @@ const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
       {title && <Text ta='center'>{title}</Text>}
       <iframe style={{ border: 0 }} height={height} src={iframeUrl} />
       {allowDownload && (
-        <>
-          <Space mb='md' />
-          <Button variant='outline' mx='auto' onClick={() => file && downloadFile(file)}>
-            Download
-          </Button>
-        </>
+        <Center>
+          <Group mt='md'>
+            <Button variant='outline' onClick={() => file && downloadFile(file)}>
+              Download
+            </Button>
+            {includeLink && (
+              <Button
+                component={Link}
+                to={`${GLOBAL_CONFIG.server_host}/api${url}`}
+                variant='outline'
+                target='_blank'
+              >
+                View File
+              </Button>
+            )}
+          </Group>
+        </Center>
       )}
     </Stack>
   )

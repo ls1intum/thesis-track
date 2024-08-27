@@ -34,8 +34,14 @@ const TopicData = (props: ITopicDataProps) => {
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
-            label='Type'
-            value={topic.type ? (GLOBAL_CONFIG.thesis_types[topic.type] ?? topic.type) : 'Any'}
+            label='Thesis Types'
+            value={
+              topic.thesisTypes
+                ? topic.thesisTypes.map(
+                    (thesisType) => GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType,
+                  )
+                : 'Any'
+            }
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>

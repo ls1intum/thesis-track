@@ -105,6 +105,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
         style={{
           minHeight: editMode ? '170px' : undefined,
           borderColor: wrapperProps.error ? 'var(--mantine-color-error)' : undefined,
+          borderStyle: editMode ? 'solid' : 'dashed',
         }}
       >
         {editMode && (

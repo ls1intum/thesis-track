@@ -32,6 +32,9 @@ public class Application {
     @Column(name = "thesis_title")
     private String thesisTitle;
 
+    @Column(name = "thesis_type")
+    private String thesisType;
+
     @NotNull
     @Column(name = "motivation", nullable = false)
     private String motivation;

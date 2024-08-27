@@ -74,7 +74,7 @@ public class TopicController {
         Topic topic = topicService.createTopic(
                 authenticatedUser,
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
-                RequestValidator.validateStringMaxLengthAllowNull(payload.type(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringSetItemMaxLengthAllowNull(payload.thesisTypes(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),
@@ -99,7 +99,7 @@ public class TopicController {
                 authenticatedUser,
                 topic,
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
-                RequestValidator.validateStringMaxLengthAllowNull(payload.type(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringSetItemMaxLengthAllowNull(payload.thesisTypes(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),

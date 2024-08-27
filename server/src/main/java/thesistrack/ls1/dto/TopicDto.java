@@ -7,12 +7,13 @@ import thesistrack.ls1.entity.TopicRole;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public record TopicDto (
         UUID topicId,
         String title,
-        String type,
+        Set<String> thesisTypes,
         String problemStatement,
         String goals,
         String references,
@@ -43,7 +44,7 @@ public record TopicDto (
         return new TopicDto(
                 topic.getId(),
                 topic.getTitle(),
-                topic.getType(),
+                topic.getThesisTypes() == null || topic.getThesisTypes().isEmpty() ? null : topic.getThesisTypes(),
                 topic.getProblemStatement(),
                 topic.getGoals(),
                 topic.getReferences(),

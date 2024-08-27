@@ -58,7 +58,7 @@ public class UserController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=examination_report_%s.pdf", userId))
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=examination_report_%s.pdf", userId))
                 .body(userService.getExaminationReport(user));
     }
 
@@ -73,7 +73,7 @@ public class UserController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=cv_%s.pdf", userId))
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=cv_%s.pdf", userId))
                 .body(userService.getCV(user));
     }
 
@@ -88,7 +88,7 @@ public class UserController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=degree_report_%s.pdf", userId))
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=degree_report_%s.pdf", userId))
                 .body(userService.getDegreeReport(user));
     }
 }

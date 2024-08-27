@@ -120,6 +120,7 @@ public class ApplicationService {
         application.setUser(userRepository.save(student));
 
         application.setThesisTitle(RequestValidator.validateStringMaxLength(payload.thesisTitle(), 500));
+        application.setThesisType(RequestValidator.validateStringMaxLength(payload.thesisType(), 500));
         application.setMotivation(RequestValidator.validateStringMaxLength(payload.motivation(), 1000));
         application.setComment("");
         application.setState(ApplicationState.NOT_ASSESSED);
@@ -134,12 +135,13 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application createApplication(User user, UUID topicId, String thesisTitle, Instant desiredStartDate, String motivation) {
+    public Application createApplication(User user, UUID topicId, String thesisTitle, String thesisType, Instant desiredStartDate, String motivation) {
         Application application = new Application();
         application.setUser(user);
 
         application.setTopic(topicId == null ? null : topicService.findById(topicId));
         application.setThesisTitle(thesisTitle);
+        application.setThesisType(thesisType);
         application.setMotivation(motivation);
         application.setComment("");
         application.setState(ApplicationState.NOT_ASSESSED);

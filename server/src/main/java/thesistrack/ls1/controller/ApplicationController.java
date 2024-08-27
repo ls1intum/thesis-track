@@ -55,6 +55,7 @@ public class ApplicationController {
                 authenticatedUser,
                 payload.topicId(),
                 RequestValidator.validateStringMaxLengthAllowNull(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TITLE.getLimit()),
                 RequestValidator.validateNotNull(payload.desiredStartDate()),
                 RequestValidator.validateStringMaxLength(payload.motivation(), StringLimits.LONGTEXT.getLimit())
         );

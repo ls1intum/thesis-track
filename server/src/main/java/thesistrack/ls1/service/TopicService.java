@@ -54,7 +54,7 @@ public class TopicService {
     public Topic createTopic(
             User creator,
             String title,
-            String type,
+            Set<String> thesisTypes,
             String problemStatement,
             String goals,
             String references,
@@ -64,7 +64,7 @@ public class TopicService {
         Topic topic = new Topic();
 
         topic.setTitle(title);
-        topic.setType(type);
+        topic.setThesisTypes(thesisTypes);
         topic.setProblemStatement(problemStatement);
         topic.setGoals(goals);
         topic.setReferences(references);
@@ -84,7 +84,7 @@ public class TopicService {
             User updater,
             Topic topic,
             String title,
-            String type,
+            Set<String> thesisTypes,
             String problemStatement,
             String goals,
             String references,
@@ -92,7 +92,7 @@ public class TopicService {
             Set<UUID> advisorIds
     ) {
         topic.setTitle(title);
-        topic.setType(type);
+        topic.setThesisTypes(thesisTypes);
         topic.setProblemStatement(problemStatement);
         topic.setGoals(goals);
         topic.setReferences(references);

@@ -61,7 +61,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
         title: application.topic?.title || application.thesisTitle || '',
         comment: application.comment || '',
         type:
-          application.topic?.type || GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
+          application.thesisType || GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
             ? application.user.studyDegree
             : null,
         advisors: application.topic?.advisors.map((advisor) => advisor.userId) ?? [],

@@ -1,4 +1,4 @@
-import { Button, Modal, Select, Stack, TextInput } from '@mantine/core'
+import { Button, Modal, MultiSelect, Select, Stack, TextInput } from '@mantine/core'
 import { ITopic } from '../../../../requests/responses/topic'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { isNotEmptyUserList } from '../../../../utils/validation'
@@ -27,14 +27,14 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
     problemStatement: string
     goals: string
     references: string
-    type: string | null
+    thesisTypes: string[]
     supervisorIds: string[]
     advisorIds: string[]
   }>({
     mode: 'controlled',
     initialValues: {
       title: '',
-      type: '',
+      thesisTypes: [],
       problemStatement: '',
       goals: '',
       references: '',
@@ -56,7 +56,7 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
     if (opened && topic) {
       form.setInitialValues({
         title: topic.title,
-        type: topic.type || '',
+        thesisTypes: topic.thesisTypes || [],
         problemStatement: topic.problemStatement,
         goals: topic.goals,
         references: topic.references,
@@ -77,7 +77,7 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
         requiresAuth: true,
         data: {
           title: form.values.title,
-          type: form.values.type || null,
+          thesisTypes: form.values.thesisTypes.length > 0 ? form.values.thesisTypes : null,
           problemStatement: form.values.problemStatement,
           goals: form.values.goals,
           references: form.values.references,
@@ -114,17 +114,14 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
       <form onSubmit={form.onSubmit(onSubmit)}>
         <Stack gap='md'>
           <TextInput label='Title' required {...form.getInputProps('title')} />
-          <Select
-            label='Type'
-            required
-            data={[
-              { value: '', label: 'Any' },
-              ...Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
-                value: key,
-                label: value,
-              })),
-            ]}
-            {...form.getInputProps('type')}
+          <MultiSelect
+            label='Thesis Types'
+            placeholder={form.values.thesisTypes.length > 0 ? undefined : 'All Thesis Types'}
+            data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+              value: key,
+              label: value,
+            }))}
+            {...form.getInputProps('thesisTypes')}
           />
           <UserMultiSelect
             label='Supervisor'

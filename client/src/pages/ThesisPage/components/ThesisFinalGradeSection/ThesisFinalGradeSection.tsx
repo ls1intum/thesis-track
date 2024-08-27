@@ -48,7 +48,7 @@ const ThesisFinalGradeSection = () => {
               <Stack>
                 <Title order={3}>Final Grade</Title>
                 <Text>{thesis.grade.finalGrade}</Text>
-                <Title order={3}>Feedback</Title>
+                <Title order={3}>Feedback (Visible to Student)</Title>
                 <DocumentEditor value={thesis.grade.feedback} />
               </Stack>
             ) : (

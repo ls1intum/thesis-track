@@ -6,6 +6,7 @@ import {
   Group,
   Modal,
   Pagination,
+  Paper,
   Skeleton,
   Stack,
   Text,
@@ -16,6 +17,7 @@ import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePr
 import { useLoggedInUser } from '../../../../hooks/authentication'
 import { formatDate, formatUser } from '../../../../utils/format'
 import { Download } from 'phosphor-react'
+import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
 
 const ThesisCommentsList = () => {
   const { thesis, comments, deleteComment, limit, page, setPage } = useThesisCommentsContext()
@@ -23,6 +25,8 @@ const ThesisCommentsList = () => {
   const user = useLoggedInUser()
 
   const [openedComment, setOpenedComment] = useState<IThesisComment>()
+
+  const commentBackgroundColor = useHighlightedBackgroundColor(false)
 
   return (
     <Stack>
@@ -41,7 +45,7 @@ const ThesisCommentsList = () => {
       {comments &&
         comments.content.map((comment) => (
           <Stack gap={0} key={comment.commentId}>
-            <Card p='md' radius='sm'>
+            <Paper p='md' radius='sm' style={{ backgroundColor: commentBackgroundColor }}>
               <Group style={{ width: '100%' }}>
                 <Text>{comment.message}</Text>
                 {comment.hasFile && (
@@ -50,7 +54,7 @@ const ThesisCommentsList = () => {
                   </Button>
                 )}
               </Group>
-            </Card>
+            </Paper>
             <Group ml='auto'>
               <Text size='xs' c='dimmed'>
                 {formatDate(comment.createdAt)}

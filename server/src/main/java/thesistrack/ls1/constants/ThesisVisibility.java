@@ -8,6 +8,7 @@ import lombok.Getter;
 public enum ThesisVisibility {
     PRIVATE("PRIVATE"),
     INTERNAL("INTERNAL"),
+    STUDENT("STUDENT"),
     PUBLIC("PUBLIC");
 
     private final String value;

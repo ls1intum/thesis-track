@@ -155,13 +155,6 @@ const ThesisWritingSection = () => {
                 )}
               </Grid.Col>
             </Grid>
-            <Divider />
-            <Stack>
-              <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
-                <ThesisCommentsList />
-                {access.student && <ThesisCommentsForm />}
-              </ThesisCommentsProvider>
-            </Stack>
             <Group grow>
               {access.student &&
                 thesis.state === ThesisState.WRITING &&
@@ -181,6 +174,13 @@ const ThesisWritingSection = () => {
                   </Stack>
                 )}
             </Group>
+            <Divider />
+            <Stack>
+              <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
+                <ThesisCommentsList />
+                {access.student && <ThesisCommentsForm />}
+              </ThesisCommentsProvider>
+            </Stack>
             <Stack>
               <Divider />
               <CreatePresentationModal

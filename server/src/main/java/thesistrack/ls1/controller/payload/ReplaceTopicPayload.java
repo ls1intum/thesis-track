@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public record ReplaceTopicPayload(
         String title,
-        String type,
+        Set<String> thesisTypes,
         String problemStatement,
         String goals,
         String references,

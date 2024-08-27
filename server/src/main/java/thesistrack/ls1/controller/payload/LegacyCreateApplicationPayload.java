@@ -20,6 +20,7 @@ public record LegacyCreateApplicationPayload (
         String interests,
         String projects,
         String thesisTitle,
+        String thesisType,
         Instant desiredStartDate
 ) {
 

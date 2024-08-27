@@ -91,7 +91,7 @@ public class ThesisService {
 
         thesis.setTitle(thesisTitle);
         thesis.setType(thesisType);
-        thesis.setVisibility(ThesisVisibility.PRIVATE);
+        thesis.setVisibility(ThesisVisibility.INTERNAL);
         thesis.setKeywords(new HashSet<>());
         thesis.setInfo("");
         thesis.setAbstractField("");

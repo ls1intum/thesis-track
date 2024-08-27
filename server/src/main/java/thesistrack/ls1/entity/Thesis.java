@@ -199,7 +199,7 @@ public class Thesis {
     }
 
     public boolean hasReadAccess(User user) {
-        if (user == null && visibility == ThesisVisibility.PUBLIC && state == ThesisState.FINISHED) {
+        if (visibility == ThesisVisibility.PUBLIC && state == ThesisState.FINISHED) {
             return true;
         }
 
@@ -216,6 +216,10 @@ public class Thesis {
         }
 
         if (visibility.equals(ThesisVisibility.INTERNAL) && user.hasAnyGroup("advisor", "supervisor")) {
+            return true;
+        }
+
+        if (visibility.equals(ThesisVisibility.STUDENT) && user.hasAnyGroup("student", "advisor", "supervisor")) {
             return true;
         }
 

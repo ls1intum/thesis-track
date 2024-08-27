@@ -114,6 +114,7 @@ const PublishedTheses = () => {
             <ThesisData thesis={openedThesis} additionalInformation={['abstract']} />
             <AuthenticatedFilePreview
               url={`/v2/published-theses/${openedThesis.thesisId}/thesis`}
+              includeLink
               height={500}
               filename={`${openedThesis.title.replaceAll(' ', '-')}.pdf`}
             />
