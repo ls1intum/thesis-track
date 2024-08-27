@@ -37,7 +37,7 @@ const TopicPage = () => {
               Manage Topics
             </Button>
           )}
-          <Button ml='auto' component={Link} to={`/submit-application/apply/${topic.topicId}`}>
+          <Button ml='auto' component={Link} to={`/submit-application/${topic.topicId}`}>
             Apply Now
           </Button>
         </Group>

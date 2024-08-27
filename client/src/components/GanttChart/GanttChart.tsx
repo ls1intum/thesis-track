@@ -9,6 +9,7 @@ import {
   useState,
   useEffect,
   CSSProperties,
+  useRef,
 } from 'react'
 import { Button, Collapse, Group, Popover, RangeSlider, Text } from '@mantine/core'
 import { formatDate } from '../../utils/format'
@@ -75,7 +76,7 @@ const GanttChart = (props: IGanttChartProps) => {
   const [hoveredTimelineItem, setHoveredTimelineItem] = useState<string>()
   const [hoveredEventItem, setHoveredEventItem] = useState<string>()
 
-  const [initialTouchDistance, setInitialTouchDistance] = useState<number>()
+  const initialTouch = useRef<{ initialDistance: number; initialRange: DateRange } | null>(null)
 
   const currentTime = useMemo(() => Date.now(), [])
 
@@ -135,12 +136,12 @@ const GanttChart = (props: IGanttChartProps) => {
   )
 
   // Touch events for pinch to zoom
-  const zoomRange = (zoomFactor: number) => {
-    const center = (filteredRange[0] + filteredRange[1]) / 2
+  const zoomRange = (zoomFactor: number, currentRange: DateRange) => {
+    const center = (currentRange[0] + currentRange[1]) / 2
 
     setRange([
-      Math.max(center - (center - filteredRange[0]) * zoomFactor, totalRange[0]),
-      Math.min(center + (filteredRange[1] - center) * zoomFactor, totalRange[1]),
+      Math.max(center - (center - currentRange[0]) * zoomFactor, totalRange[0]),
+      Math.min(center + (currentRange[1] - center) * zoomFactor, totalRange[1]),
     ])
   }
 
@@ -152,15 +153,21 @@ const GanttChart = (props: IGanttChartProps) => {
 
   const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
     if (e.touches.length === 2) {
-      setInitialTouchDistance(getTouchDistance(e.touches[0], e.touches[1]))
+      initialTouch.current = {
+        initialDistance: getTouchDistance(e.touches[0], e.touches[1]),
+        initialRange: filteredRange,
+      }
     }
   }
 
   const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
-    if (e.touches.length === 2 && initialTouchDistance) {
+    if (e.touches.length === 2 && initialTouch.current) {
       const currentDistance = getTouchDistance(e.touches[0], e.touches[1])
 
-      zoomRange(currentDistance / initialTouchDistance)
+      zoomRange(
+        currentDistance / initialTouch.current.initialDistance,
+        initialTouch.current.initialRange,
+      )
     }
   }
 
@@ -168,7 +175,7 @@ const GanttChart = (props: IGanttChartProps) => {
     if (e.ctrlKey) {
       e.preventDefault()
 
-      zoomRange(e.deltaY < 0 ? 1.05 : 0.95)
+      zoomRange(e.deltaY < 0 ? 1.05 : 0.95, filteredRange)
     }
   }
 
@@ -299,7 +306,6 @@ const GanttChart = (props: IGanttChartProps) => {
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onWheel={handleWheel}
-          style={{ touchAction: 'none' }}
         >
           {groups.map((group) => (
             <div key={group.groupId} className={classes.groupRow}>
