@@ -218,7 +218,7 @@ public class MailBuilder {
         }
 
         for (User recipient : primaryRecipients) {
-            if (primarySenders.contains(recipient)) {
+            if (primarySenders.contains(recipient) && secondaryRecipients.isEmpty()) {
                 continue;
             }
 
