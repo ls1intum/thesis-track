@@ -1,4 +1,4 @@
-const { promises: fsp } = require('fs');
+const { promises: fsp } = require('fs')
 
 const ALLOWED_ENVIRONMENT_VARIABLES = [
   'SERVER_HOST',
@@ -13,18 +13,22 @@ const ALLOWED_ENVIRONMENT_VARIABLES = [
   'STUDY_DEGREES',
   'STUDY_PROGRAMS',
   'PRIVACY_NOTICE',
-];
+]
 
 async function generateConfig() {
-  const runtimeEnvironment = {};
+  const runtimeEnvironment = {}
 
   for (const key of ALLOWED_ENVIRONMENT_VARIABLES) {
     if (process.env[key]) {
-      runtimeEnvironment[key] = process.env[key];
+      runtimeEnvironment[key] = process.env[key]
     }
   }
 
-  await fsp.writeFile('runtime-env.js', `window.RUNTIME_ENVIRONMENT_VARIABLES=${JSON.stringify(runtimeEnvironment)};\n`, 'utf-8');
+  await fsp.writeFile(
+    'runtime-env.js',
+    `window.RUNTIME_ENVIRONMENT_VARIABLES=${JSON.stringify(runtimeEnvironment)};\n`,
+    'utf-8',
+  )
 }
 
-void generateConfig();
+void generateConfig()
