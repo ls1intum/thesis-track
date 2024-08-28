@@ -1,17 +1,12 @@
 package thesistrack.ls1.service;
 
-import io.netty.handler.logging.LogLevel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.client.reactive.ClientHttpConnector;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.netty.http.client.HttpClient;
-import reactor.netty.transport.logging.AdvancedByteBufFormat;
 import thesistrack.ls1.entity.User;
 
 import org.springframework.http.HttpHeaders;
@@ -23,7 +18,8 @@ import java.util.UUID;
 
 @Service
 public class AccessManagementService {
-    private static final Logger logger = LoggerFactory.getLogger(AccessManagementService.class);
+    private static final Logger log = LoggerFactory.getLogger(AccessManagementService.class);
+
     private final WebClient webClient;
 
     private final String keycloakRealmName;
@@ -54,7 +50,7 @@ public class AccessManagementService {
         try {
             studentGroupId = studentGroupName.isBlank() ? null : getGroupId(studentGroupName);
         } catch (RuntimeException exception) {
-            logger.warn("Could not fetch group id from configured student group", exception);
+            log.warn("Could not fetch group id from configured student group", exception);
         }
         this.studentGroupId = studentGroupId;
     }
@@ -67,7 +63,7 @@ public class AccessManagementService {
         try {
             assignKeycloakGroup(getUserId(user.getUniversityId()), studentGroupId);
         } catch (RuntimeException exception) {
-            logger.warn("Could not assign keycloak group to user", exception);
+            log.warn("Could not assign keycloak group to user", exception);
         }
     }
 
@@ -79,7 +75,7 @@ public class AccessManagementService {
         try {
             removeKeycloakGroup(getUserId(user.getUniversityId()), studentGroupId);
         } catch (RuntimeException exception) {
-            logger.warn("Could not remove keycloak group from user", exception);
+            log.warn("Could not remove keycloak group from user", exception);
         }
     }
 

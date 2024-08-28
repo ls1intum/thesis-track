@@ -18,6 +18,7 @@ import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.*;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -172,7 +173,11 @@ public class ThesisService {
             saveStateChange(thesis, state.state(), state.changedAt());
         }
 
-        return thesisRepository.save(thesis);
+        thesis = thesisRepository.save(thesis);
+
+        updateThesisCalendarEvents(thesis);
+
+        return thesis;
     }
 
     @Transactional
@@ -184,7 +189,11 @@ public class ThesisService {
         thesis.setAbstractField(abstractText);
         thesis.setInfo(infoText);
 
-        return thesisRepository.save(thesis);
+        thesis = thesisRepository.save(thesis);
+
+        updateThesisCalendarEvents(thesis);
+
+        return thesis;
     }
 
     /* PROPOSAL */
@@ -313,19 +322,12 @@ public class ThesisService {
         presentation.setVisibility(visibility);
         presentation.setLocation(location);
         presentation.setStreamUrl(streamUrl);
-        presentation.setCalendarEvent(calendarService.createEvent(
-                "Thesis Presentation \"" + thesis.getTitle() + "\"",
-                location == null || location.isBlank() ? streamUrl : location,
-                "Title: " + thesis.getTitle() + "\n" +
-                        (streamUrl != null && !streamUrl.isBlank() ? "Stream URL: " + streamUrl + "\n" : "") + "\n" +
-                        "Abstract:\n\n" + thesis.getAbstractField(),
-                date,
-                3600
-        ));
         presentation.setScheduledAt(date);
         presentation.setCreatedBy(creatingUser);
         presentation.setCreatedAt(Instant.now());
 
+        presentation = thesisPresentationRepository.save(presentation);
+        presentation.setCalendarEvent(calendarService.createEvent(createPresentationCalendarEvent(presentation)));
         presentation = thesisPresentationRepository.save(presentation);
 
         List<ThesisPresentation> presentations = thesis.getPresentations();
@@ -358,6 +360,33 @@ public class ThesisService {
         mailingService.sendPresentationDeletedEmail(deletingUser, presentation);
 
         return thesis;
+    }
+
+    private void updateThesisCalendarEvents(Thesis thesis) {
+        for (ThesisPresentation presentation : thesis.getPresentations()) {
+            String eventId = presentation.getCalendarEvent();
+
+            if (eventId != null) {
+                calendarService.updateEvent(eventId, createPresentationCalendarEvent(presentation));
+            }
+        }
+    }
+
+    private CalendarService.CalendarEvent createPresentationCalendarEvent(ThesisPresentation presentation) {
+        String location = presentation.getLocation();
+        String streamUrl = presentation.getStreamUrl();
+
+        return new CalendarService.CalendarEvent(
+                "Thesis Presentation \"" + presentation.getThesis().getTitle() + "\"",
+                location == null || location.isBlank() ? streamUrl : location,
+                "Title: " + presentation.getThesis().getTitle() + "\n" +
+                        (streamUrl != null && !streamUrl.isBlank() ? "Stream URL: " + streamUrl + "\n" : "") + "\n" +
+                        "Abstract:\n\n" + presentation.getThesis().getAbstractField(),
+                presentation.getScheduledAt(),
+                presentation.getScheduledAt().plus(60, ChronoUnit.MINUTES),
+                presentation.getThesis().getSupervisors().getFirst().getEmail(),
+                presentation.getThesis().getRoles().stream().map((role) -> role.getUser().getEmail()).toList()
+        );
     }
 
     /* ASSESSMENT */

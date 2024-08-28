@@ -1,6 +1,7 @@
 logging:
   level:
     liquibase: INFO
+    net.fortuna.ical4j.util.Configurator: INFO
 
 spring:
   datasource:
@@ -60,12 +61,12 @@ thesis-track:
     realm-name: ${KEYCLOAK_REALM_NAME:thesis-track}
     client-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
     service-client:
-      id: ${KEYCLOAK_SERVICE_CLIENT_ID:service-client}
+      id: ${KEYCLOAK_SERVICE_CLIENT_ID:}
       secret: ${KEYCLOAK_SERVICE_CLIENT_SECRET:}
-      student-group-name: ${KEYCLOAK_SERVICE_ACCOUNT_STUDENT_GROUP_ID:thesis-students}
+      student-group-name: ${KEYCLOAK_SERVICE_ACCOUNT_STUDENT_GROUP_ID:}
   calendar:
     enabled: ${CALDAV_ENABLED:false}
-    host: ${CALDAV_HOST:}
+    url: ${CALDAV_URL:}
     username: ${CALDAV_USERNAME:}
     password: ${CALDAV_PASSWORD:}
   client:

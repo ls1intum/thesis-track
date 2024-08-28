@@ -122,7 +122,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
             <Button
               type='submit'
               onClick={onCreatePresentation}
-              disabled={!form.isValid}
+              disabled={!form.isValid()}
               loading={creating}
             >
               Schedule Presentation

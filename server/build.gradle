@@ -28,6 +28,9 @@ dependencies {
 	implementation 'org.postgresql:postgresql'
 	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1'
 
+	// Calendar
+	implementation 'org.mnode.ical4j:ical4j:4.0.3'
+
 	// Liquibase
 	implementation 'org.liquibase:liquibase-core:4.28.0'
 
