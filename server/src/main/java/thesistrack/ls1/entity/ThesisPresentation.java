@@ -42,6 +42,9 @@ public class ThesisPresentation {
     @Column(name = "stream_url")
     private String streamUrl;
 
+    @Column(name = "calendar_event")
+    private String calendarEvent;
+
     @NotNull
     @Column(name = "scheduled_at", nullable = false)
     private Instant scheduledAt;

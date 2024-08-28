@@ -24,6 +24,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.postgresql:postgresql'
 	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1'
 

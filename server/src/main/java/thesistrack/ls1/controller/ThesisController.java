@@ -71,15 +71,16 @@ public class ThesisController {
         );
 
         if (fetchAll) {
+            userId = null;
+
             if (authenticatedUser.hasAnyGroup("admin")) {
-                userId = null;
                 visibilities = null;
             } else if (authenticatedUser.hasAnyGroup("advisor", "supervisor")) {
-                userId = null;
                 visibilities = Set.of(ThesisVisibility.PUBLIC, ThesisVisibility.STUDENT, ThesisVisibility.INTERNAL);
             } else if (authenticatedUser.hasAnyGroup("student")) {
-                userId = null;
                 visibilities = Set.of(ThesisVisibility.PUBLIC, ThesisVisibility.STUDENT);
+            } else {
+                visibilities = Set.of(ThesisVisibility.PUBLIC);
             }
         }
 

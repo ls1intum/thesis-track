@@ -13,7 +13,4 @@ import org.springframework.validation.annotation.Validated;
 public class JwtAuthConfig {
     @NotBlank
     private String clientId;
-
-    @NotBlank
-    private String universityIdJwtAttribute;
 }

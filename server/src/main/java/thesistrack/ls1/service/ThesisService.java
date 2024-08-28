@@ -31,6 +31,8 @@ public class ThesisService {
     private final ThesisAssessmentRepository thesisAssessmentRepository;
     private final ThesisPresentationRepository thesisPresentationRepository;
     private final MailingService mailingService;
+    private final AccessManagementService accessManagementService;
+    private final CalendarService calendarService;
 
     @Autowired
     public ThesisService(
@@ -41,7 +43,7 @@ public class ThesisService {
             ThesisProposalRepository thesisProposalRepository,
             ThesisAssessmentRepository thesisAssessmentRepository,
             UploadService uploadService,
-            ThesisPresentationRepository thesisPresentationRepository, MailingService mailingService) {
+            ThesisPresentationRepository thesisPresentationRepository, MailingService mailingService, AccessManagementService accessManagementService, CalendarService calendarService) {
         this.thesisRoleRepository = thesisRoleRepository;
         this.thesisRepository = thesisRepository;
         this.thesisStateChangeRepository = thesisStateChangeRepository;
@@ -51,6 +53,8 @@ public class ThesisService {
         this.thesisAssessmentRepository = thesisAssessmentRepository;
         this.thesisPresentationRepository = thesisPresentationRepository;
         this.mailingService = mailingService;
+        this.accessManagementService = accessManagementService;
+        this.calendarService = calendarService;
     }
 
     public Page<Thesis> getAll(
@@ -106,6 +110,10 @@ public class ThesisService {
 
         mailingService.sendThesisCreatedEmail(creator, thesis);
 
+        for (User student : thesis.getStudents()) {
+            accessManagementService.addStudentGroup(student);
+        }
+
         return thesis;
     }
 
@@ -121,6 +129,12 @@ public class ThesisService {
         thesis = thesisRepository.save(thesis);
 
         mailingService.sendThesisClosedEmail(closingUser, thesis);
+
+        for (User student : thesis.getStudents()) {
+            if (!existsPendingThesis(student)) {
+                accessManagementService.removeStudentGroup(student);
+            }
+        }
 
         return thesis;
     }
@@ -299,6 +313,15 @@ public class ThesisService {
         presentation.setVisibility(visibility);
         presentation.setLocation(location);
         presentation.setStreamUrl(streamUrl);
+        presentation.setCalendarEvent(calendarService.createEvent(
+                "Thesis Presentation \"" + thesis.getTitle() + "\"",
+                location == null || location.isBlank() ? streamUrl : location,
+                "Title: " + thesis.getTitle() + "\n" +
+                        (streamUrl != null && !streamUrl.isBlank() ? "Stream URL: " + streamUrl + "\n" : "") + "\n" +
+                        "Abstract:\n\n" + thesis.getAbstractField(),
+                date,
+                3600
+        ));
         presentation.setScheduledAt(date);
         presentation.setCreatedBy(creatingUser);
         presentation.setCreatedAt(Instant.now());
@@ -329,9 +352,12 @@ public class ThesisService {
 
         thesis.setPresentations(presentations);
 
+        thesis = thesisRepository.save(thesis);
+
+        calendarService.deleteEvent(presentation.getCalendarEvent());
         mailingService.sendPresentationDeletedEmail(deletingUser, presentation);
 
-        return thesisRepository.save(thesis);
+        return thesis;
     }
 
     /* ASSESSMENT */
@@ -390,10 +416,36 @@ public class ThesisService {
 
         saveStateChange(thesis, ThesisState.FINISHED, Instant.now());
 
-        return thesisRepository.save(thesis);
+        thesis = thesisRepository.save(thesis);
+
+        for (User student : thesis.getStudents()) {
+            if (!existsPendingThesis(student)) {
+                accessManagementService.removeStudentGroup(student);
+            }
+        }
+
+        return thesis;
     }
 
     /* UTILITY */
+
+    private boolean existsPendingThesis(User user) {
+        Page<Thesis> theses = thesisRepository.searchTheses(
+                user.getId(),
+                null,
+                null,
+                Set.of(
+                        ThesisState.PROPOSAL,
+                        ThesisState.WRITING,
+                        ThesisState.SUBMITTED,
+                        ThesisState.ASSESSED,
+                        ThesisState.GRADED
+                ),
+                PageRequest.ofSize(1)
+        );
+
+        return theses.getTotalElements() > 0;
+    }
 
     public Thesis findById(UUID thesisId) {
         return thesisRepository.findById(thesisId)

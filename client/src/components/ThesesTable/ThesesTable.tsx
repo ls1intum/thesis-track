@@ -43,7 +43,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       accessor: 'state',
       title: 'State',
       textAlign: 'center',
-      width: 100,
+      width: 120,
       render: (thesis: IThesis) => {
         return (
           <Center>

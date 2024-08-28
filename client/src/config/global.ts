@@ -52,7 +52,5 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     host: getEnvironmentVariable('KEYCLOAK_HOST') || 'http://localhost:8081',
     realm: getEnvironmentVariable('KEYCLOAK_REALM_NAME') || 'thesis-track',
     client_id: getEnvironmentVariable('KEYCLOAK_CLIENT_ID') || 'thesis-track-app',
-    university_id_jwt_attribute:
-      getEnvironmentVariable('UNIVERSITY_ID_JWT_ATTRIBUTE') || 'preferred_username',
   },
 }

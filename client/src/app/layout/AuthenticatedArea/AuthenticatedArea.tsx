@@ -68,9 +68,9 @@ const links: Array<{
   },
   {
     link: '/theses',
-    label: 'Theses Overview',
+    label: 'Theses',
     icon: Kanban,
-    groups: ['admin', 'advisor', 'supervisor'],
+    groups: ['admin', 'student', 'advisor', 'supervisor'],
   },
 ]
 
