@@ -44,6 +44,8 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     GUIDED_RESEARCH: 'Guided Research',
   },
 
+  privacy_notice: getEnvironmentVariable('PRIVACY_NOTICE') || '',
+
   default_supervisors: getEnvironmentVariable('DEFAULT_SUPERVISOR_UUID')?.split(';') || [],
 
   server_host: getEnvironmentVariable('SERVER_HOST') || 'http://localhost:8080',

@@ -8,6 +8,8 @@ export interface IGlobalConfig {
   study_degrees: Record<string, string>
   thesis_types: Record<string, string>
 
+  privacy_notice: string
+
   default_supervisors: string[]
 
   keycloak: {

@@ -64,10 +64,17 @@ services:
       - KEYCLOAK_HOST
       - KEYCLOAK_REALM_NAME
       - KEYCLOAK_CLIENT_ID
+      - KEYCLOAK_SERVICE_CLIENT_ID
+      - KEYCLOAK_SERVICE_CLIENT_SECRET
+      - KEYCLOAK_SERVICE_STUDENT_GROUP_NAME
       - MAIL_WORKSPACE_URL
       - MAIL_SENDER
       - MAIL_SIGNATURE
       - MAIL_BCC_RECIPIENTS
+      - CALDAV_ENABLED
+      - CALDAV_URL
+      - CALDAV_USERNAME
+      - CALDAV_PASSWORD
     networks:
       - thesis-track-network
 
@@ -90,6 +97,12 @@ services:
       - KEYCLOAK_REALM_NAME
       - KEYCLOAK_CLIENT_ID
       - DEFAULT_SUPERVISOR_UUID
+      - PRIVACY_NOTICE
+      - THESIS_TYPES
+      - STUDY_PROGRAMS
+      - STUDY_DEGREES
+      - GENDERS
+      - APPLICATION_TITLE
     depends_on:
       - server
     networks:

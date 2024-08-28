@@ -63,7 +63,7 @@ thesis-track:
     service-client:
       id: ${KEYCLOAK_SERVICE_CLIENT_ID:}
       secret: ${KEYCLOAK_SERVICE_CLIENT_SECRET:}
-      student-group-name: ${KEYCLOAK_SERVICE_ACCOUNT_STUDENT_GROUP_ID:}
+      student-group-name: ${KEYCLOAK_SERVICE_STUDENT_GROUP_NAME:}
   calendar:
     enabled: ${CALDAV_ENABLED:false}
     url: ${CALDAV_URL:}
