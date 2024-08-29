@@ -30,10 +30,9 @@ public class ThesisService {
     private final UploadService uploadService;
     private final ThesisProposalRepository thesisProposalRepository;
     private final ThesisAssessmentRepository thesisAssessmentRepository;
-    private final ThesisPresentationRepository thesisPresentationRepository;
     private final MailingService mailingService;
     private final AccessManagementService accessManagementService;
-    private final CalendarService calendarService;
+    private final ThesisPresentationService thesisPresentationService;
 
     @Autowired
     public ThesisService(
@@ -44,7 +43,10 @@ public class ThesisService {
             ThesisProposalRepository thesisProposalRepository,
             ThesisAssessmentRepository thesisAssessmentRepository,
             UploadService uploadService,
-            ThesisPresentationRepository thesisPresentationRepository, MailingService mailingService, AccessManagementService accessManagementService, CalendarService calendarService) {
+            MailingService mailingService,
+            AccessManagementService accessManagementService,
+            ThesisPresentationService thesisPresentationService
+    ) {
         this.thesisRoleRepository = thesisRoleRepository;
         this.thesisRepository = thesisRepository;
         this.thesisStateChangeRepository = thesisStateChangeRepository;
@@ -52,10 +54,9 @@ public class ThesisService {
         this.uploadService = uploadService;
         this.thesisProposalRepository = thesisProposalRepository;
         this.thesisAssessmentRepository = thesisAssessmentRepository;
-        this.thesisPresentationRepository = thesisPresentationRepository;
         this.mailingService = mailingService;
         this.accessManagementService = accessManagementService;
-        this.calendarService = calendarService;
+        this.thesisPresentationService = thesisPresentationService;
     }
 
     public Page<Thesis> getAll(
@@ -175,7 +176,7 @@ public class ThesisService {
 
         thesis = thesisRepository.save(thesis);
 
-        updateThesisCalendarEvents(thesis);
+        thesisPresentationService.updateThesisCalendarEvents(thesis);
 
         return thesis;
     }
@@ -191,7 +192,7 @@ public class ThesisService {
 
         thesis = thesisRepository.save(thesis);
 
-        updateThesisCalendarEvents(thesis);
+        thesisPresentationService.updateThesisCalendarEvents(thesis);
 
         return thesis;
     }
@@ -305,90 +306,6 @@ public class ThesisService {
         return uploadService.load(filename);
     }
 
-    @Transactional
-    public Thesis createPresentation(
-            User creatingUser,
-            Thesis thesis,
-            ThesisPresentationType type,
-            ThesisPresentationVisibility visibility,
-            String location,
-            String streamUrl,
-            Instant date
-    ) {
-        ThesisPresentation presentation = new ThesisPresentation();
-
-        presentation.setThesis(thesis);
-        presentation.setType(type);
-        presentation.setVisibility(visibility);
-        presentation.setLocation(location);
-        presentation.setStreamUrl(streamUrl);
-        presentation.setScheduledAt(date);
-        presentation.setCreatedBy(creatingUser);
-        presentation.setCreatedAt(Instant.now());
-
-        presentation = thesisPresentationRepository.save(presentation);
-        presentation.setCalendarEvent(calendarService.createEvent(createPresentationCalendarEvent(presentation)));
-        presentation = thesisPresentationRepository.save(presentation);
-
-        List<ThesisPresentation> presentations = thesis.getPresentations();
-        presentations.add(presentation);
-        presentations.sort(Comparator.comparing(ThesisPresentation::getScheduledAt));
-        thesis.setPresentations(presentations);
-
-        thesis = thesisRepository.save(thesis);
-
-        mailingService.sendNewScheduledPresentationEmail(presentation);
-
-        return thesis;
-    }
-
-    @Transactional
-    public Thesis deletePresentation(User deletingUser, ThesisPresentation presentation) {
-        Thesis thesis = presentation.getThesis();
-
-        thesisPresentationRepository.deleteById(presentation.getId());
-
-        List<ThesisPresentation> presentations = new ArrayList<>(thesis.getPresentations().stream()
-                .filter(x -> !presentation.getId().equals(x.getId()))
-                .toList());
-
-        thesis.setPresentations(presentations);
-
-        thesis = thesisRepository.save(thesis);
-
-        calendarService.deleteEvent(presentation.getCalendarEvent());
-        mailingService.sendPresentationDeletedEmail(deletingUser, presentation);
-
-        return thesis;
-    }
-
-    private void updateThesisCalendarEvents(Thesis thesis) {
-        for (ThesisPresentation presentation : thesis.getPresentations()) {
-            String eventId = presentation.getCalendarEvent();
-
-            if (eventId != null) {
-                calendarService.updateEvent(eventId, createPresentationCalendarEvent(presentation));
-            }
-        }
-    }
-
-    private CalendarService.CalendarEvent createPresentationCalendarEvent(ThesisPresentation presentation) {
-        String location = presentation.getLocation();
-        String streamUrl = presentation.getStreamUrl();
-
-        return new CalendarService.CalendarEvent(
-                "Thesis Presentation \"" + presentation.getThesis().getTitle() + "\"",
-                location == null || location.isBlank() ? streamUrl : location,
-                "Title: " + presentation.getThesis().getTitle() + "\n" +
-                        (streamUrl != null && !streamUrl.isBlank() ? "Stream URL: " + streamUrl + "\n" : "") + "\n" +
-                        "Abstract:\n\n" + presentation.getThesis().getAbstractField(),
-                presentation.getScheduledAt(),
-                presentation.getScheduledAt().plus(60, ChronoUnit.MINUTES),
-                presentation.getThesis().getSupervisors().getFirst().getEmail(),
-                presentation.getThesis().getRoles().stream().map((role) -> role.getUser().getEmail()).toList()
-        );
-    }
-
     /* ASSESSMENT */
     @Transactional
     public Thesis submitAssessment(
@@ -479,17 +396,6 @@ public class ThesisService {
     public Thesis findById(UUID thesisId) {
         return thesisRepository.findById(thesisId)
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Thesis with id %s not found.", thesisId)));
-    }
-
-    public ThesisPresentation findPresentationById(UUID thesisId, UUID presentationId) {
-        ThesisPresentation presentation = thesisPresentationRepository.findById(presentationId)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format("Presentation with id %s not found.", presentationId)));
-
-        if (!presentation.getThesis().getId().equals(thesisId)) {
-            throw new ResourceNotFoundException(String.format("Presentation with id %s not found for thesis with id %s.", presentationId, thesisId));
-        }
-
-        return presentation;
     }
 
     private void assignThesisRoles(

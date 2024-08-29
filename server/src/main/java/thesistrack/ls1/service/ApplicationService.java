@@ -54,6 +54,7 @@ public class ApplicationService {
             String searchQuery,
             ApplicationState[] states,
             String[] topics,
+            boolean includeSuggestedTopics,
             int page,
             int limit,
             String sortBy,
@@ -70,6 +71,7 @@ public class ApplicationService {
                 searchQueryFilter,
                 statesFilter,
                 topicsFilter,
+                includeSuggestedTopics,
                 PageRequest.of(page, limit, Sort.by(order))
         );
     }

@@ -46,6 +46,7 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.POST, "/v1/applications").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v2/topics/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v2/published-theses/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/v2/calendar/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

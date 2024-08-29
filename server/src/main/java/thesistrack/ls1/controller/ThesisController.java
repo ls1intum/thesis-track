@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -13,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.StringLimits;
 import thesistrack.ls1.constants.ThesisCommentType;
 import thesistrack.ls1.constants.ThesisState;
@@ -28,6 +26,7 @@ import thesistrack.ls1.entity.ThesisPresentation;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.ThesisCommentService;
+import thesistrack.ls1.service.ThesisPresentationService;
 import thesistrack.ls1.service.ThesisService;
 import thesistrack.ls1.utility.RequestValidator;
 
@@ -41,12 +40,14 @@ public class ThesisController {
     private final ThesisService thesisService;
     private final AuthenticationService authenticationService;
     private final ThesisCommentService thesisCommentService;
+    private final ThesisPresentationService thesisPresentationService;
 
     @Autowired
-    public ThesisController(ThesisService thesisService, AuthenticationService authenticationService, ThesisCommentService thesisCommentService) {
+    public ThesisController(ThesisService thesisService, AuthenticationService authenticationService, ThesisCommentService thesisCommentService, ThesisPresentationService thesisPresentationService) {
         this.thesisService = thesisService;
         this.authenticationService = authenticationService;
         this.thesisCommentService = thesisCommentService;
+        this.thesisPresentationService = thesisPresentationService;
     }
 
     @GetMapping
@@ -361,7 +362,7 @@ public class ThesisController {
             throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
         }
 
-        thesis = thesisService.createPresentation(
+        thesis = thesisPresentationService.createPresentation(
                 authenticatedUser,
                 thesis,
                 RequestValidator.validateNotNull(payload.type()),
@@ -381,13 +382,13 @@ public class ThesisController {
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
-        ThesisPresentation presentation = thesisService.findPresentationById(thesisId, presentationId);
+        ThesisPresentation presentation = thesisPresentationService.findById(thesisId, presentationId);
 
         if (!presentation.hasManagementAccess(authenticatedUser)) {
             throw new AccessDeniedException("You are not allowed to delete this presentation");
         }
 
-        Thesis thesis = thesisService.deletePresentation(authenticatedUser, presentation);
+        Thesis thesis = thesisPresentationService.deletePresentation(authenticatedUser, presentation);
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }

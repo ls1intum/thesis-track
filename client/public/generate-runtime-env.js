@@ -5,14 +5,13 @@ const ALLOWED_ENVIRONMENT_VARIABLES = [
   'KEYCLOAK_HOST',
   'KEYCLOAK_REALM_NAME',
   'KEYCLOAK_CLIENT_ID',
-  // no defaults
   'DEFAULT_SUPERVISOR_UUID',
-  // optional
   'APPLICATION_TITLE',
   'GENDERS',
   'STUDY_DEGREES',
   'STUDY_PROGRAMS',
   'PRIVACY_NOTICE',
+  'CALDAV_URL'
 ]
 
 async function generateConfig() {

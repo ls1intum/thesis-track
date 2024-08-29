@@ -79,6 +79,10 @@ public class CalendarService {
             return;
         }
 
+        if (eventId == null) {
+            return;
+        }
+
         try {
             Calendar calendar = getCalendar();
             Optional<VEvent> event = findVEvent(calendar, eventId);
@@ -113,7 +117,7 @@ public class CalendarService {
         }
     }
 
-    private Optional<VEvent> findVEvent(Calendar calendar, String eventId) {
+    public Optional<VEvent> findVEvent(Calendar calendar, String eventId) {
         for (Component component : calendar.getComponents(Component.VEVENT)) {
             VEvent event = (VEvent) component;
             Optional<Uid> uid = event.getUid();
@@ -126,7 +130,7 @@ public class CalendarService {
         return Optional.empty();
     }
 
-    private VEvent createVEvent(String eventId, CalendarEvent data) {
+    public VEvent createVEvent(String eventId, CalendarEvent data) {
         VEvent event = new VEvent(data.start, data.end, data.title);
 
         event.add(new Uid(eventId));
@@ -159,16 +163,16 @@ public class CalendarService {
                 .block();
 
         if (response == null) {
-            return new Calendar();
+            throw new RuntimeException("Calendar response was empty");
         }
 
-        CalendarBuilder builder = new CalendarBuilder();
-        StringReader stringReader = new StringReader(response);
-
         try {
-            return builder.build(stringReader);
-        } catch (IOException | ParserException e) {
-            return new Calendar();
+            CalendarBuilder builder = new CalendarBuilder();
+            StringReader reader = new StringReader(response);
+
+            return builder.build(reader);
+        } catch (IOException | ParserException | RuntimeException e) {
+            throw new RuntimeException("Failed to parse calendar");
         }
     }
 
@@ -177,7 +181,7 @@ public class CalendarService {
                 .contentType(MediaType.parseMediaType("text/calendar"))
                 .bodyValue(calendar.toString())
                 .retrieve()
-                .bodyToMono(String.class)
+                .bodyToMono(Void.class)
                 .block();
     }
 }

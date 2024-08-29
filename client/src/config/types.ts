@@ -9,8 +9,8 @@ export interface IGlobalConfig {
   thesis_types: Record<string, string>
 
   privacy_notice: string
-
   default_supervisors: string[]
+  calendar_url: string
 
   keycloak: {
     client_id: string

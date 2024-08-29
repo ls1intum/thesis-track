@@ -2,9 +2,10 @@ import { Grid, MultiSelect, Select, TextInput } from '@mantine/core'
 import { MagnifyingGlass } from 'phosphor-react'
 import { ApplicationState } from '../../requests/responses/application'
 import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { formatApplicationState } from '../../utils/format'
 import { useAllTopics } from '../../hooks/fetcher'
+import { useLoggedInUser } from '../../hooks/authentication'
 
 interface IApplicationsFiltersProps {
   size?: 'xl' | 'sm'
@@ -13,9 +14,9 @@ interface IApplicationsFiltersProps {
 const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
   const { size = 'xl' } = props
 
-  const { filters, setFilters, sort, setSort } = useApplicationsContext()
+  const { topics, filters, setFilters, sort, setSort } = useApplicationsContext()
 
-  const topics = useAllTopics()
+  const user = useLoggedInUser()
 
   return (
     <Grid gutter='sm'>
@@ -33,14 +34,18 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
         <MultiSelect
           hidePickedOptions
           label='Topics'
-          data={
-            topics
+          data={[
+            {
+              value: 'NO_TOPIC',
+              label: 'Suggested Topic',
+            },
+            ...(topics
               ? Object.values(topics).map((topic) => ({
                   value: topic.topicId,
                   label: topic.title,
                 }))
-              : []
-          }
+              : []),
+          ]}
           value={filters.topics || []}
           onChange={(value) => {
             setFilters((prev) => ({

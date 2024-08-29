@@ -45,8 +45,8 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
   },
 
   privacy_notice: getEnvironmentVariable('PRIVACY_NOTICE') || '',
-
   default_supervisors: getEnvironmentVariable('DEFAULT_SUPERVISOR_UUID')?.split(';') || [],
+  calendar_url: getEnvironmentVariable('CALDAV_URL') || '',
 
   server_host: getEnvironmentVariable('SERVER_HOST') || 'http://localhost:8080',
 

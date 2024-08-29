@@ -16,12 +16,17 @@ import java.util.UUID;
 
 @Repository
 public interface TopicRepository  extends JpaRepository<Topic, UUID>  {
-    @Query("SELECT DISTINCT t FROM Topic t WHERE " +
+    @Query(
+            "SELECT DISTINCT t FROM Topic t WHERE " +
             "(:searchQuery IS NULL OR t.title LIKE %:searchQuery%) AND " +
-            "(:includeClosed = TRUE OR t.closedAt IS NULL)")
+            "(:includeClosed = TRUE OR t.closedAt IS NULL)"
+    )
     Page<Topic> searchTopics(
             @Param("includeClosed") boolean includeClosed,
             @Param("searchQuery") String searchQuery,
             Pageable page
     );
+
+    @Query("SELECT COUNT(*) FROM Topic t WHERE t.closedAt IS NULL")
+    long countOpenTopics();
 }

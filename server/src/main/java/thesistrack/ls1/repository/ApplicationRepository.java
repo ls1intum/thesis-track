@@ -16,22 +16,34 @@ import java.util.UUID;
 
 @Repository
 public interface ApplicationRepository extends JpaRepository<Application, UUID> {
-    @Query("SELECT DISTINCT a FROM Application a WHERE " +
+    @Query(
+            "SELECT DISTINCT a FROM Application a WHERE " +
             "(:userId IS NULL OR a.user.id = :userId) AND " +
             "(:states IS NULL OR a.state IN :states) AND " +
-            "(:topics IS NULL OR a.topic.id IN :topics) AND " +
+            "(:includeSuggestedTopics = true OR a.topic IS NOT NULL) AND " +
+            "(:topics IS NULL OR a.topic.id IN :topics OR (:includeSuggestedTopics = true AND a.topic IS NULL)) AND " +
             "(:searchQuery IS NULL OR LOWER(a.user.firstName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.lastName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.email) LIKE %:searchQuery% OR " +
             "LOWER(a.user.matriculationNumber) LIKE %:searchQuery% OR " +
-            "LOWER(a.user.universityId) LIKE %:searchQuery%)")
+            "LOWER(a.user.universityId) LIKE %:searchQuery%)"
+    )
     Page<Application> searchApplications(
             @Param("userId") UUID userId,
             @Param("searchQuery") String searchQuery,
             @Param("states") Set<ApplicationState> states,
             @Param("topics") Set<String> topics,
+            @Param("includeSuggestedTopics") boolean includeSuggestedTopics,
             Pageable page
     );
 
     List<Application> findAllByTopic(Topic topic);
+
+    @Query(
+            "SELECT COUNT(DISTINCT a) FROM Application a " +
+            "LEFT JOIN Topic t ON (a.topic.id = t.id) " +
+            "LEFT JOIN TopicRole r ON (t.id = r.topic.id) " +
+            "WHERE (a.topic IS NULL OR :userId IS NULL OR r.user.id = :userId) AND a.state = 'NOT_ASSESSED'"
+    )
+    long countUnreviewedApplications(@Param("userId") UUID userId);
 }

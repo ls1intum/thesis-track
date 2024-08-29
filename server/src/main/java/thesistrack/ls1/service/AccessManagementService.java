@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -84,10 +85,8 @@ public class AccessManagementService {
             throw new RuntimeException("User id or group id is null");
         }
 
-        webClient.put()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/admin/realms/" + keycloakRealmName + "/users/" + userId +"/groups/" + groupId)
-                        .build())
+        webClient.method(HttpMethod.PUT)
+                .uri("/admin/realms/" + keycloakRealmName + "/users/" + userId +"/groups/" + groupId)
                 .headers(headers -> headers.addAll(getAuthenticationHeaders()))
                 .retrieve()
                 .bodyToMono(Void.class)
@@ -99,10 +98,8 @@ public class AccessManagementService {
             throw new RuntimeException("User id or group id is null");
         }
 
-        webClient.delete()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/admin/realms/" + keycloakRealmName + "/users/" + userId +"/groups/" + groupId)
-                        .build())
+        webClient.method(HttpMethod.DELETE)
+                .uri("/admin/realms/" + keycloakRealmName + "/users/" + userId +"/groups/" + groupId)
                 .headers(headers -> headers.addAll(getAuthenticationHeaders()))
                 .retrieve()
                 .bodyToMono(Void.class)
@@ -113,7 +110,7 @@ public class AccessManagementService {
 
     private HttpHeaders getAuthenticationHeaders() {
         if (tokenExpiration == null || Instant.now().isAfter(tokenExpiration)) {
-            Object accessTokenResult = webClient.post()
+            TokensResponse response = webClient.post()
                     .uri("/realms/" + keycloakRealmName + "/protocol/openid-connect/token")
                     .body(
                             BodyInserters.fromFormData("grant_type", "client_credentials")
@@ -122,14 +119,13 @@ public class AccessManagementService {
                     )
                     .retrieve()
                     .bodyToMono(TokensResponse.class)
-                    .block()
-                    .access_token();
+                    .block();
 
-            if (accessTokenResult == null) {
+            if (response == null) {
                 throw new RuntimeException("Access token not returned");
             }
 
-            accessToken = accessTokenResult.toString();
+            accessToken = response.access_token();
             tokenExpiration = Instant.now().plus(30, ChronoUnit.SECONDS);
         }
 
@@ -142,15 +138,17 @@ public class AccessManagementService {
     private record GroupElement(UUID id, String name) {}
 
     private UUID getGroupId(String groupName) {
-        List<GroupElement> groups = webClient.get()
-                .uri(uriBuilder -> uriBuilder
-                        .path("/admin/realms/" + keycloakRealmName + "/groups")
-                        .build())
+        List<GroupElement> groups = webClient.method(HttpMethod.GET)
+                .uri("/admin/realms/" + keycloakRealmName + "/groups")
                 .headers(headers -> headers.addAll(getAuthenticationHeaders()))
                 .retrieve()
                 .bodyToFlux(GroupElement.class)
                 .collectList()
                 .block();
+
+        if (groups == null) {
+            throw new RuntimeException("Groups request was empty");
+        }
 
         return groups.stream()
                 .filter(group -> group.name().equals(groupName))
@@ -162,16 +160,21 @@ public class AccessManagementService {
     private record UserElement(UUID id) {}
 
     private UUID getUserId(String username) {
-        List<UserElement> users = webClient.get()
+        List<UserElement> users = webClient.method(HttpMethod.GET)
                 .uri(uriBuilder -> uriBuilder
                         .path("/admin/realms/" + keycloakRealmName + "/users")
                         .queryParam("username", username)
-                        .build())
+                        .build()
+                )
                 .headers(headers -> headers.addAll(getAuthenticationHeaders()))
                 .retrieve()
                 .bodyToFlux(UserElement.class)
                 .collectList()
                 .block();
+
+        if (users == null) {
+            throw new RuntimeException("Users request was empty");
+        }
 
         return users.stream()
                 .findFirst()
