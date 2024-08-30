@@ -116,7 +116,7 @@ public class DashboardService {
                 continue;
             }
 
-            if (thesis.getEndDate().minus(1, ChronoUnit.MONTHS).isAfter(Instant.now())) {
+            if (thesis.getEndDate().minus(30, ChronoUnit.DAYS).isAfter(Instant.now())) {
                 continue;
             }
 
