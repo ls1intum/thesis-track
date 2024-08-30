@@ -34,9 +34,9 @@ const TopicData = (props: ITopicDataProps) => {
             label='Thesis Types'
             value={
               topic.thesisTypes
-                ? topic.thesisTypes.map(
-                    (thesisType) => GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType,
-                  )
+                ? topic.thesisTypes
+                    .map((thesisType) => GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType)
+                    .join(' / ')
                 : 'Any'
             }
           />
