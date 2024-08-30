@@ -137,14 +137,16 @@ const ThesesGanttChart = () => {
           setOpenedThesis(theses?.content.find((thesis) => thesis.thesisId === item.id))
         }
       />
-      <Center mt='md'>
-        <Group>
-          <Text>Legend:</Text>
-          {visibleStates.map((state) => (
-            <ThesisStateBadge key={state} state={state} />
-          ))}
-        </Group>
-      </Center>
+      {visibleStates.length > 0 && (
+        <Center mt='md'>
+          <Group>
+            <Text>Legend:</Text>
+            {visibleStates.map((state) => (
+              <ThesisStateBadge key={state} state={state} />
+            ))}
+          </Group>
+        </Center>
+      )}
       <ThesisPreviewModal
         opened={!!openedThesis}
         onClose={() => setOpenedThesis(undefined)}

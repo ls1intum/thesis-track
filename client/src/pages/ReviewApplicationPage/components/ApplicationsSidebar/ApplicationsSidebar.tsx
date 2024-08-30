@@ -70,6 +70,11 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
   return (
     <Stack gap='sm'>
       <ApplicationsFilters size='sm' />
+      {applications && applications.content.length === 0 && (
+        <Text ta='center' fw='bold' my='md'>
+          No applications found
+        </Text>
+      )}
       {applications?.content.map((application) => (
         <ApplicationListItem
           key={application.applicationId}

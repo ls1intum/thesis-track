@@ -80,8 +80,8 @@ public class DataFormatter {
             return "";
         }
 
-        long monthsBetween = ChronoUnit.MONTHS.between((Instant) value, Instant.now());
+        long monthsBetween = ChronoUnit.DAYS.between((Instant) value, Instant.now());
 
-        return String.valueOf(monthsBetween / 6);
+        return String.valueOf(monthsBetween / (365 / 2));
     }
 }

@@ -297,13 +297,6 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           />
         ))}
         <DocumentEditor
-          label='Special Skills (Programming languages, certificates, etc.)'
-          maxLength={500}
-          required={requireCompletion}
-          editMode={true}
-          {...form.getInputProps('specialSkills')}
-        />
-        <DocumentEditor
           label='Interests (What are you interested in?)'
           maxLength={500}
           required={requireCompletion}
@@ -316,6 +309,13 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           required={requireCompletion}
           editMode={true}
           {...form.getInputProps('projects')}
+        />
+        <DocumentEditor
+          label='Special Skills (Programming languages, certificates, etc.)'
+          maxLength={500}
+          required={requireCompletion}
+          editMode={true}
+          {...form.getInputProps('specialSkills')}
         />
         <UploadArea
           label='Examination Report'

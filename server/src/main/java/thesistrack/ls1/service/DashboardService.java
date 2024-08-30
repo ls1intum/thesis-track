@@ -78,6 +78,10 @@ public class DashboardService {
 
         // proposal task
         for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.STUDENT), Set.of(ThesisState.PROPOSAL))) {
+            if (!thesis.getProposals().isEmpty()) {
+                continue;
+            }
+
             tasks.add(new TaskDto(
                     "Add a proposal to thesis \"" + thesis.getTitle() + "\"",
                     getThesisLink(thesis),

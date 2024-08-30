@@ -101,7 +101,7 @@ const ThesisProposalSection = () => {
                     </Grid.Col>
                     {student.customData &&
                       Object.entries(student.customData).map(([key, value]) => (
-                        <Grid.Col key={key} span={{ md: 2 }}>
+                        <Grid.Col key={key} span={{ md: 6 }}>
                           <LabeledItem
                             label={GLOBAL_CONFIG.custom_data[key] ?? key}
                             value={value}
