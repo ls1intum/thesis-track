@@ -71,6 +71,10 @@ public class User {
     @Column(name = "special_skills")
     private String specialSkills;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "custom_data", columnDefinition = "jsonb")
+    private Map<String, String> customData = new HashMap<>();
+
     @Column(name = "enrolled_at")
     private Instant enrolledAt;
 

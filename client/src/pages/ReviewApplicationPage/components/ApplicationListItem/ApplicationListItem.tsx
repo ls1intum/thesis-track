@@ -1,4 +1,4 @@
-import { Badge, Group, Stack, Title, Text, Paper } from '@mantine/core'
+import { Badge, Group, Stack, Text, Paper } from '@mantine/core'
 import { IApplication } from '../../../../requests/responses/application'
 import { ApplicationStateColor } from '../../../../config/colors'
 import { formatApplicationState, formatDate } from '../../../../utils/format'
@@ -26,10 +26,10 @@ const ApplicationListItem = (props: IApplicationListItemProps) => {
       }}
     >
       <Stack gap='xs'>
-        <Group>
-          <Title order={3}>
+        <Group wrap='nowrap'>
+          <Text size='xl' fw='bold' truncate>
             {application.user.firstName} {application.user.lastName}
-          </Title>
+          </Text>
           <Badge color={ApplicationStateColor[application.state]} ml='auto'>
             {formatApplicationState(application.state)}
           </Badge>

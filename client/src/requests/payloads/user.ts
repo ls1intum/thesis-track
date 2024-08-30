@@ -11,4 +11,5 @@ export interface IUpdateUserInformationPayload {
   specialSkills: string
   interests: string
   projects: string
+  customData: Record<string, string>
 }

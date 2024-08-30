@@ -21,6 +21,7 @@ public record UserDto (
         String projects,
         String interests,
         String specialSkills,
+        Map<String, String> customData,
         Instant enrolledAt,
         Instant updatedAt,
         Instant joinedAt,
@@ -38,7 +39,7 @@ public record UserDto (
                 user.getId(), user.getAvatar(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
                 user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
-                user.getSpecialSkills(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
+                user.getSpecialSkills(), user.getCustomData(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
                 user.getGroups() == null ? Collections.emptySet() : new HashSet<>(user.getGroups().stream().map(x -> x.getId().getGroup()).toList()),
                 user.getCvFilename() != null, user.getExaminationFilename() != null, user.getDegreeFilename() != null
         );

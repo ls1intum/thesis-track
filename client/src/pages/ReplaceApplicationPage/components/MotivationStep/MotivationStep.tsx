@@ -2,7 +2,6 @@ import { ITopic } from '../../../../requests/responses/topic'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { Accordion, Button, Select, Stack, TextInput } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
-import TopicData from '../../../../components/TopicData/TopicData'
 import { useEffect, useState } from 'react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
@@ -11,6 +10,7 @@ import { DateInput, DateValue } from '@mantine/dates'
 import { getHtmlTextLength } from '../../../../utils/validation'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { IApplication } from '../../../../requests/responses/application'
+import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
 
 interface IMotivationStepProps {
   topic: ITopic | undefined
@@ -29,7 +29,6 @@ const MotivationStep = (props: IMotivationStepProps) => {
   const { topic, application, onComplete } = props
 
   const [loading, setLoading] = useState(false)
-  const [opened, setOpened] = useState(false)
 
   const mergedTopic = application?.topic || topic
 
@@ -104,17 +103,8 @@ const MotivationStep = (props: IMotivationStepProps) => {
     <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
       <Stack gap='md'>
         {mergedTopic ? (
-          <Accordion
-            variant='separated'
-            value={opened ? 'opened' : ''}
-            onChange={(value) => setOpened(value === 'opened')}
-          >
-            <Accordion.Item value='opened'>
-              <Accordion.Control>{mergedTopic.title}</Accordion.Control>
-              <Accordion.Panel>
-                <TopicData topic={mergedTopic} />
-              </Accordion.Panel>
-            </Accordion.Item>
+          <Accordion variant='separated'>
+            <TopicAccordionItem topic={mergedTopic} />
           </Accordion>
         ) : (
           <TextInput

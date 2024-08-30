@@ -4,6 +4,7 @@ import thesistrack.ls1.entity.User;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public record LightUserDto (
@@ -16,6 +17,7 @@ public record LightUserDto (
     String email,
     String studyDegree,
     String studyProgram,
+    Map<String, String> customData,
     Instant joinedAt,
     List<String> groups
 ) {
@@ -27,6 +29,7 @@ public record LightUserDto (
         return new LightUserDto(
                 user.getId(), user.getAvatar(), user.getUniversityId(), user.getMatriculationNumber(),
                 user.getFirstName(), user.getLastName(), user.getEmail().toString(), user.getStudyDegree(), user.getStudyProgram(),
+                user.getCustomData(),
                 user.getJoinedAt(), user.getGroups().stream().map(x -> x.getId().getGroup()).toList()
         );
     }

@@ -102,6 +102,7 @@ services:
       - STUDY_PROGRAMS
       - STUDY_DEGREES
       - GENDERS
+      - CUSTOM_DATA
       - APPLICATION_TITLE
     depends_on:
       - server

@@ -7,6 +7,7 @@ export interface IGlobalConfig {
   study_programs: Record<string, string>
   study_degrees: Record<string, string>
   thesis_types: Record<string, string>
+  custom_data: Record<string, string>
 
   privacy_notice: string
   default_supervisors: string[]

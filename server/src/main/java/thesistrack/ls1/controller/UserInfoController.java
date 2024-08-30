@@ -59,6 +59,7 @@ public class UserInfoController {
                 RequestValidator.validateStringMaxLengthAllowNull(payload.specialSkills(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLengthAllowNull(payload.interests(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLengthAllowNull(payload.projects(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateNotNull(payload.customData()),
                 examinationReport,
                 cv,
                 degreeReport

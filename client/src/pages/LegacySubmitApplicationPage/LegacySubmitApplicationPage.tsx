@@ -198,6 +198,7 @@ const LegacySubmitApplicationPage = () => {
                     thesisTitle: values.thesisTitle!,
                     thesisType: values.thesisType!,
                     desiredStartDate: values.desiredStartDate!,
+                    customData: {},
                   }
 
                   const formData = new FormData()

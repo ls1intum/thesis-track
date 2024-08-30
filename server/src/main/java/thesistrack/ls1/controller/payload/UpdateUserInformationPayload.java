@@ -1,6 +1,7 @@
 package thesistrack.ls1.controller.payload;
 
 import java.time.Instant;
+import java.util.Map;
 
 public record UpdateUserInformationPayload(
         String matriculationNumber,
@@ -14,5 +15,6 @@ public record UpdateUserInformationPayload(
         Instant enrolledAt,
         String specialSkills,
         String interests,
-        String projects
+        String projects,
+        Map<String, String> customData
 ) { }

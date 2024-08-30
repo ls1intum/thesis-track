@@ -8,6 +8,7 @@ export interface ILightUser {
   email: string | null
   studyDegree: string | null
   studyProgram: string | null
+  customData: Record<string, string> | null
   joinedAt: string
   groups: string[]
 }

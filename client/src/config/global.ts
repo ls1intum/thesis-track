@@ -44,6 +44,10 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     GUIDED_RESEARCH: 'Guided Research',
   },
 
+  custom_data: getEnvironmentVariable<Record<string, string>>('CUSTOM_DATA', true) || {
+    GITHUB: 'Github Profile',
+  },
+
   privacy_notice: getEnvironmentVariable('PRIVACY_NOTICE') || '',
   default_supervisors: getEnvironmentVariable('DEFAULT_SUPERVISOR_UUID')?.split(';') || [],
   calendar_url: getEnvironmentVariable('CALDAV_URL') || '',

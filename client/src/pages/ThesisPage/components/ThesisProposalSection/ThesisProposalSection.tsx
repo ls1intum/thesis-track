@@ -90,21 +90,24 @@ const ThesisProposalSection = () => {
                     <Grid.Col span={{ md: 2 }}>
                       <LabeledItem
                         label='Study Degree'
-                        value={
-                          GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
-                          student.studyDegree
-                        }
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem
-                        label='Study Program'
-                        value={
+                        value={`${
                           GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
                           student.studyProgram
-                        }
+                        } ${
+                          GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
+                          student.studyDegree
+                        } `}
                       />
                     </Grid.Col>
+                    {student.customData &&
+                      Object.entries(student.customData).map(([key, value]) => (
+                        <Grid.Col key={key} span={{ md: 2 }}>
+                          <LabeledItem
+                            label={GLOBAL_CONFIG.custom_data[key] ?? key}
+                            value={value}
+                          />
+                        </Grid.Col>
+                      ))}
                     <Grid.Col span={12}>
                       <Divider />
                     </Grid.Col>

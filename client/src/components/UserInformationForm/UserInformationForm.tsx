@@ -27,6 +27,7 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
   const form = useForm<
     Omit<IUpdateUserInformationPayload, 'enrolledAt'> & {
       semester: string
+      customData: Record<string, string>
       declarationOfConsentAccepted: boolean
       examinationReport: File | undefined
       cv: File | undefined
@@ -51,6 +52,9 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       examinationReport: undefined,
       cv: undefined,
       degreeReport: undefined,
+      customData: Object.fromEntries(
+        Object.keys(GLOBAL_CONFIG.custom_data).map((key) => [key, '']),
+      ),
     },
     validateInputOnBlur: true,
     validate: {
@@ -106,6 +110,12 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           return 'The bachelor report should not exceed 2mb'
         }
       },
+      ...Object.fromEntries(
+        Object.entries(GLOBAL_CONFIG.custom_data).map(([key, value]) => [
+          `customData.${key}`,
+          requireCompletion ? isNotEmpty(`Please state your ${value}`) : undefined,
+        ]),
+      ),
     },
   })
 
@@ -125,6 +135,9 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       specialSkills: user?.specialSkills || '',
       interests: user?.interests || '',
       projects: user?.projects || '',
+      customData: Object.fromEntries(
+        Object.keys(GLOBAL_CONFIG.custom_data).map((key) => [key, user.customData?.[key] || '']),
+      ),
     })
   }, [user])
 
@@ -164,6 +177,7 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
               specialSkills: values.specialSkills || null,
               interests: values.interests || null,
               projects: values.projects || null,
+              customData: values.customData,
             },
             values.examinationReport,
             values.cv,
@@ -274,6 +288,14 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
             {...form.getInputProps('semester')}
           />
         </Group>
+        {Object.entries(GLOBAL_CONFIG.custom_data).map(([key, value]) => (
+          <TextInput
+            key={key}
+            required={requireCompletion}
+            label={value}
+            {...form.getInputProps(`customData.${key}`)}
+          />
+        ))}
         <DocumentEditor
           label='Special Skills (Programming languages, certificates, etc.)'
           maxLength={500}
