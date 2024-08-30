@@ -1,7 +1,6 @@
 import { useThesisCommentsContext } from '../../../../contexts/ThesisCommentsProvider/hooks'
 import {
   Button,
-  Card,
   Center,
   Group,
   Modal,

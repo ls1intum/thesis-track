@@ -1,4 +1,4 @@
-import { Anchor, Modal, Text, Title } from '@mantine/core'
+import { Anchor, Modal } from '@mantine/core'
 import { useState } from 'react'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { GLOBAL_CONFIG } from '../../config/global'

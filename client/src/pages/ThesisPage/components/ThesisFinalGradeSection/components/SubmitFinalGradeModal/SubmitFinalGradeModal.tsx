@@ -1,5 +1,5 @@
 import { IThesis } from '../../../../../../requests/responses/thesis'
-import { Button, Checkbox, InputLabel, Modal, Stack, TextInput } from '@mantine/core'
+import { Button, Modal, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { useEffect, useState } from 'react'
 import DocumentEditor from '../../../../../../components/DocumentEditor/DocumentEditor'

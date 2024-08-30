@@ -7,13 +7,11 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ApiError } from '../../../../requests/handler'
 
 const ThesisInfoSection = () => {
   const { thesis, access } = useLoadedThesisContext()
-
-  const navigate = useNavigate()
 
   const [opened, setOpened] = useState(true)
   const [editMode, setEditMode] = useState(false)

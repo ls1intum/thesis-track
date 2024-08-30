@@ -6,6 +6,7 @@ import thesistrack.ls1.entity.User;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,5 +54,34 @@ public class DataFormatter {
         }
 
         return String.join(" and ", users.stream().map(user -> user.firstName() + " " + user.lastName()).toList());
+    }
+
+    public static String formatConstantName(Object value) {
+        if (!(value instanceof String text)) {
+            return "";
+        }
+
+        String[] words = text.split("_");
+        StringBuilder capitalizedSentence = new StringBuilder();
+
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                capitalizedSentence.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+
+        return capitalizedSentence.toString().trim();
+    }
+
+    public static String formatSemester(Object value) {
+        if (!(value instanceof Instant)) {
+            return "";
+        }
+
+        long monthsBetween = ChronoUnit.MONTHS.between((Instant) value, Instant.now());
+
+        return String.valueOf(monthsBetween / 6);
     }
 }

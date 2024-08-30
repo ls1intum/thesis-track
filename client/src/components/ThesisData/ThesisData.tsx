@@ -1,10 +1,12 @@
 import { IPublishedThesis, isThesis, IThesis } from '../../requests/responses/thesis'
 import { Grid, Stack } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
-import { formatDate, formatUser } from '../../utils/format'
+import { formatDate } from '../../utils/format'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { GLOBAL_CONFIG } from '../../config/global'
+import AvatarUserList from '../AvatarUserList/AvatarUserList'
+import React from 'react'
 
 type availableAdditionalInformation = 'title' | 'abstract' | 'info' | 'state' | 'keywords'
 
@@ -23,22 +25,13 @@ const ThesisData = (props: IThesisDataProps) => {
       )}
       <Grid>
         <Grid.Col span={{ md: 4 }}>
-          <LabeledItem
-            label='Supervisor'
-            value={thesis.supervisors.map((supervisor) => formatUser(supervisor)).join(', ')}
-          />
+          <LabeledItem label='Supervisor' value={<AvatarUserList users={thesis.supervisors} />} />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
-          <LabeledItem
-            label='Advisor'
-            value={thesis.advisors.map((advisor) => formatUser(advisor)).join(', ')}
-          />
+          <LabeledItem label='Advisor' value={<AvatarUserList users={thesis.advisors} />} />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
-          <LabeledItem
-            label='Student'
-            value={thesis.students.map((student) => formatUser(student)).join(', ')}
-          />
+          <LabeledItem label='Student' value={<AvatarUserList users={thesis.students} />} />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
           <LabeledItem

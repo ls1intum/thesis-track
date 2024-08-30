@@ -96,7 +96,6 @@ public class AuthenticationService {
     public User updateUserInformation(
             User user,
             String matriculationNumber,
-            boolean isExchangeStudent,
             String firstName,
             String lastName,
             String gender,
@@ -113,7 +112,6 @@ public class AuthenticationService {
             MultipartFile degreeReport
     ) {
         user.setMatriculationNumber(matriculationNumber);
-        user.setIsExchangeStudent(isExchangeStudent);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setGender(gender);

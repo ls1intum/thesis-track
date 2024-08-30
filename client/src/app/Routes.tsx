@@ -1,14 +1,8 @@
 import React, { lazy, Suspense } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 import PageLoader from '../components/PageLoader/PageLoader'
 
-const LegacyThesisApplicationForm = lazy(
-  () => import('../pages/LegacySubmitApplicationPage/LegacySubmitApplicationPage'),
-)
-const LegacyApplicationReviewPage = lazy(
-  () => import('../pages/LegacyApplicationReviewPage/LegacyApplicationReviewPage'),
-)
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage/NotFoundPage'))
 const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/ThesisOverviewPage'))
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
@@ -70,7 +64,7 @@ const AppRoutes = () => {
               </AuthenticatedArea>
             }
           />
-          <Route path='/applications/thesis' element={<LegacyThesisApplicationForm />} />
+          <Route path='/applications/thesis' element={<Navigate to='/' replace />} />
           <Route
             path='/applications/:applicationId?'
             element={
@@ -100,11 +94,7 @@ const AppRoutes = () => {
           />
           <Route
             path='/management/thesis-applications/:applicationId?'
-            element={
-              <AuthenticatedArea requiredGroups={['admin', 'advisor', 'supervisor']}>
-                <LegacyApplicationReviewPage />
-              </AuthenticatedArea>
-            }
+            element={<Navigate to='/applications' replace />}
           />
           <Route path='/logout' element={<LogoutPage />} />
           <Route path='/' element={<LandingPage />} />

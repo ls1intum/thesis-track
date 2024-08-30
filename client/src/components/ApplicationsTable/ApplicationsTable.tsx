@@ -3,10 +3,11 @@ import React from 'react'
 import { IApplication } from '../../requests/responses/application'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { Badge, Center } from '@mantine/core'
-import { formatApplicationState, formatDate, formatUser } from '../../utils/format'
+import { formatApplicationState, formatDate } from '../../utils/format'
 import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
 import { IApplicationsSort } from '../../contexts/ApplicationsProvider/context'
 import { ApplicationStateColor } from '../../config/colors'
+import AvatarUser from '../AvatarUser/AvatarUser'
 
 type ApplicationColumn = 'state' | 'user' | 'thesis_title' | 'reviewed_at' | 'created_at'
 
@@ -42,7 +43,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       accessor: 'user.firstName',
       title: 'Student',
       width: 200,
-      render: (application) => formatUser(application.user),
+      render: (application) => <AvatarUser user={application.user} />,
     },
     thesis_title: {
       accessor: 'thesisTitle',

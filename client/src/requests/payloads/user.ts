@@ -1,6 +1,5 @@
 export interface IUpdateUserInformationPayload {
   matriculationNumber: string
-  isExchangeStudent: boolean
   firstName: string
   lastName: string
   gender: string

@@ -56,9 +56,38 @@ $chart-row-spacing: rem(0.5rem);
 .content {
     display: flex;
     flex-direction: column;
+    position: relative;
+}
+
+.contentBackground {
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.columnBackground {
+    position: relative;
+}
+
+.timelineBackground {
+    flex-grow: 1;
+    position: relative;
+}
+
+.nowDivider {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-right: 1px solid var(--mantine-color-dimmed);
+    transform: translateX(-50%);
 }
 
 .groupRow {
+    z-index: 10;
     display: flex;
     flex-direction: column;
 }
@@ -79,12 +108,15 @@ $chart-row-spacing: rem(0.5rem);
 }
 
 .dataColumn {
-    line-height: calc($chart-timeline-height + 2 * $chart-row-spacing);
+    height: calc($chart-timeline-height + 2 * $chart-row-spacing);
     padding: 0 rem(5);
 
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+
+    display: flex;
+    align-items: center;
 
     border-right: 1px solid var(--mantine-color-dimmed);
 }

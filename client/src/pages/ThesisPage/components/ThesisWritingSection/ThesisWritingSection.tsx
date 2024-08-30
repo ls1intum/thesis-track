@@ -15,8 +15,8 @@ import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
-import PresentationsTable from './components/PresentationsTable/PresentationsTable'
 import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
+import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -187,7 +187,7 @@ const ThesisWritingSection = () => {
                 opened={createPresentationModal}
                 onClose={() => setCreatePresentationModal(false)}
               />
-              <PresentationsTable />
+              <ThesisPresentationsTable />
               {access.advisor &&
                 [ThesisState.WRITING, ThesisState.SUBMITTED].includes(thesis.state) && (
                   <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>

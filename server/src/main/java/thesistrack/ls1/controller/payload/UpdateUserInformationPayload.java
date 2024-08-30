@@ -4,7 +4,6 @@ import java.time.Instant;
 
 public record UpdateUserInformationPayload(
         String matriculationNumber,
-        Boolean isExchangeStudent,
         String firstName,
         String lastName,
         String gender,

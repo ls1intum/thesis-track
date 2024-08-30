@@ -6,7 +6,6 @@ import java.util.Set;
 public record LegacyCreateApplicationPayload (
         String universityId,
         String matriculationNumber,
-        Boolean isExchangeStudent,
         String firstName,
         String lastName,
         String gender,

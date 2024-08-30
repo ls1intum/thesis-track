@@ -51,7 +51,7 @@ const PublishedTheses = () => {
       <Title order={2}>Published Theses</Title>
       <DataTable
         fetching={!theses}
-        withTableBorder
+        withTableBorder={false}
         minHeight={200}
         noRecordsText='No theses published yet'
         borderRadius='sm'

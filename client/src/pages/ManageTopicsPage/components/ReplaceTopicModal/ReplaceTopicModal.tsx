@@ -1,4 +1,4 @@
-import { Button, Modal, MultiSelect, Select, Stack, TextInput } from '@mantine/core'
+import { Button, Modal, MultiSelect, Stack, TextInput } from '@mantine/core'
 import { ITopic } from '../../../../requests/responses/topic'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { isNotEmptyUserList } from '../../../../utils/validation'

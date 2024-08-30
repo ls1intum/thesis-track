@@ -8,6 +8,7 @@ import java.util.*;
 
 public record UserDto (
         UUID userId,
+        String avatar,
         String universityId,
         String matriculationNumber,
         String email,
@@ -15,7 +16,6 @@ public record UserDto (
         String lastName,
         String gender,
         String nationality,
-        Boolean isExchangeStudent,
         String studyDegree,
         String studyProgram,
         String projects,
@@ -35,8 +35,8 @@ public record UserDto (
         }
 
         return new UserDto(
-                user.getId(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
-                user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(), user.getIsExchangeStudent(),
+                user.getId(), user.getAvatar(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
+                user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
                 user.getSpecialSkills(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
                 user.getGroups() == null ? Collections.emptySet() : new HashSet<>(user.getGroups().stream().map(x -> x.getId().getGroup()).toList()),

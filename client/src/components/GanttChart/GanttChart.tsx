@@ -28,15 +28,16 @@ interface IGanttChartProps {
     timelineEvent?: ArrayElement<IGanttChartDataElement['events']>,
   ) => ReactNode
   onItemClick?: (item: IGanttChartDataElement) => unknown
-  defaultRange?: number
+  initialRangeDuration?: number
   maxTicks?: number
+  minRange?: DateRange
 }
 
 export interface IGanttChartDataElement {
   id: string
   groupId: string
   groupName: string
-  columns: string[]
+  columns: ReactNode[]
   timeline: Array<{
     id: string
     startDate: Date
@@ -65,8 +66,9 @@ const GanttChart = (props: IGanttChartProps) => {
     data,
     itemPopover,
     onItemClick,
-    defaultRange = 3600 * 24 * 30 * 3 * 1000,
+    initialRangeDuration = 3600 * 24 * 30 * 3 * 1000,
     maxTicks = 6,
+    minRange,
   } = props
 
   const [range, setRange] = useState<DateRange>()
@@ -108,6 +110,7 @@ const GanttChart = (props: IGanttChartProps) => {
           ...item.events.map((timelineEvent) => timelineEvent.time.getTime()),
         ),
       ),
+      ...(minRange ? [minRange[0]] : []),
     ),
     Math.max(
       ...data.map((item) =>
@@ -116,13 +119,14 @@ const GanttChart = (props: IGanttChartProps) => {
           ...item.events.map((timelineEvent) => timelineEvent.time.getTime()),
         ),
       ),
+      ...(minRange ? [minRange[1]] : []),
     ),
   ]
 
   // Default filtered range to currentTime if there are elements larger than current Time
   const initialEndTime = Math.min(currentTime, totalRange[1])
   const filteredRange: DateRange = [
-    Math.max(totalRange[0], range?.[0] ?? initialEndTime - defaultRange),
+    Math.max(totalRange[0], range?.[0] ?? initialEndTime - initialRangeDuration),
     Math.min(totalRange[1], range?.[1] ?? initialEndTime),
   ]
   const filteredRangeDuration = filteredRange[1] - filteredRange[0]
@@ -268,7 +272,6 @@ const GanttChart = (props: IGanttChartProps) => {
           <Text fw='bold'>Timeline Range Filter:</Text>
           <RangeSlider
             style={{ flex: 1 }}
-            labelAlwaysOn
             min={totalRange[0]}
             max={totalRange[1]}
             step={3600 * 24 * 1000}
@@ -308,6 +311,26 @@ const GanttChart = (props: IGanttChartProps) => {
           onWheel={handleWheel}
           style={{ touchAction: 'pan-x pan-y' }}
         >
+          <div className={classes.contentBackground}>
+            {columns.map((column) => (
+              <div
+                key={column.label}
+                className={classes.columnBackground}
+                style={{ width: column.width }}
+              />
+            ))}
+            <div className={classes.timelineBackground}>
+              {isInDateRange([currentTime, currentTime], filteredRange) && (
+                <div
+                  className={classes.nowDivider}
+                  style={{
+                    left: `${Math.max((100 * (currentTime - filteredRange[0])) / filteredRangeDuration, 0)}%`,
+                  }}
+                />
+              )}
+            </div>
+          </div>
+
           {groups.map((group) => (
             <div key={group.groupId} className={classes.groupRow}>
               <div>

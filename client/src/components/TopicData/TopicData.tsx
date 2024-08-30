@@ -1,10 +1,11 @@
 import { ITopic } from '../../requests/responses/topic'
 import { Grid, Stack } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
-import { formatDate, formatUser } from '../../utils/format'
+import { formatDate } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import React from 'react'
+import AvatarUserList from '../AvatarUserList/AvatarUserList'
 
 interface ITopicDataProps {
   topic: ITopic
@@ -19,17 +20,13 @@ const TopicData = (props: ITopicDataProps) => {
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
             label='Supervisor'
-            value={topic.supervisors
-              .map((supervisor) => formatUser(supervisor, { withUniversityId: false }))
-              .join(', ')}
+            value={<AvatarUserList users={topic.supervisors} withUniversityId={false} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
             label='Advisor'
-            value={topic.advisors
-              .map((advisor) => formatUser(advisor, { withUniversityId: false }))
-              .join(', ')}
+            value={<AvatarUserList users={topic.advisors} withUniversityId={false} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>

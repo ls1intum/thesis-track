@@ -10,6 +10,16 @@ export enum ThesisState {
   DROPPED_OUT = 'DROPPED_OUT',
 }
 
+export interface IThesisPresentation {
+  presentationId: string
+  type: string
+  location: string | null
+  streamUrl: string | null
+  scheduledAt: string
+  createdAt: string
+  createdBy: ILightUser
+}
+
 export interface IThesis {
   thesisId: string
   title: string
@@ -49,15 +59,7 @@ export interface IThesis {
     finalGrade: string
     feedback: string
   }
-  presentations: Array<{
-    presentationId: string
-    type: string
-    location: string | null
-    streamUrl: string | null
-    scheduledAt: string
-    createdAt: string
-    createdBy: ILightUser
-  }>
+  presentations: IThesisPresentation[]
   states: Array<{
     state: ThesisState
     startedAt: string
@@ -83,6 +85,15 @@ export interface IPublishedThesis {
   students: ILightUser[]
   advisors: ILightUser[]
   supervisors: ILightUser[]
+}
+
+export interface IPublishedPresentation {
+  presentationId: string
+  type: string
+  location: string | null
+  streamUrl: string | null
+  scheduledAt: string
+  thesis: IPublishedThesis
 }
 
 export function isThesis(thesis: any): thesis is IThesis {

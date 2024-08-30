@@ -1,6 +1,6 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { formatDate, formatUser } from '../../utils/format'
+import { formatDate } from '../../utils/format'
 import React from 'react'
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
 import { IThesesSort } from '../../contexts/ThesesProvider/context'
@@ -9,6 +9,7 @@ import { IThesis } from '../../requests/responses/thesis'
 import { GLOBAL_CONFIG } from '../../config/global'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import { Center } from '@mantine/core'
+import AvatarUserList from '../AvatarUserList/AvatarUserList'
 
 type ThesisColumn =
   | 'state'
@@ -55,18 +56,17 @@ const ThesesTable = (props: IThesesTableProps) => {
     supervisors: {
       accessor: 'supervisors',
       title: 'Supervisor',
-      render: (thesis: IThesis) =>
-        thesis.supervisors.map((supervisor) => formatUser(supervisor)).join(', '),
+      render: (thesis: IThesis) => <AvatarUserList users={thesis.supervisors} />,
     },
     advisors: {
       accessor: 'advisors',
       title: 'Advisor',
-      render: (thesis: IThesis) => thesis.advisors.map((advisor) => formatUser(advisor)).join(', '),
+      render: (thesis: IThesis) => <AvatarUserList users={thesis.advisors} />,
     },
     students: {
       accessor: 'students',
       title: 'Student',
-      render: (thesis: IThesis) => thesis.students.map((student) => formatUser(student)).join(', '),
+      render: (thesis: IThesis) => <AvatarUserList users={thesis.students} />,
     },
     type: {
       accessor: 'type',

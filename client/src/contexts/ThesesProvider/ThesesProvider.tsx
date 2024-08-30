@@ -15,7 +15,7 @@ interface IThesesProviderProps {
 }
 
 const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
-  const { children, fetchAll = false, limit = 50, hideIfEmpty = false } = props
+  const { children, fetchAll = false, limit = 100, hideIfEmpty = false } = props
 
   const [theses, setTheses] = useState<PaginationResponse<IThesis>>()
   const [page, setPage] = useState(0)

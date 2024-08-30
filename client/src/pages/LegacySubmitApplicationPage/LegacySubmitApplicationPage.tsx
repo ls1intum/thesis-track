@@ -47,7 +47,6 @@ const LegacySubmitApplicationPage = () => {
     mode: 'controlled',
     initialValues: {
       universityId: '',
-      isExchangeStudent: false,
       gender: undefined,
       desiredStartDate: new Date(),
       firstName: '',
@@ -71,14 +70,12 @@ const LegacySubmitApplicationPage = () => {
     },
     validateInputOnBlur: true,
     validate: {
-      universityId: (value, values) =>
-        /^[A-Za-z]{2}[0-9]{2}[A-Za-z]{3}$/.test(value ?? '') || values?.isExchangeStudent
+      universityId: (value) =>
+        /^[A-Za-z]{2}[0-9]{2}[A-Za-z]{3}$/.test(value ?? '')
           ? undefined
           : 'This is not a valid TUM ID',
-      matriculationNumber: (value, values) =>
-        /^\d{8}$/.test(value ?? '') || values?.isExchangeStudent
-          ? undefined
-          : 'This is not a valid matriculation number.',
+      matriculationNumber: (value) =>
+        /^\d{8}$/.test(value ?? '') ? undefined : 'This is not a valid matriculation number.',
       firstName: isNotEmpty('Please state your first name.'),
       lastName: isNotEmpty('Please state your last name'),
       email: isEmail('Invalid email'),
@@ -186,7 +183,6 @@ const LegacySubmitApplicationPage = () => {
                   const applicationPayload: ILegacyCreateApplicationPayload = {
                     universityId: values.universityId!,
                     matriculationNumber: values.matriculationNumber!,
-                    isExchangeStudent: values.isExchangeStudent!,
                     firstName: values.firstName!,
                     lastName: values.lastName!,
                     gender: values.gender!,
@@ -240,16 +236,14 @@ const LegacySubmitApplicationPage = () => {
                 <Group grow align='flex-start'>
                   <TextInput
                     type='text'
-                    required={!form.values.isExchangeStudent}
-                    withAsterisk={!form.values.isExchangeStudent}
+                    required={true}
                     placeholder='TUM ID'
                     label='TUM ID'
                     {...form.getInputProps('universityId')}
                   />
                   <TextInput
                     type='text'
-                    required={!form.values.isExchangeStudent}
-                    withAsterisk={!form.values.isExchangeStudent}
+                    required={true}
                     placeholder='Matriculation Number'
                     label='Matriculation Number'
                     {...form.getInputProps('matriculationNumber')}

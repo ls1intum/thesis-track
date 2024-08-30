@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Button, Center, Group, Space, Stack, Text } from '@mantine/core'
+import { Button, Center, Group, Stack, Text } from '@mantine/core'
 import { downloadFile } from '../../utils/blob'
 import { useApiFile } from '../../hooks/fetcher'
 import { Link } from 'react-router-dom'

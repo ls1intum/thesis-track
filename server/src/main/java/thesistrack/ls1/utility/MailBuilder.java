@@ -140,14 +140,27 @@ public class MailBuilder {
         return this;
     }
 
-    public MailBuilder fillUserPlaceholders(User user, String placeholder) {
-        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
-
-        formatters.put(placeholder + ".enrolledAt", DataFormatter::formatDate);
-
-        replaceDtoPlaceholders(UserDto.fromUserEntity(user), placeholder, formatters);
+    public MailBuilder fillPlaceholder(String placeholder, String value) {
+        content = content.replace("{{" + placeholder + "}}", value);
 
         return this;
+    }
+
+    public MailBuilder fillUserPlaceholders(User user, String placeholder) {
+        replaceDtoPlaceholders(UserDto.fromUserEntity(user), placeholder, getUserFormatters(placeholder));
+
+        return this;
+    }
+
+    private HashMap<String, Function<Object, String>> getUserFormatters(String placeholder) {
+        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
+
+        formatters.put(placeholder + ".enrolledAt", DataFormatter::formatSemester);
+        formatters.put(placeholder + ".gender", DataFormatter::formatConstantName);
+        formatters.put(placeholder + ".studyDegree", DataFormatter::formatConstantName);
+        formatters.put(placeholder + ".studyProgram", DataFormatter::formatConstantName);
+
+        return formatters;
     }
 
     public MailBuilder fillApplicationPlaceholders(Application application) {
@@ -161,7 +174,8 @@ public class MailBuilder {
             return Objects.requireNonNullElse(application.getThesisTitle(), "");
         });
         formatters.put("application.desiredStartDate", DataFormatter::formatDate);
-        formatters.put("application.user.enrolledAt", DataFormatter::formatDate);
+
+        formatters.putAll(getUserFormatters("application.user"));
 
         replaceDtoPlaceholders(ApplicationDto.fromApplicationEntity(application, false), "application", formatters);
 

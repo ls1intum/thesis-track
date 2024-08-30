@@ -1,6 +1,7 @@
 export interface ILightUser {
   userId: string
   universityId: string
+  avatar: string | null
   matriculationNumber: string | null
   firstName: string | null
   lastName: string | null
@@ -14,7 +15,6 @@ export interface ILightUser {
 export interface IUser extends ILightUser {
   gender: string | null
   nationality: string | null
-  isExchangeStudent: boolean | null
   projects: string | null
   interests: string | null
   specialSkills: string | null

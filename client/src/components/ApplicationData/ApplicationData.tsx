@@ -4,11 +4,12 @@ import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedF
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { formatApplicationState, formatDate, formatUser } from '../../utils/format'
+import { formatApplicationState, formatDate } from '../../utils/format'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
 import TopicAccordionItem from '../TopicAccordionItem/TopicAccordionItem'
+import AvatarUser from '../AvatarUser/AvatarUser'
 
 interface IApplicationDataProps {
   application: IApplication
@@ -134,7 +135,10 @@ const ApplicationData = (props: IApplicationDataProps) => {
               <Divider />
               <Group grow>
                 {application.reviewedBy && (
-                  <LabeledItem label='Reviewer' value={formatUser(application.reviewedBy)} />
+                  <LabeledItem
+                    label='Reviewer'
+                    value={<AvatarUser user={application.reviewedBy} />}
+                  />
                 )}
                 {application.reviewedAt && (
                   <LabeledItem

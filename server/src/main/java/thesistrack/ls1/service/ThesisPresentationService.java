@@ -40,7 +40,7 @@ public class ThesisPresentationService {
 
         calendar.add(new ProdId("-//Thesis Track//Thesis Presentations//EN"));
         calendar.add(ImmutableCalScale.GREGORIAN);
-        calendar.getProperties().add(ImmutableMethod.PUBLISH);
+        calendar.add(ImmutableMethod.PUBLISH);
 
         List<ThesisPresentation> presentations = thesisPresentationRepository.findAllPresentations(
                 Set.of(ThesisPresentationVisibility.PUBLIC)

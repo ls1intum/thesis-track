@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record LightUserDto (
     UUID userId,
+    String avatar,
     String universityId,
     String matriculationNumber,
     String firstName,
@@ -24,7 +25,7 @@ public record LightUserDto (
         }
 
         return new LightUserDto(
-                user.getId(), user.getUniversityId(), user.getMatriculationNumber(),
+                user.getId(), user.getAvatar(), user.getUniversityId(), user.getMatriculationNumber(),
                 user.getFirstName(), user.getLastName(), user.getEmail().toString(), user.getStudyDegree(), user.getStudyProgram(),
                 user.getJoinedAt(), user.getGroups().stream().map(x -> x.getId().getGroup()).toList()
         );
