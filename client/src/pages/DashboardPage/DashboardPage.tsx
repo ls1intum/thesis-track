@@ -11,6 +11,8 @@ import ThesesGanttChart from '../../components/ThesesGanttChart/ThesesGanttChart
 import { useHasGroupAccess } from '../../hooks/authentication'
 import { Link } from 'react-router-dom'
 import ApplicationModal from '../../components/ApplicationModal/ApplicationModal'
+import MyTasksSection from './components/MyTasksSection/MyTasksSection'
+import PublicPresentationsSection from './components/PublicPresentationsSection/PublicPresentationsSection'
 
 const DashboardPage = () => {
   usePageTitle('Dashboard')
@@ -24,6 +26,8 @@ const DashboardPage = () => {
       <Title order={1} mb='md'>
         Dashboard
       </Title>
+      <MyTasksSection />
+      <Space mb='md' />
       <ThesesProvider hideIfEmpty={!managementAccess}>
         <Title order={2}>My Theses</Title>
         {managementAccess && (
@@ -44,7 +48,7 @@ const DashboardPage = () => {
                 My Applications
               </Title>
               <Center>
-                <Button my='md' component={Link} to='/applications/thesis'>
+                <Button mb='md' component={Link} to='/applications/thesis'>
                   New Application
                 </Button>
               </Center>
@@ -63,9 +67,11 @@ const DashboardPage = () => {
           application={application}
           onClose={() => setApplication(undefined)}
           allowReviews={false}
+          allowEdit={true}
         />
         <Space mb='md' />
       </ApplicationsProvider>
+      <PublicPresentationsSection />
     </ContentContainer>
   )
 }

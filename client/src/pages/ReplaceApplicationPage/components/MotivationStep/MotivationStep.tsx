@@ -1,46 +1,53 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { isNotEmpty, useForm } from '@mantine/form'
-import { Accordion, Button, Stack, TextInput } from '@mantine/core'
+import { Accordion, Button, Select, Stack, TextInput } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
-import TopicData from '../../../../components/TopicData/TopicData'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { DateInput, DateValue } from '@mantine/dates'
 import { getHtmlTextLength } from '../../../../utils/validation'
+import { GLOBAL_CONFIG } from '../../../../config/global'
+import { IApplication } from '../../../../requests/responses/application'
+import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
 
 interface IMotivationStepProps {
   topic: ITopic | undefined
+  application: IApplication | undefined
   onComplete: () => unknown
 }
 
 interface IMotivationStepForm {
   thesisTitle: string
+  thesisType: string | null
   desiredStartDate: DateValue
   motivation: string
 }
 
 const MotivationStep = (props: IMotivationStepProps) => {
-  const { topic, onComplete } = props
+  const { topic, application, onComplete } = props
 
   const [loading, setLoading] = useState(false)
-  const [opened, setOpened] = useState(false)
+
+  const mergedTopic = application?.topic || topic
 
   const form = useForm<IMotivationStepForm>({
     mode: 'controlled',
     initialValues: {
       thesisTitle: '',
+      thesisType: null,
       desiredStartDate: new Date(),
       motivation: '',
     },
     validateInputOnBlur: true,
     validate: {
       thesisTitle: (value) => {
-        if (!topic && !value) {
+        if (!mergedTopic && !value) {
           return 'Please state your suggested thesis title'
         }
       },
+      thesisType: isNotEmpty('Please state your thesis type'),
       desiredStartDate: isNotEmpty('Please state your desired start date'),
       motivation: (value) => {
         if (!value) {
@@ -52,20 +59,35 @@ const MotivationStep = (props: IMotivationStepProps) => {
     },
   })
 
+  useEffect(() => {
+    if (application) {
+      form.setValues({
+        motivation: application.motivation,
+        desiredStartDate: new Date(application.desiredStartDate),
+        thesisType: application.thesisType,
+        thesisTitle: application.thesisTitle || '',
+      })
+    }
+  }, [application?.applicationId])
+
   const onSubmit = async (values: IMotivationStepForm) => {
     setLoading(true)
 
     try {
-      const response = await doRequest('/v2/applications', {
-        method: 'POST',
-        requiresAuth: true,
-        data: {
-          topicId: topic?.topicId,
-          thesisTitle: values.thesisTitle || null,
-          desiredStartDate: values.desiredStartDate,
-          motivation: values.motivation,
+      const response = await doRequest(
+        application ? `/v2/applications/${application.applicationId}` : '/v2/applications',
+        {
+          method: application ? 'PUT' : 'POST',
+          requiresAuth: true,
+          data: {
+            topicId: mergedTopic?.topicId,
+            thesisTitle: values.thesisTitle || null,
+            thesisType: values.thesisType,
+            desiredStartDate: values.desiredStartDate,
+            motivation: values.motivation,
+          },
         },
-      })
+      )
 
       if (response.ok) {
         onComplete()
@@ -80,18 +102,9 @@ const MotivationStep = (props: IMotivationStepProps) => {
   return (
     <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
       <Stack gap='md'>
-        {topic ? (
-          <Accordion
-            variant='separated'
-            value={opened ? 'opened' : ''}
-            onChange={(value) => setOpened(value === 'opened')}
-          >
-            <Accordion.Item value='opened'>
-              <Accordion.Control>{topic.title}</Accordion.Control>
-              <Accordion.Panel>
-                <TopicData topic={topic} />
-              </Accordion.Panel>
-            </Accordion.Item>
+        {mergedTopic ? (
+          <Accordion variant='separated'>
+            <TopicAccordionItem topic={mergedTopic} />
           </Accordion>
         ) : (
           <TextInput
@@ -100,6 +113,17 @@ const MotivationStep = (props: IMotivationStepProps) => {
             {...form.getInputProps('thesisTitle')}
           />
         )}
+        <Select
+          label='Thesis Type'
+          required={true}
+          data={(mergedTopic?.thesisTypes || Object.keys(GLOBAL_CONFIG.thesis_types)).map(
+            (thesisType) => ({
+              label: GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType,
+              value: thesisType,
+            }),
+          )}
+          {...form.getInputProps('thesisType')}
+        />
         <DateInput
           label='Desired Start Date'
           required={true}
@@ -113,7 +137,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
           {...form.getInputProps('motivation')}
         />
         <Button type='submit' ml='auto' disabled={!form.isValid()} loading={loading}>
-          Submit Application
+          {application ? 'Update Application' : 'Submit Application'}
         </Button>
       </Stack>
     </form>

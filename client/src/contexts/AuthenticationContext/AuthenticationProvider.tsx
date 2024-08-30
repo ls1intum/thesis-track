@@ -138,9 +138,7 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
     if (authenticationTokens?.access_token) {
       const decodedAccessToken = jwtDecode<IDecodedAccessToken>(authenticationTokens.access_token)
 
-      setUniversityId(
-        decodedAccessToken[GLOBAL_CONFIG.keycloak.university_id_jwt_attribute] || undefined,
-      )
+      setUniversityId(decodedAccessToken['preferred_username'] || undefined)
     } else {
       setUniversityId(undefined)
     }

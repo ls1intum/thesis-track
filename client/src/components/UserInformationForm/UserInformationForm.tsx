@@ -1,11 +1,9 @@
 import { isEmail, isNotEmpty, useForm } from '@mantine/form'
 import { IUpdateUserInformationPayload } from '../../requests/payloads/user'
-import { Button, Checkbox, Group, Select, Stack, TextInput } from '@mantine/core'
+import { Button, Checkbox, Group, NumberInput, Select, Stack, TextInput } from '@mantine/core'
 import { useAuthenticationContext, useLoggedInUser } from '../../hooks/authentication'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { DatePickerInput } from '@mantine/dates'
-import { Calendar } from 'phosphor-react'
 import UploadArea from '../UploadArea/UploadArea'
 import { DeclarationOfDataConsent } from '../DeclarationOfDataConsent/DeclarationOfDataConsent'
 import { useEffect, useState } from 'react'
@@ -13,6 +11,7 @@ import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { useApiFile } from '../../hooks/fetcher'
 import { showSimpleError } from '../../utils/notification'
 import { getHtmlTextLength } from '../../utils/validation'
+import { enrollmentDateToSemester, semesterToEnrollmentDate } from '../../utils/converter'
 
 interface IUserInformationFormProps {
   requireCompletion: boolean
@@ -26,7 +25,9 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
   const user = useLoggedInUser()
 
   const form = useForm<
-    IUpdateUserInformationPayload & {
+    Omit<IUpdateUserInformationPayload, 'enrolledAt'> & {
+      semester: string
+      customData: Record<string, string>
       declarationOfConsentAccepted: boolean
       examinationReport: File | undefined
       cv: File | undefined
@@ -43,15 +44,17 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       nationality: '',
       studyDegree: '',
       studyProgram: '',
-      enrolledAt: null,
+      semester: '',
       specialSkills: '',
       projects: '',
       interests: '',
-      isExchangeStudent: false,
       declarationOfConsentAccepted: false,
       examinationReport: undefined,
       cv: undefined,
       degreeReport: undefined,
+      customData: Object.fromEntries(
+        Object.keys(GLOBAL_CONFIG.custom_data).map((key) => [key, '']),
+      ),
     },
     validateInputOnBlur: true,
     validate: {
@@ -65,7 +68,7 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       nationality: requireCompletion ? isNotEmpty('Please state your nationality') : undefined,
       studyDegree: requireCompletion ? isNotEmpty('Please state your study degree') : undefined,
       studyProgram: requireCompletion ? isNotEmpty('Please state your study program') : undefined,
-      enrolledAt: requireCompletion ? isNotEmpty('Please state your enrollment date') : undefined,
+      semester: requireCompletion ? isNotEmpty('Please state your semester date') : undefined,
       specialSkills: (value) => {
         if (!value && requireCompletion) {
           return 'Please state your special skills.'
@@ -107,6 +110,12 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           return 'The bachelor report should not exceed 2mb'
         }
       },
+      ...Object.fromEntries(
+        Object.entries(GLOBAL_CONFIG.custom_data).map(([key, value]) => [
+          `customData.${key}`,
+          requireCompletion ? isNotEmpty(`Please state your ${value}`) : undefined,
+        ]),
+      ),
     },
   })
 
@@ -114,19 +123,21 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
 
   useEffect(() => {
     form.setValues({
-      isExchangeStudent: user?.isExchangeStudent ?? false,
-      email: user?.email || undefined,
-      matriculationNumber: user?.matriculationNumber || undefined,
-      firstName: user?.firstName || undefined,
-      lastName: user?.lastName || undefined,
-      gender: user?.gender || undefined,
-      nationality: user?.nationality || undefined,
-      studyDegree: user?.studyDegree || undefined,
-      studyProgram: user?.studyProgram || undefined,
-      enrolledAt: user?.enrolledAt ? new Date(user.enrolledAt) : undefined,
-      specialSkills: user?.specialSkills || undefined,
-      interests: user?.interests || undefined,
-      projects: user?.projects || undefined,
+      email: user?.email || '',
+      matriculationNumber: user?.matriculationNumber || '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      gender: user?.gender || '',
+      nationality: user?.nationality || '',
+      studyDegree: user?.studyDegree || '',
+      studyProgram: user?.studyProgram || '',
+      semester: user?.enrolledAt ? enrollmentDateToSemester(user.enrolledAt).toString() : '',
+      specialSkills: user?.specialSkills || '',
+      interests: user?.interests || '',
+      projects: user?.projects || '',
+      customData: Object.fromEntries(
+        Object.keys(GLOBAL_CONFIG.custom_data).map((key) => [key, user.customData?.[key] || '']),
+      ),
     })
   }, [user])
 
@@ -155,7 +166,6 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           await updateInformation(
             {
               matriculationNumber: values.matriculationNumber || null,
-              isExchangeStudent: values.isExchangeStudent ?? false,
               firstName: values.firstName || null,
               lastName: values.lastName || null,
               gender: values.gender || null,
@@ -163,10 +173,11 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
               email: values.email || null,
               studyDegree: values.studyDegree || null,
               studyProgram: values.studyProgram || null,
-              enrolledAt: values.enrolledAt || null,
+              enrolledAt: semesterToEnrollmentDate(values.semester),
               specialSkills: values.specialSkills || null,
               interests: values.interests || null,
               projects: values.projects || null,
+              customData: values.customData,
             },
             values.examinationReport,
             values.cv,
@@ -271,20 +282,20 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
             searchable={true}
             {...form.getInputProps('studyProgram')}
           />
-          <DatePickerInput
-            leftSection={<Calendar />}
+          <NumberInput
             required={requireCompletion}
-            label='Enrollment Date'
-            {...form.getInputProps('enrolledAt')}
+            label='Semester'
+            {...form.getInputProps('semester')}
           />
         </Group>
-        <DocumentEditor
-          label='Special Skills (Programming languages, certificates, etc.)'
-          maxLength={500}
-          required={requireCompletion}
-          editMode={true}
-          {...form.getInputProps('specialSkills')}
-        />
+        {Object.entries(GLOBAL_CONFIG.custom_data).map(([key, value]) => (
+          <TextInput
+            key={key}
+            required={requireCompletion}
+            label={value}
+            {...form.getInputProps(`customData.${key}`)}
+          />
+        ))}
         <DocumentEditor
           label='Interests (What are you interested in?)'
           maxLength={500}
@@ -298,6 +309,13 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           required={requireCompletion}
           editMode={true}
           {...form.getInputProps('projects')}
+        />
+        <DocumentEditor
+          label='Special Skills (Programming languages, certificates, etc.)'
+          maxLength={500}
+          required={requireCompletion}
+          editMode={true}
+          {...form.getInputProps('specialSkills')}
         />
         <UploadArea
           label='Examination Report'

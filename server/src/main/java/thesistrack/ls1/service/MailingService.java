@@ -71,6 +71,15 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
+    public void sendApplicationReminderEmail(long unreviewedApplications) {
+        MailBuilder builder = new MailBuilder(config, "Unreviewed Thesis Applications", "application-reminder");
+        builder
+                .sendToChairMembers()
+                .fillPlaceholder("unreviewedApplications", String.valueOf(unreviewedApplications))
+                .fillPlaceholder("reviewApplicationsLink", config.getClientHost() + "/applications")
+                .send(javaMailSender, uploadService);
+    }
+
     public void sendThesisCreatedEmail(User creatingUser, Thesis thesis) {
         MailBuilder builder = new MailBuilder(config, "Thesis Created", "thesis-created");
         builder
@@ -107,6 +116,7 @@ public class MailingService {
                 .addPrimarySender(proposal.getApprovedBy())
                 .sendToThesisStudents(proposal.getThesis())
                 .fillThesisPlaceholders(proposal.getThesis())
+                .fillThesisProposalPlaceholders(proposal)
                 .send(javaMailSender, uploadService);
     }
 

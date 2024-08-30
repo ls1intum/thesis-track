@@ -15,8 +15,8 @@ import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
-import PresentationsTable from './components/PresentationsTable/PresentationsTable'
 import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
+import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -155,13 +155,6 @@ const ThesisWritingSection = () => {
                 )}
               </Grid.Col>
             </Grid>
-            <Divider />
-            <Stack>
-              <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
-                <ThesisCommentsList />
-                {access.student && <ThesisCommentsForm />}
-              </ThesisCommentsProvider>
-            </Stack>
             <Group grow>
               {access.student &&
                 thesis.state === ThesisState.WRITING &&
@@ -181,13 +174,20 @@ const ThesisWritingSection = () => {
                   </Stack>
                 )}
             </Group>
+            <Divider />
+            <Stack>
+              <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
+                <ThesisCommentsList />
+                {access.student && <ThesisCommentsForm />}
+              </ThesisCommentsProvider>
+            </Stack>
             <Stack>
               <Divider />
               <CreatePresentationModal
                 opened={createPresentationModal}
                 onClose={() => setCreatePresentationModal(false)}
               />
-              <PresentationsTable />
+              <ThesisPresentationsTable />
               {access.advisor &&
                 [ThesisState.WRITING, ThesisState.SUBMITTED].includes(thesis.state) && (
                   <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>

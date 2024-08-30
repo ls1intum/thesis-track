@@ -1,13 +1,14 @@
 import { IThesis } from '../../../../../../requests/responses/thesis'
-import { Button, Checkbox, InputLabel, Modal, Stack, TextInput } from '@mantine/core'
+import { Button, Modal, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DocumentEditor from '../../../../../../components/DocumentEditor/DocumentEditor'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
 import { ApiError } from '../../../../../../requests/handler'
+import ThesisVisibilitySelect from '../../../ThesisVisibilitySelect/ThesisVisibilitySelect'
 
 interface ISubmitFinalGradeModalProps {
   opened: boolean
@@ -21,7 +22,11 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
 
   const [finalGrade, setFinalGrade] = useState('')
   const [feedback, setFeedback] = useState('')
-  const [publishThesis, setPublishThesis] = useState(false)
+  const [visibility, setVisibility] = useState(thesis.visibility)
+
+  useEffect(() => {
+    setVisibility(visibility)
+  }, [thesis.visibility])
 
   const isEmpty = !finalGrade || !feedback
 
@@ -32,7 +37,7 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
       data: {
         finalGrade,
         finalFeedback: feedback,
-        visibility: publishThesis ? 'PUBLIC' : thesis.visibility,
+        visibility: visibility,
       },
     })
 
@@ -48,22 +53,24 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
   return (
     <Modal opened={opened} onClose={onClose} size='xl' title='Submit Final Grade'>
       <Stack gap='md'>
+        <ThesisVisibilitySelect
+          required
+          label='Thesis Visibility'
+          value={visibility}
+          onChange={(e) => e && setVisibility(e)}
+        />
         <TextInput
           required
           label='Final Grade'
           value={finalGrade}
           onChange={(e) => setFinalGrade(e.target.value)}
         />
-        <InputLabel required>Feedback</InputLabel>
         <DocumentEditor
+          required
+          label='Feedback (Visible to student)'
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}
           editMode={true}
-        />
-        <Checkbox
-          label='Publish Thesis'
-          checked={publishThesis}
-          onChange={(e) => setPublishThesis(e.target.checked)}
         />
         <Button loading={submitting} onClick={onGradeSubmit} disabled={isEmpty}>
           Submit Grade

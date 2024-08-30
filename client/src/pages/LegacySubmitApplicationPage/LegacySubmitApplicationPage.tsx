@@ -13,6 +13,7 @@ import {
   Title,
   TextInput,
   Grid,
+  Card,
 } from '@mantine/core'
 import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
 import LS1Logo from '../../static/ls1logo.png'
@@ -27,7 +28,6 @@ import UploadArea from '../../components/UploadArea/UploadArea'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
-import { LegacySuccessfulSubmission } from './components/LegacySuccessfulSubmission/LegacySuccessfulSubmission'
 import { getApiResponseErrorMessage } from '../../requests/handler'
 import DocumentEditor from '../../components/DocumentEditor/DocumentEditor'
 import { getHtmlTextLength } from '../../utils/validation'
@@ -47,7 +47,6 @@ const LegacySubmitApplicationPage = () => {
     mode: 'controlled',
     initialValues: {
       universityId: '',
-      isExchangeStudent: false,
       gender: undefined,
       desiredStartDate: new Date(),
       firstName: '',
@@ -63,6 +62,7 @@ const LegacySubmitApplicationPage = () => {
       projects: '',
       interests: '',
       thesisTitle: '',
+      thesisType: null,
       declarationOfConsentAccepted: false,
       examinationReport: undefined,
       cv: undefined,
@@ -70,14 +70,12 @@ const LegacySubmitApplicationPage = () => {
     },
     validateInputOnBlur: true,
     validate: {
-      universityId: (value, values) =>
-        /^[A-Za-z]{2}[0-9]{2}[A-Za-z]{3}$/.test(value ?? '') || values?.isExchangeStudent
+      universityId: (value) =>
+        /^[A-Za-z]{2}[0-9]{2}[A-Za-z]{3}$/.test(value ?? '')
           ? undefined
           : 'This is not a valid TUM ID',
-      matriculationNumber: (value, values) =>
-        /^\d{8}$/.test(value ?? '') || values?.isExchangeStudent
-          ? undefined
-          : 'This is not a valid matriculation number.',
+      matriculationNumber: (value) =>
+        /^\d{8}$/.test(value ?? '') ? undefined : 'This is not a valid matriculation number.',
       firstName: isNotEmpty('Please state your first name.'),
       lastName: isNotEmpty('Please state your last name'),
       email: isEmail('Invalid email'),
@@ -118,6 +116,7 @@ const LegacySubmitApplicationPage = () => {
           return 'The maximum allowed number of characters is 200.'
         }
       },
+      thesisType: isNotEmpty('Please state your thesis type.'),
       studyDegree: isNotEmpty('Please state your study degree.'),
       studyProgram: isNotEmpty('Please state your study program.'),
       enrolledAt: isNotEmpty('Please state your enrollment date.'),
@@ -150,10 +149,21 @@ const LegacySubmitApplicationPage = () => {
       <Box mx='auto' pos='relative'>
         <LoadingOverlay visible={loadingOverlayVisible} overlayProps={{ blur: 2 }} />
         {applicationSuccessfullySubmitted ? (
-          <LegacySuccessfulSubmission
-            title='Your application was successfully submitted!'
-            text='We will contact you as soon as we have reviewed your application.'
-          />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '100vh',
+            }}
+          >
+            <Card withBorder p='xl'>
+              <Title order={5}>Your application was successfully submitted!</Title>
+              <Text c='dimmed'>
+                We will contact you as soon as we have reviewed your application.
+              </Text>
+            </Card>
+          </div>
         ) : (
           <Stack>
             <Center>
@@ -173,7 +183,6 @@ const LegacySubmitApplicationPage = () => {
                   const applicationPayload: ILegacyCreateApplicationPayload = {
                     universityId: values.universityId!,
                     matriculationNumber: values.matriculationNumber!,
-                    isExchangeStudent: values.isExchangeStudent!,
                     firstName: values.firstName!,
                     lastName: values.lastName!,
                     gender: values.gender!,
@@ -187,7 +196,9 @@ const LegacySubmitApplicationPage = () => {
                     interests: values.interests!,
                     projects: values.projects!,
                     thesisTitle: values.thesisTitle!,
+                    thesisType: values.thesisType!,
                     desiredStartDate: values.desiredStartDate!,
+                    customData: {},
                   }
 
                   const formData = new FormData()
@@ -226,16 +237,14 @@ const LegacySubmitApplicationPage = () => {
                 <Group grow align='flex-start'>
                   <TextInput
                     type='text'
-                    required={!form.values.isExchangeStudent}
-                    withAsterisk={!form.values.isExchangeStudent}
+                    required={true}
                     placeholder='TUM ID'
                     label='TUM ID'
                     {...form.getInputProps('universityId')}
                   />
                   <TextInput
                     type='text'
-                    required={!form.values.isExchangeStudent}
-                    withAsterisk={!form.values.isExchangeStudent}
+                    required={true}
                     placeholder='Matriculation Number'
                     label='Matriculation Number'
                     {...form.getInputProps('matriculationNumber')}
@@ -366,20 +375,35 @@ const LegacySubmitApplicationPage = () => {
                     />
                   </Grid.Col>
                 </Grid>
-                <Stack gap='0'>
-                  <TextInput
-                    label='Thesis Title Suggestion'
-                    placeholder='Thesis Title Suggestion'
-                    required={true}
-                    {...form.getInputProps('thesisTitle')}
-                  />
-                  {!form.errors.thesisTitle && (
-                    <Text
-                      fz='xs'
-                      ta='right'
-                    >{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
-                  )}
-                </Stack>
+                <Grid>
+                  <Grid.Col span={{ md: 8 }}>
+                    <Stack gap='0'>
+                      <TextInput
+                        label='Thesis Title Suggestion'
+                        placeholder='Thesis Title Suggestion'
+                        required={true}
+                        {...form.getInputProps('thesisTitle')}
+                      />
+                      {!form.errors.thesisTitle && (
+                        <Text
+                          fz='xs'
+                          ta='right'
+                        >{`${form.values.thesisTitle?.length ?? 0} / 200`}</Text>
+                      )}
+                    </Stack>
+                  </Grid.Col>
+                  <Grid.Col span={{ md: 4 }}>
+                    <Select
+                      label='Thesis Type'
+                      required={true}
+                      data={Object.keys(GLOBAL_CONFIG.thesis_types).map((thesisType) => ({
+                        label: GLOBAL_CONFIG.thesis_types[thesisType],
+                        value: thesisType,
+                      }))}
+                      {...form.getInputProps('thesisType')}
+                    />
+                  </Grid.Col>
+                </Grid>
                 <DatePickerInput
                   leftSection={<Calendar />}
                   label='Desired Thesis Start Date'

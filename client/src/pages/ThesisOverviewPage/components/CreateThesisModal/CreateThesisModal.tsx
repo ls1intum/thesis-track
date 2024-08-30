@@ -112,7 +112,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
             maxValues={1}
             {...form.getInputProps('supervisors')}
           />
-          <Button type='submit' loading={loading}>
+          <Button type='submit' loading={loading} disabled={!form.isValid()}>
             Create Thesis
           </Button>
         </Stack>

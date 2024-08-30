@@ -68,9 +68,9 @@ const links: Array<{
   },
   {
     link: '/theses',
-    label: 'Theses Overview',
+    label: 'Theses',
     icon: Kanban,
-    groups: ['admin', 'advisor', 'supervisor'],
+    groups: ['admin', 'student', 'advisor', 'supervisor'],
   },
 ]
 
@@ -89,14 +89,17 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
   const [minimizedState, setMinimized] = useLocalStorage<boolean>('navigation_minimized', {
     usingJson: true,
   })
-  const [debouncedMinimized] = useDebouncedValue(minimizedState, minimizeAnimationDuration)
+  const [debouncedMinimized] = useDebouncedValue(
+    collapseNavigation || minimizedState,
+    minimizeAnimationDuration,
+  )
   // only use debounced State if value is false because otherwise the text is formatted weirdly if you expand the navigation
-  const minimized = minimizedState || debouncedMinimized
+  const minimized = opened ? false : minimizedState || !!debouncedMinimized
 
   const location = useLocation()
   const navigationType = useNavigationType()
 
-  const showHeader = useIsSmallerBreakpoint('md') || collapseNavigation
+  const showHeader = useIsSmallerBreakpoint('md')
   const auth = useAuthenticationContext()
 
   useEffect(() => {
@@ -126,9 +129,9 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     <AppShell
       header={{ collapsed: !showHeader, height: 60 }}
       navbar={{
-        width: minimizedState ? 70 : 300,
+        width: collapseNavigation || minimizedState ? 70 : 300,
         breakpoint: 'md',
-        collapsed: { mobile: !opened, desktop: !opened && collapseNavigation },
+        collapsed: { mobile: !opened, desktop: false },
       }}
       styles={{
         navbar: {
@@ -139,12 +142,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     >
       <AppShell.Header>
         <Group h='100%' px='md'>
-          <Burger
-            opened={opened}
-            onClick={toggle}
-            hiddenFrom={collapseNavigation ? undefined : 'md'}
-            size='md'
-          />
+          <Burger opened={opened} onClick={toggle} hiddenFrom='md' size='md' />
         </Group>
       </AppShell.Header>
 
@@ -204,17 +202,19 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
             </Tooltip>
             {!minimized && <span>Logout</span>}
           </Link>
-          <Group>
-            <ActionIcon
-              visibleFrom='md'
-              ml='auto'
-              mr={minimized ? 'auto' : undefined}
-              variant='transparent'
-              onClick={() => setMinimized((prev) => !prev)}
-            >
-              {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
-            </ActionIcon>
-          </Group>
+          {!collapseNavigation && (
+            <Group>
+              <ActionIcon
+                visibleFrom='md'
+                ml='auto'
+                mr={minimized ? 'auto' : undefined}
+                variant='transparent'
+                onClick={() => setMinimized((prev) => !prev)}
+              >
+                {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
+              </ActionIcon>
+            </Group>
+          )}
         </AppShell.Section>
       </AppShell.Navbar>
 

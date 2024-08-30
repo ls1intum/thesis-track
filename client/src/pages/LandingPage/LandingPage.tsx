@@ -18,6 +18,7 @@ const LandingPage = () => {
           </Title>
           <TopicsTable
             columns={['title', 'supervisor', 'advisor', 'actions']}
+            noBorder
             extraColumns={{
               actions: {
                 accessor: 'actions',

@@ -10,6 +10,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.*;
 
@@ -45,9 +47,6 @@ public class User {
     @Column(name = "nationality")
     private String nationality;
 
-    @Column(name = "is_exchange_student")
-    private Boolean isExchangeStudent;
-
     @Column(name = "cv_filename")
     private String cvFilename;
 
@@ -72,6 +71,10 @@ public class User {
     @Column(name = "special_skills")
     private String specialSkills;
 
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(name = "custom_data", columnDefinition = "jsonb")
+    private Map<String, String> customData = new HashMap<>();
+
     @Column(name = "enrolled_at")
     private Instant enrolledAt;
 
@@ -92,6 +95,28 @@ public class User {
         try {
             return new InternetAddress(email);
         } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public String getAvatar() {
+        if (email == null) {
+            return null;
+        }
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            byte[] hashInBytes = md.digest(email.trim().toLowerCase().getBytes());
+
+            StringBuilder sb = new StringBuilder();
+
+            for (byte b : hashInBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return "https://www.gravatar.com/avatar/" + sb;
+        } catch (NoSuchAlgorithmException e) {
             return null;
         }
     }

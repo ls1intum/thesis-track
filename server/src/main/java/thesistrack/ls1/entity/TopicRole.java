@@ -27,6 +27,10 @@ public class TopicRole {
     private User user;
 
     @NotNull
+    @Column(name = "position", nullable = false)
+    private Integer position;
+
+    @NotNull
     @Column(name = "assigned_at", nullable = false)
     private Instant assignedAt;
 

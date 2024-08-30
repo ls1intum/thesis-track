@@ -7,13 +7,11 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
-import { useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { ApiError } from '../../../../requests/handler'
 
 const ThesisInfoSection = () => {
   const { thesis, access } = useLoadedThesisContext()
-
-  const navigate = useNavigate()
 
   const [opened, setOpened] = useState(true)
   const [editMode, setEditMode] = useState(false)
@@ -68,19 +66,18 @@ const ThesisInfoSection = () => {
               onChange={(e) => setInfoText(e.target.value)}
             />
             <Grid>
-              <Grid.Col>
+              <Grid.Col span={{ md: 6 }}>
                 {access.advisor && thesis.applicationId && (
                   <Button
+                    component={Link}
                     variant='outline'
-                    onClick={() =>
-                      navigate(`/management/thesis-applications/${thesis.applicationId}`)
-                    }
+                    to={`/applications/${thesis.applicationId}`}
                   >
                     View Student Application
                   </Button>
                 )}
               </Grid.Col>
-              <Grid.Col>
+              <Grid.Col span={{ md: 6 }}>
                 <Flex justify='flex-end'>
                   {access.student && !editMode && (
                     <Button ml='auto' onClick={() => setEditMode(true)}>

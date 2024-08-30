@@ -1,6 +1,5 @@
 export interface IUpdateUserInformationPayload {
   matriculationNumber: string
-  isExchangeStudent: boolean
   firstName: string
   lastName: string
   gender: string
@@ -12,4 +11,5 @@ export interface IUpdateUserInformationPayload {
   specialSkills: string
   interests: string
   projects: string
+  customData: Record<string, string>
 }

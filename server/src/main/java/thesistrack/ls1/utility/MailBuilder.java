@@ -6,6 +6,8 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.JavaMailSender;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.dto.ApplicationDto;
@@ -23,6 +25,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class MailBuilder {
+    private static final Logger log = LoggerFactory.getLogger(MailBuilder.class);
     private final MailConfig config;
 
     private final List<User> primarySenders;
@@ -137,14 +140,27 @@ public class MailBuilder {
         return this;
     }
 
-    public MailBuilder fillUserPlaceholders(User user, String placeholder) {
-        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
-
-        formatters.put(placeholder + ".enrolledAt", DataFormatter::formatDate);
-
-        replaceDtoPlaceholders(UserDto.fromUserEntity(user), placeholder, formatters);
+    public MailBuilder fillPlaceholder(String placeholder, String value) {
+        content = content.replace("{{" + placeholder + "}}", value);
 
         return this;
+    }
+
+    public MailBuilder fillUserPlaceholders(User user, String placeholder) {
+        replaceDtoPlaceholders(UserDto.fromUserEntity(user), placeholder, getUserFormatters(placeholder));
+
+        return this;
+    }
+
+    private HashMap<String, Function<Object, String>> getUserFormatters(String placeholder) {
+        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
+
+        formatters.put(placeholder + ".enrolledAt", DataFormatter::formatSemester);
+        formatters.put(placeholder + ".gender", DataFormatter::formatConstantName);
+        formatters.put(placeholder + ".studyDegree", DataFormatter::formatConstantName);
+        formatters.put(placeholder + ".studyProgram", DataFormatter::formatConstantName);
+
+        return formatters;
     }
 
     public MailBuilder fillApplicationPlaceholders(Application application) {
@@ -158,7 +174,8 @@ public class MailBuilder {
             return Objects.requireNonNullElse(application.getThesisTitle(), "");
         });
         formatters.put("application.desiredStartDate", DataFormatter::formatDate);
-        formatters.put("application.user.enrolledAt", DataFormatter::formatDate);
+
+        formatters.putAll(getUserFormatters("application.user"));
 
         replaceDtoPlaceholders(ApplicationDto.fromApplicationEntity(application, false), "application", formatters);
 
@@ -255,8 +272,8 @@ public class MailBuilder {
                 message.setContent(messageContent);
 
                 mailSender.send(message);
-            } catch (MessagingException | IOException e) {
-                throw new MailingException("Failed to send email", e);
+            } catch (MessagingException | IOException exception) {
+                log.warn("Failed to send email", exception);
             }
         }
     }

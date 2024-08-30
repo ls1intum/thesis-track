@@ -10,4 +10,5 @@
     <include file="changes/04_thesis_comments.sql" relativeToChangelogFile="true" />
     <include file="changes/05_thesis_presentations.sql" relativeToChangelogFile="true" />
     <include file="changes/06_topics.sql" relativeToChangelogFile="true" />
+    <include file="changes/07_cleanup.sql" relativeToChangelogFile="true" />
 </databaseChangeLog>

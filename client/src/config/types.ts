@@ -7,13 +7,15 @@ export interface IGlobalConfig {
   study_programs: Record<string, string>
   study_degrees: Record<string, string>
   thesis_types: Record<string, string>
+  custom_data: Record<string, string>
 
+  privacy_notice: string
   default_supervisors: string[]
+  calendar_url: string
 
   keycloak: {
     client_id: string
     realm: string
     host: string
-    university_id_jwt_attribute: string
   }
 }

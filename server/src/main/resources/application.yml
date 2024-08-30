@@ -1,6 +1,7 @@
 logging:
   level:
     liquibase: INFO
+    net.fortuna.ical4j.util.Configurator: INFO
 
 spring:
   datasource:
@@ -32,7 +33,7 @@ spring:
         provider:
           keycloak:
             issuer-uri: ${KEYCLOAK_HOST:http://localhost:8081}/realms/${KEYCLOAK_REALM_NAME:thesis-track}
-            user-name-attribute: ${UNIVERSITY_ID_JWT_ATTRIBUTE:preferred_username}
+            user-name-attribute: preferred_username
       resourceserver:
         jwt:
           jwk-set-uri: ${KEYCLOAK_HOST:http://localhost:8081}/realms/${KEYCLOAK_REALM_NAME:thesis-track}/protocol/openid-connect/certs
@@ -50,10 +51,24 @@ spring:
           starttls:
             enable: true
 
+server:
+  servlet:
+    context-path: /api
+
 thesis-track:
   keycloak:
+    host: ${KEYCLOAK_HOST:http://localhost:8081}
+    realm-name: ${KEYCLOAK_REALM_NAME:thesis-track}
     client-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
-    university-id-jwt-attribute: ${UNIVERSITY_ID_JWT_ATTRIBUTE:preferred_username}
+    service-client:
+      id: ${KEYCLOAK_SERVICE_CLIENT_ID:}
+      secret: ${KEYCLOAK_SERVICE_CLIENT_SECRET:}
+      student-group-name: ${KEYCLOAK_SERVICE_STUDENT_GROUP_NAME:}
+  calendar:
+    enabled: ${CALDAV_ENABLED:false}
+    url: ${CALDAV_URL:}
+    username: ${CALDAV_USERNAME:}
+    password: ${CALDAV_PASSWORD:}
   client:
     host: ${CLIENT_HOST:http://localhost:3000}
   mail:
@@ -65,7 +80,3 @@ thesis-track:
     mail-template-location: ${MAIL_TEMPLATE_FOLDER:server/mail-templates}
   storage:
     upload-location: ${UPLOAD_FOLDER:uploads}
-
-server:
-  servlet:
-    context-path: /api

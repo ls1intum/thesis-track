@@ -4,11 +4,12 @@ import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedF
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { formatApplicationState, formatDate, formatUser } from '../../utils/format'
+import { formatApplicationState, formatDate } from '../../utils/format'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
 import TopicAccordionItem from '../TopicAccordionItem/TopicAccordionItem'
+import AvatarUser from '../AvatarUser/AvatarUser'
 
 interface IApplicationDataProps {
   application: IApplication
@@ -128,13 +129,22 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 }
               />
             </Grid.Col>
+            {application.user.customData &&
+              Object.entries(application.user.customData).map(([key, value]) => (
+                <Grid.Col key={key} span={{ md: 6 }}>
+                  <LabeledItem label={GLOBAL_CONFIG.custom_data[key] ?? key} value={value} />
+                </Grid.Col>
+              ))}
           </Grid>
           {(application.reviewedBy || application.reviewedAt || application.comment) && (
             <Stack gap='md'>
               <Divider />
               <Group grow>
                 {application.reviewedBy && (
-                  <LabeledItem label='Reviewer' value={formatUser(application.reviewedBy)} />
+                  <LabeledItem
+                    label='Reviewer'
+                    value={<AvatarUser user={application.reviewedBy} />}
+                  />
                 )}
                 {application.reviewedAt && (
                   <LabeledItem

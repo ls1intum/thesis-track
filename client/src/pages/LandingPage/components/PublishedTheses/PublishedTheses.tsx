@@ -51,7 +51,7 @@ const PublishedTheses = () => {
       <Title order={2}>Published Theses</Title>
       <DataTable
         fetching={!theses}
-        withTableBorder
+        withTableBorder={false}
         minHeight={200}
         noRecordsText='No theses published yet'
         borderRadius='sm'
@@ -114,6 +114,7 @@ const PublishedTheses = () => {
             <ThesisData thesis={openedThesis} additionalInformation={['abstract']} />
             <AuthenticatedFilePreview
               url={`/v2/published-theses/${openedThesis.thesisId}/thesis`}
+              includeLink
               height={500}
               filename={`${openedThesis.title.replaceAll(' ', '-')}.pdf`}
             />

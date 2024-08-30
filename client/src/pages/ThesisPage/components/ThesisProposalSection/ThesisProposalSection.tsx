@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Grid, Group, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Divider, Grid, Group, Stack, Text } from '@mantine/core'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
@@ -90,20 +90,26 @@ const ThesisProposalSection = () => {
                     <Grid.Col span={{ md: 2 }}>
                       <LabeledItem
                         label='Study Degree'
-                        value={
-                          GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
-                          student.studyDegree
-                        }
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem
-                        label='Study Program'
-                        value={
+                        value={`${
                           GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
                           student.studyProgram
-                        }
+                        } ${
+                          GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
+                          student.studyDegree
+                        } `}
                       />
+                    </Grid.Col>
+                    {student.customData &&
+                      Object.entries(student.customData).map(([key, value]) => (
+                        <Grid.Col key={key} span={{ md: 6 }}>
+                          <LabeledItem
+                            label={GLOBAL_CONFIG.custom_data[key] ?? key}
+                            value={value}
+                          />
+                        </Grid.Col>
+                      ))}
+                    <Grid.Col span={12}>
+                      <Divider />
                     </Grid.Col>
                   </Grid>
                 ))}
@@ -147,7 +153,7 @@ const ThesisProposalSection = () => {
               )}
               {access.student && thesis.state === ThesisState.WRITING && (
                 <Button ml='auto' onClick={() => setUploadModal(true)}>
-                  Upload New Proposal (Needs Approval)
+                  Upload New Proposal (Needs Re-Approval)
                 </Button>
               )}
             </Group>

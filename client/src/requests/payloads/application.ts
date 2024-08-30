@@ -4,5 +4,6 @@ export interface ILegacyCreateApplicationPayload extends IUpdateUserInformationP
   universityId: string
   motivation: string
   thesisTitle: string
+  thesisType: string | null
   desiredStartDate: Date
 }

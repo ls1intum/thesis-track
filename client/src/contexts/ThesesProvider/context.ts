@@ -5,6 +5,7 @@ import { PaginationResponse } from '../../requests/responses/pagination'
 export interface IThesesFilters {
   search?: string
   states?: ThesisState[]
+  types?: string[]
 }
 
 export interface IThesesSort {

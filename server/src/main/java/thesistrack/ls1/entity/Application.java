@@ -32,6 +32,9 @@ public class Application {
     @Column(name = "thesis_title")
     private String thesisTitle;
 
+    @Column(name = "thesis_type")
+    private String thesisType;
+
     @NotNull
     @Column(name = "motivation", nullable = false)
     private String motivation;
@@ -63,6 +66,14 @@ public class Application {
 
     public boolean hasReadAccess(User user) {
         if (user.hasAnyGroup("admin", "advisor", "supervisor")) {
+            return true;
+        }
+
+        return this.user.getId().equals(user.getId());
+    }
+
+    public boolean hasEditAccess(User user) {
+        if (user.hasAnyGroup("admin")) {
             return true;
         }
 

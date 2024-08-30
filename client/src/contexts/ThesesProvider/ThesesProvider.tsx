@@ -15,7 +15,7 @@ interface IThesesProviderProps {
 }
 
 const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
-  const { children, fetchAll = false, limit = 50, hideIfEmpty = false } = props
+  const { children, fetchAll = false, limit = 100, hideIfEmpty = false } = props
 
   const [theses, setTheses] = useState<PaginationResponse<IThesis>>()
   const [page, setPage] = useState(0)
@@ -48,6 +48,7 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
           fetchAll: fetchAll ? 'true' : 'false',
           search: debouncedSearch,
           state: filters.states?.join(',') ?? '',
+          type: filters.types?.join(',') ?? '',
           page,
           limit,
           sortBy: sort.column,
@@ -71,7 +72,15 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
         setTheses(res.data)
       },
     )
-  }, [fetchAll, page, limit, sort, filters.states?.join(','), debouncedSearch])
+  }, [
+    fetchAll,
+    page,
+    limit,
+    sort,
+    filters.states?.join(','),
+    filters.types?.join(','),
+    debouncedSearch,
+  ])
 
   const contextState = useMemo<IThesesContext>(() => {
     return {

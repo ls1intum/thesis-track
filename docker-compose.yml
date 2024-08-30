@@ -53,6 +53,12 @@ services:
     ports:
       - "25:25"
 
+  caldav:
+    image: tomsquest/docker-radicale:latest
+    container_name: thesis-track-caldav
+    ports:
+      - "5232:5232"
+
   keycloak:
     image: quay.io/keycloak/keycloak:25.0
     container_name: thesis-track-keycloak

@@ -1,10 +1,10 @@
 package thesistrack.ls1.controller.payload;
 
 import java.time.Instant;
+import java.util.Map;
 
 public record UpdateUserInformationPayload(
         String matriculationNumber,
-        Boolean isExchangeStudent,
         String firstName,
         String lastName,
         String gender,
@@ -15,5 +15,6 @@ public record UpdateUserInformationPayload(
         Instant enrolledAt,
         String specialSkills,
         String interests,
-        String projects
+        String projects,
+        Map<String, String> customData
 ) { }

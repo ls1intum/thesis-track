@@ -12,10 +12,11 @@ export interface IApplication {
   user: IUser
   topic: ITopic | null
   thesisTitle: string | null
+  thesisType: string | null
   motivation: string
   state: ApplicationState
   desiredStartDate: string
-  comment: string | null
+  comment: string
   createdAt: string
   reviewedBy: ILightUser | null
   reviewedAt: string

@@ -56,7 +56,9 @@ const UploadArea = (props: IUploadAreaProps) => {
             onChange(files[0])
           }}
           onReject={() => {
-            showSimpleError(`Failed upload file. Max file size is ${Math.floor(maxSize / 1024 / 1024)}MB`)
+            showSimpleError(
+              `Failed upload file. Max file size is ${Math.floor(maxSize / 1024 / 1024)}MB`,
+            )
           }}
           maxSize={maxSize}
           accept={PDF_MIME_TYPE}

@@ -44,7 +44,13 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     GUIDED_RESEARCH: 'Guided Research',
   },
 
+  custom_data: getEnvironmentVariable<Record<string, string>>('CUSTOM_DATA', true) || {
+    GITHUB: 'Github Profile',
+  },
+
+  privacy_notice: getEnvironmentVariable('PRIVACY_NOTICE') || '',
   default_supervisors: getEnvironmentVariable('DEFAULT_SUPERVISOR_UUID')?.split(';') || [],
+  calendar_url: getEnvironmentVariable('CALDAV_URL') || '',
 
   server_host: getEnvironmentVariable('SERVER_HOST') || 'http://localhost:8080',
 
@@ -52,7 +58,5 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     host: getEnvironmentVariable('KEYCLOAK_HOST') || 'http://localhost:8081',
     realm: getEnvironmentVariable('KEYCLOAK_REALM_NAME') || 'thesis-track',
     client_id: getEnvironmentVariable('KEYCLOAK_CLIENT_ID') || 'thesis-track-app',
-    university_id_jwt_attribute:
-      getEnvironmentVariable('UNIVERSITY_ID_JWT_ATTRIBUTE') || 'preferred_username',
   },
 }

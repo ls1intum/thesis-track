@@ -10,11 +10,14 @@ import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import { Presentation } from 'phosphor-react'
 import { arrayUnique } from '../../utils/array'
 import ThesisData from '../ThesisData/ThesisData'
+import AvatarUserList from '../AvatarUserList/AvatarUserList'
 
 const ThesesGanttChart = () => {
   const { theses } = useThesesContext()
 
   const [openedThesis, setOpenedThesis] = useState<IThesis>()
+
+  const currentTime = useMemo(() => Date.now(), [])
 
   const data = useMemo<IGanttChartDataElement[] | undefined>(() => {
     if (!theses) {
@@ -38,34 +41,40 @@ const ThesesGanttChart = () => {
         return endDate
       }
 
-      result.push(
-        ...thesis.advisors.map((advisor) => ({
-          id: thesis.thesisId,
-          groupId: advisor.userId,
-          groupName: formatUser(advisor),
-          columns: [
-            thesis.students
-              .map((student) => formatUser(student, { withUniversityId: false }))
-              .join(', '),
-            thesis.title,
-          ],
-          timeline: thesis.states.map((state) => ({
-            id: state.state,
-            startDate: new Date(state.startedAt),
-            endDate: getAdjustedEndDate(
-              state.state,
-              new Date(state.startedAt),
-              new Date(state.endedAt),
-            ),
-            color: ThesisStateColor[state.state],
-          })),
-          events: thesis.presentations.map((presentation) => ({
-            id: presentation.presentationId,
-            icon: <Presentation />,
-            time: new Date(presentation.scheduledAt),
-          })),
+      const advisor = thesis.advisors[0]
+
+      result.push({
+        id: thesis.thesisId,
+        groupId: advisor.userId,
+        groupName: formatUser(advisor),
+        columns: [
+          <AvatarUserList
+            key='student'
+            users={thesis.students}
+            withUniversityId={false}
+            size='xs'
+            oneLine
+          />,
+          <Text key='title' size='xs' truncate>
+            {thesis.title}
+          </Text>,
+        ],
+        timeline: thesis.states.map((state) => ({
+          id: state.state,
+          startDate: new Date(state.startedAt),
+          endDate: getAdjustedEndDate(
+            state.state,
+            new Date(state.startedAt),
+            new Date(state.endedAt),
+          ),
+          color: ThesisStateColor[state.state],
         })),
-      )
+        events: thesis.presentations.map((presentation) => ({
+          id: presentation.presentationId,
+          icon: <Presentation />,
+          time: new Date(presentation.scheduledAt),
+        })),
+      })
     }
 
     return result
@@ -87,10 +96,11 @@ const ThesesGanttChart = () => {
     <div>
       <GanttChart
         columns={[
-          { label: 'Student', width: '10%', textAlign: 'center' },
-          { label: 'Title', width: '15%' },
+          { label: 'Student', width: '10rem' },
+          { label: 'Title', width: '15rem' },
         ]}
         data={data}
+        minRange={[currentTime - 1000 * 3600 * 24 * 365 * 2, currentTime + 1000 * 3600 * 24 * 365]}
         itemPopover={(item, timeline, event) => {
           const thesis = theses?.content.find((row) => row.thesisId === item.id)
 
@@ -127,14 +137,16 @@ const ThesesGanttChart = () => {
           setOpenedThesis(theses?.content.find((thesis) => thesis.thesisId === item.id))
         }
       />
-      <Center mt='md'>
-        <Group>
-          <Text>Legend:</Text>
-          {visibleStates.map((state) => (
-            <ThesisStateBadge key={state} state={state} />
-          ))}
-        </Group>
-      </Center>
+      {visibleStates.length > 0 && (
+        <Center mt='md'>
+          <Group>
+            <Text>Legend:</Text>
+            {visibleStates.map((state) => (
+              <ThesisStateBadge key={state} state={state} />
+            ))}
+          </Group>
+        </Center>
+      )}
       <ThesisPreviewModal
         opened={!!openedThesis}
         onClose={() => setOpenedThesis(undefined)}

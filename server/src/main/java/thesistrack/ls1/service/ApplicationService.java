@@ -54,6 +54,7 @@ public class ApplicationService {
             String searchQuery,
             ApplicationState[] states,
             String[] topics,
+            boolean includeSuggestedTopics,
             int page,
             int limit,
             String sortBy,
@@ -70,6 +71,7 @@ public class ApplicationService {
                 searchQueryFilter,
                 statesFilter,
                 topicsFilter,
+                includeSuggestedTopics,
                 PageRequest.of(page, limit, Sort.by(order))
         );
     }
@@ -104,9 +106,7 @@ public class ApplicationService {
         student.setInterests(RequestValidator.validateStringMaxLength(payload.interests(), 1000));
         student.setProjects(RequestValidator.validateStringMaxLength(payload.projects(), 1000));
 
-        student.setIsExchangeStudent(payload.isExchangeStudent());
         student.setEnrolledAt(payload.enrolledAt());
-
         student.setUpdatedAt(currentTime);
 
         student.setExaminationFilename(uploadService.store(examinationReport, 3 * 1024 * 1024));
@@ -120,6 +120,7 @@ public class ApplicationService {
         application.setUser(userRepository.save(student));
 
         application.setThesisTitle(RequestValidator.validateStringMaxLength(payload.thesisTitle(), 500));
+        application.setThesisType(RequestValidator.validateStringMaxLength(payload.thesisType(), 500));
         application.setMotivation(RequestValidator.validateStringMaxLength(payload.motivation(), 1000));
         application.setComment("");
         application.setState(ApplicationState.NOT_ASSESSED);
@@ -134,12 +135,13 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application createApplication(User user, UUID topicId, String thesisTitle, Instant desiredStartDate, String motivation) {
+    public Application createApplication(User user, UUID topicId, String thesisTitle, String thesisType, Instant desiredStartDate, String motivation) {
         Application application = new Application();
         application.setUser(user);
 
         application.setTopic(topicId == null ? null : topicService.findById(topicId));
         application.setThesisTitle(thesisTitle);
+        application.setThesisType(thesisType);
         application.setMotivation(motivation);
         application.setComment("");
         application.setState(ApplicationState.NOT_ASSESSED);
@@ -154,13 +156,26 @@ public class ApplicationService {
     }
 
     @Transactional
+    public Application updateApplication(Application application, UUID topicId, String thesisTitle, String thesisType, Instant desiredStartDate, String motivation) {
+        application.setTopic(topicId == null ? null : topicService.findById(topicId));
+        application.setThesisTitle(thesisTitle);
+        application.setThesisType(thesisType);
+        application.setMotivation(motivation);
+        application.setDesiredStartDate(desiredStartDate);
+
+        application = applicationRepository.save(application);
+
+        return application;
+    }
+
+    @Transactional
     public Application accept(
             User reviewingUser,
             Application application,
             String thesisTitle,
             String thesisType,
-            Set<UUID> advisorIds,
-            Set<UUID> supervisorIds,
+            List<UUID> advisorIds,
+            List<UUID> supervisorIds,
             boolean notifyUser,
             boolean closeTopic
     ) {
@@ -174,7 +189,7 @@ public class ApplicationService {
                 thesisType,
                 supervisorIds,
                 advisorIds,
-                Collections.singleton(application.getUser().getId()),
+                List.of(application.getUser().getId()),
                 application
         );
 
@@ -227,6 +242,10 @@ public class ApplicationService {
         application.setComment(comment);
 
         return applicationRepository.save(application);
+    }
+
+    public boolean applicationExists(User user, UUID topicId) {
+        return applicationRepository.existsPendingApplication(user.getId(), topicId);
     }
 
     public Application findById(UUID applicationId) {

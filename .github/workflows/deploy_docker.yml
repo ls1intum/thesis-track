@@ -102,7 +102,14 @@ jobs:
             echo "SERVER_HOST=${{ vars.SERVER_HOST }}" >> .env.prod
             echo "CLIENT_HOST=${{ vars.CLIENT_HOST }}" >> .env.prod
             
+            echo "APPLICATION_TITLE=${{ vars.APPLICATION_TITLE }}" >> .env.prod
+            echo "PRIVACY_NOTICE=${{ vars.PRIVACY_NOTICE }}" >> .env.prod
             echo "DEFAULT_SUPERVISOR_UUID=${{ vars.DEFAULT_SUPERVISOR_UUID }}" >> .env.prod
+            echo "THESIS_TYPES=${{ vars.THESIS_TYPES }}" >> .env.prod
+            echo "STUDY_PROGRAMS=${{ vars.STUDY_PROGRAMS }}" >> .env.prod
+            echo "STUDY_DEGREES=${{ vars.STUDY_DEGREES }}" >> .env.prod
+            echo "GENDERS=${{ vars.GENDERS }}" >> .env.prod
+            echo "CUSTOM_DATA=${{ vars.CUSTOM_DATA }}" >> .env.prod
 
             echo "MAIL_SENDER=${{ vars.MAIL_SENDER }}" >> .env.prod
             echo "MAIL_SIGNATURE=${{ vars.MAIL_SIGNATURE }}" >> .env.prod
@@ -113,6 +120,14 @@ jobs:
             echo "KEYCLOAK_HOST=${{ vars.KEYCLOAK_HOST }}" >> .env.prod
             echo "KEYCLOAK_REALM_NAME=${{ vars.KEYCLOAK_REALM_NAME }}" >> .env.prod
             echo "KEYCLOAK_CLIENT_ID=${{ vars.KEYCLOAK_CLIENT_ID }}" >> .env.prod
+            echo "KEYCLOAK_SERVICE_CLIENT_ID=${{ vars.KEYCLOAK_SERVICE_CLIENT_ID }}" >> .env.prod
+            echo "KEYCLOAK_SERVICE_CLIENT_SECRET=${{ secrets.KEYCLOAK_SERVICE_CLIENT_SECRET }}" >> .env.prod
+            echo "KEYCLOAK_SERVICE_STUDENT_GROUP_NAME=${{ vars.KEYCLOAK_SERVICE_STUDENT_GROUP_NAME }}" >> .env.prod
+            
+            echo "CALDAV_ENABLED=${{ vars.CALDAV_ENABLED }}" >> .env.prod
+            echo "CALDAV_URL=${{ vars.CALDAV_URL }}" >> .env.prod
+            echo "CALDAV_USERNAME=${{ vars.CALDAV_USERNAME }}" >> .env.prod
+            echo "CALDAV_PASSWORD=${{ secrets.CALDAV_PASSWORD }}" >> .env.prod
             
             echo "SERVER_IMAGE_TAG=${{ inputs.server_image_tag }}" >> .env.prod
             echo "CLIENT_IMAGE_TAG=${{ inputs.client_image_tag }}" >> .env.prod

@@ -96,7 +96,6 @@ public class AuthenticationService {
     public User updateUserInformation(
             User user,
             String matriculationNumber,
-            boolean isExchangeStudent,
             String firstName,
             String lastName,
             String gender,
@@ -108,12 +107,12 @@ public class AuthenticationService {
             String specialSkills,
             String interests,
             String projects,
+            Map<String, String> customData,
             MultipartFile examinationReport,
             MultipartFile cv,
             MultipartFile degreeReport
     ) {
         user.setMatriculationNumber(matriculationNumber);
-        user.setIsExchangeStudent(isExchangeStudent);
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setGender(gender);
@@ -125,6 +124,7 @@ public class AuthenticationService {
         user.setSpecialSkills(specialSkills);
         user.setInterests(interests);
         user.setProjects(projects);
+        user.setCustomData(customData);
 
         user.setExaminationFilename(examinationReport == null ? null : uploadService.store(examinationReport, 3 * 1024 * 1024));
         user.setCvFilename(cv == null ? null : uploadService.store(cv, 3 * 1024 * 1024));

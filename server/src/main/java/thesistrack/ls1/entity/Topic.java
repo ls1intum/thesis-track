@@ -5,12 +5,12 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -26,8 +26,9 @@ public class Topic {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "type")
-    private String type;
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "thesis_types", columnDefinition = "text[]")
+    private Set<String> thesisTypes = new HashSet<>();
 
     @NotNull
     @Column(name = "problem_statement", nullable = false)
@@ -60,5 +61,6 @@ public class Topic {
     private User createdBy;
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.EAGER)
-    private Set<TopicRole> roles = new HashSet<>();
+    @OrderBy("position ASC")
+    private List<TopicRole> roles = new ArrayList<>();
 }

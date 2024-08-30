@@ -31,3 +31,8 @@ UPDATE applications SET comment = '' WHERE comment IS NULL;
 ALTER TABLE applications
     ALTER COLUMN comment SET DEFAULT '',
     ALTER COLUMN comment SET NOT NULL;
+
+--changeset emilius:06-topics-6
+ALTER TABLE topics ADD COLUMN thesis_types TEXT[];
+ALTER TABLE topics DROP COLUMN "type";
+ALTER TABLE applications ADD COLUMN thesis_type TEXT;

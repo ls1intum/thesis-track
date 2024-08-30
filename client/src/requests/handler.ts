@@ -15,8 +15,10 @@ export function getApiResponseErrorMessage(response: ApiResponse<unknown>) {
     message = 'You are not authorized to access this resource'
   } else if (response.status === 404) {
     message = 'Requested resource not found'
-  } else if (response.status === 500) {
-    message = 'Internal Server Error'
+  } else if (response.status === 404) {
+    message = 'Requested resource not found'
+  } else if (response.status === 409) {
+    message = 'Resource already exists'
   } else if (response.status === 501) {
     message = 'Endpoint not implemented yet'
   } else {

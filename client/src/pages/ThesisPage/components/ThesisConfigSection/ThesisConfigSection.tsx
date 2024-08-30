@@ -15,6 +15,7 @@ import {
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { ApiError } from '../../../../requests/handler'
 import ThesisStateBadge from '../../../../components/ThesisStateBadge/ThesisStateBadge'
+import ThesisVisibilitySelect from '../ThesisVisibilitySelect/ThesisVisibilitySelect'
 
 interface IThesisConfigSectionFormValues {
   title: string
@@ -193,15 +194,10 @@ const ThesisConfigSection = () => {
                 }))}
                 {...form.getInputProps('type')}
               />
-              <Select
+              <ThesisVisibilitySelect
                 label='Visibility'
                 required={true}
                 disabled={!access.advisor}
-                data={[
-                  { value: 'PUBLIC', label: 'Public' },
-                  { value: 'INTERNAL', label: 'Internal' },
-                  { value: 'PRIVATE', label: 'Private' },
-                ]}
                 {...form.getInputProps('visibility')}
               />
               <TagsInput

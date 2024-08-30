@@ -11,6 +11,8 @@ import { ApplicationState, IApplication } from '../../requests/responses/applica
 import { useDebouncedValue } from '@mantine/hooks'
 import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
+import { useAllTopics } from '../../hooks/fetcher'
+import { useLoggedInUser } from '../../hooks/authentication'
 
 interface IApplicationsProviderProps {
   fetchAll?: boolean
@@ -30,6 +32,9 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
     emptyComponent,
   } = props
 
+  const user = useLoggedInUser()
+  const topics = useAllTopics()
+
   const [applications, setApplications] = useState<PaginationResponse<IApplication>>()
   const [page, setPage] = useState(0)
 
@@ -41,14 +46,37 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
     direction: 'desc',
   })
 
-  const [debouncedSearch] = useDebouncedValue(filters.search || '', 500)
+  const adjustedFilters = useMemo(() => {
+    const copiedFilters = { ...filters }
+
+    if (!user.groups.includes('admin') && !copiedFilters.topics?.length && topics) {
+      copiedFilters.topics = [
+        'NO_TOPIC',
+        ...topics
+          .filter(
+            (topic) =>
+              topic.supervisors.some((supervisor) => supervisor.userId === user.userId) ||
+              topic.advisors.some((advisor) => advisor.userId === user.userId),
+          )
+          .map((topic) => topic.topicId),
+      ]
+    }
+
+    return copiedFilters
+  }, [filters, topics, user.userId])
+
+  const [debouncedSearch] = useDebouncedValue(adjustedFilters.search || '', 500)
 
   useEffect(() => {
     setPage(0)
-  }, [sort, filters])
+  }, [sort, adjustedFilters])
 
   useEffect(() => {
     setApplications(undefined)
+
+    if (!topics) {
+      return
+    }
 
     return doRequest<PaginationResponse<IApplication>>(
       `/v2/applications`,
@@ -58,8 +86,14 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
         params: {
           fetchAll: fetchAll ? 'true' : 'false',
           search: debouncedSearch,
-          state: filters.states?.join(',') ?? '',
-          topic: filters.topics?.join(',') ?? '',
+          state: adjustedFilters.states?.join(',') ?? '',
+          topic:
+            adjustedFilters.topics?.filter((topicId) => topicId !== 'NO_TOPIC').join(',') ?? '',
+          includeSuggestedTopics: !adjustedFilters.topics?.length
+            ? 'true'
+            : adjustedFilters.topics.includes('NO_TOPIC')
+              ? 'true'
+              : 'false',
           limit,
           page,
           sortBy: sort.column,
@@ -83,12 +117,22 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
         setApplications(res.data)
       },
     )
-  }, [fetchAll, page, limit, sort, filters.states?.join(','), filters.topics?.join(','), debouncedSearch])
+  }, [
+    fetchAll,
+    page,
+    limit,
+    sort,
+    adjustedFilters.states?.join(','),
+    adjustedFilters.topics?.join(','),
+    debouncedSearch,
+    !topics,
+  ])
 
   const contextState = useMemo<IApplicationsContext>(() => {
     return {
+      topics,
       applications,
-      filters,
+      filters: adjustedFilters,
       setFilters: (value) => {
         setPage(0)
         setFilters(value)
@@ -119,7 +163,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
         })
       },
     }
-  }, [applications, filters, sort, page, limit])
+  }, [user.userId, topics, applications, adjustedFilters, sort, page, limit])
 
   if (hideIfEmpty && page === 0 && (!applications || applications.content.length === 0)) {
     return <>{emptyComponent}</>

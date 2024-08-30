@@ -8,6 +8,7 @@ import java.util.*;
 
 public record UserDto (
         UUID userId,
+        String avatar,
         String universityId,
         String matriculationNumber,
         String email,
@@ -15,12 +16,12 @@ public record UserDto (
         String lastName,
         String gender,
         String nationality,
-        Boolean isExchangeStudent,
         String studyDegree,
         String studyProgram,
         String projects,
         String interests,
         String specialSkills,
+        Map<String, String> customData,
         Instant enrolledAt,
         Instant updatedAt,
         Instant joinedAt,
@@ -35,10 +36,10 @@ public record UserDto (
         }
 
         return new UserDto(
-                user.getId(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
-                user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(), user.getIsExchangeStudent(),
+                user.getId(), user.getAvatar(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
+                user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
-                user.getSpecialSkills(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
+                user.getSpecialSkills(), user.getCustomData(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),
                 user.getGroups() == null ? Collections.emptySet() : new HashSet<>(user.getGroups().stream().map(x -> x.getId().getGroup()).toList()),
                 user.getCvFilename() != null, user.getExaminationFilename() != null, user.getDegreeFilename() != null
         );

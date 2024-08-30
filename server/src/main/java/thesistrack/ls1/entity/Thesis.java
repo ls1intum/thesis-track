@@ -83,7 +83,8 @@ public class Thesis {
     private Instant createdAt;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private Set<ThesisRole> roles = new HashSet<>();
+    @OrderBy("position ASC")
+    private List<ThesisRole> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("createdAt DESC")
@@ -199,7 +200,7 @@ public class Thesis {
     }
 
     public boolean hasReadAccess(User user) {
-        if (user == null && visibility == ThesisVisibility.PUBLIC && state == ThesisState.FINISHED) {
+        if (visibility == ThesisVisibility.PUBLIC && state == ThesisState.FINISHED) {
             return true;
         }
 
@@ -216,6 +217,10 @@ public class Thesis {
         }
 
         if (visibility.equals(ThesisVisibility.INTERNAL) && user.hasAnyGroup("advisor", "supervisor")) {
+            return true;
+        }
+
+        if (visibility.equals(ThesisVisibility.STUDENT) && user.hasAnyGroup("student", "advisor", "supervisor")) {
             return true;
         }
 

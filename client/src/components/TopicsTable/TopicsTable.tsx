@@ -1,20 +1,23 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { formatDate, formatUser } from '../../utils/format'
+import { formatDate } from '../../utils/format'
 import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
 import { ITopic } from '../../requests/responses/topic'
 import { useNavigate } from 'react-router-dom'
 import { Badge } from '@mantine/core'
+import AvatarUserList from '../AvatarUserList/AvatarUserList'
+import React from 'react'
 
 type TopicColumn = 'title' | 'advisor' | 'supervisor' | 'state' | 'createdAt' | string
 
 interface ITopicsTableProps {
   columns?: TopicColumn[]
   extraColumns?: Record<string, DataTableColumn<ITopic>>
+  noBorder?: boolean
 }
 
 const TopicsTable = (props: ITopicsTableProps) => {
-  const { extraColumns, columns = ['title', 'supervisor', 'advisor'] } = props
+  const { extraColumns, columns = ['title', 'supervisor', 'advisor'], noBorder = false } = props
 
   const navigate = useNavigate()
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -39,18 +42,12 @@ const TopicsTable = (props: ITopicsTableProps) => {
     supervisor: {
       accessor: 'supervisor',
       title: 'Supervisor',
-      render: (topic) =>
-        topic.supervisors
-          .map((supervisor) => formatUser(supervisor, { withUniversityId: false }))
-          .join(', '),
+      render: (topic) => <AvatarUserList users={topic.supervisors} withUniversityId={false} />,
     },
     advisor: {
       accessor: 'advisor',
       title: 'Advisor',
-      render: (topic) =>
-        topic.advisors
-          .map((advisor) => formatUser(advisor, { withUniversityId: false }))
-          .join(', '),
+      render: (topic) => <AvatarUserList users={topic.advisors} withUniversityId={false} />,
     },
     createdAt: {
       accessor: 'createdAt',
@@ -62,7 +59,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
   return (
     <DataTable
       fetching={!topics}
-      withTableBorder
+      withTableBorder={!noBorder}
       minHeight={200}
       noRecordsText='No topics to show. You can suggest your own topic. The chair is always searching for motivated students'
       borderRadius='sm'
