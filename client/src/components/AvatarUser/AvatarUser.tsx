@@ -1,7 +1,6 @@
 import { ILightUser } from '../../requests/responses/user'
 import { Avatar, Group, MantineSize, Text } from '@mantine/core'
 import { formatUser } from '../../utils/format'
-import { getSmallerMantineSize } from '../../utils/theme'
 
 interface IAvatarUserProps {
   user: ILightUser
@@ -18,7 +17,7 @@ const AvatarUser = (props: IAvatarUserProps) => {
         src={user.avatar || undefined}
         name={`${user.firstName} ${user.lastName}`}
         color='initials'
-        size={getSmallerMantineSize(size)}
+        size={size}
       />
       <Text size={size} truncate style={{ flex: 1, minWidth: 0 }}>
         {formatUser(user, { withUniversityId })}

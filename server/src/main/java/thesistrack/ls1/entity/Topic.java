@@ -10,9 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -63,5 +61,6 @@ public class Topic {
     private User createdBy;
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.EAGER)
-    private Set<TopicRole> roles = new HashSet<>();
+    @OrderBy("position ASC")
+    private List<TopicRole> roles = new ArrayList<>();
 }

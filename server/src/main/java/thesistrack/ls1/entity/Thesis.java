@@ -83,7 +83,8 @@ public class Thesis {
     private Instant createdAt;
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
-    private Set<ThesisRole> roles = new HashSet<>();
+    @OrderBy("position ASC")
+    private List<ThesisRole> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("createdAt DESC")

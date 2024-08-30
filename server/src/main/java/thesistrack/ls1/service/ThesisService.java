@@ -91,9 +91,9 @@ public class ThesisService {
             User creator,
             String thesisTitle,
             String thesisType,
-            Set<UUID> supervisorIds,
-            Set<UUID> advisorIds,
-            Set<UUID> studentIds,
+            List<UUID> supervisorIds,
+            List<UUID> advisorIds,
+            List<UUID> studentIds,
             Application application
     ) {
         Thesis thesis = new Thesis();
@@ -154,9 +154,9 @@ public class ThesisService {
             Set<String> keywords,
             Instant startDate,
             Instant endDate,
-            Set<UUID> studentIds,
-            Set<UUID> advisorIds,
-            Set<UUID> supervisorIds,
+            List<UUID> studentIds,
+            List<UUID> advisorIds,
+            List<UUID> supervisorIds,
             List<ThesisStatePayload> states
     ) {
         thesis.setTitle(thesisTitle);
@@ -405,13 +405,17 @@ public class ThesisService {
     private void assignThesisRoles(
             Thesis thesis,
             User assigner,
-            Set<UUID> supervisorIds,
-            Set<UUID> advisorIds,
-            Set<UUID> studentIds
+            List<UUID> supervisorIds,
+            List<UUID> advisorIds,
+            List<UUID> studentIds
     ) {
         List<User> supervisors = userRepository.findAllById(supervisorIds);
         List<User> advisors = userRepository.findAllById(advisorIds);
         List<User> students = userRepository.findAllById(studentIds);
+
+        supervisors.sort(Comparator.comparing(user -> supervisorIds.indexOf(user.getId())));
+        advisors.sort(Comparator.comparing(user -> advisorIds.indexOf(user.getId())));
+        students.sort(Comparator.comparing(user -> studentIds.indexOf(user.getId())));
 
         if (supervisors.isEmpty() || supervisors.size() != supervisorIds.size()) {
             throw new ResourceInvalidParametersException("No supervisors selected or supervisors not found");
@@ -426,26 +430,31 @@ public class ThesisService {
         }
 
         thesisRoleRepository.deleteByThesisId(thesis.getId());
-        thesis.setRoles(new HashSet<>());
+        thesis.setRoles(new ArrayList<>());
 
-        for (User supervisor : supervisors) {
+        for (int i = 0; i < supervisors.size(); i++) {
+            User supervisor = supervisors.get(i);
+
             if (!supervisor.hasAnyGroup("supervisor")) {
                 throw new ResourceInvalidParametersException("User is not a supervisor");
             }
 
-            saveThesisRole(thesis, assigner, supervisor, ThesisRoleName.SUPERVISOR);
+            saveThesisRole(thesis, assigner, supervisor, ThesisRoleName.SUPERVISOR, i);
         }
 
-        for (User advisor : advisors) {
+        for (int i = 0; i < advisors.size(); i++) {
+            User advisor = advisors.get(i);
+
             if (!advisor.hasAnyGroup("advisor", "supervisor")) {
                 throw new ResourceInvalidParametersException("User is not an advisor");
             }
 
-            saveThesisRole(thesis, assigner, advisor, ThesisRoleName.ADVISOR);
+            saveThesisRole(thesis, assigner, advisor, ThesisRoleName.ADVISOR, i);
         }
 
-        for (User student : students) {
-            saveThesisRole(thesis, assigner, student, ThesisRoleName.STUDENT);
+        for (int i = 0; i < students.size(); i++) {
+            User student = students.get(i);
+            saveThesisRole(thesis, assigner, student, ThesisRoleName.STUDENT, i);
         }
     }
 
@@ -466,7 +475,7 @@ public class ThesisService {
         thesis.setStates(stateChanges);
     }
 
-    private void saveThesisRole(Thesis thesis, User assigner, User user, ThesisRoleName role) {
+    private void saveThesisRole(Thesis thesis, User assigner, User user, ThesisRoleName role, int position) {
         if (assigner == null || user == null) {
             throw new ResourceInvalidParametersException("Assigner and user must be provided.");
         }
@@ -483,11 +492,15 @@ public class ThesisService {
         thesisRole.setAssignedBy(assigner);
         thesisRole.setAssignedAt(Instant.now());
         thesisRole.setThesis(thesis);
+        thesisRole.setPosition(position);
 
         thesisRoleRepository.save(thesisRole);
 
-        Set<ThesisRole> roles = thesis.getRoles();
+        List<ThesisRole> roles = thesis.getRoles();
+
         roles.add(thesisRole);
+        roles.sort(Comparator.comparingInt(ThesisRole::getPosition));
+
         thesis.setRoles(roles);
     }
 }

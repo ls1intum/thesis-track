@@ -1,13 +1,13 @@
 package thesistrack.ls1.controller.payload;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public record AcceptApplicationPayload (
         String thesisTitle,
         String thesisType,
-        Set<UUID> advisorIds,
-        Set<UUID> supervisorIds,
+        List<UUID> advisorIds,
+        List<UUID> supervisorIds,
         Boolean notifyUser,
         Boolean closeTopic
 ) { }

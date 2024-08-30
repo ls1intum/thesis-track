@@ -174,8 +174,8 @@ public class ApplicationService {
             Application application,
             String thesisTitle,
             String thesisType,
-            Set<UUID> advisorIds,
-            Set<UUID> supervisorIds,
+            List<UUID> advisorIds,
+            List<UUID> supervisorIds,
             boolean notifyUser,
             boolean closeTopic
     ) {
@@ -189,7 +189,7 @@ public class ApplicationService {
                 thesisType,
                 supervisorIds,
                 advisorIds,
-                Collections.singleton(application.getUser().getId()),
+                List.of(application.getUser().getId()),
                 application
         );
 

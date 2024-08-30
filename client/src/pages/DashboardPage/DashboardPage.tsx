@@ -48,7 +48,7 @@ const DashboardPage = () => {
                 My Applications
               </Title>
               <Center>
-                <Button my='md' component={Link} to='/applications/thesis'>
+                <Button mb='md' component={Link} to='/applications/thesis'>
                   New Application
                 </Button>
               </Center>

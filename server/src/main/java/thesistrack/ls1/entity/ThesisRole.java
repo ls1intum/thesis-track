@@ -28,6 +28,10 @@ public class ThesisRole {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @NotNull
+    @Column(name = "position", nullable = false)
+    private Integer position;
+
     @CreationTimestamp
     @NotNull
     @Column(name = "assigned_at", nullable = false)

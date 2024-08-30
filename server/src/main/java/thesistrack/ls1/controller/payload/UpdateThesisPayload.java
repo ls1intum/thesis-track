@@ -14,9 +14,9 @@ public record UpdateThesisPayload(
         Set<String> keywords,
         Instant startDate,
         Instant endDate,
-        Set<UUID> studentIds,
-        Set<UUID> advisorIds,
-        Set<UUID> supervisorIds,
+        List<UUID> studentIds,
+        List<UUID> advisorIds,
+        List<UUID> supervisorIds,
         List<ThesisStatePayload> states
 ) {
 

@@ -6,6 +6,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import thesistrack.ls1.constants.ThesisRoleName;
+import thesistrack.ls1.entity.ThesisRole;
 import thesistrack.ls1.entity.Topic;
 import thesistrack.ls1.entity.TopicRole;
 import thesistrack.ls1.entity.User;
@@ -58,8 +59,8 @@ public class TopicService {
             String problemStatement,
             String goals,
             String references,
-            Set<UUID> supervisorIds,
-            Set<UUID> advisorIds
+            List<UUID> supervisorIds,
+            List<UUID> advisorIds
     ) {
         Topic topic = new Topic();
 
@@ -88,8 +89,8 @@ public class TopicService {
             String problemStatement,
             String goals,
             String references,
-            Set<UUID> supervisorIds,
-            Set<UUID> advisorIds
+            List<UUID> supervisorIds,
+            List<UUID> advisorIds
     ) {
         topic.setTitle(title);
         topic.setThesisTypes(thesisTypes);
@@ -108,9 +109,12 @@ public class TopicService {
                 .orElseThrow(() -> new ResourceNotFoundException(String.format("Topic with id %s not found.", topicId)));
     }
 
-    private void assignTopicRoles(Topic topic, User assigner, Set<UUID> advisorIds, Set<UUID> supervisorIds) {
+    private void assignTopicRoles(Topic topic, User assigner, List<UUID> advisorIds, List<UUID> supervisorIds) {
         List<User> supervisors = userRepository.findAllById(supervisorIds);
         List<User> advisors = userRepository.findAllById(advisorIds);
+
+        supervisors.sort(Comparator.comparing(user -> supervisorIds.indexOf(user.getId())));
+        advisors.sort(Comparator.comparing(user -> advisorIds.indexOf(user.getId())));
 
         if (supervisors.isEmpty() || supervisors.size() != supervisorIds.size()) {
             throw new ResourceInvalidParametersException("No supervisors selected or supervisors not found");
@@ -121,26 +125,30 @@ public class TopicService {
         }
 
         topicRoleRepository.deleteByTopicId(topic.getId());
-        topic.setRoles(new HashSet<>());
+        topic.setRoles(new ArrayList<>());
 
-        for (User supervisor : supervisors) {
+        for (int i = 0; i < supervisors.size(); i++) {
+            User supervisor = supervisors.get(i);
+
             if (!supervisor.hasAnyGroup("supervisor")) {
                 throw new ResourceInvalidParametersException("User is not a supervisor");
             }
 
-            saveTopicRole(topic, assigner, supervisor, ThesisRoleName.SUPERVISOR);
+            saveTopicRole(topic, assigner, supervisor, ThesisRoleName.SUPERVISOR, i);
         }
 
-        for (User advisor : advisors) {
+        for (int i = 0; i < advisors.size(); i++) {
+            User advisor = advisors.get(i);
+
             if (!advisor.hasAnyGroup("advisor", "supervisor")) {
                 throw new ResourceInvalidParametersException("User is not an advisor");
             }
 
-            saveTopicRole(topic, assigner, advisor, ThesisRoleName.ADVISOR);
+            saveTopicRole(topic, assigner, advisor, ThesisRoleName.ADVISOR, i);
         }
     }
 
-    private void saveTopicRole(Topic topic, User assigner, User user, ThesisRoleName role) {
+    private void saveTopicRole(Topic topic, User assigner, User user, ThesisRoleName role, int position) {
         if (assigner == null || user == null) {
             throw new ResourceInvalidParametersException("Assigner and user must be provided.");
         }
@@ -157,11 +165,15 @@ public class TopicService {
         topicRole.setAssignedBy(assigner);
         topicRole.setAssignedAt(Instant.now());
         topicRole.setTopic(topic);
+        topicRole.setPosition(position);
 
         topicRoleRepository.save(topicRole);
 
-        Set<TopicRole> roles = topic.getRoles();
+        List<TopicRole> roles = topic.getRoles();
+
         roles.add(topicRole);
+        roles.sort(Comparator.comparingInt(TopicRole::getPosition));
+
         topic.setRoles(roles);
     }
 }
