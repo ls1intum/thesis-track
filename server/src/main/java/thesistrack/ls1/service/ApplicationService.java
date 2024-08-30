@@ -156,6 +156,19 @@ public class ApplicationService {
     }
 
     @Transactional
+    public Application updateApplication(Application application, UUID topicId, String thesisTitle, String thesisType, Instant desiredStartDate, String motivation) {
+        application.setTopic(topicId == null ? null : topicService.findById(topicId));
+        application.setThesisTitle(thesisTitle);
+        application.setThesisType(thesisType);
+        application.setMotivation(motivation);
+        application.setDesiredStartDate(desiredStartDate);
+
+        application = applicationRepository.save(application);
+
+        return application;
+    }
+
+    @Transactional
     public Application accept(
             User reviewingUser,
             Application application,
@@ -229,6 +242,10 @@ public class ApplicationService {
         application.setComment(comment);
 
         return applicationRepository.save(application);
+    }
+
+    public boolean applicationExists(User user, UUID topicId) {
+        return applicationRepository.existsPendingApplication(user.getId(), topicId);
     }
 
     public Application findById(UUID applicationId) {

@@ -22,6 +22,7 @@ public interface ThesisRepository extends JpaRepository<Thesis, UUID> {
             "(:userId IS NULL OR r.user.id = :userId) AND " +
             "(:visibilities IS NULL OR t.visibility IN :visibilities OR r.user.id = :userId) AND " +
             "(:states IS NULL OR t.state IN :states) AND " +
+            "(:types IS NULL OR t.type IN :types) AND " +
             "(:searchQuery IS NULL OR LOWER(t.title) LIKE %:searchQuery% OR " +
             "LOWER(r.user.firstName) LIKE %:searchQuery% OR " +
             "LOWER(r.user.lastName) LIKE %:searchQuery% OR " +
@@ -34,6 +35,7 @@ public interface ThesisRepository extends JpaRepository<Thesis, UUID> {
             @Param("visibilities") Set<ThesisVisibility> visibilities,
             @Param("searchQuery") String searchQuery,
             @Param("states") Set<ThesisState> states,
+            @Param("types") Set<String> types,
             Pageable page
     );
 

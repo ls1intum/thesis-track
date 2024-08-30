@@ -42,6 +42,7 @@ public class PublishedThesisController {
                 Set.of(ThesisVisibility.PUBLIC),
                 null,
                 new ThesisState[]{ThesisState.FINISHED},
+                null,
                 page,
                 limit,
                 sortBy,

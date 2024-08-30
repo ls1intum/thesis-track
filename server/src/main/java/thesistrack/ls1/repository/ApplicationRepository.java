@@ -46,4 +46,16 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             "WHERE (a.topic IS NULL OR :userId IS NULL OR r.user.id = :userId) AND a.state = 'NOT_ASSESSED'"
     )
     long countUnreviewedApplications(@Param("userId") UUID userId);
+
+    @Query(
+            "SELECT EXISTS (" +
+                    "SELECT a FROM Application a " +
+                    "WHERE a.user.id = :userId AND a.state = 'NOT_ASSESSED' AND " +
+                    "((a.topic IS NULL AND :topicId IS NULL) OR (a.topic IS NOT NULL AND a.topic.id = :topicId))" +
+            ")"
+    )
+    boolean existsPendingApplication(
+            @Param("userId") UUID userId,
+            @Param("topicId") UUID topicId
+    );
 }

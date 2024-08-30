@@ -2,15 +2,38 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useTopic } from '../../hooks/fetcher'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { Card, Center, Stack, Stepper, Text, Title } from '@mantine/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SelectTopicStep from './components/SelectTopicStep/SelectTopicStep'
 import StudentInformationStep from './components/StudentInformationStep/StudentInformationStep'
 import MotivationStep from './components/MotivationStep/MotivationStep'
 import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
 import { useWindowScroll } from '@mantine/hooks'
+import { IApplication } from '../../requests/responses/application'
+import { doRequest } from '../../requests/request'
 
-const SubmitApplicationPage = () => {
-  const { topicId } = useParams<{ topicId: string }>()
+const ReplaceApplicationPage = () => {
+  const { topicId, applicationId } = useParams<{ topicId: string; applicationId: string }>()
+
+  const [application, setApplication] = useState<IApplication>()
+
+  useEffect(() => {
+    setApplication(undefined)
+
+    if (applicationId) {
+      return doRequest<IApplication>(
+        `/v2/applications/${applicationId}`,
+        {
+          method: 'GET',
+          requiresAuth: true,
+        },
+        (res) => {
+          if (res.ok) {
+            setApplication(res.data)
+          }
+        },
+      )
+    }
+  }, [applicationId])
 
   const [, scrollTo] = useWindowScroll()
   const navigate = useNavigate()
@@ -34,7 +57,7 @@ const SubmitApplicationPage = () => {
   return (
     <ContentContainer>
       <Title mb='md'>Submit Application</Title>
-      <Stepper active={Math.max(step, topicId ? 1 : 0)} onStepClick={updateStep}>
+      <Stepper active={Math.max(step, topicId || applicationId ? 1 : 0)} onStepClick={updateStep}>
         <Stepper.Step label='First Step' description='Select Topic'>
           <TopicsProvider limit={100}>
             <SelectTopicStep
@@ -49,13 +72,21 @@ const SubmitApplicationPage = () => {
           <StudentInformationStep onComplete={() => setStep(2)} />
         </Stepper.Step>
         <Stepper.Step label='Final step' description='Submit your Application'>
-          <MotivationStep onComplete={() => setStep(3)} topic={topic || undefined} />
+          <MotivationStep
+            onComplete={() => setStep(3)}
+            topic={topic || undefined}
+            application={application}
+          />
         </Stepper.Step>
         <Stepper.Completed>
           <Center style={{ height: '50vh' }}>
             <Card withBorder p='xl'>
               <Stack gap='sm'>
-                <Text ta='center'>Your application was successfully submitted!</Text>
+                <Text ta='center'>
+                  {application
+                    ? 'Your application was successfully updated!'
+                    : 'Your application was successfully submitted!'}
+                </Text>
                 <Text ta='center' size='sm' c='muted'>
                   We will contact you as soon as we have reviewed your application.
                 </Text>
@@ -68,4 +99,4 @@ const SubmitApplicationPage = () => {
   )
 }
 
-export default SubmitApplicationPage
+export default ReplaceApplicationPage

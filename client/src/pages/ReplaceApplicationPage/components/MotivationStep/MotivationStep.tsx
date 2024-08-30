@@ -3,16 +3,18 @@ import { isNotEmpty, useForm } from '@mantine/form'
 import { Accordion, Button, Select, Stack, TextInput } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import TopicData from '../../../../components/TopicData/TopicData'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { DateInput, DateValue } from '@mantine/dates'
 import { getHtmlTextLength } from '../../../../utils/validation'
 import { GLOBAL_CONFIG } from '../../../../config/global'
+import { IApplication } from '../../../../requests/responses/application'
 
 interface IMotivationStepProps {
   topic: ITopic | undefined
+  application: IApplication | undefined
   onComplete: () => unknown
 }
 
@@ -24,10 +26,12 @@ interface IMotivationStepForm {
 }
 
 const MotivationStep = (props: IMotivationStepProps) => {
-  const { topic, onComplete } = props
+  const { topic, application, onComplete } = props
 
   const [loading, setLoading] = useState(false)
   const [opened, setOpened] = useState(false)
+
+  const mergedTopic = application?.topic || topic
 
   const form = useForm<IMotivationStepForm>({
     mode: 'controlled',
@@ -40,7 +44,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
     validateInputOnBlur: true,
     validate: {
       thesisTitle: (value) => {
-        if (!topic && !value) {
+        if (!mergedTopic && !value) {
           return 'Please state your suggested thesis title'
         }
       },
@@ -56,21 +60,35 @@ const MotivationStep = (props: IMotivationStepProps) => {
     },
   })
 
+  useEffect(() => {
+    if (application) {
+      form.setValues({
+        motivation: application.motivation,
+        desiredStartDate: new Date(application.desiredStartDate),
+        thesisType: application.thesisType,
+        thesisTitle: application.thesisTitle || '',
+      })
+    }
+  }, [application?.applicationId])
+
   const onSubmit = async (values: IMotivationStepForm) => {
     setLoading(true)
 
     try {
-      const response = await doRequest('/v2/applications', {
-        method: 'POST',
-        requiresAuth: true,
-        data: {
-          topicId: topic?.topicId,
-          thesisTitle: values.thesisTitle || null,
-          thesisType: values.thesisType,
-          desiredStartDate: values.desiredStartDate,
-          motivation: values.motivation,
+      const response = await doRequest(
+        application ? `/v2/applications/${application.applicationId}` : '/v2/applications',
+        {
+          method: application ? 'PUT' : 'POST',
+          requiresAuth: true,
+          data: {
+            topicId: mergedTopic?.topicId,
+            thesisTitle: values.thesisTitle || null,
+            thesisType: values.thesisType,
+            desiredStartDate: values.desiredStartDate,
+            motivation: values.motivation,
+          },
         },
-      })
+      )
 
       if (response.ok) {
         onComplete()
@@ -85,16 +103,16 @@ const MotivationStep = (props: IMotivationStepProps) => {
   return (
     <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
       <Stack gap='md'>
-        {topic ? (
+        {mergedTopic ? (
           <Accordion
             variant='separated'
             value={opened ? 'opened' : ''}
             onChange={(value) => setOpened(value === 'opened')}
           >
             <Accordion.Item value='opened'>
-              <Accordion.Control>{topic.title}</Accordion.Control>
+              <Accordion.Control>{mergedTopic.title}</Accordion.Control>
               <Accordion.Panel>
-                <TopicData topic={topic} />
+                <TopicData topic={mergedTopic} />
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
@@ -108,7 +126,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
         <Select
           label='Thesis Type'
           required={true}
-          data={(topic?.thesisTypes || Object.keys(GLOBAL_CONFIG.thesis_types)).map(
+          data={(mergedTopic?.thesisTypes || Object.keys(GLOBAL_CONFIG.thesis_types)).map(
             (thesisType) => ({
               label: GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType,
               value: thesisType,
@@ -129,7 +147,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
           {...form.getInputProps('motivation')}
         />
         <Button type='submit' ml='auto' disabled={!form.isValid()} loading={loading}>
-          Submit Application
+          {application ? 'Update Application' : 'Submit Application'}
         </Button>
       </Stack>
     </form>

@@ -8,8 +8,8 @@ const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/Thesis
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
 const LogoutPage = lazy(() => import('../pages/LogoutPage/LogoutPage'))
 const MyInformationPage = lazy(() => import('../pages/MyInformationPage/MyInformationPage'))
-const SubmitApplicationPage = lazy(
-  () => import('../pages/SubmitApplicationPage/SubmitApplicationPage'),
+const ReplaceApplicationPage = lazy(
+  () => import('../pages/ReplaceApplicationPage/ReplaceApplicationPage'),
 )
 const ManageTopicsPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicsPage'))
 const TopicPage = lazy(() => import('../pages/TopicPage/TopicPage'))
@@ -44,7 +44,15 @@ const AppRoutes = () => {
             path='/submit-application/:topicId?'
             element={
               <AuthenticatedArea>
-                <SubmitApplicationPage />
+                <ReplaceApplicationPage />
+              </AuthenticatedArea>
+            }
+          />
+          <Route
+            path='/edit-application/:applicationId'
+            element={
+              <AuthenticatedArea>
+                <ReplaceApplicationPage />
               </AuthenticatedArea>
             }
           />

@@ -41,16 +41,19 @@ const ThesesGanttChart = () => {
         return endDate
       }
 
+      const advisor = thesis.advisors[0]
+
       result.push({
         id: thesis.thesisId,
-        groupId: thesis.advisors[0].userId,
-        groupName: formatUser(thesis.advisors[0]),
+        groupId: advisor.userId,
+        groupName: formatUser(advisor),
         columns: [
           <AvatarUserList
             key='student'
             users={thesis.students}
             withUniversityId={false}
             size='xs'
+            oneLine
           />,
           <Text key='title' size='xs' truncate>
             {thesis.title}

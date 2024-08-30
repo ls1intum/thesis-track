@@ -48,6 +48,7 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
           fetchAll: fetchAll ? 'true' : 'false',
           search: debouncedSearch,
           state: filters.states?.join(',') ?? '',
+          type: filters.types?.join(',') ?? '',
           page,
           limit,
           sortBy: sort.column,
@@ -71,7 +72,15 @@ const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
         setTheses(res.data)
       },
     )
-  }, [fetchAll, page, limit, sort, filters.states?.join(','), debouncedSearch])
+  }, [
+    fetchAll,
+    page,
+    limit,
+    sort,
+    filters.states?.join(','),
+    filters.types?.join(','),
+    debouncedSearch,
+  ])
 
   const contextState = useMemo<IThesesContext>(() => {
     return {

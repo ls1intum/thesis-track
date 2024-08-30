@@ -54,6 +54,7 @@ public class ThesisController {
     public ResponseEntity<PaginationDto<ThesisDto>> getTheses(
             @RequestParam(required = false) String search,
             @RequestParam(required = false) ThesisState[] state,
+            @RequestParam(required = false) String[] type,
             @RequestParam(required = false, defaultValue = "false") Boolean fetchAll,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "50") Integer limit,
@@ -90,6 +91,7 @@ public class ThesisController {
                 visibilities,
                 search,
                 state,
+                type,
                 page,
                 limit,
                 sortBy,

@@ -67,6 +67,7 @@ const DashboardPage = () => {
           application={application}
           onClose={() => setApplication(undefined)}
           allowReviews={false}
+          allowEdit={true}
         />
         <Space mb='md' />
       </ApplicationsProvider>

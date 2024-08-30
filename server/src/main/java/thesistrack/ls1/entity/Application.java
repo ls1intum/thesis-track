@@ -72,6 +72,14 @@ public class Application {
         return this.user.getId().equals(user.getId());
     }
 
+    public boolean hasEditAccess(User user) {
+        if (user.hasAnyGroup("admin")) {
+            return true;
+        }
+
+        return this.user.getId().equals(user.getId());
+    }
+
     public boolean hasManagementAccess(User user) {
         return user.hasAnyGroup("admin", "advisor", "supervisor");
     }

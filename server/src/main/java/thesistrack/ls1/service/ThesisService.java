@@ -64,6 +64,7 @@ public class ThesisService {
             Set<ThesisVisibility> visibilities,
             String searchQuery,
             ThesisState[] states,
+            String[] types,
             int page,
             int limit,
             String sortBy,
@@ -73,12 +74,14 @@ public class ThesisService {
 
         String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
         Set<ThesisState> statesFilter = states == null || states.length == 0 ? null : new HashSet<>(Arrays.asList(states));
+        Set<String> typesFilter = types == null || types.length == 0 ? null : new HashSet<>(Arrays.asList(types));
 
         return thesisRepository.searchTheses(
                 userId,
                 visibilities,
                 searchQueryFilter,
                 statesFilter,
+                typesFilter,
                 PageRequest.of(page, limit, Sort.by(order))
         );
     }
@@ -387,6 +390,7 @@ public class ThesisService {
                         ThesisState.ASSESSED,
                         ThesisState.GRADED
                 ),
+                null,
                 PageRequest.ofSize(1)
         );
 

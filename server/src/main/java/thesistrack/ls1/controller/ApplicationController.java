@@ -20,6 +20,7 @@ import thesistrack.ls1.dto.ApplicationDto;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.User;
+import thesistrack.ls1.exception.request.ResourceAlreadyExistsException;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.service.ApplicationService;
 import thesistrack.ls1.service.AuthenticationService;
@@ -49,6 +50,10 @@ public class ApplicationController {
 
         if (payload.topicId() == null && payload.thesisTitle() == null) {
             throw new ResourceInvalidParametersException("Either topic id or a thesis title must be provided");
+        }
+
+        if (applicationService.applicationExists(authenticatedUser, payload.topicId())) {
+            throw new ResourceAlreadyExistsException("There is already a pending application for this topic. Please edit your application in the dashboard.");
         }
 
         Application application = applicationService.createApplication(
@@ -103,6 +108,35 @@ public class ApplicationController {
         if (!application.hasReadAccess(authenticatedUser)) {
             throw new AccessDeniedException("You do not have access to this application");
         }
+
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
+    }
+
+    @PutMapping("/{applicationId}")
+    public ResponseEntity<ApplicationDto> updateApplication(
+            @PathVariable UUID applicationId,
+            @RequestBody CreateApplicationPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Application application = applicationService.findById(applicationId);
+
+        if (!application.hasEditAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have edit access to this application");
+        }
+
+        if (!application.getState().equals(ApplicationState.NOT_ASSESSED)) {
+            throw new ResourceInvalidParametersException("Only applications that are not assessed can be edited");
+        }
+
+        application = applicationService.updateApplication(
+                application,
+                payload.topicId(),
+                RequestValidator.validateStringMaxLengthAllowNull(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateNotNull(payload.desiredStartDate()),
+                RequestValidator.validateStringMaxLength(payload.motivation(), StringLimits.LONGTEXT.getLimit())
+        );
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
     }

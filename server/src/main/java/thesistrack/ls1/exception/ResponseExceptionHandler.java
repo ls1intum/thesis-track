@@ -11,6 +11,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import thesistrack.ls1.dto.ErrorDto;
 import thesistrack.ls1.exception.request.AccessDeniedException;
+import thesistrack.ls1.exception.request.ResourceAlreadyExistsException;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 
@@ -21,6 +22,11 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({ ResourceNotFoundException.class })
     protected ResponseEntity<Object> handleNotFound(RuntimeException ex, WebRequest request) {
         return handleExceptionInternal(ex, ErrorDto.fromRuntimeException(ex), new HttpHeaders(), HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler({ ResourceAlreadyExistsException.class })
+    protected ResponseEntity<Object> handleAlreadyExists(RuntimeException ex, WebRequest request) {
+        return handleExceptionInternal(ex, ErrorDto.fromRuntimeException(ex), new HttpHeaders(), HttpStatus.CONFLICT, request);
     }
 
     @ExceptionHandler({

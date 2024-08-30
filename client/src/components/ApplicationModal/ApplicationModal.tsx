@@ -1,18 +1,26 @@
-import { IApplication } from '../../requests/responses/application'
-import { Modal, Stack, Divider } from '@mantine/core'
+import { ApplicationState, IApplication } from '../../requests/responses/application'
+import { Button, Divider, Modal, Stack } from '@mantine/core'
 import React from 'react'
 import ApplicationReviewForm from '../ApplicationReviewForm/ApplicationReviewForm'
 import ApplicationData from '../ApplicationData/ApplicationData'
+import { Link } from 'react-router-dom'
 
 interface IApplicationModalProps {
   application: IApplication | undefined
   onClose: () => unknown
-  allowReviews: boolean
+  allowReviews?: boolean
+  allowEdit?: boolean
   onUpdate?: (application: IApplication) => unknown
 }
 
 const ApplicationModal = (props: IApplicationModalProps) => {
-  const { application, onUpdate = () => undefined, onClose, allowReviews } = props
+  const {
+    application,
+    onUpdate = () => undefined,
+    onClose,
+    allowReviews = false,
+    allowEdit = false,
+  } = props
 
   return (
     <Modal centered size='100vw' opened={!!application} onClose={onClose}>
@@ -20,6 +28,21 @@ const ApplicationModal = (props: IApplicationModalProps) => {
         {application && (
           <ApplicationData
             application={application}
+            rightTitleSection={
+              allowEdit && application.state === ApplicationState.NOT_ASSESSED ? (
+                <Button
+                  ml='auto'
+                  mt='sm'
+                  size='sm'
+                  component={Link}
+                  to={`/edit-application/${application.applicationId}`}
+                  variant='outline'
+                  color='green'
+                >
+                  Edit
+                </Button>
+              ) : undefined
+            }
             bottomSection={
               allowReviews ? (
                 <Stack>
