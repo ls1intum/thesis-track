@@ -103,7 +103,7 @@ jobs:
             echo "CLIENT_HOST=${{ vars.CLIENT_HOST }}" >> .env.prod
             
             echo "APPLICATION_TITLE=${{ vars.APPLICATION_TITLE }}" >> .env.prod
-            echo "CHAIR_NAME=${{ vars.CHAIR_NAMECHAIR_NAME }}" >> .env.prod
+            echo "CHAIR_NAME=${{ vars.CHAIR_NAME }}" >> .env.prod
             echo "CHAIR_URL=${{ vars.CHAIR_URL }}" >> .env.prod
             echo "PRIVACY=${{ vars.PRIVACY }}" >> .env.prod
             echo "IMPRINT=${{ vars.IMPRINT }}" >> .env.prod
