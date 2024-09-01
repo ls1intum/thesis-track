@@ -32,7 +32,11 @@ export function doRequest<T>(
 
   const executeRequest = async (): Promise<ApiResponse<T>> => {
     if (options.requiresAuth && keycloak.isTokenExpired(5)) {
-      await keycloak.updateToken(5 * 60)
+      const updateSuccess = await keycloak.updateToken(5 * 60)
+
+      if (!updateSuccess) {
+        throw new Error('Failed to refresh access token. Please try to refresh the page')
+      }
     }
 
     const jwtToken = keycloak.token
@@ -89,15 +93,19 @@ export function doRequest<T>(
     }
   }
 
-  const promise = executeRequest().catch<ApiResponse<T>>((error) => ({
-    ok: false,
-    status: 1000,
-    data: undefined,
-    error,
-  }))
+  const promise = executeRequest().catch<ApiResponse<T>>((error) => {
+    return {
+      ok: false,
+      status: error.name === 'AbortError' ? 1005 : 1000,
+      data: undefined,
+      error,
+    }
+  })
+
+  const blacklistedCodes = [1005]
 
   if (cb) {
-    promise.then((res) => cb(res))
+    promise.then((res) => !blacklistedCodes.includes(res.status) && cb(res))
 
     return () => {
       controller.abort()

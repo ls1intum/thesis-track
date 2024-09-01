@@ -1,6 +1,9 @@
 export interface IGlobalConfig {
   title: string
 
+  chair_name: string
+  chair_url: string
+
   server_host: string
 
   genders: Record<string, string>
@@ -9,7 +12,9 @@ export interface IGlobalConfig {
   thesis_types: Record<string, string>
   custom_data: Record<string, string>
 
-  privacy_notice: string
+  privacy_text: string
+  imprint_text: string
+
   default_supervisors: string[]
   calendar_url: string
 

@@ -60,12 +60,12 @@ const ThesesTable = (props: IThesesTableProps) => {
     },
     advisors: {
       accessor: 'advisors',
-      title: 'Advisor',
+      title: 'Advisor(s)',
       render: (thesis: IThesis) => <AvatarUserList users={thesis.advisors} />,
     },
     students: {
       accessor: 'students',
-      title: 'Student',
+      title: 'Student(s)',
       render: (thesis: IThesis) => <AvatarUserList users={thesis.students} />,
     },
     type: {

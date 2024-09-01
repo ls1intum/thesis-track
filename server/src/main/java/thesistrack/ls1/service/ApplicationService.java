@@ -7,9 +7,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.constants.ApplicationState;
+import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.ApplicationRepository;
 import thesistrack.ls1.repository.TopicRepository;
@@ -136,10 +138,16 @@ public class ApplicationService {
 
     @Transactional
     public Application createApplication(User user, UUID topicId, String thesisTitle, String thesisType, Instant desiredStartDate, String motivation) {
+        Topic topic = topicId == null ? null : topicService.findById(topicId);
+
+        if (topic != null && topic.getClosedAt() != null) {
+            throw new ResourceInvalidParametersException("This topic is already closed. You cannot submit new applications for it.");
+        }
+
         Application application = new Application();
         application.setUser(user);
 
-        application.setTopic(topicId == null ? null : topicService.findById(topicId));
+        application.setTopic(topic);
         application.setThesisTitle(thesisTitle);
         application.setThesisType(thesisType);
         application.setMotivation(motivation);
@@ -190,13 +198,16 @@ public class ApplicationService {
                 supervisorIds,
                 advisorIds,
                 List.of(application.getUser().getId()),
-                application
+                application,
+                false
         );
+
+        application = applicationRepository.save(application);
 
         Topic topic = application.getTopic();
 
         if (topic != null && closeTopic) {
-            application.setTopic(closeTopic(reviewingUser, topic, notifyUser));
+            application.setTopic(closeTopic(reviewingUser, topic, ApplicationRejectReason.TOPIC_FILLED, true));
         }
 
         if (notifyUser) {
@@ -207,33 +218,37 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application reject(User reviewingUser, Application application, boolean notifyUser) {
+    public Application reject(User reviewingUser, Application application, ApplicationRejectReason reason, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
 
         if (notifyUser) {
-            mailingService.sendApplicationRejectionEmail(application);
+            mailingService.sendApplicationRejectionEmail(application, reason);
         }
 
         return applicationRepository.save(application);
     }
 
     @Transactional
-    public Topic closeTopic(User closer, Topic topic, boolean notifyStudent) {
+    public Topic closeTopic(User closer, Topic topic, ApplicationRejectReason reason, boolean notifyUser) {
         topic.setClosedAt(Instant.now());
 
-        rejectApplicationsForTopic(closer, topic, notifyStudent);
+        rejectApplicationsForTopic(closer, topic, reason, notifyUser);
 
         return topicRepository.save(topic);
     }
 
     @Transactional
-    public void rejectApplicationsForTopic(User closer, Topic topic, boolean notifyUser) {
+    public void rejectApplicationsForTopic(User closer, Topic topic, ApplicationRejectReason reason, boolean notifyUser) {
         List<Application> applications = applicationRepository.findAllByTopic(topic);
 
         for (Application application : applications) {
-            reject(closer, application, notifyUser);
+            if (application.getState() != ApplicationState.NOT_ASSESSED) {
+                continue;
+            }
+
+            reject(closer, application, reason, notifyUser);
         }
     }
 

@@ -13,11 +13,10 @@ export function HeroSection() {
 
       <div className={classes.inner}>
         <Title className={classes.title}>
-          Find or Propose the{' '}
+          Find or Propose a{' '}
           <Text component='span' className={classes.highlight} inherit>
-            Perfect Thesis
-          </Text>{' '}
-          Topic
+            Thesis Topic
+          </Text>
         </Title>
 
         <Container p={0} size={700}>

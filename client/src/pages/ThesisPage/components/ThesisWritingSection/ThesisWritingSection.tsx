@@ -17,6 +17,7 @@ import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
 import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
+import { formatUsersFilename } from '../../../../utils/format'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -111,7 +112,7 @@ const ThesisWritingSection = () => {
                     key={thesis.files.thesis}
                     title='Thesis'
                     url={`/v2/theses/${thesis.thesisId}/thesis`}
-                    filename={`thesis-${thesis.thesisId}.pdf`}
+                    filename={`thesis-${formatUsersFilename(thesis.students)}.pdf`}
                     height={400}
                   />
                 ) : (
@@ -138,7 +139,7 @@ const ThesisWritingSection = () => {
                     key={thesis.files.presentation}
                     title='Presentation'
                     url={`/v2/theses/${thesis.thesisId}/presentation`}
-                    filename={`presentation-${thesis.thesisId}.pdf`}
+                    filename={`presentation-${formatUsersFilename(thesis.students)}.pdf`}
                     height={400}
                   />
                 ) : (

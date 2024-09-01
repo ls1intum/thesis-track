@@ -97,13 +97,16 @@ services:
       - KEYCLOAK_REALM_NAME
       - KEYCLOAK_CLIENT_ID
       - DEFAULT_SUPERVISOR_UUID
-      - PRIVACY_NOTICE
+      - PRIVACY
+      - IMPRINT
       - THESIS_TYPES
       - STUDY_PROGRAMS
       - STUDY_DEGREES
       - GENDERS
       - CUSTOM_DATA
       - APPLICATION_TITLE
+      - CHAIR_NAME
+      - CHAIR_URL
     depends_on:
       - server
     networks:

@@ -5,13 +5,13 @@ import { useAuthenticationContext, useLoggedInUser } from '../../hooks/authentic
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
 import UploadArea from '../UploadArea/UploadArea'
-import { DeclarationOfDataConsent } from '../DeclarationOfDataConsent/DeclarationOfDataConsent'
 import { useEffect, useState } from 'react'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { useApiFile } from '../../hooks/fetcher'
 import { showSimpleError } from '../../utils/notification'
 import { getHtmlTextLength } from '../../utils/validation'
 import { enrollmentDateToSemester, semesterToEnrollmentDate } from '../../utils/converter'
+import { Link } from 'react-router-dom'
 
 interface IUserInformationFormProps {
   requireCompletion: boolean
@@ -341,8 +341,8 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           mt='md'
           label={
             <>
-              I have read the <DeclarationOfDataConsent text='declaration of consent' /> and agree
-              to the processing of my data.
+              I have read the <Link to='/privacy'>declaration of consent</Link> and agree to the
+              processing of my data.
             </>
           }
           {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}

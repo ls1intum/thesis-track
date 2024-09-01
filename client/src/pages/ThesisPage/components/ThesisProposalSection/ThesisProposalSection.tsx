@@ -12,7 +12,7 @@ import {
 } from '../../../../contexts/ThesisProvider/hooks'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
-import { formatUser } from '../../../../utils/format'
+import { formatUser, formatUsersFilename } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 
 const ThesisProposalSection = () => {
@@ -76,16 +76,25 @@ const ThesisProposalSection = () => {
                       />
                     </Grid.Col>
                     <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem label='University ID' value={student.universityId} />
+                      <LabeledItem
+                        label='University ID'
+                        value={student.universityId}
+                        copyText={student.universityId}
+                      />
                     </Grid.Col>
                     <Grid.Col span={{ md: 2 }}>
                       <LabeledItem
                         label='Matriculation Number'
                         value={student.matriculationNumber}
+                        copyText={student.matriculationNumber || undefined}
                       />
                     </Grid.Col>
                     <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem label='E-Mail' value={student.email} />
+                      <LabeledItem
+                        label='E-Mail'
+                        value={student.email}
+                        copyText={student.email || undefined}
+                      />
                     </Grid.Col>
                     <Grid.Col span={{ md: 2 }}>
                       <LabeledItem
@@ -118,7 +127,7 @@ const ThesisProposalSection = () => {
             {thesis.proposal ? (
               <AuthenticatedFilePreview
                 url={`/v2/theses/${thesis.thesisId}/proposal`}
-                filename={`proposal-${thesis.thesisId}.pdf`}
+                filename={`proposal-${formatUsersFilename(thesis.students)}.pdf`}
                 height={400}
                 key={thesis.files.proposal}
               />

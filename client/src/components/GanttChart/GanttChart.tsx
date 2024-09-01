@@ -36,7 +36,7 @@ interface IGanttChartProps {
 export interface IGanttChartDataElement {
   id: string
   groupId: string
-  groupName: string
+  groupNode: ReactNode
   columns: ReactNode[]
   timeline: Array<{
     id: string
@@ -131,10 +131,10 @@ const GanttChart = (props: IGanttChartProps) => {
   ]
   const filteredRangeDuration = filteredRange[1] - filteredRange[0]
 
-  const groups: Array<{ groupId: string; groupName: string }> = arrayUnique(
+  const groups: Array<{ groupId: string; groupNode: ReactNode }> = arrayUnique(
     data.map((row) => ({
       groupId: row.groupId,
-      groupName: row.groupName,
+      groupNode: row.groupNode,
     })),
     (a, b) => a.groupId === b.groupId,
   )
@@ -348,7 +348,7 @@ const GanttChart = (props: IGanttChartProps) => {
                     collapsedGroups.includes(group.groupId) ? <CaretDown /> : <CaretUp />
                   }
                 >
-                  {group.groupName}
+                  {group.groupNode}
                 </Button>
               </div>
               <div className={classes.groupContent}>

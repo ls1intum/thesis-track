@@ -8,9 +8,9 @@ import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
-import { formatUser } from '../../../../utils/format'
 import { Eye } from 'phosphor-react'
 import ThesisData from '../../../../components/ThesisData/ThesisData'
+import AvatarUserList from '../../../../components/AvatarUserList/AvatarUserList'
 
 const PublishedTheses = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -67,26 +67,20 @@ const PublishedTheses = () => {
         idAccessor='thesisId'
         columns={[
           {
-            accessor: 'students',
-            title: 'Student',
-            render: (thesis) =>
-              thesis.students
-                .map((student) => formatUser(student, { withUniversityId: false }))
-                .join(', '),
-          },
-          {
-            accessor: 'advisors',
-            title: 'Advisor',
-            render: (thesis) =>
-              thesis.advisors
-                .map((advisor) => formatUser(advisor, { withUniversityId: false }))
-                .join(', '),
-          },
-          {
             accessor: 'title',
             title: 'Title',
             ellipsis: true,
             width: 350,
+          },
+          {
+            accessor: 'students',
+            title: 'Student(s)',
+            render: (thesis) => <AvatarUserList users={thesis.students} withUniversityId={false} />,
+          },
+          {
+            accessor: 'advisors',
+            title: 'Advisor(s)',
+            render: (thesis) => <AvatarUserList users={thesis.advisors} withUniversityId={false} />,
           },
           {
             accessor: 'actions',
@@ -116,7 +110,7 @@ const PublishedTheses = () => {
               url={`/v2/published-theses/${openedThesis.thesisId}/thesis`}
               includeLink
               height={500}
-              filename={`${openedThesis.title.replaceAll(' ', '-')}.pdf`}
+              filename={`${openedThesis.title.toLowerCase().replaceAll(' ', '-')}.pdf`}
             />
           </Stack>
         )}

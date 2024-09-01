@@ -1,7 +1,7 @@
 import { ITopic } from '../../requests/responses/topic'
 import { Grid, Stack } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
-import { formatDate } from '../../utils/format'
+import { formatDate, pluralize } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import React from 'react'
@@ -19,19 +19,19 @@ const TopicData = (props: ITopicDataProps) => {
       <Grid>
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
-            label='Supervisor'
+            label={pluralize('Supervisor', topic.supervisors.length)}
             value={<AvatarUserList users={topic.supervisors} withUniversityId={false} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
-            label='Advisor'
+            label={pluralize('Advisor', topic.advisors.length)}
             value={<AvatarUserList users={topic.advisors} withUniversityId={false} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
-            label='Thesis Types'
+            label={pluralize('Thesis Type', topic.thesisTypes?.length || 0)}
             value={
               topic.thesisTypes
                 ? topic.thesisTypes

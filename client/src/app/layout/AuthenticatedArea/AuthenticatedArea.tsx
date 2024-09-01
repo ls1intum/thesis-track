@@ -9,7 +9,6 @@ import {
   Stack,
   Text,
   Tooltip,
-  useMantineColorScheme,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
 import { Link, useLocation } from 'react-router-dom'
@@ -18,22 +17,21 @@ import {
   CaretDoubleLeft,
   CaretDoubleRight,
   Kanban,
-  Moon,
   NewspaperClipping,
   Scroll,
   SignOut,
-  Sun,
   FolderSimplePlus,
   User,
   PaperPlaneTilt,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext } from '../../../hooks/authentication'
-import Logo from '../../../static/logo'
 import { useNavigationType } from 'react-router'
 import ScrollToTop from '../ScrollToTop/ScrollToTop'
 import PageLoader from '../../../components/PageLoader/PageLoader'
 import { useLocalStorage } from '../../../hooks/local-storage'
+import Logo from '../../../components/Logo/Logo'
+import ColorSchemeToggleButton from '../../../components/ColorSchemeToggleButton/ColorSchemeToggleButton'
 
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
@@ -82,7 +80,6 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     requiredGroups,
   } = props
 
-  const { colorScheme, toggleColorScheme } = useMantineColorScheme()
   const [opened, { toggle, close }] = useDisclosure()
 
   const minimizeAnimationDuration = 200
@@ -105,6 +102,12 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
   useEffect(() => {
     if (requireAuthentication && !auth.isAuthenticated) {
       auth.login()
+
+      const interval = setInterval(() => {
+        auth.login()
+      }, 1000)
+
+      return () => clearInterval(interval)
     }
   }, [requireAuthentication, auth.isAuthenticated])
 
@@ -154,15 +157,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
               <Text className={classes.siteName} fw='bold'>
                 ThesisTrack
               </Text>
-              <ActionIcon
-                variant='outline'
-                color={colorScheme === 'dark' ? 'yellow' : 'pale-purple'}
-                onClick={() => toggleColorScheme()}
-                title='Toggle color scheme'
-                ml='auto'
-              >
-                {colorScheme === 'dark' ? <Sun size='1.1rem' /> : <Moon size='1.1rem' />}
-              </ActionIcon>
+              <ColorSchemeToggleButton />
             </Group>
           )}
           {!minimized && <Divider my='sm' />}

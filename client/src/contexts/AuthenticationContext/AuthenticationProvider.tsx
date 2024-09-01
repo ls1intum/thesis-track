@@ -83,10 +83,15 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
 
     const storedTokens = getAuthenticationTokens()
 
-    keycloak.onTokenExpired = () => refreshAccessToken()
     keycloak.onAuthRefreshSuccess = () => storeTokens()
-    keycloak.onAuthRefreshError = () => setAuthenticationTokens(undefined)
-    keycloak.onAuthLogout = () => setAuthenticationTokens(undefined)
+    keycloak.onAuthRefreshError = () => {
+      keycloak.clearToken()
+      setAuthenticationTokens(undefined)
+    }
+    keycloak.onAuthLogout = () => {
+      keycloak.clearToken()
+      setAuthenticationTokens(undefined)
+    }
 
     console.log('Initializing keycloak...')
 
@@ -201,7 +206,7 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
       },
       login: () =>
         readySignal.then(() => {
-          if (!keycloak.authenticated) {
+          if (!authenticationTokens?.access_token) {
             return keycloak.login()
           }
         }),
@@ -223,7 +228,12 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
         })
       },
     }
-  }, [user, !!authenticationTokens?.access_token, location.origin])
+  }, [
+    user,
+    !!authenticationTokens?.access_token,
+    authenticationTokens?.refresh_token,
+    location.origin,
+  ])
 
   return (
     <AuthenticationContext.Provider value={contextValue}>{children}</AuthenticationContext.Provider>

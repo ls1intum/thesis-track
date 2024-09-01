@@ -49,6 +49,14 @@ export function formatUser(user: ILightUser, options: Partial<IFormatUserOptions
   return text
 }
 
+export function formatUserFilename(user: ILightUser): string {
+  return `${user.firstName} ${user.lastName}`.toLowerCase().replace(' ', '-')
+}
+
+export function formatUsersFilename(users: ILightUser[]) {
+  return users.map((user) => formatUserFilename(user)).join('-')
+}
+
 export function formatThesisState(state: ThesisState) {
   const stateMap: Record<ThesisState, string> = {
     [ThesisState.PROPOSAL]: 'Proposal',
@@ -83,4 +91,12 @@ export function formatPresentationType(type: string) {
   }
 
   return type
+}
+
+export function pluralize(word: string, count: number) {
+  if (count === 1) {
+    return word
+  }
+
+  return `${word}s`
 }

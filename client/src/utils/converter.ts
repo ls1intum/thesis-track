@@ -9,6 +9,10 @@ export function semesterToEnrollmentDate(semester: string | number): DateValue {
 }
 
 export function enrollmentDateToSemester(enrollmentDate: string): number {
+  if (!enrollmentDate) {
+    return 0
+  }
+
   const date = new Date(enrollmentDate).getTime()
 
   return Math.floor((Date.now() - date) / ((1000 * 3600 * 24 * 365) / 2))

@@ -1,12 +1,13 @@
 package thesistrack.ls1.service;
 
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import thesistrack.ls1.constants.ThesisRoleName;
-import thesistrack.ls1.entity.ThesisRole;
 import thesistrack.ls1.entity.Topic;
 import thesistrack.ls1.entity.TopicRole;
 import thesistrack.ls1.entity.User;
@@ -16,6 +17,7 @@ import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.TopicRepository;
 import thesistrack.ls1.repository.TopicRoleRepository;
 import thesistrack.ls1.repository.UserRepository;
+import thesistrack.ls1.utility.HibernateHelper;
 
 import java.time.Instant;
 import java.util.*;
@@ -26,13 +28,18 @@ public class TopicService {
     private final TopicRoleRepository topicRoleRepository;
     private final UserRepository userRepository;
 
-    public TopicService(TopicRepository topicRepository, TopicRoleRepository topicRoleRepository, UserRepository userRepository) {
+    private final SessionFactory sessionFactory;
+
+    @Autowired
+    public TopicService(TopicRepository topicRepository, TopicRoleRepository topicRoleRepository, UserRepository userRepository, SessionFactory sessionFactory) {
         this.topicRepository = topicRepository;
         this.topicRoleRepository = topicRoleRepository;
         this.userRepository = userRepository;
+        this.sessionFactory = sessionFactory;
     }
 
     public Page<Topic> getAll(
+            String[] types,
             boolean includeClosed,
             String searchQuery,
             int page,
@@ -40,11 +47,16 @@ public class TopicService {
             String sortBy,
             String sortOrder
     ) {
-        Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
+        Sort.Order order = new Sort.Order(
+                sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                HibernateHelper.getColumnName(sessionFactory, Topic.class, sortBy)
+        );
 
         String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
+        String[] typesFilter = types == null || types.length == 0 ? null : types;
 
         return topicRepository.searchTopics(
+                typesFilter,
                 includeClosed,
                 searchQueryFilter,
                 PageRequest.of(page, limit, Sort.by(order))

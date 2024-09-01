@@ -103,7 +103,10 @@ jobs:
             echo "CLIENT_HOST=${{ vars.CLIENT_HOST }}" >> .env.prod
             
             echo "APPLICATION_TITLE=${{ vars.APPLICATION_TITLE }}" >> .env.prod
-            echo "PRIVACY_NOTICE=${{ vars.PRIVACY_NOTICE }}" >> .env.prod
+            echo "CHAIR_NAME=${{ vars.CHAIR_NAMECHAIR_NAME }}" >> .env.prod
+            echo "CHAIR_URL=${{ vars.CHAIR_URL }}" >> .env.prod
+            echo "PRIVACY=${{ vars.PRIVACY }}" >> .env.prod
+            echo "IMPRINT=${{ vars.IMPRINT }}" >> .env.prod
             echo "DEFAULT_SUPERVISOR_UUID=${{ vars.DEFAULT_SUPERVISOR_UUID }}" >> .env.prod
             echo "THESIS_TYPES=${{ vars.THESIS_TYPES }}" >> .env.prod
             echo "STUDY_PROGRAMS=${{ vars.STUDY_PROGRAMS }}" >> .env.prod
@@ -113,7 +116,6 @@ jobs:
 
             echo "MAIL_SENDER=${{ vars.MAIL_SENDER }}" >> .env.prod
             echo "MAIL_SIGNATURE=${{ vars.MAIL_SIGNATURE }}" >> .env.prod
-            echo "MAIL_CHAIR_RECIPIENTS=${{ vars.MAIL_CHAIR_RECIPIENTS }}" >> .env.prod
             echo "MAIL_BCC_RECIPIENTS=${{ vars.MAIL_BCC_RECIPIENTS }}" >> .env.prod
             echo "MAIL_WORKSPACE_URL=${{ vars.MAIL_WORKSPACE_URL }}" >> .env.prod
             

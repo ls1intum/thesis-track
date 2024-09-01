@@ -9,6 +9,7 @@ import { formatUser } from '../../utils/format'
 import { arrayUnique } from '../../utils/array'
 import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
+import AvatarUser from '../AvatarUser/AvatarUser'
 
 interface IUserMultiSelectProps extends GetInputPropsReturnType {
   maxValues?: number
@@ -33,7 +34,7 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
   const selected: string[] = inputProps.value || []
 
   const [loading, setLoading] = useState(false)
-  const [data, setData] = useState<Array<{ value: string; label: string }>>([])
+  const [data, setData] = useState<Array<{ value: string; label: string; user: ILightUser }>>([])
   const [searchValue, setSearchValue] = useState('')
 
   const [debouncedSearchValue] = useDebouncedValue(searchValue, 500)
@@ -61,7 +62,8 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
                 ...prevState.filter((item) => selected.includes(item.value)),
                 ...res.data.content.map((user) => ({
                   value: user.userId,
-                  label: formatUser(user),
+                  label: formatUser(user, { withUniversityId: true }),
+                  user: user,
                 })),
               ],
               (a, b) => a.value === b.value,
@@ -75,20 +77,32 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
     )
   }, [groups.join(','), debouncedSearchValue])
 
+  const mergedData = arrayUnique(
+    [
+      ...data,
+      ...initialUsers
+        .filter((user) => selected.includes(user.userId))
+        .map((user) => ({
+          value: user.userId,
+          label: formatUser(user, { withUniversityId: true }),
+          user,
+        })),
+    ],
+    (a, b) => a.value === b.value,
+  )
+
   return (
     <MultiSelect
-      data={arrayUnique(
-        [
-          ...data,
-          ...initialUsers
-            .filter((user) => selected.includes(user.userId))
-            .map((user) => ({
-              value: user.userId,
-              label: formatUser(user),
-            })),
-        ],
-        (a, b) => a.value === b.value,
-      )}
+      data={mergedData}
+      renderOption={({ option }) => {
+        const item = mergedData.find((row) => row.value === option.value)
+
+        if (!item) {
+          return null
+        }
+
+        return <AvatarUser user={item.user} withUniversityId={true} />
+      }}
       disabled={disabled}
       searchable={selected.length < maxValues}
       clearable={true}

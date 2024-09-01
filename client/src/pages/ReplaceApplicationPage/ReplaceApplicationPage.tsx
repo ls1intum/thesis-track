@@ -56,7 +56,7 @@ const ReplaceApplicationPage = () => {
 
   return (
     <ContentContainer>
-      <Title mb='md'>Submit Application</Title>
+      <Title mb='md'>{applicationId ? 'Edit Application' : 'Submit Application'}</Title>
       <Stepper active={Math.max(step, topicId || applicationId ? 1 : 0)} onStepClick={updateStep}>
         <Stepper.Step label='First Step' description='Select Topic'>
           <TopicsProvider limit={100}>

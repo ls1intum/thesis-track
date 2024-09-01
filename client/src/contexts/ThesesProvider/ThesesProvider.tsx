@@ -15,19 +15,13 @@ interface IThesesProviderProps {
 }
 
 const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
-  const { children, fetchAll = false, limit = 100, hideIfEmpty = false } = props
+  const { children, fetchAll = false, limit = 100, hideIfEmpty = false, defaultStates } = props
 
   const [theses, setTheses] = useState<PaginationResponse<IThesis>>()
   const [page, setPage] = useState(0)
 
   const [filters, setFilters] = useState<IThesesFilters>({
-    states: [
-      ThesisState.PROPOSAL,
-      ThesisState.WRITING,
-      ThesisState.SUBMITTED,
-      ThesisState.ASSESSED,
-      ThesisState.GRADED,
-    ],
+    states: defaultStates,
   })
   const [sort, setSort] = useState<IThesesSort>({
     column: 'startDate',
