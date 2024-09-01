@@ -61,9 +61,9 @@ thesis-track:
     realm-name: ${KEYCLOAK_REALM_NAME:thesis-track}
     client-id: ${KEYCLOAK_CLIENT_ID:thesis-track-app}
     service-client:
-      id: ${KEYCLOAK_SERVICE_CLIENT_ID:}
+      id: ${KEYCLOAK_SERVICE_CLIENT_ID:thesis-track-service-client}
       secret: ${KEYCLOAK_SERVICE_CLIENT_SECRET:}
-      student-group-name: ${KEYCLOAK_SERVICE_STUDENT_GROUP_NAME:}
+      student-group-name: ${KEYCLOAK_SERVICE_STUDENT_GROUP_NAME:thesis-students}
   calendar:
     enabled: ${CALDAV_ENABLED:false}
     url: ${CALDAV_URL:}
