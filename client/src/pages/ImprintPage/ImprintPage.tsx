@@ -7,7 +7,7 @@ const ImprintPage = () => {
   return (
     <ContentContainer size='md'>
       <Title mb='md'>Imprint</Title>
-      <DocumentEditor value={GLOBAL_CONFIG.imprint_text} noBorder />
+      <DocumentEditor value={GLOBAL_CONFIG.imprint_text} />
     </ContentContainer>
   )
 }

@@ -7,7 +7,7 @@ const PrivacyPage = () => {
   return (
     <ContentContainer size='md'>
       <Title mb='md'>Privacy</Title>
-      <DocumentEditor value={GLOBAL_CONFIG.privacy_text} noBorder />
+      <DocumentEditor value={GLOBAL_CONFIG.privacy_text} />
     </ContentContainer>
   )
 }
