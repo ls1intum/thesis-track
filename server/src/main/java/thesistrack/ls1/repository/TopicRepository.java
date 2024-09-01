@@ -20,7 +20,7 @@ public interface TopicRepository  extends JpaRepository<Topic, UUID>  {
     @Query(value =
             "SELECT t.* FROM topics t WHERE " +
             "(:searchQuery IS NULL OR t.title ILIKE CONCAT('%', :searchQuery, '%')) AND " +
-            "(CAST(:types AS TEXT[]) IS NULL OR t.thesis_types && CAST(:types AS TEXT[])) AND " +
+            "(t.thesis_types IS NULL OR CAST(:types AS TEXT[]) IS NULL OR t.thesis_types && CAST(:types AS TEXT[])) AND " +
             "(:includeClosed = TRUE OR t.closed_at IS NULL)",
             nativeQuery = true
     )

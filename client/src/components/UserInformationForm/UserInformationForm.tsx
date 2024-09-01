@@ -341,8 +341,8 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           mt='md'
           label={
             <>
-              I have read the <Link to='/privacy'>declaration of consent</Link> and agree to the
-              processing of my data.
+              I have read the <Link to='/privacy'>privacy notice</Link> and agree to the processing
+              of my data.
             </>
           }
           {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}

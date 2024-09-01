@@ -29,7 +29,7 @@ public record ApplicationDto (
                 application.getId(),
                 UserDto.fromUserEntity(application.getUser()),
                 TopicDto.fromTopicEntity(application.getTopic()),
-                application.getThesisTitle(),
+                application.getTopic() != null ? application.getTopic().getTitle() : application.getThesisTitle(),
                 application.getThesisType(),
                 application.getMotivation(),
                 application.getState(),
