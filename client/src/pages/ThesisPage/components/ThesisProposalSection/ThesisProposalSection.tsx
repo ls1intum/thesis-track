@@ -12,7 +12,7 @@ import {
 } from '../../../../contexts/ThesisProvider/hooks'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
-import { formatUser, formatUsersFilename } from '../../../../utils/format'
+import { formatThesisFilename, formatUser, formatUsersFilename } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 
 const ThesisProposalSection = () => {
@@ -127,7 +127,7 @@ const ThesisProposalSection = () => {
             {thesis.proposal ? (
               <AuthenticatedFilePreview
                 url={`/v2/theses/${thesis.thesisId}/proposal`}
-                filename={`proposal-${formatUsersFilename(thesis.students)}.pdf`}
+                filename={`${formatThesisFilename(thesis, 'proposal')}.pdf`}
                 height={400}
                 key={thesis.files.proposal}
               />

@@ -1,6 +1,7 @@
 import { ILightUser } from '../requests/responses/user'
-import { ThesisState } from '../requests/responses/thesis'
-import { ApplicationState } from '../requests/responses/application'
+import { IThesis, ThesisState } from '../requests/responses/thesis'
+import { ApplicationState, IApplication } from '../requests/responses/application'
+import { GLOBAL_CONFIG } from '../config/global'
 
 interface IFormatDateOptions {
   withTime: boolean
@@ -49,12 +50,50 @@ export function formatUser(user: ILightUser, options: Partial<IFormatUserOptions
   return text
 }
 
+export function wordsToFilename(words: string) {
+  return words.toLowerCase().replace(' ', '-')
+}
+
 export function formatUserFilename(user: ILightUser): string {
-  return `${user.firstName} ${user.lastName}`.toLowerCase().replace(' ', '-')
+  return wordsToFilename(`${user.firstName} ${user.lastName}`)
 }
 
 export function formatUsersFilename(users: ILightUser[]) {
   return users.map((user) => formatUserFilename(user)).join('-')
+}
+
+export function getInitials(words: string) {
+  return words
+    .split(' ')
+    .filter((word) => word.length > 0)
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase()
+}
+
+export function formatThesisFilename(thesis: IThesis, name: string, version?: number) {
+  let text = `${wordsToFilename(GLOBAL_CONFIG.thesis_types[thesis.type] ?? '')}`
+
+  if (name) {
+    text += `-${name.toLowerCase()}`
+  }
+
+  text += `-${formatUsersFilename(thesis.students)}`
+
+  if (version) {
+    text += `-v${version}`
+  }
+
+  return text
+}
+
+export function formatApplicationFilename(application: IApplication, name: string) {
+  let text = `${wordsToFilename(GLOBAL_CONFIG.thesis_types[application.thesisType || ''] ?? '')}`
+
+  text += `-${name.toLowerCase()}`
+  text += `-${formatUserFilename(application.user)}`
+
+  return text
 }
 
 export function formatThesisState(state: ThesisState) {

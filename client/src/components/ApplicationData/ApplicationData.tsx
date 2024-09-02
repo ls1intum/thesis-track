@@ -4,7 +4,7 @@ import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedF
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { formatApplicationState, formatDate, formatUserFilename } from '../../utils/format'
+import { formatApplicationFilename, formatApplicationState, formatDate, formatUserFilename } from '../../utils/format'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
@@ -178,7 +178,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               title='CV'
               url={`/v2/users/${application.user.userId}/cv`}
               height={400}
-              filename={`cv-${formatUserFilename(application.user)}`}
+              filename={`${formatApplicationFilename(application, 'application-cv')}.pdf`}
               key={application.user.userId}
             />
           )}
@@ -187,7 +187,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               title='Examination Report'
               url={`/v2/users/${application.user.userId}/examination-report`}
               height={400}
-              filename={`examination-report-${formatUserFilename(application.user)}`}
+              filename={`${formatApplicationFilename(application, 'application-examination-report')}.pdf`}
               key={application.user.userId}
             />
           )}
@@ -196,7 +196,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               title='Degree Report'
               url={`/v2/users/${application.user.userId}/degree-report`}
               height={400}
-              filename={`degree-report-${formatUserFilename(application.user)}`}
+              filename={`${formatApplicationFilename(application, 'application-degree-report')}.pdf`}
               key={application.user.userId}
             />
           )}
