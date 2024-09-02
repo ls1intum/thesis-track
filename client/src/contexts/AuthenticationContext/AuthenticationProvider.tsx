@@ -129,7 +129,6 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
       clearInterval(refreshTokenInterval)
 
       keycloak.onAuthRefreshSuccess = undefined
-      keycloak.onTokenExpired = undefined
       keycloak.onAuthRefreshError = undefined
       keycloak.onAuthLogout = undefined
     }
@@ -206,7 +205,9 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
       },
       login: () =>
         readySignal.then(() => {
-          if (!authenticationTokens?.access_token) {
+          const tokens = getAuthenticationTokens()
+
+          if (!tokens?.access_token) {
             return keycloak.login()
           }
         }),
