@@ -1,5 +1,6 @@
 package thesistrack.ls1.dto;
 
+import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.entity.Application;
 
@@ -16,6 +17,7 @@ public record ApplicationDto (
     ApplicationState state,
     Instant desiredStartDate,
     String comment,
+    ApplicationRejectReason rejectReason,
     Instant createdAt,
     LightUserDto reviewedBy,
     Instant reviewedAt
@@ -34,6 +36,7 @@ public record ApplicationDto (
                 application.getMotivation(),
                 application.getState(),
                 application.getDesiredStartDate(), protectedData ? application.getComment() : null,
+                application.getRejectReason(),
                 application.getCreatedAt(),
                 protectedData ? LightUserDto.fromUserEntity(application.getReviewedBy()) : null,
                 application.getReviewedAt()

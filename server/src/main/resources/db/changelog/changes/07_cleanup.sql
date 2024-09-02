@@ -13,3 +13,6 @@ ALTER TABLE topic_roles ADD COLUMN position INT NOT NULL DEFAULT 0;
 
 --changeset emilius:07-cleanup-4
 ALTER TABLE topics ADD COLUMN requirements TEXT NOT NULL DEFAULT '';
+
+--changeset emilius:07-cleanup-5
+ALTER TABLE applications ADD COLUMN reject_reason TEXT;

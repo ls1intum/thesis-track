@@ -220,6 +220,7 @@ public class ApplicationService {
     @Transactional
     public Application reject(User reviewingUser, Application application, ApplicationRejectReason reason, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
+        application.setRejectReason(reason);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
 
@@ -229,6 +230,7 @@ public class ApplicationService {
             for (Application item : applications) {
                 if (item.getState() == ApplicationState.NOT_ASSESSED) {
                     item.setState(ApplicationState.REJECTED);
+                    item.setRejectReason(reason);
                     item.setReviewedAt(Instant.now());
                     item.setReviewedBy(reviewingUser);
 
