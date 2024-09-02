@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.entity.Application;
 import thesistrack.ls1.entity.Topic;
+import thesistrack.ls1.entity.User;
 
 import java.util.List;
 import java.util.Set;
@@ -37,8 +38,6 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             Pageable page
     );
 
-    List<Application> findAllByTopic(Topic topic);
-
     @Query(
             "SELECT COUNT(DISTINCT a) FROM Application a " +
             "LEFT JOIN Topic t ON (a.topic.id = t.id) " +
@@ -58,4 +57,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             @Param("userId") UUID userId,
             @Param("topicId") UUID topicId
     );
+
+    List<Application> findAllByTopic(Topic topic);
+    List<Application> findAllByUser(User user);
 }

@@ -223,6 +223,20 @@ public class ApplicationService {
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
 
+        if (reason == ApplicationRejectReason.BAD_GRADES) {
+            List<Application> applications = applicationRepository.findAllByUser(application.getUser());
+
+            for (Application item : applications) {
+                if (item.getState() == ApplicationState.NOT_ASSESSED) {
+                    item.setState(ApplicationState.REJECTED);
+                    item.setReviewedAt(Instant.now());
+                    item.setReviewedBy(reviewingUser);
+
+                    applicationRepository.save(item);
+                }
+            }
+        }
+
         if (notifyUser) {
             mailingService.sendApplicationRejectionEmail(application, reason);
         }

@@ -206,7 +206,7 @@ public class ApplicationController {
         application =  applicationService.reject(
                 authenticatedUser,
                 application,
-                ApplicationRejectReason.REJECTED,
+                RequestValidator.validateNotNull(payload.reason()),
                 RequestValidator.validateNotNull(payload.notifyUser())
         );
 

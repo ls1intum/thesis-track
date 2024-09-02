@@ -63,9 +63,7 @@ public class MailingService {
     }
 
     public void sendApplicationRejectionEmail(Application application, ApplicationRejectReason reason) {
-        String template = reason.getMailTemplate();
-        
-        MailBuilder builder = new MailBuilder(config, "Thesis Application Rejection", template);
+        MailBuilder builder = new MailBuilder(config, "Thesis Application Rejection", reason.getMailTemplate());
         builder
                 .addPrimaryRecipient(application.getUser())
                 .addDefaultBccRecipients()
