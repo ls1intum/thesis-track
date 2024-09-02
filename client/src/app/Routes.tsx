@@ -4,6 +4,9 @@ import AuthenticatedArea from './layout/AuthenticatedArea/AuthenticatedArea'
 import PageLoader from '../components/PageLoader/PageLoader'
 
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage/NotFoundPage'))
+const PrivacyPage = lazy(() => import('../pages/PrivacyPage/PrivacyPage'))
+const ImprintPage = lazy(() => import('../pages/ImprintPage/ImprintPage'))
+const AboutPage = lazy(() => import('../pages/AboutPage/AboutPage'))
 const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/ThesisOverviewPage'))
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
 const LogoutPage = lazy(() => import('../pages/LogoutPage/LogoutPage'))
@@ -24,6 +27,11 @@ const AppRoutes = () => {
     <Suspense fallback={<PageLoader />}>
       <BrowserRouter>
         <Routes>
+          <Route
+            path='/management/thesis-applications/:applicationId?'
+            element={<Navigate to='/applications' replace />}
+          />
+          <Route path='/applications/thesis' element={<Navigate to='/' replace />} />
           <Route
             path='/dashboard'
             element={
@@ -72,7 +80,6 @@ const AppRoutes = () => {
               </AuthenticatedArea>
             }
           />
-          <Route path='/applications/thesis' element={<Navigate to='/' replace />} />
           <Route
             path='/applications/:applicationId?'
             element={
@@ -100,10 +107,9 @@ const AppRoutes = () => {
               </AuthenticatedArea>
             }
           />
-          <Route
-            path='/management/thesis-applications/:applicationId?'
-            element={<Navigate to='/applications' replace />}
-          />
+          <Route path='/about' element={<AboutPage />} />
+          <Route path='/imprint' element={<ImprintPage />} />
+          <Route path='/privacy' element={<PrivacyPage />} />
           <Route path='/logout' element={<LogoutPage />} />
           <Route path='/' element={<LandingPage />} />
           <Route path='*' element={<NotFoundPage />} />

@@ -35,6 +35,10 @@ public class Topic {
     private String problemStatement;
 
     @NotNull
+    @Column(name = "requirements", nullable = false)
+    private String requirements;
+
+    @NotNull
     @Column(name = "goals", nullable = false)
     private String goals;
 

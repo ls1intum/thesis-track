@@ -4,7 +4,7 @@ import { formatDate } from '../../utils/format'
 import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
 import { ITopic } from '../../requests/responses/topic'
 import { useNavigate } from 'react-router-dom'
-import { Badge } from '@mantine/core'
+import { Badge, Center } from '@mantine/core'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import React from 'react'
 
@@ -30,8 +30,11 @@ const TopicsTable = (props: ITopicsTableProps) => {
       title: 'State',
       textAlign: 'center',
       width: 100,
-      render: (topic) =>
-        topic.closedAt ? <Badge color='red'>Closed</Badge> : <Badge color='gray'>Open</Badge>,
+      render: (topic) => (
+        <Center>
+          {topic.closedAt ? <Badge color='red'>Closed</Badge> : <Badge color='gray'>Open</Badge>}
+        </Center>
+      ),
     },
     title: {
       accessor: 'title',
@@ -46,7 +49,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
     },
     advisor: {
       accessor: 'advisor',
-      title: 'Advisor',
+      title: 'Advisor(s)',
       render: (topic) => <AvatarUserList users={topic.advisors} withUniversityId={false} />,
     },
     createdAt: {

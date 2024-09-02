@@ -75,6 +75,11 @@ const ThesisConfigSection = () => {
       title: isNotEmpty('Title must not be empty'),
       type: isNotEmpty('Type must not be empty'),
       visibility: isNotEmpty('Visibility must not be empty'),
+      keywords: (value) => {
+        if (value && value.length > 2) {
+          return 'You cannot add more than 2 keywords'
+        }
+      },
       students: isNotEmptyUserList('student'),
       advisors: isNotEmptyUserList('advisor'),
       supervisors: isNotEmptyUserList('supervisor'),

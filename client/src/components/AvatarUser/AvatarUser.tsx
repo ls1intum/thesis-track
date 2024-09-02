@@ -12,7 +12,7 @@ const AvatarUser = (props: IAvatarUserProps) => {
   const { user, withUniversityId = true, size = 'sm' } = props
 
   return (
-    <Group gap='xs' preventGrowOverflow wrap='nowrap' style={{ overflow: 'hidden' }}>
+    <Group gap={5} preventGrowOverflow wrap='nowrap' style={{ overflow: 'hidden' }}>
       <Avatar
         src={user.avatar || undefined}
         name={`${user.firstName} ${user.lastName}`}

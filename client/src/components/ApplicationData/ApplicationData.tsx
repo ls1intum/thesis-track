@@ -4,12 +4,13 @@ import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedF
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { formatApplicationState, formatDate } from '../../utils/format'
+import { formatApplicationFilename, formatApplicationState, formatDate, formatUserFilename } from '../../utils/format'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
 import TopicAccordionItem from '../TopicAccordionItem/TopicAccordionItem'
 import AvatarUser from '../AvatarUser/AvatarUser'
+import { enrollmentDateToSemester } from '../../utils/converter'
 
 interface IApplicationDataProps {
   application: IApplication
@@ -55,7 +56,11 @@ const ApplicationData = (props: IApplicationDataProps) => {
           />
           <Grid>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
-              <LabeledItem label='Email' value={application.user.email} />
+              <LabeledItem
+                label='Email'
+                value={application.user.email}
+                copyText={application.user.email || undefined}
+              />
             </Grid.Col>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
@@ -75,12 +80,17 @@ const ApplicationData = (props: IApplicationDataProps) => {
               />
             </Grid.Col>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
-              <LabeledItem label='University ID' value={application.user.universityId} />
+              <LabeledItem
+                label='University ID'
+                value={application.user.universityId}
+                copyText={application.user.universityId}
+              />
             </Grid.Col>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
                 label='Matriculation Number'
                 value={application.user.matriculationNumber}
+                copyText={application.user.matriculationNumber || undefined}
               />
             </Grid.Col>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
@@ -103,8 +113,8 @@ const ApplicationData = (props: IApplicationDataProps) => {
             </Grid.Col>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
-                label='Enrollment Date'
-                value={formatDate(application.user.enrolledAt, { withTime: false })}
+                label='Semester'
+                value={enrollmentDateToSemester(application.user.enrolledAt || '')}
               />
             </Grid.Col>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
@@ -164,42 +174,30 @@ const ApplicationData = (props: IApplicationDataProps) => {
       <Grid.Col span={{ md: 4 }}>
         <Stack gap='md'>
           {application.user.hasCv && (
-            <LabeledItem
-              label='CV'
-              value={
-                <AuthenticatedFilePreview
-                  url={`/v2/users/${application.user.userId}/cv`}
-                  height={400}
-                  filename={`cv-${application.user.universityId}`}
-                  key={application.user.userId}
-                />
-              }
+            <AuthenticatedFilePreview
+              title='CV'
+              url={`/v2/users/${application.user.userId}/cv`}
+              height={400}
+              filename={`${formatApplicationFilename(application, 'application-cv')}.pdf`}
+              key={application.user.userId}
             />
           )}
           {application.user.hasExaminationReport && (
-            <LabeledItem
-              label='Examination Report'
-              value={
-                <AuthenticatedFilePreview
-                  url={`/v2/users/${application.user.userId}/examination-report`}
-                  height={400}
-                  filename={`examination-report-${application.user.universityId}`}
-                  key={application.user.userId}
-                />
-              }
+            <AuthenticatedFilePreview
+              title='Examination Report'
+              url={`/v2/users/${application.user.userId}/examination-report`}
+              height={400}
+              filename={`${formatApplicationFilename(application, 'application-examination-report')}.pdf`}
+              key={application.user.userId}
             />
           )}
           {application.user.hasDegreeReport && (
-            <LabeledItem
-              label='Degree Report'
-              value={
-                <AuthenticatedFilePreview
-                  url={`/v2/users/${application.user.userId}/degree-report`}
-                  height={400}
-                  filename={`degree-report-${application.user.universityId}`}
-                  key={application.user.userId}
-                />
-              }
+            <AuthenticatedFilePreview
+              title='Degree Report'
+              url={`/v2/users/${application.user.userId}/degree-report`}
+              height={400}
+              filename={`${formatApplicationFilename(application, 'application-degree-report')}.pdf`}
+              key={application.user.userId}
             />
           )}
         </Stack>

@@ -1,7 +1,7 @@
 import { IPublishedThesis, isThesis, IThesis } from '../../requests/responses/thesis'
 import { Grid, Stack } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
-import { formatDate } from '../../utils/format'
+import { formatDate, pluralize } from '../../utils/format'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { GLOBAL_CONFIG } from '../../config/global'
@@ -25,13 +25,22 @@ const ThesisData = (props: IThesisDataProps) => {
       )}
       <Grid>
         <Grid.Col span={{ md: 4 }}>
-          <LabeledItem label='Supervisor' value={<AvatarUserList users={thesis.supervisors} />} />
+          <LabeledItem
+            label={pluralize('Supervisor', thesis.supervisors.length)}
+            value={<AvatarUserList users={thesis.supervisors} />}
+          />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
-          <LabeledItem label='Advisor' value={<AvatarUserList users={thesis.advisors} />} />
+          <LabeledItem
+            label={pluralize('Advisor', thesis.advisors.length)}
+            value={<AvatarUserList users={thesis.advisors} />}
+          />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
-          <LabeledItem label='Student' value={<AvatarUserList users={thesis.students} />} />
+          <LabeledItem
+            label={pluralize('Student', thesis.students.length)}
+            value={<AvatarUserList users={thesis.students} />}
+          />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
           <LabeledItem

@@ -2,10 +2,8 @@ import { isEmail, isNotEmpty, useForm } from '@mantine/form'
 import {
   Box,
   Button,
-  Center,
   Checkbox,
   Group,
-  Image,
   LoadingOverlay,
   Select,
   Stack,
@@ -14,9 +12,8 @@ import {
   TextInput,
   Grid,
   Card,
+  Center,
 } from '@mantine/core'
-import { DeclarationOfDataConsent } from '../../components/DeclarationOfDataConsent/DeclarationOfDataConsent'
-import LS1Logo from '../../static/ls1logo.png'
 import { DatePickerInput } from '@mantine/dates'
 import { useDisclosure } from '@mantine/hooks'
 import { useState } from 'react'
@@ -31,6 +28,7 @@ import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
 import DocumentEditor from '../../components/DocumentEditor/DocumentEditor'
 import { getHtmlTextLength } from '../../utils/validation'
+import { Link } from 'react-router-dom'
 
 const LegacySubmitApplicationPage = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -167,14 +165,8 @@ const LegacySubmitApplicationPage = () => {
         ) : (
           <Stack>
             <Center>
-              <Group grow>
-                <Image src={LS1Logo} alt='Logo' />
-                <Title ta='center' order={3}>
-                  Thesis Application at LS1 Chair
-                </Title>
-              </Group>
+              <Title>Submit Thesis Application</Title>
             </Center>
-
             <form
               onSubmit={form.onSubmit(async (values) => {
                 loadingOverlayHandlers.open()
@@ -435,8 +427,8 @@ const LegacySubmitApplicationPage = () => {
                   mt='md'
                   label={
                     <>
-                      I have read the <DeclarationOfDataConsent text='declaration of consent' /> and
-                      agree to the processing of my data.
+                      I have read the <Link to='/privacy'>privacy notice</Link> and agree to the
+                      processing of my data.
                     </>
                   }
                   {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}

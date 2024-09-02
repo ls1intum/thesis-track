@@ -2,7 +2,7 @@ import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { doRequest } from '../../requests/request'
 import { showSimpleError } from '../../utils/notification'
 import { ITopic } from '../../requests/responses/topic'
-import { ITopicsContext, TopicsContext } from './context'
+import { ITopicsContext, ITopicsFilters, TopicsContext } from './context'
 import { PaginationResponse } from '../../requests/responses/pagination'
 
 interface ITopicsProviderProps {
@@ -16,6 +16,9 @@ const TopicsProvider = (props: PropsWithChildren<ITopicsProviderProps>) => {
 
   const [topics, setTopics] = useState<PaginationResponse<ITopic>>()
   const [page, setPage] = useState(0)
+  const [filters, setFilters] = useState<ITopicsFilters>({
+    includeClosed: includeClosedTopics,
+  })
 
   useEffect(() => {
     setTopics(undefined)
@@ -28,7 +31,8 @@ const TopicsProvider = (props: PropsWithChildren<ITopicsProviderProps>) => {
         params: {
           page,
           limit,
-          includeClosed: includeClosedTopics ? 'true' : 'false',
+          type: filters.types?.join(',') || '',
+          includeClosed: filters.includeClosed ? 'true' : 'false',
         },
       },
       (res) => {
@@ -48,11 +52,13 @@ const TopicsProvider = (props: PropsWithChildren<ITopicsProviderProps>) => {
         setTopics(res.data)
       },
     )
-  }, [includeClosedTopics, page, limit])
+  }, [filters, page, limit])
 
   const contextState = useMemo<ITopicsContext>(() => {
     return {
       topics,
+      filters,
+      setFilters,
       page,
       setPage,
       limit,
@@ -85,7 +91,7 @@ const TopicsProvider = (props: PropsWithChildren<ITopicsProviderProps>) => {
         })
       },
     }
-  }, [topics, page, limit])
+  }, [topics, filters, page, limit])
 
   if (hideIfEmpty && page === 0 && (!topics || topics.content.length === 0)) {
     return <></>

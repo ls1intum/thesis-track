@@ -6,10 +6,11 @@ import { Button, Group, Space, Title } from '@mantine/core'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PublishedTheses from './components/PublishedTheses/PublishedTheses'
+import Footer from './components/Footer/Footer'
 
 const LandingPage = () => {
   return (
-    <>
+    <div>
       <HeroSection />
       <ContentContainer size='md'>
         <TopicsProvider limit={10}>
@@ -17,7 +18,7 @@ const LandingPage = () => {
             Open Topics
           </Title>
           <TopicsTable
-            columns={['title', 'supervisor', 'advisor', 'actions']}
+            columns={['title', 'advisor', 'actions']}
             noBorder
             extraColumns={{
               actions: {
@@ -50,7 +51,8 @@ const LandingPage = () => {
         <Space my='md' />
         <PublishedTheses />
       </ContentContainer>
-    </>
+      <Footer />
+    </div>
   )
 }
 

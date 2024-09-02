@@ -1,6 +1,10 @@
 import { ApiResponse } from './request'
 
 export function getApiResponseErrorMessage(response: ApiResponse<unknown>) {
+  if (response.status === 1005) {
+    throw new Error('Should not show error')
+  }
+
   let message
 
   if (response.ok) {

@@ -10,6 +10,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.constants.StringLimits;
 import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
@@ -205,6 +206,7 @@ public class ApplicationController {
         application =  applicationService.reject(
                 authenticatedUser,
                 application,
+                RequestValidator.validateNotNull(payload.reason()),
                 RequestValidator.validateNotNull(payload.notifyUser())
         );
 

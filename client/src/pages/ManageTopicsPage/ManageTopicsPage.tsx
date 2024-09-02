@@ -8,6 +8,7 @@ import { ITopic } from '../../requests/responses/topic'
 import { Pencil } from 'phosphor-react'
 import CloseTopicButton from './components/CloseTopicButton/CloseTopicButton'
 import ReplaceTopicModal from './components/ReplaceTopicModal/ReplaceTopicModal'
+import TopicsFilters from '../../components/TopicsFilters/TopicsFilters'
 
 const ManageTopicsPage = () => {
   usePageTitle('Manage Topics')
@@ -34,6 +35,7 @@ const ManageTopicsPage = () => {
           <Button ml='auto' onClick={() => setCreateTopicModal(true)} hiddenFrom='md'>
             Create Topic
           </Button>
+          <TopicsFilters visible={['closed']} />
           <TopicsTable
             columns={['state', 'title', 'supervisor', 'advisor', 'createdAt', 'actions']}
             extraColumns={{

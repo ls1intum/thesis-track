@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.constants.ApplicationState;
 
 import java.time.Instant;
@@ -51,6 +52,10 @@ public class Application {
     @NotNull
     @Column(name = "comment")
     private String comment;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "reject_reason")
+    private ApplicationRejectReason rejectReason;
 
     @CreationTimestamp
     @NotNull

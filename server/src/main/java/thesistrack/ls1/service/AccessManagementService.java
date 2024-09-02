@@ -49,7 +49,7 @@ public class AccessManagementService {
 
         UUID studentGroupId = null;
         try {
-            studentGroupId = studentGroupName.isBlank() ? null : getGroupId(studentGroupName);
+            studentGroupId = studentGroupName.isBlank() || serviceClientSecret.isBlank() ? null : getGroupId(studentGroupName);
         } catch (RuntimeException exception) {
             log.warn("Could not fetch group id from configured student group", exception);
         }

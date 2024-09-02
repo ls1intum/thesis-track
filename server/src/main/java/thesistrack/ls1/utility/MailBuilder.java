@@ -166,13 +166,6 @@ public class MailBuilder {
     public MailBuilder fillApplicationPlaceholders(Application application) {
         HashMap<String, Function<Object, String>> formatters = new HashMap<>();
 
-        formatters.put("application.thesisTitle", (Object value) -> {
-            if (application.getTopic() != null) {
-                return application.getTopic().getTitle();
-            }
-
-            return Objects.requireNonNullElse(application.getThesisTitle(), "");
-        });
         formatters.put("application.desiredStartDate", DataFormatter::formatDate);
 
         formatters.putAll(getUserFormatters("application.user"));

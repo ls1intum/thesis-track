@@ -4,10 +4,7 @@ import { Accordion, Button, Center, Divider, Grid, Group, Stack, Text } from '@m
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 import { doRequest } from '../../../../requests/request'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
-import {
-  useLoadedThesisContext,
-  useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
@@ -17,6 +14,7 @@ import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
 import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
+import { formatThesisFilename, formatUsersFilename } from '../../../../utils/format'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -111,7 +109,7 @@ const ThesisWritingSection = () => {
                     key={thesis.files.thesis}
                     title='Thesis'
                     url={`/v2/theses/${thesis.thesisId}/thesis`}
-                    filename={`thesis-${thesis.thesisId}.pdf`}
+                    filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? '' : 'final')}.pdf`}
                     height={400}
                   />
                 ) : (
@@ -138,7 +136,7 @@ const ThesisWritingSection = () => {
                     key={thesis.files.presentation}
                     title='Presentation'
                     url={`/v2/theses/${thesis.thesisId}/presentation`}
-                    filename={`presentation-${thesis.thesisId}.pdf`}
+                    filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'presentation' : 'final-presentation')}.pdf`}
                     height={400}
                   />
                 ) : (

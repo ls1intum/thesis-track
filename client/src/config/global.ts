@@ -17,6 +17,11 @@ const getEnvironmentVariable = <T = string>(key: string, useJson = false): T | u
 export const GLOBAL_CONFIG: IGlobalConfig = {
   title: getEnvironmentVariable('APPLICATION_TITLE') || 'Thesis Track',
 
+  chair_name: getEnvironmentVariable('CHAIR_NAME') || 'Thesis Track',
+  chair_url: getEnvironmentVariable('CHAIR_URL') || window.origin,
+
+  allow_suggested_topics: (getEnvironmentVariable('ALLOW_SUGGESTED_TOPICS') || 'true') === 'true',
+
   genders: getEnvironmentVariable<Record<string, string>>('GENDERS', true) || {
     MALE: 'Male',
     FEMALE: 'Female',
@@ -48,10 +53,11 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     GITHUB: 'Github Profile',
   },
 
-  privacy_notice: getEnvironmentVariable('PRIVACY_NOTICE') || '',
+  privacy_text: getEnvironmentVariable('PRIVACY') || '',
+  imprint_text: getEnvironmentVariable('IMPRINT') || '',
+
   default_supervisors: getEnvironmentVariable('DEFAULT_SUPERVISOR_UUID')?.split(';') || [],
   calendar_url: getEnvironmentVariable('CALDAV_URL') || '',
-
   server_host: getEnvironmentVariable('SERVER_HOST') || 'http://localhost:8080',
 
   keycloak: {

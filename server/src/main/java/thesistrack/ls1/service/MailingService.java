@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import thesistrack.ls1.constants.ThesisCommentType;
+import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.entity.*;
-import thesistrack.ls1.exception.MailingException;
 import thesistrack.ls1.utility.MailBuilder;
 import thesistrack.ls1.utility.MailConfig;
 
@@ -26,7 +26,7 @@ public class MailingService {
         this.config = config;
     }
 
-    public void sendApplicationCreatedEmail(Application application) throws MailingException {
+    public void sendApplicationCreatedEmail(Application application) {
         MailBuilder chairMailBuilder = new MailBuilder(config, "New Thesis Application", "application-created-chair");
         chairMailBuilder
                 .sendToChairMembers()
@@ -46,7 +46,7 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendApplicationAcceptanceEmail(Application application, Thesis thesis) throws MailingException {
+    public void sendApplicationAcceptanceEmail(Application application, Thesis thesis) {
         User advisor = thesis.getAdvisors().getFirst();
         User supervisor = thesis.getSupervisors().getFirst();
 
@@ -62,8 +62,8 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendApplicationRejectionEmail(Application application) throws MailingException {
-        MailBuilder builder = new MailBuilder(config, "Thesis Application Rejection", "application-rejected");
+    public void sendApplicationRejectionEmail(Application application, ApplicationRejectReason reason) {
+        MailBuilder builder = new MailBuilder(config, "Thesis Application Rejection", reason.getMailTemplate());
         builder
                 .addPrimaryRecipient(application.getUser())
                 .addDefaultBccRecipients()

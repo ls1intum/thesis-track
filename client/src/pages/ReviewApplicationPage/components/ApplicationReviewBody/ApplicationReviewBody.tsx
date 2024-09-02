@@ -30,7 +30,6 @@ const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
         rightTitleSection={
           <ApplicationRejectButton
             application={application}
-            notifyUser
             onUpdate={(newApplication) => {
               onChange(newApplication)
               updateApplication(newApplication)

@@ -205,7 +205,6 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           <Group grow>
             <ApplicationRejectButton
               application={application}
-              notifyUser={form.values.notifyUser}
               onUpdate={(newApplication) => {
                 onUpdate(newApplication)
               }}

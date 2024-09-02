@@ -15,10 +15,20 @@ interface IDocumentEditorProps extends InputWrapperProps {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => unknown
   editMode?: boolean
   maxLength?: number
+  noBorder?: boolean
 }
 
 const DocumentEditor = (props: IDocumentEditorProps) => {
-  const { value, maxLength, onChange, editMode = false, onBlur, onFocus, ...wrapperProps } = props
+  const {
+    value,
+    maxLength,
+    onChange,
+    editMode = false,
+    noBorder = false,
+    onBlur,
+    onFocus,
+    ...wrapperProps
+  } = props
 
   const onChangeRef = useRef(onChange)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -106,6 +116,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
           minHeight: editMode ? '170px' : undefined,
           borderColor: wrapperProps.error ? 'var(--mantine-color-error)' : undefined,
           borderStyle: editMode ? 'solid' : 'dashed',
+          borderWidth: noBorder ? 0 : 1,
         }}
       >
         {editMode && (

@@ -94,7 +94,8 @@ public class ThesisService {
             List<UUID> supervisorIds,
             List<UUID> advisorIds,
             List<UUID> studentIds,
-            Application application
+            Application application,
+            boolean notifyUser
     ) {
         Thesis thesis = new Thesis();
 
@@ -113,7 +114,9 @@ public class ThesisService {
         assignThesisRoles(thesis, creator, supervisorIds, advisorIds, studentIds);
         saveStateChange(thesis, ThesisState.PROPOSAL, Instant.now());
 
-        mailingService.sendThesisCreatedEmail(creator, thesis);
+        if (notifyUser) {
+            mailingService.sendThesisCreatedEmail(creator, thesis);
+        }
 
         for (User student : thesis.getStudents()) {
             accessManagementService.addStudentGroup(student);

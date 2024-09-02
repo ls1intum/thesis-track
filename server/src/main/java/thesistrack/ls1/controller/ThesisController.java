@@ -129,7 +129,8 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateNotNull(payload.advisorIds()),
                 RequestValidator.validateNotNull(payload.studentIds()),
-                null
+                null,
+                true
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));

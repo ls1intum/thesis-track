@@ -41,8 +41,7 @@ const MyTasksSection = () => {
         My Tasks
       </Title>
       <DataTable
-        withTableBorder={true}
-        minHeight={200}
+        withTableBorder
         striped
         noHeader
         borderRadius='sm'

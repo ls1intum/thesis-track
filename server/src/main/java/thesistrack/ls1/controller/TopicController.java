@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import thesistrack.ls1.constants.StringLimits;
+import thesistrack.ls1.controller.payload.CloseTopicPayload;
 import thesistrack.ls1.controller.payload.ReplaceTopicPayload;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.TopicDto;
@@ -38,6 +39,7 @@ public class TopicController {
     @GetMapping
     public ResponseEntity<PaginationDto<TopicDto>> getTopics(
             @RequestParam(required = false) String search,
+            @RequestParam(required = false, defaultValue = "") String[] type,
             @RequestParam(required = false, defaultValue = "false") Boolean includeClosed,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "50") Integer limit,
@@ -45,6 +47,7 @@ public class TopicController {
             @RequestParam(required = false, defaultValue = "desc") String sortOrder
     ) {
         Page<Topic> topics = topicService.getAll(
+                type,
                 includeClosed,
                 search,
                 page,
@@ -76,6 +79,7 @@ public class TopicController {
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
                 RequestValidator.validateStringSetItemMaxLengthAllowNull(payload.thesisTypes(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.requirements(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
@@ -101,6 +105,7 @@ public class TopicController {
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
                 RequestValidator.validateStringSetItemMaxLengthAllowNull(payload.thesisTypes(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.requirements(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
@@ -114,12 +119,18 @@ public class TopicController {
     @PreAuthorize("hasAnyRole('admin', 'advisor', 'supervisor')")
     public ResponseEntity<TopicDto> closeTopic(
             @PathVariable UUID topicId,
+            @RequestBody CloseTopicPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Topic topic = topicService.findById(topicId);
 
-        topic = applicationService.closeTopic(authenticatedUser, topic, true);
+        topic = applicationService.closeTopic(
+                authenticatedUser,
+                topic,
+                RequestValidator.validateNotNull(payload.reason()),
+                RequestValidator.validateNotNull(payload.notifyUser())
+        );
 
         return ResponseEntity.ok(TopicDto.fromTopicEntity(topic));
     }
