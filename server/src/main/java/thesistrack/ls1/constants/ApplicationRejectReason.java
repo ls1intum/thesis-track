@@ -8,9 +8,9 @@ import lombok.Getter;
 public enum ApplicationRejectReason {
     TOPIC_FILLED("TOPIC_FILLED"),
     TOPIC_OUTDATED("TOPIC_OUTDATED"),
-    BAD_GRADES("BAD_GRADES"),
-    FAILED_REQUIREMENTS("FAILED_REQUIREMENTS"),
-    TITLE_NOT_INTERESTING("TITLE_NOT_INTERESTING");
+    FAILED_STUDENT_REQUIREMENTS("FAILED_STUDENT_REQUIREMENTS"),
+    FAILED_TOPIC_REQUIREMENTS("FAILED_TOPIC_REQUIREMENTS"),
+    TITLE_NOT_INTERESTING("TITLE_NOT_INTERESTING"),
     NO_CAPACITY("NO_CAPACITY");
 
     private final String value;
@@ -24,12 +24,12 @@ public enum ApplicationRejectReason {
             return "application-rejected-topic-outdated";
         }
 
-        if (value.equals(BAD_GRADES.getValue())) {
-            return "application-rejected-bad-grades";
+        if (value.equals(FAILED_STUDENT_REQUIREMENTS.getValue())) {
+            return "application-rejected-student-requirements";
         }
 
-        if (value.equals(FAILED_REQUIREMENTS.getValue())) {
-            return "application-rejected-failed-requirements";
+        if (value.equals(FAILED_TOPIC_REQUIREMENTS.getValue())) {
+            return "application-rejected-topic-requirements";
         }
 
         if (value.equals(TITLE_NOT_INTERESTING.getValue())) {

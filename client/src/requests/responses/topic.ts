@@ -5,6 +5,7 @@ export interface ITopic {
   title: string
   thesisTypes: string[] | null
   problemStatement: string
+  requirements: string
   goals: string
   references: string
   closedAt: string | null

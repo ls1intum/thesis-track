@@ -20,6 +20,8 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
   chair_name: getEnvironmentVariable('CHAIR_NAME') || 'Thesis Track',
   chair_url: getEnvironmentVariable('CHAIR_URL') || window.origin,
 
+  allow_suggested_topics: (getEnvironmentVariable('ALLOW_SUGGESTED_TOPICS') || 'true') === 'true',
+
   genders: getEnvironmentVariable<Record<string, string>>('GENDERS', true) || {
     MALE: 'Male',
     FEMALE: 'Female',

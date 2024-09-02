@@ -108,6 +108,7 @@ jobs:
             echo "PRIVACY=${{ vars.PRIVACY }}" >> .env.prod
             echo "IMPRINT=${{ vars.IMPRINT }}" >> .env.prod
             echo "DEFAULT_SUPERVISOR_UUID=${{ vars.DEFAULT_SUPERVISOR_UUID }}" >> .env.prod
+            echo "ALLOW_SUGGESTED_TOPICS=${{ vars.ALLOW_SUGGESTED_TOPICS }}" >> .env.prod
             echo "THESIS_TYPES=${{ vars.THESIS_TYPES }}" >> .env.prod
             echo "STUDY_PROGRAMS=${{ vars.STUDY_PROGRAMS }}" >> .env.prod
             echo "STUDY_DEGREES=${{ vars.STUDY_DEGREES }}" >> .env.prod

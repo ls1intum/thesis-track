@@ -25,6 +25,7 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
   const form = useForm<{
     title: string
     problemStatement: string
+    requirements: string
     goals: string
     references: string
     thesisTypes: string[]
@@ -36,6 +37,7 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
       title: '',
       thesisTypes: [],
       problemStatement: '',
+      requirements: '',
       goals: '',
       references: '',
       supervisorIds: GLOBAL_CONFIG.default_supervisors,
@@ -58,6 +60,7 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
         title: topic.title,
         thesisTypes: topic.thesisTypes || [],
         problemStatement: topic.problemStatement,
+        requirements: topic.requirements,
         goals: topic.goals,
         references: topic.references,
         supervisorIds: topic.supervisors.map((supervisor) => supervisor.userId),
@@ -79,6 +82,7 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
           title: form.values.title,
           thesisTypes: form.values.thesisTypes.length > 0 ? form.values.thesisTypes : null,
           problemStatement: form.values.problemStatement,
+          requirements: form.values.requirements,
           goals: form.values.goals,
           references: form.values.references,
           supervisorIds: form.values.supervisorIds,
@@ -142,6 +146,11 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
             required
             editMode={true}
             {...form.getInputProps('problemStatement')}
+          />
+          <DocumentEditor
+            label='Requirements'
+            editMode={true}
+            {...form.getInputProps('requirements')}
           />
           <DocumentEditor label='Goals' editMode={true} {...form.getInputProps('goals')} />
           <DocumentEditor

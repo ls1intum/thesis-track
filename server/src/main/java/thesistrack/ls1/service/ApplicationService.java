@@ -223,7 +223,7 @@ public class ApplicationService {
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
 
-        if (reason == ApplicationRejectReason.BAD_GRADES) {
+        if (reason == ApplicationRejectReason.FAILED_STUDENT_REQUIREMENTS) {
             List<Application> applications = applicationRepository.findAllByUser(application.getUser());
 
             for (Application item : applications) {

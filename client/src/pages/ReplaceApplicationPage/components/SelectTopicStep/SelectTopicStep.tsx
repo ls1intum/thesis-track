@@ -4,6 +4,7 @@ import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
 import React from 'react'
 import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
 import TopicsFilters from '../../../../components/TopicsFilters/TopicsFilters'
+import { GLOBAL_CONFIG } from '../../../../config/global'
 
 interface ISelectTopicStepProps {
   onComplete: (topic: ITopic | undefined) => unknown
@@ -17,15 +18,7 @@ const SelectTopicStep = (props: ISelectTopicStepProps) => {
   return (
     <div>
       <TopicsFilters visible={['type']} />
-      <Accordion defaultValue='custom' variant='separated'>
-        <Accordion.Item value='custom'>
-          <Accordion.Control>Suggest Topic</Accordion.Control>
-          <Accordion.Panel>
-            <Center>
-              <Button onClick={() => onComplete(undefined)}>Suggest your own topic</Button>
-            </Center>
-          </Accordion.Panel>
-        </Accordion.Item>
+      <Accordion variant='separated'>
         {topics?.content.map((topic) => (
           <TopicAccordionItem key={topic.topicId} topic={topic}>
             <Space mb='md' />
@@ -34,6 +27,16 @@ const SelectTopicStep = (props: ISelectTopicStepProps) => {
             </Center>
           </TopicAccordionItem>
         ))}
+        {GLOBAL_CONFIG.allow_suggested_topics && (
+          <Accordion.Item value='custom'>
+            <Accordion.Control>Suggest Topic</Accordion.Control>
+            <Accordion.Panel>
+              <Center>
+                <Button onClick={() => onComplete(undefined)}>Suggest your own topic</Button>
+              </Center>
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
       </Accordion>
     </div>
   )

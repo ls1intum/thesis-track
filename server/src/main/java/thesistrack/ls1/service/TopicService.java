@@ -69,6 +69,7 @@ public class TopicService {
             String title,
             Set<String> thesisTypes,
             String problemStatement,
+            String requirements,
             String goals,
             String references,
             List<UUID> supervisorIds,
@@ -79,6 +80,7 @@ public class TopicService {
         topic.setTitle(title);
         topic.setThesisTypes(thesisTypes);
         topic.setProblemStatement(problemStatement);
+        topic.setRequirements(requirements);
         topic.setGoals(goals);
         topic.setReferences(references);
         topic.setUpdatedAt(Instant.now());
@@ -99,6 +101,7 @@ public class TopicService {
             String title,
             Set<String> thesisTypes,
             String problemStatement,
+            String requirements,
             String goals,
             String references,
             List<UUID> supervisorIds,
@@ -107,6 +110,7 @@ public class TopicService {
         topic.setTitle(title);
         topic.setThesisTypes(thesisTypes);
         topic.setProblemStatement(problemStatement);
+        topic.setRequirements(requirements);
         topic.setGoals(goals);
         topic.setReferences(references);
         topic.setUpdatedAt(Instant.now());

@@ -100,7 +100,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
                 },
                 application.topic
                   ? {
-                      value: 'FAILED_REQUIREMENTS',
+                      value: 'FAILED_TOPIC_REQUIREMENTS',
                       label: 'Student does not fulfil the requirements of the topic',
                     }
                   : {
@@ -108,8 +108,9 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
                       label: 'Suggested thesis topic is not interesting',
                     },
                 {
-                  value: 'BAD_GRADES',
-                  label: 'Student has bad grades or did not attend required lectures',
+                  value: 'FAILED_STUDENT_REQUIREMENTS',
+                  label:
+                    'Student does not fulfil general requirements (This will reject all applications of the student)',
                 },
               ]}
               {...form.getInputProps('reason')}

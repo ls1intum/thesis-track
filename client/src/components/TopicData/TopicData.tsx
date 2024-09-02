@@ -49,6 +49,7 @@ const TopicData = (props: ITopicDataProps) => {
         </Grid.Col>
       </Grid>
       <DocumentEditor label='Problem Statement' value={topic.problemStatement} />
+      {topic.requirements && <DocumentEditor label='Requirements' value={topic.requirements} />}
       {topic.goals && <DocumentEditor label='Goals' value={topic.goals} />}
       {topic.references && <DocumentEditor label='References' value={topic.references} />}
     </Stack>

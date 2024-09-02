@@ -4,6 +4,8 @@ export interface IGlobalConfig {
   chair_name: string
   chair_url: string
 
+  allow_suggested_topics: boolean
+
   server_host: string
 
   genders: Record<string, string>
