@@ -1,5 +1,5 @@
 import { ITopic } from '../../../../requests/responses/topic'
-import { Accordion, Button, Center, Space } from '@mantine/core'
+import { Accordion, Button, Center, Space, Text } from '@mantine/core'
 import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
 import React from 'react'
 import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
@@ -14,6 +14,18 @@ const SelectTopicStep = (props: ISelectTopicStepProps) => {
   const { onComplete } = props
 
   const { topics } = useTopicsContext()
+
+  if (
+    !GLOBAL_CONFIG.allow_suggested_topics &&
+    topics?.content.length === 0 &&
+    topics?.pageNumber === 0
+  ) {
+    return (
+      <Text ta='center' fw='bold' my='md'>
+        The chair is currently not searching for theses.
+      </Text>
+    )
+  }
 
   return (
     <div>
