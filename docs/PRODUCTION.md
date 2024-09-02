@@ -32,6 +32,8 @@ environment:
   - SPRING_DATASOURCE_USERNAME=
   - SPRING_DATASOURCE_PASSWORD=
   - MAIL_ENABLED=true
+  - MAIL_WORKSPACE_URL=
+  - MAIL_SENDER=
   - POSTFIX_HOST=postfix
   - POSTFIX_PORT=25
   - POSTFIX_USERNAME=
@@ -40,8 +42,6 @@ environment:
   - KEYCLOAK_HOST=
   - KEYCLOAK_REALM_NAME=
   - KEYCLOAK_CLIENT_ID=
-  - MAIL_WORKSPACE_URL=
-  - MAIL_SENDER=
 ```
 
 ## Running Client
@@ -63,6 +63,10 @@ environment:
   - KEYCLOAK_HOST=
   - KEYCLOAK_REALM_NAME=
   - KEYCLOAK_CLIENT_ID=
+  - CHAIR_NAME=
+  - CHAIR_URL=
+  - PRIVACY=
+  - IMPRINT=
 ```
 
 ## Reverse Proxy
