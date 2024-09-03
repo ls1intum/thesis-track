@@ -57,6 +57,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
     thesis_title: {
       accessor: 'thesisTitle',
       title: 'Topic',
+      cellsStyle: () => ({ minWidth: 200 }),
       render: (application) => application.thesisTitle,
     },
     thesis_type: {

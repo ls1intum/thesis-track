@@ -4,7 +4,12 @@ import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedF
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { formatApplicationFilename, formatApplicationState, formatDate } from '../../utils/format'
+import {
+  formatApplicationFilename,
+  formatApplicationState,
+  formatDate,
+  formatThesisType,
+} from '../../utils/format'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
@@ -122,6 +127,9 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 label='Desired Start Date'
                 value={formatDate(application.desiredStartDate, { withTime: false })}
               />
+            </Grid.Col>
+            <Grid.Col span={{ xs: 4, sm: 3 }}>
+              <LabeledItem label='Thesis Type' value={formatThesisType(application.thesisType)} />
             </Grid.Col>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem

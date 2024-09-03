@@ -1,5 +1,5 @@
 import { DataTable } from 'mantine-datatable'
-import { ActionIcon, Center, Modal, Stack, Title } from '@mantine/core'
+import { ActionIcon, Anchor, Center, Group, Modal, Stack, Title } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { PaginationResponse } from '../../../../requests/responses/pagination'
 import { IPublishedThesis } from '../../../../requests/responses/thesis'
@@ -8,10 +8,12 @@ import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
-import { Eye } from 'phosphor-react'
+import { DownloadSimple, Eye } from 'phosphor-react'
 import ThesisData from '../../../../components/ThesisData/ThesisData'
 import AvatarUserList from '../../../../components/AvatarUserList/AvatarUserList'
 import { formatThesisType } from '../../../../utils/format'
+import { Link } from 'react-router-dom'
+import { GLOBAL_CONFIG } from '../../../../config/global'
 
 const PublishedTheses = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -70,6 +72,7 @@ const PublishedTheses = () => {
           {
             accessor: 'title',
             title: 'Title',
+            cellsStyle: () => ({ minWidth: 200 }),
           },
           {
             accessor: 'type',
@@ -96,12 +99,21 @@ const PublishedTheses = () => {
             accessor: 'actions',
             title: 'Actions',
             textAlign: 'center',
-            width: 80,
-            render: () => (
+            width: 100,
+            render: (thesis) => (
               <Center>
-                <ActionIcon>
-                  <Eye />
-                </ActionIcon>
+                <Group gap='xs' onClick={(e) => e.stopPropagation()} wrap='nowrap'>
+                  <ActionIcon onClick={() => setOpenedThesis(thesis)}>
+                    <Eye />
+                  </ActionIcon>
+                  <ActionIcon
+                    component={Anchor<'a'>}
+                    href={`${GLOBAL_CONFIG.server_host}/api/v2/published-theses/${thesis.thesisId}/thesis`}
+                    target='_blank'
+                  >
+                    <DownloadSimple />
+                  </ActionIcon>
+                </Group>
               </Center>
             ),
           },

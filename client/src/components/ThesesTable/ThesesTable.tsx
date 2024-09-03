@@ -82,6 +82,7 @@ const ThesesTable = (props: IThesesTableProps) => {
     title: {
       accessor: 'title',
       title: 'Title',
+      cellsStyle: () => ({ minWidth: 200 }),
     },
     start_date: {
       accessor: 'startDate',

@@ -1,5 +1,5 @@
 import { ITopic } from '../../../../requests/responses/topic'
-import { Accordion, Button, Center, Space, Text } from '@mantine/core'
+import { Accordion, Button, Center, Skeleton, Space, Stack, Text } from '@mantine/core'
 import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
 import React from 'react'
 import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
@@ -30,6 +30,13 @@ const SelectTopicStep = (props: ISelectTopicStepProps) => {
   return (
     <div>
       <TopicsFilters visible={['type']} />
+      {!topics && (
+        <Stack>
+          <Skeleton height={48} />
+          <Skeleton height={48} />
+          <Skeleton height={48} />
+        </Stack>
+      )}
       <Accordion variant='separated'>
         {topics?.content.map((topic) => (
           <TopicAccordionItem key={topic.topicId} topic={topic}>

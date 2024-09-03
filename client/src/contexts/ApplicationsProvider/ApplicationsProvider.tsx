@@ -87,6 +87,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
           fetchAll: fetchAll ? 'true' : 'false',
           search: debouncedSearch,
           state: adjustedFilters.states?.join(',') ?? '',
+          type: adjustedFilters.types?.join(',') ?? '',
           topic:
             adjustedFilters.topics?.filter((topicId) => topicId !== 'NO_TOPIC').join(',') ?? '',
           includeSuggestedTopics: !adjustedFilters.topics?.length
@@ -124,6 +125,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
     sort,
     adjustedFilters.states?.join(','),
     adjustedFilters.topics?.join(','),
+    adjustedFilters.types?.join(','),
     debouncedSearch,
     !topics,
   ])
