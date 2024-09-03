@@ -61,7 +61,7 @@ const DashboardPage = () => {
         </Title>
         <ApplicationsTable
           onApplicationClick={setApplication}
-          columns={['state', 'user', 'reviewed_at', 'created_at']}
+          columns={['state', 'thesis_title', 'thesis_type', 'user', 'reviewed_at', 'created_at']}
         />
         <ApplicationModal
           application={application}

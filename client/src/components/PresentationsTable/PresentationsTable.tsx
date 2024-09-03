@@ -6,6 +6,7 @@ import { formatDate, formatPresentationType } from '../../utils/format'
 
 interface IPresentationsTableProps<T> {
   presentations: T[] | undefined
+  onRowClick?: (presentation: T) => unknown
   extraColumns?: Array<DataTableColumn<T>>
   pagination?: {
     totalRecords: number
@@ -18,7 +19,7 @@ interface IPresentationsTableProps<T> {
 const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentation>(
   props: IPresentationsTableProps<T>,
 ) => {
-  const { presentations, extraColumns, pagination } = props
+  const { presentations, onRowClick, extraColumns, pagination } = props
 
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
@@ -27,6 +28,8 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
       accessor: 'type',
       title: 'Type',
       textAlign: 'center',
+      width: 160,
+      ellipsis: true,
       render: (presentation) => formatPresentationType(presentation.type),
     },
     {
@@ -49,6 +52,8 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
     {
       accessor: 'scheduledAt',
       title: 'Scheduled At',
+      width: 160,
+      ellipsis: true,
       render: (presentation) => formatDate(presentation.scheduledAt),
     },
     ...(extraColumns ?? []),
@@ -72,6 +77,7 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
         onPageChange={pagination.onPageChange}
         idAccessor='presentationId'
         columns={columns}
+        onRowClick={onRowClick ? ({ record }) => onRowClick(record) : undefined}
       />
     )
   } else {

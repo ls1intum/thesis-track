@@ -8,8 +8,15 @@ import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hook
 import { IApplicationsSort } from '../../contexts/ApplicationsProvider/context'
 import { ApplicationStateColor } from '../../config/colors'
 import AvatarUser from '../AvatarUser/AvatarUser'
+import { GLOBAL_CONFIG } from '../../config/global'
 
-type ApplicationColumn = 'state' | 'user' | 'thesis_title' | 'reviewed_at' | 'created_at'
+type ApplicationColumn =
+  | 'state'
+  | 'user'
+  | 'thesis_title'
+  | 'thesis_type'
+  | 'reviewed_at'
+  | 'created_at'
 
 interface IApplicationsTableProps {
   onApplicationClick: (application: IApplication) => unknown
@@ -17,7 +24,10 @@ interface IApplicationsTableProps {
 }
 
 const ApplicationsTable = (props: IApplicationsTableProps) => {
-  const { onApplicationClick, columns = ['state', 'user', 'thesis_title', 'created_at'] } = props
+  const {
+    onApplicationClick,
+    columns = ['state', 'thesis_title', 'thesis_type', 'user', 'created_at'],
+  } = props
 
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
@@ -28,7 +38,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       accessor: 'state',
       title: 'State',
       textAlign: 'center',
-      width: 100,
+      width: 120,
       render: (application) => {
         return (
           <Center>
@@ -42,28 +52,33 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
     user: {
       accessor: 'user.firstName',
       title: 'Student',
-      width: 200,
-      render: (application) => <AvatarUser user={application.user} />,
+      width: 170,
+      render: (application) => <AvatarUser user={application.user} withUniversityId={false} />,
     },
     thesis_title: {
       accessor: 'thesisTitle',
-      title: 'Suggested Title',
+      title: 'Topic',
+      render: (application) => application.thesisTitle,
+    },
+    thesis_type: {
+      accessor: 'thesisType',
+      title: 'Type',
       ellipsis: true,
-      width: 300,
-      render: (application) => application.thesisTitle || application.topic?.title,
+      width: 150,
+      render: (application) => GLOBAL_CONFIG.thesis_types[application.thesisType || ''] ?? application.thesisType,
     },
     reviewed_at: {
       accessor: 'reviewedAt',
       title: 'Reviewed At',
       sortable: true,
-      width: 140,
+      width: 150,
       render: (application) => formatDate(application.reviewedAt),
     },
     created_at: {
       accessor: 'createdAt',
       title: 'Created At',
       sortable: true,
-      width: 140,
+      width: 150,
       render: (application) => formatDate(application.createdAt),
     },
   }
