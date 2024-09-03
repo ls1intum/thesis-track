@@ -54,7 +54,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
     user: {
       accessor: 'user.firstName',
       title: 'Student',
-      width: 170,
+      width: 180,
       render: (application) => <AvatarUser user={application.user} />,
     },
     thesis_title: {

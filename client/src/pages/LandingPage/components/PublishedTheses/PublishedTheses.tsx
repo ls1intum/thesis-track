@@ -84,14 +84,14 @@ const PublishedTheses = () => {
             accessor: 'students',
             title: 'Student(s)',
             ellipsis: true,
-            width: 170,
+            width: 180,
             render: (thesis) => <AvatarUserList users={thesis.students} />,
           },
           {
             accessor: 'advisors',
             title: 'Advisor(s)',
             ellipsis: true,
-            width: 170,
+            width: 180,
             render: (thesis) => <AvatarUserList users={thesis.advisors} />,
           },
           {

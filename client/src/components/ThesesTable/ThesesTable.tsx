@@ -59,21 +59,21 @@ const ThesesTable = (props: IThesesTableProps) => {
     supervisors: {
       accessor: 'supervisors',
       title: 'Supervisor',
-      width: 170,
+      width: 180,
       render: (thesis: IThesis) => <AvatarUserList users={thesis.supervisors} />,
     },
     advisors: {
       accessor: 'advisors',
       title: 'Advisor(s)',
       ellipsis: true,
-      width: 170,
+      width: 180,
       render: (thesis: IThesis) => <AvatarUserList users={thesis.advisors} />,
     },
     students: {
       accessor: 'students',
       title: 'Student(s)',
       ellipsis: true,
-      width: 170,
+      width: 180,
       render: (thesis: IThesis) => <AvatarUserList users={thesis.students} />,
     },
     type: {
