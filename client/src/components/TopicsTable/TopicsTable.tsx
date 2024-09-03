@@ -47,7 +47,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
     },
     types: {
       accessor: 'thesisTypes',
-      title: 'Types',
+      title: 'Thesis Types',
       width: 150,
       ellipsis: true,
       render: (topic) => (
