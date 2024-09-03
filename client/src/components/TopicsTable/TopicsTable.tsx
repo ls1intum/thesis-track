@@ -39,22 +39,26 @@ const TopicsTable = (props: ITopicsTableProps) => {
     title: {
       accessor: 'title',
       title: 'Title',
-      ellipsis: true,
-      width: 350,
     },
     supervisor: {
       accessor: 'supervisor',
       title: 'Supervisor',
+      width: 170,
+      ellipsis: true,
       render: (topic) => <AvatarUserList users={topic.supervisors} withUniversityId={false} />,
     },
     advisor: {
       accessor: 'advisor',
       title: 'Advisor(s)',
+      width: 170,
+      ellipsis: true,
       render: (topic) => <AvatarUserList users={topic.advisors} withUniversityId={false} />,
     },
     createdAt: {
       accessor: 'createdAt',
       title: 'Created At',
+      width: 150,
+      ellipsis: true,
       render: (record) => formatDate(record.createdAt),
     },
   }
@@ -64,7 +68,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
       fetching={!topics}
       withTableBorder={!noBorder}
       minHeight={200}
-      noRecordsText='No topics to show. You can suggest your own topic. The chair is always searching for motivated students'
+      noRecordsText='No topics to show'
       borderRadius='sm'
       verticalSpacing='md'
       striped

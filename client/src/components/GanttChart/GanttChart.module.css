@@ -10,7 +10,7 @@ $chart-row-spacing: rem(0.5rem);
     display: flex;
     flex-direction: column;
     width: 100%;
-    min-width: 700px;
+    min-width: 800px;
 }
 
 .headers {

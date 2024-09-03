@@ -1,4 +1,13 @@
-import { ActionIcon, CopyButton, Group, Text, TextInput, Title, Tooltip } from '@mantine/core'
+import {
+  ActionIcon,
+  CopyButton,
+  Group,
+  Modal,
+  Text,
+  TextInput,
+  Title,
+  Tooltip,
+} from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import PresentationsTable from '../../../../components/PresentationsTable/PresentationsTable'
 import { IPublishedPresentation } from '../../../../requests/responses/thesis'
@@ -8,12 +17,15 @@ import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { Check, Copy } from 'phosphor-react'
+import ThesisData from '../../../../components/ThesisData/ThesisData'
 
 const PublicPresentationsSection = () => {
   const limit = 10
 
   const [presentations, setPresentations] = useState<PaginationResponse<IPublishedPresentation>>()
   const [page, setPage] = useState(0)
+
+  const [openedPresentation, setOpenenedPresentation] = useState<IPublishedPresentation>()
 
   useEffect(() => {
     setPresentations(undefined)
@@ -67,8 +79,19 @@ const PublicPresentationsSection = () => {
           </CopyButton>
         </div>
       </Group>
+      <Modal
+        title={openedPresentation?.thesis.title}
+        opened={!!openedPresentation}
+        size='xl'
+        onClose={() => setOpenenedPresentation(undefined)}
+      >
+        {openedPresentation && (
+          <ThesisData thesis={openedPresentation.thesis} additionalInformation={['abstract']} />
+        )}
+      </Modal>
       <PresentationsTable
         presentations={presentations?.content}
+        onRowClick={setOpenenedPresentation}
         pagination={{
           totalRecords: presentations?.totalElements ?? 0,
           recordsPerPage: limit,

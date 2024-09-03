@@ -26,7 +26,7 @@ interface IThesesTableProps {
 }
 
 const ThesesTable = (props: IThesesTableProps) => {
-  const { columns = ['state', 'students', 'advisors', 'type', 'title', 'start_date', 'end_date'] } =
+  const { columns = ['state', 'title', 'type', 'students', 'advisors', 'start_date', 'end_date'] } =
     props
 
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -56,39 +56,55 @@ const ThesesTable = (props: IThesesTableProps) => {
     supervisors: {
       accessor: 'supervisors',
       title: 'Supervisor',
-      render: (thesis: IThesis) => <AvatarUserList users={thesis.supervisors} />,
+      width: 170,
+      render: (thesis: IThesis) => (
+        <AvatarUserList users={thesis.supervisors} withUniversityId={false} />
+      ),
     },
     advisors: {
       accessor: 'advisors',
       title: 'Advisor(s)',
-      render: (thesis: IThesis) => <AvatarUserList users={thesis.advisors} />,
+      ellipsis: true,
+      width: 170,
+      render: (thesis: IThesis) => (
+        <AvatarUserList users={thesis.advisors} withUniversityId={false} />
+      ),
     },
     students: {
       accessor: 'students',
       title: 'Student(s)',
-      render: (thesis: IThesis) => <AvatarUserList users={thesis.students} />,
+      ellipsis: true,
+      width: 170,
+      render: (thesis: IThesis) => (
+        <AvatarUserList users={thesis.students} withUniversityId={false} />
+      ),
     },
     type: {
       accessor: 'type',
       title: 'Type',
+      ellipsis: true,
+      width: 150,
       render: (thesis: IThesis) => GLOBAL_CONFIG.thesis_types[thesis.type] ?? thesis.type,
     },
     title: {
       accessor: 'title',
-      title: 'Thesis Title',
+      title: 'Title',
       ellipsis: true,
-      width: 200,
     },
     start_date: {
       accessor: 'startDate',
       title: 'Start Date',
       sortable: true,
+      ellipsis: true,
+      width: 130,
       render: (thesis: IThesis) => formatDate(thesis.startDate, { withTime: false }),
     },
     end_date: {
       accessor: 'endDate',
       title: 'End Date',
       sortable: true,
+      ellipsis: true,
+      width: 130,
       render: (thesis: IThesis) => formatDate(thesis.endDate, { withTime: false }),
     },
   }

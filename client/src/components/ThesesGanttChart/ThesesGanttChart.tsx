@@ -80,6 +80,7 @@ const ThesesGanttChart = () => {
             position='middle-start'
             pl={10}
             mx={5}
+            zIndex={5}
             style={{ width: '100%' }}
           >
             <Text size='xs' truncate>
@@ -181,7 +182,13 @@ const ThesesGanttChart = () => {
             <Text>Legend:</Text>
             {visibleTypes.map((type) => (
               <Badge key={type} color='gray'>
-                <Indicator color={ThesisTypeColor[type]} position='middle-start' offset={5} pl={15}>
+                <Indicator
+                  color={ThesisTypeColor[type]}
+                  position='middle-start'
+                  offset={5}
+                  pl={15}
+                  zIndex={5}
+                >
                   {GLOBAL_CONFIG.thesis_types[type] ?? type}
                 </Indicator>
               </Badge>
