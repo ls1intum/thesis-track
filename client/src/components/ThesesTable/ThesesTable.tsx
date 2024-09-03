@@ -43,7 +43,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       accessor: 'state',
       title: 'State',
       textAlign: 'center',
-      width: 120,
+      width: 150,
       render: (thesis: IThesis) => {
         return (
           <Center>
@@ -82,7 +82,6 @@ const ThesesTable = (props: IThesesTableProps) => {
     title: {
       accessor: 'title',
       title: 'Title',
-      ellipsis: true,
     },
     start_date: {
       accessor: 'startDate',
