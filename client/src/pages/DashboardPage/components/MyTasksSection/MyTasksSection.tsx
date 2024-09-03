@@ -1,4 +1,4 @@
-import { Title } from '@mantine/core'
+import { Skeleton, Title } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
@@ -31,7 +31,11 @@ const MyTasksSection = () => {
     )
   }, [])
 
-  if (!tasks?.length) {
+  if (!tasks) {
+    return <Skeleton height={200} />
+  }
+
+  if (!tasks.length) {
     return null
   }
 

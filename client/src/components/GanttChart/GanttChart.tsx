@@ -11,7 +11,7 @@ import {
   CSSProperties,
   useRef,
 } from 'react'
-import { Button, Collapse, Group, Popover, RangeSlider, Text } from '@mantine/core'
+import { Button, Collapse, Group, Popover, RangeSlider, Skeleton, Text } from '@mantine/core'
 import { formatDate } from '../../utils/format'
 import { CaretDown, CaretUp } from 'phosphor-react'
 
@@ -97,7 +97,11 @@ const GanttChart = (props: IGanttChartProps) => {
     }
   }, [])
 
-  if (!data || data.length === 0) {
+  if (!data) {
+    return <Skeleton height={200} />
+  }
+
+  if (data.length === 0) {
     return null
   }
 
