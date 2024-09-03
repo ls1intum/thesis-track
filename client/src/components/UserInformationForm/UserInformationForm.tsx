@@ -1,6 +1,15 @@
 import { isEmail, isNotEmpty, useForm } from '@mantine/form'
 import { IUpdateUserInformationPayload } from '../../requests/payloads/user'
-import { Button, Checkbox, Group, NumberInput, Select, Stack, TextInput } from '@mantine/core'
+import {
+  Anchor,
+  Button,
+  Checkbox,
+  Group,
+  NumberInput,
+  Select,
+  Stack,
+  TextInput,
+} from '@mantine/core'
 import { useAuthenticationContext, useLoggedInUser } from '../../hooks/authentication'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
@@ -341,8 +350,11 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           mt='md'
           label={
             <>
-              I have read the <Link to='/privacy'>privacy notice</Link> and agree to the processing
-              of my data.
+              I have read the{' '}
+              <Anchor component={Link} to='/privacy'>
+                privacy notice
+              </Anchor>{' '}
+              and agree to the processing of my data.
             </>
           }
           {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}
