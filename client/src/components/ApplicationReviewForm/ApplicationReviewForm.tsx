@@ -171,7 +171,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             {...form.getInputProps('supervisors')}
           />
           <UserMultiSelect
-            label='Advisor'
+            label='Advisor(s)'
             required={true}
             groups={['advisor', 'supervisor']}
             {...form.getInputProps('advisors')}
