@@ -1,10 +1,9 @@
 import { IPublishedThesis, isThesis, IThesis } from '../../requests/responses/thesis'
 import { Grid, Stack } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
-import { formatDate, pluralize } from '../../utils/format'
+import { formatDate, formatThesisType, pluralize } from '../../utils/format'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
-import { GLOBAL_CONFIG } from '../../config/global'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import React from 'react'
 
@@ -27,26 +26,23 @@ const ThesisData = (props: IThesisDataProps) => {
         <Grid.Col span={{ md: 4 }}>
           <LabeledItem
             label={pluralize('Supervisor', thesis.supervisors.length)}
-            value={<AvatarUserList users={thesis.supervisors} />}
+            value={<AvatarUserList users={thesis.supervisors} withUniversityId={true} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
           <LabeledItem
             label={pluralize('Advisor', thesis.advisors.length)}
-            value={<AvatarUserList users={thesis.advisors} />}
+            value={<AvatarUserList users={thesis.advisors} withUniversityId={true} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
           <LabeledItem
             label={pluralize('Student', thesis.students.length)}
-            value={<AvatarUserList users={thesis.students} />}
+            value={<AvatarUserList users={thesis.students} withUniversityId={true} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 4 }}>
-          <LabeledItem
-            label='Thesis Type'
-            value={GLOBAL_CONFIG.thesis_types[thesis.type] ?? thesis.type}
-          />
+          <LabeledItem label='Thesis Type' value={formatThesisType(thesis.type)} />
         </Grid.Col>
         {thesis.startDate && (
           <Grid.Col span={{ md: 4 }}>

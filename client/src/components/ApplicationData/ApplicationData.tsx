@@ -4,7 +4,7 @@ import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedF
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
-import { formatApplicationFilename, formatApplicationState, formatDate, formatUserFilename } from '../../utils/format'
+import { formatApplicationFilename, formatApplicationState, formatDate } from '../../utils/format'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
@@ -153,7 +153,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 {application.reviewedBy && (
                   <LabeledItem
                     label='Reviewer'
-                    value={<AvatarUser user={application.reviewedBy} />}
+                    value={<AvatarUser user={application.reviewedBy} withUniversityId={true} />}
                   />
                 )}
                 {application.reviewedAt && (

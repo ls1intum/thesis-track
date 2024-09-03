@@ -3,7 +3,7 @@ import { Grid, MultiSelect, Select, TextInput } from '@mantine/core'
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
 import { ThesisState } from '../../requests/responses/thesis'
 import { MagnifyingGlass } from 'phosphor-react'
-import { formatThesisState } from '../../utils/format'
+import { formatThesisState, formatThesisType } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
 
 const ThesesFilters = () => {
@@ -44,7 +44,7 @@ const ThesesFilters = () => {
           label='Thesis Type'
           data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
             value: key,
-            label: GLOBAL_CONFIG.thesis_types[key],
+            label: formatThesisType(key),
           }))}
           value={filters.types || []}
           onChange={(x) =>

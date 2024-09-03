@@ -37,7 +37,7 @@ interface IFormatUserOptions {
 
 export function formatUser(user: ILightUser, options: Partial<IFormatUserOptions> = {}) {
   const { withUniversityId } = {
-    withUniversityId: true,
+    withUniversityId: false,
     ...options,
   }
 
@@ -62,17 +62,8 @@ export function formatUsersFilename(users: ILightUser[]) {
   return users.map((user) => formatUserFilename(user)).join('-')
 }
 
-export function getInitials(words: string) {
-  return words
-    .split(' ')
-    .filter((word) => word.length > 0)
-    .map((word) => word[0])
-    .join('')
-    .toUpperCase()
-}
-
 export function formatThesisFilename(thesis: IThesis, name: string, version?: number) {
-  let text = `${wordsToFilename(GLOBAL_CONFIG.thesis_types[thesis.type] ?? '')}`
+  let text = `${wordsToFilename(formatThesisType(thesis.type))}`
 
   if (name) {
     text += `-${name.toLowerCase()}`
@@ -88,7 +79,7 @@ export function formatThesisFilename(thesis: IThesis, name: string, version?: nu
 }
 
 export function formatApplicationFilename(application: IApplication, name: string) {
-  let text = `${wordsToFilename(GLOBAL_CONFIG.thesis_types[application.thesisType || ''] ?? '')}`
+  let text = `${wordsToFilename(formatThesisType(application.thesisType))}`
 
   text += `-${name.toLowerCase()}`
   text += `-${formatUserFilename(application.user)}`
@@ -130,6 +121,14 @@ export function formatPresentationType(type: string) {
   }
 
   return type
+}
+
+export function formatThesisType(type: string | null | undefined) {
+  if (!type) {
+    return ''
+  }
+
+  return GLOBAL_CONFIG.thesis_types[type] ?? type
 }
 
 export function pluralize(word: string, count: number) {

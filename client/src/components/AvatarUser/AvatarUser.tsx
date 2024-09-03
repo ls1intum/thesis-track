@@ -9,7 +9,7 @@ interface IAvatarUserProps {
 }
 
 const AvatarUser = (props: IAvatarUserProps) => {
-  const { user, withUniversityId = true, size = 'sm' } = props
+  const { user, withUniversityId = false, size = 'sm' } = props
 
   return (
     <Group gap={5} preventGrowOverflow wrap='nowrap' style={{ overflow: 'hidden' }}>

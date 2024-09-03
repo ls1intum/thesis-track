@@ -1,7 +1,7 @@
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
 import GanttChart, { IGanttChartDataElement } from '../GanttChart/GanttChart'
 import { useMemo, useState } from 'react'
-import { formatDate, formatPresentationType } from '../../utils/format'
+import { formatDate, formatPresentationType, formatThesisType } from '../../utils/format'
 import { ThesisStateColor, ThesisTypeColor } from '../../config/colors'
 import ThesisPreviewModal from '../ThesisPreviewModal/ThesisPreviewModal'
 import { IThesis, ThesisState } from '../../requests/responses/thesis'
@@ -12,7 +12,6 @@ import { arrayUnique } from '../../utils/array'
 import ThesisData from '../ThesisData/ThesisData'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import AvatarUser from '../AvatarUser/AvatarUser'
-import { GLOBAL_CONFIG } from '../../config/global'
 
 const ThesesGanttChart = () => {
   const { theses } = useThesesContext()
@@ -65,7 +64,7 @@ const ThesesGanttChart = () => {
       result.push({
         id: thesis.thesisId,
         groupId: advisor.userId,
-        groupNode: <AvatarUser user={advisor} withUniversityId={false} />,
+        groupNode: <AvatarUser user={advisor} />,
         columns: [
           <AvatarUserList
             key='student'
@@ -189,7 +188,7 @@ const ThesesGanttChart = () => {
                   pl={15}
                   zIndex={5}
                 >
-                  {GLOBAL_CONFIG.thesis_types[type] ?? type}
+                  {formatThesisType(type)}
                 </Indicator>
               </Badge>
             ))}

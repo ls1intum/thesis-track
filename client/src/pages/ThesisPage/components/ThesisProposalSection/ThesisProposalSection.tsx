@@ -12,7 +12,7 @@ import {
 } from '../../../../contexts/ThesisProvider/hooks'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
-import { formatThesisFilename, formatUser, formatUsersFilename } from '../../../../utils/format'
+import { formatThesisFilename, formatUser } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 
 const ThesisProposalSection = () => {
@@ -70,10 +70,7 @@ const ThesisProposalSection = () => {
                 {thesis.students.map((student) => (
                   <Grid key={student.userId}>
                     <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem
-                        label='Student'
-                        value={formatUser(student, { withUniversityId: false })}
-                      />
+                      <LabeledItem label='Student' value={formatUser(student)} />
                     </Grid.Col>
                     <Grid.Col span={{ md: 2 }}>
                       <LabeledItem

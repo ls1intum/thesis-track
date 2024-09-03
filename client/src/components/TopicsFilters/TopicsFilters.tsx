@@ -2,6 +2,7 @@ import { Center, Checkbox, Grid, Stack } from '@mantine/core'
 import { GLOBAL_CONFIG } from '../../config/global'
 import React from 'react'
 import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
+import { formatThesisType } from '../../utils/format'
 
 interface ITopicsFiltersProps {
   visible: Array<'type' | 'closed'>
@@ -27,11 +28,11 @@ const TopicsFilters = (props: ITopicsFiltersProps) => {
       )}
       {visible.includes('type') && (
         <Grid mb='md' grow>
-          {Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => (
+          {Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => (
             <Grid.Col key={key} span={{ md: 3 }}>
               <Center>
                 <Checkbox
-                  label={value}
+                  label={formatThesisType(key)}
                   checked={!!filters.types?.includes(key)}
                   onChange={(e) => {
                     setFilters((prev) => ({

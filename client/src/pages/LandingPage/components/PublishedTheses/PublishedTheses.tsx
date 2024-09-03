@@ -2,7 +2,7 @@ import { DataTable } from 'mantine-datatable'
 import { ActionIcon, Center, Modal, Stack, Title } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { PaginationResponse } from '../../../../requests/responses/pagination'
-import { IPublishedThesis, IThesis } from '../../../../requests/responses/thesis'
+import { IPublishedThesis } from '../../../../requests/responses/thesis'
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
@@ -11,7 +11,7 @@ import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePr
 import { Eye } from 'phosphor-react'
 import ThesisData from '../../../../components/ThesisData/ThesisData'
 import AvatarUserList from '../../../../components/AvatarUserList/AvatarUserList'
-import { GLOBAL_CONFIG } from '../../../../config/global'
+import { formatThesisType } from '../../../../utils/format'
 
 const PublishedTheses = () => {
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -76,21 +76,21 @@ const PublishedTheses = () => {
             title: 'Type',
             ellipsis: true,
             width: 140,
-            render: (thesis: IPublishedThesis) => GLOBAL_CONFIG.thesis_types[thesis.type] ?? thesis.type,
+            render: (thesis: IPublishedThesis) => formatThesisType(thesis.type),
           },
           {
             accessor: 'students',
             title: 'Student(s)',
             ellipsis: true,
             width: 170,
-            render: (thesis) => <AvatarUserList users={thesis.students} withUniversityId={false} />,
+            render: (thesis) => <AvatarUserList users={thesis.students} />,
           },
           {
             accessor: 'advisors',
             title: 'Advisor(s)',
             ellipsis: true,
             width: 170,
-            render: (thesis) => <AvatarUserList users={thesis.advisors} withUniversityId={false} />,
+            render: (thesis) => <AvatarUserList users={thesis.advisors} />,
           },
           {
             accessor: 'actions',

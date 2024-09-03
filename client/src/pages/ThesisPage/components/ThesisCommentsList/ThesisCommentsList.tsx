@@ -59,7 +59,7 @@ const ThesisCommentsList = () => {
                 {formatDate(comment.createdAt)}
               </Text>
               <Text size='xs' c='dimmed'>
-                {formatUser(comment.createdBy)}
+                {formatUser(comment.createdBy, { withUniversityId: true })}
               </Text>
               {(user.groups.includes('admin') || user.userId === comment.createdBy.userId) && (
                 <Text
