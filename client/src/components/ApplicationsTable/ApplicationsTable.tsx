@@ -16,16 +16,19 @@ type ApplicationColumn =
   | 'thesis_type'
   | 'reviewed_at'
   | 'created_at'
+  | string
 
 interface IApplicationsTableProps {
   onApplicationClick: (application: IApplication) => unknown
   columns?: ApplicationColumn[]
+  extraColumns?: Record<string, DataTableColumn<IApplication>>
 }
 
 const ApplicationsTable = (props: IApplicationsTableProps) => {
   const {
     onApplicationClick,
     columns = ['state', 'thesis_title', 'thesis_type', 'user', 'created_at'],
+    extraColumns = {},
   } = props
 
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -37,7 +40,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       accessor: 'state',
       title: 'State',
       textAlign: 'center',
-      width: 120,
+      width: 140,
       render: (application) => {
         return (
           <Center>
@@ -81,6 +84,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
       width: 150,
       render: (application) => formatDate(application.createdAt),
     },
+    ...extraColumns,
   }
 
   return (

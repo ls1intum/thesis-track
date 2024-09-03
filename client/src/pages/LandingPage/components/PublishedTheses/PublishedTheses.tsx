@@ -12,7 +12,6 @@ import { DownloadSimple, Eye } from 'phosphor-react'
 import ThesisData from '../../../../components/ThesisData/ThesisData'
 import AvatarUserList from '../../../../components/AvatarUserList/AvatarUserList'
 import { formatThesisType } from '../../../../utils/format'
-import { Link } from 'react-router-dom'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 
 const PublishedTheses = () => {

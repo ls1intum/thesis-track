@@ -19,14 +19,18 @@ type ThesisColumn =
   | 'title'
   | 'start_date'
   | 'end_date'
+  | string
 
 interface IThesesTableProps {
   columns?: ThesisColumn[]
+  extraColumns?: Record<string, DataTableColumn<IThesis>>
 }
 
 const ThesesTable = (props: IThesesTableProps) => {
-  const { columns = ['state', 'title', 'type', 'students', 'advisors', 'start_date', 'end_date'] } =
-    props
+  const {
+    columns = ['state', 'title', 'type', 'students', 'advisors', 'start_date', 'end_date'],
+    extraColumns = {},
+  } = props
 
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
@@ -100,6 +104,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       width: 130,
       render: (thesis: IThesis) => formatDate(thesis.endDate, { withTime: false }),
     },
+    ...extraColumns,
   }
 
   return (
