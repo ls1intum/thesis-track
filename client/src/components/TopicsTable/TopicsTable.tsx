@@ -43,6 +43,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
     title: {
       accessor: 'title',
       title: 'Title',
+      cellsStyle: () => ({ minWidth: 200 }),
     },
     types: {
       accessor: 'thesisTypes',
