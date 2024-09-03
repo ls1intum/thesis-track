@@ -157,10 +157,15 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
               <Text className={classes.siteName} fw='bold'>
                 ThesisTrack
               </Text>
-              <ColorSchemeToggleButton />
+              <ColorSchemeToggleButton ml='auto' />
             </Group>
           )}
           {!minimized && <Divider my='sm' />}
+          {minimized && (
+            <Center mb='md'>
+              <ColorSchemeToggleButton />
+            </Center>
+          )}
           {links
             .filter(
               (item) =>

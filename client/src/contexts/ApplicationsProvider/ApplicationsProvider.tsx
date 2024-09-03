@@ -89,7 +89,11 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
           state: adjustedFilters.states?.join(',') ?? '',
           type: adjustedFilters.types?.join(',') ?? '',
           topic:
-            adjustedFilters.topics?.filter((topicId) => topicId !== 'NO_TOPIC').join(',') ?? '',
+            adjustedFilters.topics
+              ?.map((topicId) =>
+                topicId === 'NO_TOPIC' ? '00000000-0000-0000-0000-000000000000' : topicId,
+              )
+              .join(',') ?? '',
           includeSuggestedTopics: !adjustedFilters.topics?.length
             ? 'true'
             : adjustedFilters.topics.includes('NO_TOPIC')

@@ -1,4 +1,4 @@
-import { Skeleton, Title } from '@mantine/core'
+import { ActionIcon, Center, Group, Skeleton, Title } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
@@ -6,6 +6,7 @@ import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { ITask } from '../../../../requests/responses/dashboard'
 import { DataTable } from 'mantine-datatable'
 import { useNavigate } from 'react-router-dom'
+import { Link as LinkIcon } from 'phosphor-react'
 
 const MyTasksSection = () => {
   const navigate = useNavigate()
@@ -56,7 +57,20 @@ const MyTasksSection = () => {
         columns={[
           {
             accessor: 'message',
-            title: 'Message',
+          },
+          {
+            accessor: 'actions',
+            textAlign: 'center',
+            width: 80,
+            render: (record) => (
+              <Center>
+                <Group gap='xs' onClick={(e) => e.stopPropagation()} wrap='nowrap'>
+                  <ActionIcon onClick={() => navigate(record.link)}>
+                    <LinkIcon />
+                  </ActionIcon>
+                </Group>
+              </Center>
+            ),
           },
         ]}
         onRowClick={({ record }) => navigate(record.link)}

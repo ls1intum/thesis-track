@@ -41,7 +41,8 @@ const ThesesFilters = () => {
       <Grid.Col span={6}>
         <MultiSelect
           hidePickedOptions
-          label='Thesis Type'
+          label='Type'
+          placeholder='Thesis Types'
           data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
             value: key,
             label: formatThesisType(key),
@@ -58,7 +59,8 @@ const ThesesFilters = () => {
       <Grid.Col span={6}>
         <MultiSelect
           hidePickedOptions
-          label='Thesis State'
+          label='State'
+          placeholder='Thesis States'
           data={Object.values(ThesisState).map((value) => ({
             value: value,
             label: formatThesisState(value),

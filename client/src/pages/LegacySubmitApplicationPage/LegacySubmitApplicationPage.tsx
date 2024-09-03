@@ -13,6 +13,7 @@ import {
   Grid,
   Card,
   Center,
+  Anchor,
 } from '@mantine/core'
 import { DatePickerInput } from '@mantine/dates'
 import { useDisclosure } from '@mantine/hooks'
@@ -428,8 +429,11 @@ const LegacySubmitApplicationPage = () => {
                   mt='md'
                   label={
                     <>
-                      I have read the <Link to='/privacy'>privacy notice</Link> and agree to the
-                      processing of my data.
+                      I have read the{' '}
+                      <Anchor component={Link} to='/privacy'>
+                        privacy notice
+                      </Anchor>{' '}
+                      and agree to the processing of my data.
                     </>
                   }
                   {...form.getInputProps('declarationOfConsentAccepted', { type: 'checkbox' })}

@@ -180,7 +180,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
         </Stack>
       </Grid.Col>
       <Grid.Col span={{ md: 4 }}>
-        <Stack gap='md'>
+        <Stack gap='md' key={application.applicationId}>
           {application.user.hasCv && (
             <AuthenticatedFilePreview
               title='CV'

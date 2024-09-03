@@ -18,7 +18,7 @@ interface ITopicsTableProps {
 
 const TopicsTable = (props: ITopicsTableProps) => {
   const {
-    extraColumns,
+    extraColumns = {},
     columns = ['title', 'types', 'supervisor', 'advisor'],
     noBorder = false,
   } = props
@@ -47,7 +47,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
     },
     types: {
       accessor: 'thesisTypes',
-      title: 'Types',
+      title: 'Thesis Types',
       width: 150,
       ellipsis: true,
       render: (topic) => (
@@ -67,14 +67,14 @@ const TopicsTable = (props: ITopicsTableProps) => {
     supervisor: {
       accessor: 'supervisor',
       title: 'Supervisor',
-      width: 170,
+      width: 180,
       ellipsis: true,
       render: (topic) => <AvatarUserList users={topic.supervisors} />,
     },
     advisor: {
       accessor: 'advisor',
       title: 'Advisor(s)',
-      width: 170,
+      width: 180,
       ellipsis: true,
       render: (topic) => <AvatarUserList users={topic.advisors} />,
     },
@@ -85,6 +85,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
       ellipsis: true,
       render: (record) => formatDate(record.createdAt),
     },
+    ...extraColumns,
   }
 
   return (
@@ -104,7 +105,7 @@ const TopicsTable = (props: ITopicsTableProps) => {
       bodyRef={bodyRef}
       records={topics?.content}
       idAccessor='topicId'
-      columns={columns.map((column) => columnConfig[column] || extraColumns?.[column])}
+      columns={columns.map((column) => columnConfig[column])}
       onRowClick={({ record }) => navigate(`/topics/${record.topicId}`)}
     />
   )

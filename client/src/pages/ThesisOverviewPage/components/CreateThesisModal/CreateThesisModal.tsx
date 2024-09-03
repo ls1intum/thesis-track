@@ -95,13 +95,13 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
             {...form.getInputProps('type')}
           />
           <UserMultiSelect
-            label='Student'
+            label='Student(s)'
             required={true}
             groups={[]}
             {...form.getInputProps('students')}
           />
           <UserMultiSelect
-            label='Advisor'
+            label='Advisor(s)'
             required={true}
             groups={['advisor', 'supervisor']}
             {...form.getInputProps('advisors')}
