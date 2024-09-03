@@ -70,6 +70,7 @@ const PublishedTheses = () => {
           {
             accessor: 'title',
             title: 'Title',
+            cellsStyle: () => ({ minWidth: 200 }),
           },
           {
             accessor: 'type',
