@@ -65,7 +65,7 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
     },
     thesis_type: {
       accessor: 'thesisType',
-      title: 'Type',
+      title: 'Thesis Type',
       ellipsis: true,
       width: 150,
       render: (application) => formatThesisType(application.thesisType),

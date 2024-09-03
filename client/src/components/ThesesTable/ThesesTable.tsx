@@ -78,7 +78,7 @@ const ThesesTable = (props: IThesesTableProps) => {
     },
     type: {
       accessor: 'type',
-      title: 'Type',
+      title: 'Thesis Type',
       ellipsis: true,
       width: 150,
       render: (thesis: IThesis) => formatThesisType(thesis.type),
