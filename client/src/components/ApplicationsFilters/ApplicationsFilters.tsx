@@ -3,7 +3,8 @@ import { MagnifyingGlass } from 'phosphor-react'
 import { ApplicationState } from '../../requests/responses/application'
 import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
 import React from 'react'
-import { formatApplicationState } from '../../utils/format'
+import { formatApplicationState, formatThesisType } from '../../utils/format'
+import { GLOBAL_CONFIG } from '../../config/global'
 
 interface IApplicationsFiltersProps {
   size?: 'xl' | 'sm'
@@ -55,7 +56,25 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
       <Grid.Col span={size === 'sm' ? 12 : 6}>
         <MultiSelect
           hidePickedOptions
-          label='Application State'
+          label='Types'
+          data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
+            value: key,
+            label: formatThesisType(key),
+          }))}
+          value={filters.types || []}
+          onChange={(value) => {
+            setFilters((prev) => ({
+              ...prev,
+              types: value.length > 0 ? value : undefined,
+            }))
+          }}
+          searchable
+        />
+      </Grid.Col>
+      <Grid.Col span={size === 'sm' ? 12 : 6}>
+        <MultiSelect
+          hidePickedOptions
+          label='States'
           data={Object.values(ApplicationState).map((value) => ({
             value: value,
             label: formatApplicationState(value),

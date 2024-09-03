@@ -23,6 +23,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             "(:states IS NULL OR a.state IN :states) AND " +
             "(:includeSuggestedTopics = true OR a.topic IS NOT NULL) AND " +
             "(:topics IS NULL OR a.topic.id IN :topics OR (:includeSuggestedTopics = true AND a.topic IS NULL)) AND " +
+            "(:types IS NULL OR a.thesisType IN :types) AND " +
             "(:searchQuery IS NULL OR LOWER(a.user.firstName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.lastName) LIKE %:searchQuery% OR " +
             "LOWER(a.user.email) LIKE %:searchQuery% OR " +
@@ -34,6 +35,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             @Param("searchQuery") String searchQuery,
             @Param("states") Set<ApplicationState> states,
             @Param("topics") Set<String> topics,
+            @Param("types") Set<String> types,
             @Param("includeSuggestedTopics") boolean includeSuggestedTopics,
             Pageable page
     );

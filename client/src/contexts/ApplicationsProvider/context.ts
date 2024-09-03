@@ -7,6 +7,7 @@ export interface IApplicationsFilters {
   search?: string
   states?: ApplicationState[]
   topics?: string[]
+  types?: string[]
 }
 
 export interface IApplicationsSort {

@@ -56,6 +56,7 @@ public class ApplicationService {
             String searchQuery,
             ApplicationState[] states,
             String[] topics,
+            String[] types,
             boolean includeSuggestedTopics,
             int page,
             int limit,
@@ -67,12 +68,14 @@ public class ApplicationService {
         String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
         Set<ApplicationState> statesFilter = states == null || states.length == 0 ? null : new HashSet<>(Arrays.asList(states));
         Set<String> topicsFilter = topics == null || topics.length == 0 ? null : new HashSet<>(Arrays.asList(topics));
+        Set<String> typesFilter = types == null || types.length == 0 ? null : new HashSet<>(Arrays.asList(types));
 
         return applicationRepository.searchApplications(
                 userId,
                 searchQueryFilter,
                 statesFilter,
                 topicsFilter,
+                typesFilter,
                 includeSuggestedTopics,
                 PageRequest.of(page, limit, Sort.by(order))
         );
