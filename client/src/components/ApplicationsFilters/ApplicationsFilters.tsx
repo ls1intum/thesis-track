@@ -30,7 +30,8 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
       <Grid.Col span={size === 'sm' ? 12 : 6}>
         <MultiSelect
           hidePickedOptions
-          label='Topics'
+          label='Topic'
+          placeholder='Open Topics'
           data={[
             {
               value: 'NO_TOPIC',
@@ -56,7 +57,8 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
       <Grid.Col span={size === 'sm' ? 12 : 6}>
         <MultiSelect
           hidePickedOptions
-          label='Types'
+          label='Type'
+          placeholder='Thesis Types'
           data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
             value: key,
             label: formatThesisType(key),
@@ -75,6 +77,7 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
         <MultiSelect
           hidePickedOptions
           label='States'
+          placeholder='Application States'
           data={Object.values(ApplicationState).map((value) => ({
             value: value,
             label: formatApplicationState(value),
