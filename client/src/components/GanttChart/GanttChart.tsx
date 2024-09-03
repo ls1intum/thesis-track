@@ -265,6 +265,19 @@ const GanttChart = (props: IGanttChartProps) => {
 
   const ticks = generateTicks()
 
+  const getTimelineLeftPosition = (startTime: number) => {
+    return `${Math.max((100 * (startTime - filteredRange[0])) / filteredRangeDuration, 0)}%`
+  }
+
+  const getTimelineWidth = (timelineRange: DateRange) => {
+    return `${
+      (100 *
+        (Math.min(timelineRange[1], filteredRange[1]) -
+          Math.max(timelineRange[0], filteredRange[0]))) /
+      filteredRangeDuration
+    }%`
+  }
+
   return (
     <div className={classes.chartContainer}>
       <div className={classes.chartBox}>
@@ -296,7 +309,7 @@ const GanttChart = (props: IGanttChartProps) => {
                 key={tick.value}
                 className={classes.timelineTick}
                 style={{
-                  left: `${(100 * (tick.value - filteredRange[0])) / filteredRangeDuration}%`,
+                  left: getTimelineLeftPosition(tick.value),
                 }}
               >
                 {tick.label}
@@ -324,7 +337,7 @@ const GanttChart = (props: IGanttChartProps) => {
                 <div
                   className={classes.nowDivider}
                   style={{
-                    left: `${Math.max((100 * (currentTime - filteredRange[0])) / filteredRangeDuration, 0)}%`,
+                    left: getTimelineLeftPosition(currentTime),
                   }}
                 />
               )}
@@ -399,24 +412,13 @@ const GanttChart = (props: IGanttChartProps) => {
                                     onMouseEnter={() => setHoveredTimelineItem(timelineItem.id)}
                                     onMouseLeave={() => setHoveredTimelineItem(undefined)}
                                     style={{
-                                      left: `${Math.max(
-                                        (100 *
-                                          (timelineItem.startDate.getTime() - filteredRange[0])) /
-                                          filteredRangeDuration,
-                                        0,
-                                      )}%`,
-                                      width: `${
-                                        (100 *
-                                          (Math.min(
-                                            timelineItem.endDate.getTime(),
-                                            filteredRange[1],
-                                          ) -
-                                            Math.max(
-                                              timelineItem.startDate.getTime(),
-                                              filteredRange[0],
-                                            ))) /
-                                        filteredRangeDuration
-                                      }%`,
+                                      left: getTimelineLeftPosition(
+                                        timelineItem.startDate.getTime(),
+                                      ),
+                                      width: getTimelineWidth([
+                                        timelineItem.startDate.getTime(),
+                                        timelineItem.endDate.getTime(),
+                                      ]),
                                       backgroundColor: timelineItem.color,
                                     }}
                                   />
@@ -435,11 +437,7 @@ const GanttChart = (props: IGanttChartProps) => {
                                     onMouseEnter={() => setHoveredEventItem(timelineEvent.id)}
                                     onMouseLeave={() => setHoveredEventItem(undefined)}
                                     style={{
-                                      left: `${Math.max(
-                                        (100 * (timelineEvent.time.getTime() - filteredRange[0])) /
-                                          filteredRangeDuration,
-                                        0,
-                                      )}%`,
+                                      left: getTimelineLeftPosition(timelineEvent.time.getTime()),
                                     }}
                                   >
                                     {timelineEvent.icon}
