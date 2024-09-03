@@ -1,8 +1,7 @@
 import { ITopic } from '../../requests/responses/topic'
-import { Grid, Stack } from '@mantine/core'
+import { Grid, Stack, Text } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
-import { formatDate, pluralize } from '../../utils/format'
-import { GLOBAL_CONFIG } from '../../config/global'
+import { formatDate, formatThesisType, pluralize } from '../../utils/format'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import React from 'react'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
@@ -20,24 +19,30 @@ const TopicData = (props: ITopicDataProps) => {
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
             label={pluralize('Supervisor', topic.supervisors.length)}
-            value={<AvatarUserList users={topic.supervisors} withUniversityId={false} />}
+            value={<AvatarUserList users={topic.supervisors} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
             label={pluralize('Advisor', topic.advisors.length)}
-            value={<AvatarUserList users={topic.advisors} withUniversityId={false} />}
+            value={<AvatarUserList users={topic.advisors} />}
           />
         </Grid.Col>
         <Grid.Col span={{ md: 3 }}>
           <LabeledItem
             label={pluralize('Thesis Type', topic.thesisTypes?.length || 0)}
             value={
-              topic.thesisTypes
-                ? topic.thesisTypes
-                    .map((thesisType) => GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType)
-                    .join(' / ')
-                : 'Any'
+              <Stack gap={2}>
+                {topic.thesisTypes ? (
+                  topic.thesisTypes.map((type) => (
+                    <Text key={type} size='sm'>
+                      {formatThesisType(type)}
+                    </Text>
+                  ))
+                ) : (
+                  <Text size='sm'>Any</Text>
+                )}
+              </Stack>
             }
           />
         </Grid.Col>

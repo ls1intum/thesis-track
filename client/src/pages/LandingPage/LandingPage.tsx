@@ -18,7 +18,7 @@ const LandingPage = () => {
             Open Topics
           </Title>
           <TopicsTable
-            columns={['title', 'advisor', 'actions']}
+            columns={['title', 'types', 'advisor', 'actions']}
             noBorder
             extraColumns={{
               actions: {

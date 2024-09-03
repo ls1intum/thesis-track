@@ -4,7 +4,10 @@ import { Accordion, Button, Center, Divider, Grid, Group, Stack, Text } from '@m
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 import { doRequest } from '../../../../requests/request'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
-import { useLoadedThesisContext, useThesisUpdateAction } from '../../../../contexts/ThesisProvider/hooks'
+import {
+  useLoadedThesisContext,
+  useThesisUpdateAction,
+} from '../../../../contexts/ThesisProvider/hooks'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
@@ -14,7 +17,7 @@ import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
 import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
-import { formatThesisFilename, formatUsersFilename } from '../../../../utils/format'
+import { formatThesisFilename } from '../../../../utils/format'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()

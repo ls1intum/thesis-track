@@ -29,6 +29,7 @@ import { getApiResponseErrorMessage } from '../../requests/handler'
 import DocumentEditor from '../../components/DocumentEditor/DocumentEditor'
 import { getHtmlTextLength } from '../../utils/validation'
 import { Link } from 'react-router-dom'
+import { formatThesisType } from '../../utils/format'
 
 const LegacySubmitApplicationPage = () => {
   const [loadingOverlayVisible, loadingOverlayHandlers] = useDisclosure(false)
@@ -389,7 +390,7 @@ const LegacySubmitApplicationPage = () => {
                       label='Thesis Type'
                       required={true}
                       data={Object.keys(GLOBAL_CONFIG.thesis_types).map((thesisType) => ({
-                        label: GLOBAL_CONFIG.thesis_types[thesisType],
+                        label: formatThesisType(thesisType),
                         value: thesisType,
                       }))}
                       {...form.getInputProps('thesisType')}

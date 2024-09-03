@@ -37,7 +37,7 @@ const ManageTopicsPage = () => {
           </Button>
           <TopicsFilters visible={['closed']} />
           <TopicsTable
-            columns={['state', 'title', 'supervisor', 'advisor', 'createdAt', 'actions']}
+            columns={['state', 'title', 'types', 'supervisor', 'advisor', 'createdAt', 'actions']}
             extraColumns={{
               actions: {
                 accessor: 'actions',

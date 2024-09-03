@@ -1,5 +1,5 @@
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
-import { Anchor, Button, Center, Image, List, Stack, Text, Title } from '@mantine/core'
+import { Anchor, Center, Image, List, Stack, Text, Title } from '@mantine/core'
 import { Link } from 'react-router-dom'
 import flowchart from './flowchart.svg'
 import { CaretLeft } from 'phosphor-react'
@@ -35,7 +35,7 @@ const AboutPage = () => {
         </List>
         <Title order={3}>Features</Title>
         <Center>
-          <Image src={flowchart} style={{maxWidth: '600px'}} />
+          <Image src={flowchart} style={{ maxWidth: '600px' }} />
         </Center>
       </Stack>
     </ContentContainer>

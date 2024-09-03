@@ -1,12 +1,11 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { formatDate } from '../../utils/format'
+import { formatDate, formatThesisType } from '../../utils/format'
 import React from 'react'
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
 import { IThesesSort } from '../../contexts/ThesesProvider/context'
 import { useNavigate } from 'react-router-dom'
 import { IThesis } from '../../requests/responses/thesis'
-import { GLOBAL_CONFIG } from '../../config/global'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import { Center } from '@mantine/core'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
@@ -57,34 +56,28 @@ const ThesesTable = (props: IThesesTableProps) => {
       accessor: 'supervisors',
       title: 'Supervisor',
       width: 170,
-      render: (thesis: IThesis) => (
-        <AvatarUserList users={thesis.supervisors} withUniversityId={false} />
-      ),
+      render: (thesis: IThesis) => <AvatarUserList users={thesis.supervisors} />,
     },
     advisors: {
       accessor: 'advisors',
       title: 'Advisor(s)',
       ellipsis: true,
       width: 170,
-      render: (thesis: IThesis) => (
-        <AvatarUserList users={thesis.advisors} withUniversityId={false} />
-      ),
+      render: (thesis: IThesis) => <AvatarUserList users={thesis.advisors} />,
     },
     students: {
       accessor: 'students',
       title: 'Student(s)',
       ellipsis: true,
       width: 170,
-      render: (thesis: IThesis) => (
-        <AvatarUserList users={thesis.students} withUniversityId={false} />
-      ),
+      render: (thesis: IThesis) => <AvatarUserList users={thesis.students} />,
     },
     type: {
       accessor: 'type',
       title: 'Type',
       ellipsis: true,
       width: 150,
-      render: (thesis: IThesis) => GLOBAL_CONFIG.thesis_types[thesis.type] ?? thesis.type,
+      render: (thesis: IThesis) => formatThesisType(thesis.type),
     },
     title: {
       accessor: 'title',

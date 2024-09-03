@@ -16,6 +16,7 @@ import { GLOBAL_CONFIG } from '../../../../config/global'
 import { ApiError } from '../../../../requests/handler'
 import ThesisStateBadge from '../../../../components/ThesisStateBadge/ThesisStateBadge'
 import ThesisVisibilitySelect from '../ThesisVisibilitySelect/ThesisVisibilitySelect'
+import { formatThesisType } from '../../../../utils/format'
 
 interface IThesisConfigSectionFormValues {
   title: string
@@ -193,9 +194,9 @@ const ThesisConfigSection = () => {
                 label='Thesis Type'
                 required={true}
                 disabled={!access.advisor}
-                data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+                data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
                   value: key,
-                  label: value,
+                  label: formatThesisType(key),
                 }))}
                 {...form.getInputProps('type')}
               />

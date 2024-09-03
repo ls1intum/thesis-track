@@ -11,6 +11,7 @@ import { getHtmlTextLength } from '../../../../utils/validation'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { IApplication } from '../../../../requests/responses/application'
 import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
+import { formatThesisType } from '../../../../utils/format'
 
 interface IMotivationStepProps {
   topic: ITopic | undefined
@@ -118,7 +119,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
           required={true}
           data={(mergedTopic?.thesisTypes || Object.keys(GLOBAL_CONFIG.thesis_types)).map(
             (thesisType) => ({
-              label: GLOBAL_CONFIG.thesis_types[thesisType] ?? thesisType,
+              label: formatThesisType(thesisType),
               value: thesisType,
             }),
           )}

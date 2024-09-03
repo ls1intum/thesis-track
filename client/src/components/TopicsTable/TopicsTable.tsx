@@ -1,14 +1,14 @@
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { formatDate } from '../../utils/format'
+import { formatDate, formatThesisType } from '../../utils/format'
 import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
 import { ITopic } from '../../requests/responses/topic'
 import { useNavigate } from 'react-router-dom'
-import { Badge, Center } from '@mantine/core'
+import { Badge, Center, Stack, Text } from '@mantine/core'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import React from 'react'
 
-type TopicColumn = 'title' | 'advisor' | 'supervisor' | 'state' | 'createdAt' | string
+type TopicColumn = 'title' | 'types' | 'advisor' | 'supervisor' | 'state' | 'createdAt' | string
 
 interface ITopicsTableProps {
   columns?: TopicColumn[]
@@ -17,7 +17,11 @@ interface ITopicsTableProps {
 }
 
 const TopicsTable = (props: ITopicsTableProps) => {
-  const { extraColumns, columns = ['title', 'supervisor', 'advisor'], noBorder = false } = props
+  const {
+    extraColumns,
+    columns = ['title', 'types', 'supervisor', 'advisor'],
+    noBorder = false,
+  } = props
 
   const navigate = useNavigate()
   const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
@@ -40,19 +44,38 @@ const TopicsTable = (props: ITopicsTableProps) => {
       accessor: 'title',
       title: 'Title',
     },
+    types: {
+      accessor: 'thesisTypes',
+      title: 'Types',
+      width: 150,
+      ellipsis: true,
+      render: (topic) => (
+        <Stack gap={2}>
+          {topic.thesisTypes ? (
+            topic.thesisTypes.map((type) => (
+              <Text key={type} size='sm'>
+                {formatThesisType(type)}
+              </Text>
+            ))
+          ) : (
+            <Text size='sm'>Any</Text>
+          )}
+        </Stack>
+      ),
+    },
     supervisor: {
       accessor: 'supervisor',
       title: 'Supervisor',
       width: 170,
       ellipsis: true,
-      render: (topic) => <AvatarUserList users={topic.supervisors} withUniversityId={false} />,
+      render: (topic) => <AvatarUserList users={topic.supervisors} />,
     },
     advisor: {
       accessor: 'advisor',
       title: 'Advisor(s)',
       width: 170,
       ellipsis: true,
-      render: (topic) => <AvatarUserList users={topic.advisors} withUniversityId={false} />,
+      render: (topic) => <AvatarUserList users={topic.advisors} />,
     },
     createdAt: {
       accessor: 'createdAt',

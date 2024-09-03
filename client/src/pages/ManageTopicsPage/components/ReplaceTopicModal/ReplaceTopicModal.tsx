@@ -10,6 +10,7 @@ import { showSimpleError, showSimpleSuccess } from '../../../../utils/notificati
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
 import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
+import { formatThesisType } from '../../../../utils/format'
 
 interface ICreateTopicModalProps {
   opened: boolean
@@ -121,9 +122,9 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
           <MultiSelect
             label='Thesis Types'
             placeholder={form.values.thesisTypes.length > 0 ? undefined : 'All Thesis Types'}
-            data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+            data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
               value: key,
-              label: value,
+              label: formatThesisType(key),
             }))}
             {...form.getInputProps('thesisTypes')}
           />

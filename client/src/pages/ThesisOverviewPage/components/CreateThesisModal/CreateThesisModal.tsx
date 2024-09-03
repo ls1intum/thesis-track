@@ -9,6 +9,7 @@ import { IThesis } from '../../../../requests/responses/thesis'
 import { isNotEmptyUserList } from '../../../../utils/validation'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
+import { formatThesisType } from '../../../../utils/format'
 
 interface ICreateThesisModalProps {
   opened: boolean
@@ -87,9 +88,9 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
           <Select
             label='Thesis Type'
             required={true}
-            data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+            data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
               value: key,
-              label: value,
+              label: formatThesisType(key),
             }))}
             {...form.getInputProps('type')}
           />
