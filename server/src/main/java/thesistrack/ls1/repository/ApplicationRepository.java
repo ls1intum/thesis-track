@@ -20,7 +20,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     @Query(
             "SELECT DISTINCT a FROM Application a WHERE " +
             "(:userId IS NULL OR a.user.id = :userId) AND " +
-            "(:states IS NULL OR a.state IN :states) AND " +
+            "(:states IS NULL OR a.state IN :states OR (:previousIds IS NOT NULL AND a.id IN :previousIds)) AND " +
             "(:includeSuggestedTopics = true OR a.topic IS NOT NULL) AND " +
             "(:topics IS NULL OR a.topic.id IN :topics OR (:includeSuggestedTopics = true AND a.topic IS NULL)) AND " +
             "(:types IS NULL OR a.thesisType IN :types) AND " +
@@ -34,6 +34,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             @Param("userId") UUID userId,
             @Param("searchQuery") String searchQuery,
             @Param("states") Set<ApplicationState> states,
+            @Param("previousIds") Set<String> previousIds,
             @Param("topics") Set<String> topics,
             @Param("types") Set<String> types,
             @Param("includeSuggestedTopics") boolean includeSuggestedTopics,

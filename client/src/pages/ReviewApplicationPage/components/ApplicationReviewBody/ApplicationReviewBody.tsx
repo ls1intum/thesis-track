@@ -15,8 +15,6 @@ interface IApplicationReviewBodyProps {
 const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
   const { application, onChange } = props
 
-  const { updateApplication } = useApplicationsContext()
-
   const [, scrollTo] = useWindowScroll()
 
   useEffect(() => {
@@ -32,7 +30,6 @@ const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
             application={application}
             onUpdate={(newApplication) => {
               onChange(newApplication)
-              updateApplication(newApplication)
             }}
             ml='auto'
           />
@@ -44,7 +41,6 @@ const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
               application={application}
               onUpdate={(newApplication) => {
                 onChange(newApplication)
-                updateApplication(newApplication)
               }}
             />
           </Stack>

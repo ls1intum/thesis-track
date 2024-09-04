@@ -27,6 +27,7 @@ import thesistrack.ls1.service.ApplicationService;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.utility.RequestValidator;
 
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -75,6 +76,7 @@ public class ApplicationController {
             @RequestParam(required = false) ApplicationState[] state,
             @RequestParam(required = false) String[] topic,
             @RequestParam(required = false) String[] type,
+            @RequestParam(required = false) String[] previous,
             @RequestParam(required = false, defaultValue = "true") Boolean includeSuggestedTopics,
             @RequestParam(required = false, defaultValue = "false") Boolean fetchAll,
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -89,6 +91,7 @@ public class ApplicationController {
                 fetchAll && authenticatedUser.hasAnyGroup("admin", "supervisor", "advisor") ? null : authenticatedUser.getId(),
                 search,
                 state,
+                previous,
                 topic,
                 type,
                 includeSuggestedTopics,
@@ -166,7 +169,7 @@ public class ApplicationController {
     }
 
     @PutMapping("/{applicationId}/accept")
-    public ResponseEntity<ApplicationDto> acceptApplication(
+    public ResponseEntity<List<ApplicationDto>> acceptApplication(
             @PathVariable UUID applicationId,
             @RequestBody AcceptApplicationPayload payload,
             JwtAuthenticationToken jwt
@@ -178,7 +181,7 @@ public class ApplicationController {
             throw new AccessDeniedException("You do not have access to accept this application");
         }
 
-        application = applicationService.accept(
+        List<Application> applications = applicationService.accept(
                 authenticatedUser,
                 application,
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
@@ -189,11 +192,13 @@ public class ApplicationController {
                 RequestValidator.validateNotNull(payload.closeTopic())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
+        return ResponseEntity.ok(
+                applications.stream().map(item -> ApplicationDto.fromApplicationEntity(item, item.hasManagementAccess(authenticatedUser))).toList()
+        );
     }
 
     @PutMapping("/{applicationId}/reject")
-    public ResponseEntity<ApplicationDto> rejectApplication(
+    public ResponseEntity<List<ApplicationDto>> rejectApplication(
             @PathVariable UUID applicationId,
             @RequestBody RejectApplicationPayload payload,
             JwtAuthenticationToken jwt
@@ -205,13 +210,15 @@ public class ApplicationController {
             throw new AccessDeniedException("You do not have access to reject this application");
         }
 
-        application =  applicationService.reject(
+        List<Application> applications = applicationService.reject(
                 authenticatedUser,
                 application,
                 RequestValidator.validateNotNull(payload.reason()),
                 RequestValidator.validateNotNull(payload.notifyUser())
         );
 
-        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
+        return ResponseEntity.ok(
+                applications.stream().map(item -> ApplicationDto.fromApplicationEntity(item, item.hasManagementAccess(authenticatedUser))).toList()
+        );
     }
 }

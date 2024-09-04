@@ -16,7 +16,7 @@ interface IApplicationRejectButtonProps extends ButtonProps {
 const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
   const { application, onUpdate, ...buttonProps } = props
 
-  const updateApplication = useApplicationsContextUpdater()
+  const updateApplicationContext = useApplicationsContextUpdater()
 
   const [confirmationModal, setConfirmationModal] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -63,7 +63,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
             setLoading(true)
 
             try {
-              const response = await doRequest<IApplication>(
+              const response = await doRequest<IApplication[]>(
                 `/v2/applications/${application.applicationId}/reject`,
                 {
                   method: 'PUT',
@@ -78,8 +78,17 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
               if (response.ok) {
                 showSimpleSuccess('Application rejected successfully')
 
-                updateApplication(response.data)
-                onUpdate(response.data)
+                for (const item of response.data) {
+                  updateApplicationContext(item)
+                }
+
+                const currentApplication = response.data.find(
+                  (item) => item.applicationId === application.applicationId,
+                )
+
+                if (currentApplication) {
+                  onUpdate(currentApplication)
+                }
               } else {
                 showSimpleError(getApiResponseErrorMessage(response))
               }

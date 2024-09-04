@@ -53,7 +53,7 @@ const ThesesGanttChart = () => {
 
         if (state === ThesisState.WRITING && state === thesis.state && thesis.endDate) {
           // Writing phase should end at endDate if not completed yet
-          return new Date(thesis.endDate)
+          return new Date(Math.max(currentTime, new Date(thesis.endDate).getTime()))
         }
 
         return endDate

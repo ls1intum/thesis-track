@@ -55,6 +55,7 @@ public class ApplicationService {
             UUID userId,
             String searchQuery,
             ApplicationState[] states,
+            String[] previous,
             String[] topics,
             String[] types,
             boolean includeSuggestedTopics,
@@ -69,11 +70,13 @@ public class ApplicationService {
         Set<ApplicationState> statesFilter = states == null || states.length == 0 ? null : new HashSet<>(Arrays.asList(states));
         Set<String> topicsFilter = topics == null || topics.length == 0 ? null : new HashSet<>(Arrays.asList(topics));
         Set<String> typesFilter = types == null || types.length == 0 ? null : new HashSet<>(Arrays.asList(types));
+        Set<String> previousFilter = previous == null || previous.length == 0 ? null : new HashSet<>(Arrays.asList(previous));
 
         return applicationRepository.searchApplications(
                 userId,
                 searchQueryFilter,
                 statesFilter,
+                previousFilter,
                 topicsFilter,
                 typesFilter,
                 includeSuggestedTopics,
@@ -180,7 +183,7 @@ public class ApplicationService {
     }
 
     @Transactional
-    public Application accept(
+    public List<Application> accept(
             User reviewingUser,
             Application application,
             String thesisTitle,
@@ -190,6 +193,8 @@ public class ApplicationService {
             boolean notifyUser,
             boolean closeTopic
     ) {
+        List<Application> result = new ArrayList<>();
+
         application.setState(ApplicationState.ACCEPTED);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
@@ -210,22 +215,30 @@ public class ApplicationService {
         Topic topic = application.getTopic();
 
         if (topic != null && closeTopic) {
-            application.setTopic(closeTopic(reviewingUser, topic, ApplicationRejectReason.TOPIC_FILLED, true));
+            topic.setClosedAt(Instant.now());
+
+            result.addAll(rejectApplicationsForTopic(reviewingUser, topic, ApplicationRejectReason.TOPIC_FILLED, true));
+
+            application.setTopic(topicRepository.save(topic));
         }
 
         if (notifyUser) {
             mailingService.sendApplicationAcceptanceEmail(application, thesis);
         }
 
-        return applicationRepository.save(application);
+        result.add(applicationRepository.save(application));
+
+        return result;
     }
 
     @Transactional
-    public Application reject(User reviewingUser, Application application, ApplicationRejectReason reason, boolean notifyUser) {
+    public List<Application> reject(User reviewingUser, Application application, ApplicationRejectReason reason, boolean notifyUser) {
         application.setState(ApplicationState.REJECTED);
         application.setRejectReason(reason);
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(reviewingUser);
+
+        List<Application> result = new ArrayList<>();
 
         if (reason == ApplicationRejectReason.FAILED_STUDENT_REQUIREMENTS) {
             List<Application> applications = applicationRepository.findAllByUser(application.getUser());
@@ -237,7 +250,7 @@ public class ApplicationService {
                     item.setReviewedAt(Instant.now());
                     item.setReviewedBy(reviewingUser);
 
-                    applicationRepository.save(item);
+                    result.add(applicationRepository.save(item));
                 }
             }
         }
@@ -246,7 +259,9 @@ public class ApplicationService {
             mailingService.sendApplicationRejectionEmail(application, reason);
         }
 
-        return applicationRepository.save(application);
+        result.add(applicationRepository.save(application));
+
+        return result;
     }
 
     @Transactional
@@ -259,16 +274,19 @@ public class ApplicationService {
     }
 
     @Transactional
-    public void rejectApplicationsForTopic(User closer, Topic topic, ApplicationRejectReason reason, boolean notifyUser) {
+    public List<Application> rejectApplicationsForTopic(User closer, Topic topic, ApplicationRejectReason reason, boolean notifyUser) {
         List<Application> applications = applicationRepository.findAllByTopic(topic);
+        List<Application> result = new ArrayList<>();
 
         for (Application application : applications) {
             if (application.getState() != ApplicationState.NOT_ASSESSED) {
                 continue;
             }
 
-            reject(closer, application, reason, notifyUser);
+            result.addAll(reject(closer, application, reason, notifyUser));
         }
+
+        return result;
     }
 
     @Transactional
