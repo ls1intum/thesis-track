@@ -14,7 +14,6 @@
     "check-build-speed": "BUILD_SPEED=true webpack --env NODE_ENV=production"
   },
   "dependencies": {
-    "@formkit/auto-animate": "0.8.2",
     "@mantine/core": "7.12.2",
     "@mantine/dates": "7.12.2",
     "@mantine/dropzone": "7.12.2",
@@ -53,7 +52,7 @@
     "eslint": "9.9.1",
     "eslint-config-prettier": "9.1.0",
     "eslint-plugin-prettier": "5.2.1",
-    "eslint-plugin-react": "7.35.1",
+    "eslint-plugin-react": "7.35.2",
     "fork-ts-checker-webpack-plugin": "9.0.2",
     "globals": "15.9.0",
     "html-webpack-plugin": "5.6.0",
@@ -72,7 +71,7 @@
     "webpack": "5.94.0",
     "webpack-bundle-analyzer": "4.10.2",
     "webpack-cli": "5.1.4",
-    "webpack-dev-server": "5.0.4",
+    "webpack-dev-server": "5.1.0",
     "webpackbar": "6.0.1"
   }
 }
