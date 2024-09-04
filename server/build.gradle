@@ -32,7 +32,7 @@ dependencies {
 	implementation 'org.mnode.ical4j:ical4j:4.0.3'
 
 	// Liquibase
-	implementation 'org.liquibase:liquibase-core:4.28.0'
+	implementation 'org.liquibase:liquibase-core:4.29.2'
 
 	// Authentication
 	implementation 'org.springframework.boot:spring-boot-starter-security'
