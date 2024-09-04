@@ -31,7 +31,7 @@ interface IApplicationReviewForm {
 const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const { application, onUpdate } = props
 
-  const updateApplication = useApplicationsContextUpdater()
+  const updateApplicationContext = useApplicationsContextUpdater()
 
   const form = useForm<IApplicationReviewForm>({
     mode: 'controlled',
@@ -112,7 +112,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     setLoading(true)
 
     try {
-      const response = await doRequest<IApplication>(
+      const response = await doRequest<IApplication[]>(
         `/v2/applications/${application.applicationId}/accept`,
         {
           method: 'PUT',
@@ -131,8 +131,17 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
       if (response.ok) {
         showSimpleSuccess('Application accepted successfully')
 
-        updateApplication(response.data)
-        onUpdate(response.data)
+        for (const item of response.data) {
+          updateApplicationContext(item)
+        }
+
+        const currentApplication = response.data.find(
+          (item) => item.applicationId === application.applicationId,
+        )
+
+        if (currentApplication) {
+          onUpdate(currentApplication)
+        }
       } else {
         showSimpleError(getApiResponseErrorMessage(response))
       }

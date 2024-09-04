@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { PropsWithChildren, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { doRequest } from '../../requests/request'
 import { PaginationResponse } from '../../requests/responses/pagination'
 import {
@@ -37,6 +37,8 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
 
   const [applications, setApplications] = useState<PaginationResponse<IApplication>>()
   const [page, setPage] = useState(0)
+
+  const previousContent = useRef<string[]>([])
 
   const [filters, setFilters] = useState<IApplicationsFilters>({
     states: defaultStates || [],
@@ -78,6 +80,10 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
       return
     }
 
+    if (page === 0) {
+      previousContent.current = []
+    }
+
     return doRequest<PaginationResponse<IApplication>>(
       `/v2/applications`,
       {
@@ -85,6 +91,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
         requiresAuth: true,
         params: {
           fetchAll: fetchAll ? 'true' : 'false',
+          previous: previousContent.current.join(','),
           search: debouncedSearch,
           state: adjustedFilters.states?.join(',') ?? '',
           type: adjustedFilters.types?.join(',') ?? '',
@@ -119,6 +126,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
           })
         }
 
+        previousContent.current.push(...res.data.content.map((item) => item.applicationId))
         setApplications(res.data)
       },
     )
