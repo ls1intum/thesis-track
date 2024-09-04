@@ -1,4 +1,3 @@
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import React from 'react'
 import { IApplication } from '../../requests/responses/application'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
@@ -30,8 +29,6 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
     columns = ['state', 'thesis_title', 'thesis_type', 'user', 'created_at'],
     extraColumns = {},
   } = props
-
-  const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
   const { applications, sort, setSort, page, setPage, limit } = useApplicationsContext()
 
@@ -111,7 +108,6 @@ const ApplicationsTable = (props: IApplicationsTableProps) => {
           direction: newSort.direction,
         })
       }}
-      bodyRef={bodyRef}
       records={applications?.content}
       idAccessor='applicationId'
       columns={columns.map((column) => columnConfig[column])}

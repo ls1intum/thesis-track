@@ -1,4 +1,3 @@
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { formatDate, formatThesisType } from '../../utils/format'
 import React from 'react'
@@ -31,8 +30,6 @@ const ThesesTable = (props: IThesesTableProps) => {
     columns = ['state', 'title', 'type', 'students', 'advisors', 'start_date', 'end_date'],
     extraColumns = {},
   } = props
-
-  const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
   const { theses, sort, setSort, page, setPage, limit } = useThesesContext()
 
@@ -131,7 +128,6 @@ const ThesesTable = (props: IThesesTableProps) => {
           direction: newSort.direction,
         })
       }}
-      bodyRef={bodyRef}
       records={theses?.content}
       idAccessor='thesisId'
       columns={columns.map((column) => columnConfig[column])}

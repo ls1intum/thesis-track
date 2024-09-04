@@ -3,7 +3,6 @@ import { ActionIcon, Anchor, Center, Group, Modal, Stack, Title } from '@mantine
 import React, { useEffect, useState } from 'react'
 import { PaginationResponse } from '../../../../requests/responses/pagination'
 import { IPublishedThesis } from '../../../../requests/responses/thesis'
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
@@ -15,8 +14,6 @@ import { formatThesisType } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 
 const PublishedTheses = () => {
-  const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
-
   const [page, setPage] = useState(0)
   const limit = 10
 
@@ -64,7 +61,6 @@ const PublishedTheses = () => {
         recordsPerPage={limit}
         page={page + 1}
         onPageChange={(x) => setPage(x - 1)}
-        bodyRef={bodyRef}
         records={theses?.content}
         idAccessor='thesisId'
         columns={[

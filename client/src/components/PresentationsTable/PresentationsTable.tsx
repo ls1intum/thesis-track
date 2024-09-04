@@ -1,4 +1,3 @@
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import React from 'react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { IPublishedPresentation, IThesisPresentation } from '../../requests/responses/thesis'
@@ -20,8 +19,6 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
   props: IPresentationsTableProps<T>,
 ) => {
   const { presentations, onRowClick, extraColumns, pagination } = props
-
-  const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
   const columns: Array<DataTableColumn<T>> = [
     {
@@ -69,7 +66,6 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
         verticalSpacing='md'
         striped
         highlightOnHover
-        bodyRef={bodyRef}
         records={presentations}
         totalRecords={pagination.totalRecords}
         recordsPerPage={pagination.recordsPerPage}
@@ -90,7 +86,6 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
         verticalSpacing='md'
         striped
         highlightOnHover
-        bodyRef={bodyRef}
         records={presentations}
         idAccessor='presentationId'
         columns={columns}

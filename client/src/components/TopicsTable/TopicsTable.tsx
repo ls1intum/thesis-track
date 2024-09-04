@@ -1,4 +1,3 @@
-import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { formatDate, formatThesisType } from '../../utils/format'
 import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
@@ -24,7 +23,6 @@ const TopicsTable = (props: ITopicsTableProps) => {
   } = props
 
   const navigate = useNavigate()
-  const [bodyRef] = useAutoAnimate<HTMLTableSectionElement>()
 
   const { topics, page, setPage, limit } = useTopicsContext()
 
@@ -102,7 +100,6 @@ const TopicsTable = (props: ITopicsTableProps) => {
       recordsPerPage={limit}
       page={page + 1}
       onPageChange={(x) => setPage(x - 1)}
-      bodyRef={bodyRef}
       records={topics?.content}
       idAccessor='topicId'
       columns={columns.map((column) => columnConfig[column])}
