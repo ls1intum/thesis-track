@@ -20,8 +20,6 @@ java {
 	targetCompatibility = "21"
 }
 
-apply plugin: "org.liquibase.gradle"
-
 repositories {
 	mavenCentral()
 }
@@ -36,9 +34,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
 
-	implementation "org.postgresql:postgresql"
-	implementation "org.liquibase:liquibase-core:4.29.2"
-
+	implementation "org.postgresql:postgresql:42.7.4"
 	implementation "commons-io:commons-io:2.16.1"
 	implementation "com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1"
 	implementation "org.mnode.ical4j:ical4j:4.0.3"
