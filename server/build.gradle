@@ -1,17 +1,23 @@
-plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.3.3'
-	id 'io.spring.dependency-management' version '1.1.6'
-	id 'org.liquibase.gradle' version '2.2.2'
-	id 'com.github.ben-manes.versions' version '0.51.0'
+buildscript {
+	dependencies {
+		classpath "org.liquibase:liquibase-core:4.29.2"
+	}
 }
 
-group = 'thesis-track.ls1'
-version = '3.0.0'
+plugins {
+	id "java"
+	id "org.springframework.boot" version "3.3.3"
+	id "io.spring.dependency-management" version "1.1.6"
+	id "org.liquibase.gradle" version "3.0.0"
+	id "com.github.ben-manes.versions" version "0.51.0"
+}
+
+group = "thesis-track.ls1"
+version = "3.0.0"
 
 java {
-	sourceCompatibility = '21'
-	targetCompatibility = '21'
+	sourceCompatibility = "21"
+	targetCompatibility = "21"
 }
 
 apply plugin: "org.liquibase.gradle"
@@ -21,21 +27,23 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
-	implementation 'org.postgresql:postgresql'
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-starter-validation"
+	implementation "org.springframework.boot:spring-boot-starter-mail"
+	implementation "org.springframework.boot:spring-boot-starter-webflux"
+	implementation "org.springframework.boot:spring-boot-starter-security"
+	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+	implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
 
-	implementation 'org.liquibase:liquibase-core:4.29.2'
-	implementation 'commons-io:commons-io:2.16.1'
-	implementation 'com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1'
-	implementation 'org.mnode.ical4j:ical4j:4.0.3'
+	implementation "org.postgresql:postgresql"
+	implementation "org.liquibase:liquibase-core:4.29.2"
 
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	implementation "commons-io:commons-io:2.16.1"
+	implementation "com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1"
+	implementation "org.mnode.ical4j:ical4j:4.0.3"
+
+	compileOnly "org.projectlombok:lombok"
+	annotationProcessor "org.projectlombok:lombok"
+	liquibaseRuntime "info.picocli:picocli:4.7.6"
 }
