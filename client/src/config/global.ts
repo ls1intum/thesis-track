@@ -49,6 +49,11 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     GUIDED_RESEARCH: 'Guided Research',
   },
 
+  languages: getEnvironmentVariable<Record<string, string>>('LANGUAGES', true) || {
+    ENGLISH: 'English',
+    GERMAN: 'German',
+  },
+
   custom_data: getEnvironmentVariable<Record<string, string>>('CUSTOM_DATA', true) || {
     GITHUB: 'Github Profile',
   },

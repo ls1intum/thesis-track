@@ -15,10 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 public class MailConfig {
@@ -83,7 +80,11 @@ public class MailConfig {
     }
 
     public List<User> getChairMembers() {
-        return userRepository.getChairMembers();
+        return userRepository.getRoleMembers(Set.of("admin", "supervisor", "advisor"));
+    }
+
+    public List<User> getChairStudents() {
+        return userRepository.getRoleMembers(Set.of("student"));
     }
 
     public String getTemplate(String name) {

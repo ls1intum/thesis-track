@@ -42,6 +42,9 @@ public class ThesisPresentation {
     @Column(name = "stream_url")
     private String streamUrl;
 
+    @Column(name = "language")
+    private String language;
+
     @Column(name = "calendar_event")
     private String calendarEvent;
 

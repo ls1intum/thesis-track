@@ -13,6 +13,7 @@ export interface IGlobalConfig {
   study_degrees: Record<string, string>
   thesis_types: Record<string, string>
   custom_data: Record<string, string>
+  languages: Record<string, string>
 
   privacy_text: string
   imprint_text: string

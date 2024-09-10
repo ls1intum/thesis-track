@@ -1,5 +1,6 @@
 package thesistrack.ls1.service;
 
+import jakarta.mail.util.ByteArrayDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -9,21 +10,25 @@ import thesistrack.ls1.entity.*;
 import thesistrack.ls1.utility.MailBuilder;
 import thesistrack.ls1.utility.MailConfig;
 
+import java.nio.charset.StandardCharsets;
+
 @Service
 public class MailingService {
     private final JavaMailSender javaMailSender;
     private final UploadService uploadService;
     private final MailConfig config;
+    private final ThesisPresentationService thesisPresentationService;
 
     @Autowired
     public MailingService(
             JavaMailSender javaMailSender,
             UploadService uploadService,
-            MailConfig config
-    ) {
+            MailConfig config,
+            ThesisPresentationService thesisPresentationService) {
         this.javaMailSender = javaMailSender;
         this.uploadService = uploadService;
         this.config = config;
+        this.thesisPresentationService = thesisPresentationService;
     }
 
     public void sendApplicationCreatedEmail(Application application) {
@@ -154,6 +159,28 @@ public class MailingService {
                 .fillThesisPresentationPlaceholders(presentation)
                 .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
+    }
+
+    public void sendPresentationInvitation(ThesisPresentation presentation) {
+        MailBuilder builder = new MailBuilder(config, "Thesis Presentation Invitation", "thesis-presentation-invitation");
+        builder
+                .sendToChairMembers()
+                .sendToChairStudents()
+                .fillThesisPresentationPlaceholders(presentation);
+
+        for (ThesisRole role : presentation.getThesis().getRoles()) {
+            builder.addPrimarySender(role.getUser());
+        }
+
+        builder.addRawAttatchment(
+                "event.ics",
+                new ByteArrayDataSource(
+                        thesisPresentationService.getPresentationEvent(presentation).toString().getBytes(StandardCharsets.UTF_8),
+                        "application/octet-stream"
+                )
+        );
+
+        builder.send(javaMailSender, uploadService);
     }
 
     public void sendFinalSubmissionEmail(Thesis thesis) {

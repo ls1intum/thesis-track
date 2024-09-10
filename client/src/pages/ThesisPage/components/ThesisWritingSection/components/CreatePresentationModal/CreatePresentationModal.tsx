@@ -26,6 +26,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
     visibility: string
     location: string
     streamUrl: string
+    language: string | null
     date: DateValue
   }>({
     mode: 'controlled',
@@ -34,6 +35,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
       visibility: 'PUBLIC',
       location: '',
       streamUrl: '',
+      language: null,
       date: null,
     },
     validateInputOnBlur: true,
@@ -50,6 +52,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
           return 'Location or Stream URL is required'
         }
       },
+      language: isNotEmpty('Language is required'),
       date: (value) => {
         if (!value) {
           return 'Date is required'
@@ -80,6 +83,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
         visibility: form.values.visibility,
         location: form.values.location,
         streamUrl: form.values.streamUrl,
+        language: form.values.language,
         date: form.values.date,
       },
     })

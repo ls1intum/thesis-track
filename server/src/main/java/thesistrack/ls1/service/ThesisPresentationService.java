@@ -36,10 +36,8 @@ public class ThesisPresentationService {
     }
 
     public Calendar getPresentationCalendar() {
-        Calendar calendar = new Calendar();
+        Calendar calendar = createEmptyCalendar();
 
-        calendar.add(new ProdId("-//Thesis Track//Thesis Presentations//EN"));
-        calendar.add(ImmutableCalScale.GREGORIAN);
         calendar.add(ImmutableMethod.PUBLISH);
 
         List<ThesisPresentation> presentations = thesisPresentationRepository.findAllPresentations(
@@ -53,6 +51,14 @@ public class ThesisPresentationService {
         return calendar;
     }
 
+    public Calendar getPresentationEvent(ThesisPresentation presentation) {
+        Calendar calendar = createEmptyCalendar();
+
+        calendar.add(calendarService.createVEvent(presentation.getId().toString(), createPresentationCalendarEvent(presentation)));
+
+        return calendar;
+    }
+
     @Transactional
     public Thesis createPresentation(
             User creatingUser,
@@ -61,6 +67,7 @@ public class ThesisPresentationService {
             ThesisPresentationVisibility visibility,
             String location,
             String streamUrl,
+            String language,
             Instant date
     ) {
         ThesisPresentation presentation = new ThesisPresentation();
@@ -70,6 +77,7 @@ public class ThesisPresentationService {
         presentation.setVisibility(visibility);
         presentation.setLocation(location);
         presentation.setStreamUrl(streamUrl);
+        presentation.setLanguage(language);
         presentation.setScheduledAt(date);
         presentation.setCreatedBy(creatingUser);
         presentation.setCreatedAt(Instant.now());
@@ -79,6 +87,8 @@ public class ThesisPresentationService {
         if (visibility.equals(ThesisPresentationVisibility.PUBLIC)) {
             presentation.setCalendarEvent(calendarService.createEvent(createPresentationCalendarEvent(presentation)));
             presentation = thesisPresentationRepository.save(presentation);
+
+            mailingService.sendPresentationInvitation(presentation);
         }
 
         List<ThesisPresentation> presentations = thesis.getPresentations();
@@ -134,6 +144,15 @@ public class ThesisPresentationService {
         return presentation;
     }
 
+    private Calendar createEmptyCalendar() {
+        Calendar calendar = new Calendar();
+
+        calendar.add(new ProdId("-//Thesis Track//Thesis Presentations//EN"));
+        calendar.add(ImmutableCalScale.GREGORIAN);
+
+        return calendar;
+    }
+
     private CalendarService.CalendarEvent createPresentationCalendarEvent(ThesisPresentation presentation) {
         String location = presentation.getLocation();
         String streamUrl = presentation.getStreamUrl();
@@ -143,6 +162,7 @@ public class ThesisPresentationService {
                 location == null || location.isBlank() ? streamUrl : location,
                 "Title: " + presentation.getThesis().getTitle() + "\n" +
                         (streamUrl != null && !streamUrl.isBlank() ? "Stream URL: " + streamUrl + "\n" : "") + "\n" +
+                        "Language: " + presentation.getLanguage() + "\n" +
                         "Abstract:\n\n" + presentation.getThesis().getAbstractField(),
                 presentation.getScheduledAt(),
                 presentation.getScheduledAt().plus(60, ChronoUnit.MINUTES),

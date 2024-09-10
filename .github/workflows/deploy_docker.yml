@@ -113,6 +113,7 @@ jobs:
             echo "STUDY_PROGRAMS=${{ vars.STUDY_PROGRAMS }}" >> .env.prod
             echo "STUDY_DEGREES=${{ vars.STUDY_DEGREES }}" >> .env.prod
             echo "GENDERS=${{ vars.GENDERS }}" >> .env.prod
+            echo "LANGUAGES=${{ vars.LANGUAGES }}" >> .env.prod
             echo "CUSTOM_DATA=${{ vars.CUSTOM_DATA }}" >> .env.prod
 
             echo "MAIL_SENDER=${{ vars.MAIL_SENDER }}" >> .env.prod
