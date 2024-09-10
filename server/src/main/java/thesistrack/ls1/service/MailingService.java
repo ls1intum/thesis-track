@@ -17,18 +17,16 @@ public class MailingService {
     private final JavaMailSender javaMailSender;
     private final UploadService uploadService;
     private final MailConfig config;
-    private final ThesisPresentationService thesisPresentationService;
 
     @Autowired
     public MailingService(
             JavaMailSender javaMailSender,
             UploadService uploadService,
-            MailConfig config,
-            ThesisPresentationService thesisPresentationService) {
+            MailConfig config
+    ) {
         this.javaMailSender = javaMailSender;
         this.uploadService = uploadService;
         this.config = config;
-        this.thesisPresentationService = thesisPresentationService;
     }
 
     public void sendApplicationCreatedEmail(Application application) {
@@ -161,7 +159,7 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendPresentationInvitation(ThesisPresentation presentation) {
+    public void sendPresentationInvitation(ThesisPresentation presentation, String icsFile) {
         MailBuilder builder = new MailBuilder(config, "Thesis Presentation Invitation", "thesis-presentation-invitation");
         builder
                 .sendToChairMembers()
@@ -174,10 +172,7 @@ public class MailingService {
 
         builder.addRawAttatchment(
                 "event.ics",
-                new ByteArrayDataSource(
-                        thesisPresentationService.getPresentationEvent(presentation).toString().getBytes(StandardCharsets.UTF_8),
-                        "application/octet-stream"
-                )
+                new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
         );
 
         builder.send(javaMailSender, uploadService);

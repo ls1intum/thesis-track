@@ -88,7 +88,7 @@ public class ThesisPresentationService {
             presentation.setCalendarEvent(calendarService.createEvent(createPresentationCalendarEvent(presentation)));
             presentation = thesisPresentationRepository.save(presentation);
 
-            mailingService.sendPresentationInvitation(presentation);
+            mailingService.sendPresentationInvitation(presentation, getPresentationEvent(presentation).toString());
         }
 
         List<ThesisPresentation> presentations = thesis.getPresentations();
