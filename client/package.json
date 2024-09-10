@@ -27,7 +27,7 @@
     "@tiptap/extension-text-align": "2.6.6",
     "@tiptap/extension-underline": "2.6.6",
     "@tiptap/starter-kit": "2.6.6",
-    "i18n-iso-countries": "7.11.3",
+    "i18n-iso-countries": "7.12.0",
     "jwt-decode": "4.0.0",
     "keycloak-js": "25.0.4",
     "mantine-datatable": "7.12.4",
