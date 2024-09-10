@@ -170,10 +170,12 @@ public class MailingService {
             builder.addPrimarySender(role.getUser());
         }
 
-        builder.addRawAttatchment(
-                "event.ics",
-                new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
-        );
+        if (icsFile != null && !icsFile.isBlank()) {
+            builder.addRawAttatchment(
+                    "event.ics",
+                    new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
+            );
+        }
 
         builder.send(javaMailSender, uploadService);
     }
