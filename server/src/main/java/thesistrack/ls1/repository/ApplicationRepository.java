@@ -24,8 +24,7 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
             "(:includeSuggestedTopics = true OR a.topic IS NOT NULL) AND " +
             "(:topics IS NULL OR a.topic.id IN :topics OR (:includeSuggestedTopics = true AND a.topic IS NULL)) AND " +
             "(:types IS NULL OR a.thesisType IN :types) AND " +
-            "(:searchQuery IS NULL OR LOWER(a.user.firstName) LIKE %:searchQuery% OR " +
-            "LOWER(a.user.lastName) LIKE %:searchQuery% OR " +
+            "(:searchQuery IS NULL OR (LOWER(a.user.firstName) || ' ' || LOWER(a.user.lastName)) LIKE %:searchQuery% OR " +
             "LOWER(a.user.email) LIKE %:searchQuery% OR " +
             "LOWER(a.user.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(a.user.universityId) LIKE %:searchQuery%)"
