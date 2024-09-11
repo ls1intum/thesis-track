@@ -39,7 +39,7 @@ public class DataFormatter {
             return "";
         }
 
-        return ((Enum<?>) value).name();
+        return formatConstantName(((Enum<?>) value).name());
     }
 
     public static String formatUsers(Object value) {

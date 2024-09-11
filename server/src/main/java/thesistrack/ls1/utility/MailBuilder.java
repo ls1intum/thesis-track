@@ -235,7 +235,7 @@ public class MailBuilder {
 
         HashMap<String, Function<Object, String>> formatters = new HashMap<>();
 
-        formatters.put("presentation.type", DataFormatter::formatConstantName);
+        formatters.put("presentation.type", DataFormatter::formatEnum);
         formatters.put("presentation.language", DataFormatter::formatConstantName);
 
         replaceDtoPlaceholders(ThesisDto.ThesisPresentationDto.fromPresentationEntity(presentation), "presentation", formatters);
