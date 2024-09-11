@@ -209,6 +209,8 @@ public class MailBuilder {
 
         formatters.put("thesis.startDate", DataFormatter::formatDate);
         formatters.put("thesis.endDate", DataFormatter::formatDate);
+        formatters.put("thesis.type", DataFormatter::formatConstantName);
+        formatters.put("thesis.visibility", DataFormatter::formatConstantName);
 
         formatters.put("thesis.students", DataFormatter::formatUsers);
         formatters.put("thesis.advisors", DataFormatter::formatUsers);
