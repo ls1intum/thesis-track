@@ -19,3 +19,6 @@ ALTER TABLE applications ADD COLUMN reject_reason TEXT;
 
 --changeset emilius:07-cleanup-6
 ALTER TABLE thesis_presentations ADD COLUMN language TEXT NOT NULL DEFAULT 'ENGLISH';
+
+--changeset emilius:07-cleanup-7
+ALTER TABLE thesis_presentations ADD COLUMN IF NOT EXISTS language TEXT NOT NULL DEFAULT 'ENGLISH';
