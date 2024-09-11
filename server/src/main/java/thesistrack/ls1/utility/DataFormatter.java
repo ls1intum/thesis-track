@@ -75,6 +75,18 @@ public class DataFormatter {
         return capitalizedSentence.toString().trim();
     }
 
+    public static String formatOptionalString(Object value) {
+        if (!(value instanceof String text)) {
+            return "Not available";
+        }
+
+        if (text.isBlank()) {
+            return "Not available";
+        }
+
+        return text;
+    }
+
     public static String formatSemester(Object value) {
         if (!(value instanceof Instant)) {
             return "";

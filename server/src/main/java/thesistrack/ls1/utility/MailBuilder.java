@@ -237,6 +237,8 @@ public class MailBuilder {
 
         formatters.put("presentation.type", DataFormatter::formatEnum);
         formatters.put("presentation.language", DataFormatter::formatConstantName);
+        formatters.put("presentation.streamUrl", DataFormatter::formatOptionalString);
+        formatters.put("presentation.location", DataFormatter::formatOptionalString);
 
         replaceDtoPlaceholders(ThesisDto.ThesisPresentationDto.fromPresentationEntity(presentation), "presentation", formatters);
 
