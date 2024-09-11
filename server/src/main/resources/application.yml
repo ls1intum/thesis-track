@@ -10,6 +10,7 @@ spring:
     password: ${SPRING_DATASOURCE_PASSWORD:thesis-track-postgres}
     driver-class-name: org.postgresql.Driver
   liquibase:
+    enabled: true
     change-log: db/changelog/db.changelog-master.xml
   jpa:
     hibernate:
