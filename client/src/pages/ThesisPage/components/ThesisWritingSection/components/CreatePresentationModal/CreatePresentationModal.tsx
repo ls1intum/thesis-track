@@ -10,6 +10,7 @@ import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
 import { ApiError } from '../../../../../../requests/handler'
 import { formatPresentationType } from '../../../../../../utils/format'
+import { GLOBAL_CONFIG } from '../../../../../../config/global'
 
 interface ICreatePresentationModalProps {
   opened: boolean
@@ -121,6 +122,15 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
           />
           <TextInput label='Location' {...form.getInputProps('location')} />
           <TextInput type='url' label='Stream URL' {...form.getInputProps('streamUrl')} />
+          <Select
+            label='Language'
+            required
+            data={Object.entries(GLOBAL_CONFIG.languages).map(([key, value]) => ({
+              label: value,
+              value: key,
+            }))}
+            {...form.getInputProps('language')}
+          />
           <DateTimePicker label='Scheduled At' required {...form.getInputProps('date')} />
           <Group grow>
             <Button
