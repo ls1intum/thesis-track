@@ -10,6 +10,7 @@ import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
 import { ApiError } from '../../../../../../requests/handler'
 import { formatPresentationType } from '../../../../../../utils/format'
+import { GLOBAL_CONFIG } from '../../../../../../config/global'
 
 interface ICreatePresentationModalProps {
   opened: boolean
@@ -26,6 +27,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
     visibility: string
     location: string
     streamUrl: string
+    language: string | null
     date: DateValue
   }>({
     mode: 'controlled',
@@ -34,6 +36,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
       visibility: 'PUBLIC',
       location: '',
       streamUrl: '',
+      language: null,
       date: null,
     },
     validateInputOnBlur: true,
@@ -50,6 +53,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
           return 'Location or Stream URL is required'
         }
       },
+      language: isNotEmpty('Language is required'),
       date: (value) => {
         if (!value) {
           return 'Date is required'
@@ -80,6 +84,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
         visibility: form.values.visibility,
         location: form.values.location,
         streamUrl: form.values.streamUrl,
+        language: form.values.language,
         date: form.values.date,
       },
     })
@@ -117,6 +122,15 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
           />
           <TextInput label='Location' {...form.getInputProps('location')} />
           <TextInput type='url' label='Stream URL' {...form.getInputProps('streamUrl')} />
+          <Select
+            label='Language'
+            required
+            data={Object.entries(GLOBAL_CONFIG.languages).map(([key, value]) => ({
+              label: value,
+              value: key,
+            }))}
+            {...form.getInputProps('language')}
+          />
           <DateTimePicker label='Scheduled At' required {...form.getInputProps('date')} />
           <Group grow>
             <Button

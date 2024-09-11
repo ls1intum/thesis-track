@@ -1,10 +1,12 @@
 package thesistrack.ls1.utility;
 
+import jakarta.activation.DataHandler;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
+import jakarta.mail.util.ByteArrayDataSource;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +20,7 @@ import thesistrack.ls1.entity.*;
 import thesistrack.ls1.exception.MailingException;
 import thesistrack.ls1.service.UploadService;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.Instant;
@@ -41,7 +44,12 @@ public class MailBuilder {
     private String content;
 
     @Getter
-    private final List<String> attachments;
+    private final List<String> fileAttachments;
+
+    @Getter
+    private final List<RawAttachment> rawAttachments;
+
+    private record RawAttachment(String name, ByteArrayDataSource file) {}
 
     public MailBuilder(MailConfig config, String subject, String template) {
         this.config = config;
@@ -53,7 +61,8 @@ public class MailBuilder {
 
         this.subject = subject;
         this.content = config.getTemplate(template);
-        this.attachments = new ArrayList<>();
+        this.fileAttachments = new ArrayList<>();
+        this.rawAttachments = new ArrayList<>();
     }
 
     public MailBuilder addAttachmentFile(String filename) {
@@ -61,7 +70,17 @@ public class MailBuilder {
             return this;
         }
 
-        attachments.add(filename);
+        fileAttachments.add(filename);
+
+        return this;
+    }
+
+    public MailBuilder addRawAttatchment(String filename, ByteArrayDataSource file) {
+        if (filename == null || filename.isBlank()) {
+            return this;
+        }
+
+        rawAttachments.add(new RawAttachment(filename, file));
 
         return this;
     }
@@ -100,6 +119,14 @@ public class MailBuilder {
 
     public MailBuilder sendToChairMembers() {
         for (User user : config.getChairMembers()) {
+            addPrimaryRecipient(user);
+        }
+
+        return this;
+    }
+
+    public MailBuilder sendToChairStudents() {
+        for (User user : config.getChairStudents()) {
             addPrimaryRecipient(user);
         }
 
@@ -182,6 +209,8 @@ public class MailBuilder {
 
         formatters.put("thesis.startDate", DataFormatter::formatDate);
         formatters.put("thesis.endDate", DataFormatter::formatDate);
+        formatters.put("thesis.type", DataFormatter::formatConstantName);
+        formatters.put("thesis.visibility", DataFormatter::formatConstantName);
 
         formatters.put("thesis.students", DataFormatter::formatUsers);
         formatters.put("thesis.advisors", DataFormatter::formatUsers);
@@ -203,7 +232,15 @@ public class MailBuilder {
 
     public MailBuilder fillThesisPresentationPlaceholders(ThesisPresentation presentation) {
         fillThesisPlaceholders(presentation.getThesis());
-        replaceDtoPlaceholders(ThesisDto.ThesisPresentationDto.fromPresentationEntity(presentation), "presentation", new HashMap<>());
+
+        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
+
+        formatters.put("presentation.type", DataFormatter::formatEnum);
+        formatters.put("presentation.language", DataFormatter::formatConstantName);
+        formatters.put("presentation.streamUrl", DataFormatter::formatOptionalString);
+        formatters.put("presentation.location", DataFormatter::formatOptionalString);
+
+        replaceDtoPlaceholders(ThesisDto.ThesisPresentationDto.fromPresentationEntity(presentation), "presentation", formatters);
 
         return this;
     }
@@ -256,9 +293,18 @@ public class MailBuilder {
                 );
                 messageContent.addBodyPart(messageBody);
 
-                for (String filename : attachments) {
+                for (String filename : fileAttachments) {
                     MimeBodyPart attachment = new MimeBodyPart();
                     attachment.attachFile(uploadService.load(filename).getFile());
+                    messageContent.addBodyPart(attachment);
+                }
+
+                for (RawAttachment data : rawAttachments) {
+                    MimeBodyPart attachment = new MimeBodyPart();
+
+                    attachment.setDataHandler(new DataHandler(data.file()));
+                    attachment.setFileName(data.name());
+
                     messageContent.addBodyPart(attachment);
                 }
 

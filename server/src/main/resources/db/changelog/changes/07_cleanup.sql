@@ -16,3 +16,6 @@ ALTER TABLE topics ADD COLUMN requirements TEXT NOT NULL DEFAULT '';
 
 --changeset emilius:07-cleanup-5
 ALTER TABLE applications ADD COLUMN reject_reason TEXT;
+
+--changeset emilius:07-cleanup-6
+ALTER TABLE thesis_presentations ADD COLUMN language TEXT NOT NULL DEFAULT 'ENGLISH';

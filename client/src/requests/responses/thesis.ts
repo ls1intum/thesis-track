@@ -15,6 +15,7 @@ export interface IThesisPresentation {
   type: string
   location: string | null
   streamUrl: string | null
+  language: string
   scheduledAt: string
   createdAt: string
   createdBy: ILightUser
@@ -92,6 +93,7 @@ export interface IPublishedPresentation {
   type: string
   location: string | null
   streamUrl: string | null
+  language: string
   scheduledAt: string
   thesis: IPublishedThesis
 }

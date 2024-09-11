@@ -39,7 +39,7 @@ public class DataFormatter {
             return "";
         }
 
-        return ((Enum<?>) value).name();
+        return formatConstantName(((Enum<?>) value).name());
     }
 
     public static String formatUsers(Object value) {
@@ -73,6 +73,18 @@ public class DataFormatter {
         }
 
         return capitalizedSentence.toString().trim();
+    }
+
+    public static String formatOptionalString(Object value) {
+        if (!(value instanceof String text)) {
+            return "Not available";
+        }
+
+        if (text.isBlank()) {
+            return "Not available";
+        }
+
+        return text;
     }
 
     public static String formatSemester(Object value) {

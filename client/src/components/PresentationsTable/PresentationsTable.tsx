@@ -2,6 +2,7 @@ import React from 'react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { IPublishedPresentation, IThesisPresentation } from '../../requests/responses/thesis'
 import { formatDate, formatPresentationType } from '../../utils/format'
+import { GLOBAL_CONFIG } from '../../config/global'
 
 interface IPresentationsTableProps<T> {
   presentations: T[] | undefined
@@ -45,6 +46,13 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
           {presentation.streamUrl}
         </a>
       ),
+    },
+    {
+      accessor: 'language',
+      title: 'Language',
+      width: 120,
+      ellipsis: true,
+      render: (presentation) => GLOBAL_CONFIG.languages[presentation.language] ?? presentation.language,
     },
     {
       accessor: 'scheduledAt',

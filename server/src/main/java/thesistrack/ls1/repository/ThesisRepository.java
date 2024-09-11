@@ -24,8 +24,7 @@ public interface ThesisRepository extends JpaRepository<Thesis, UUID> {
             "(:states IS NULL OR t.state IN :states) AND " +
             "(:types IS NULL OR t.type IN :types) AND " +
             "(:searchQuery IS NULL OR LOWER(t.title) LIKE %:searchQuery% OR " +
-            "LOWER(r.user.firstName) LIKE %:searchQuery% OR " +
-            "LOWER(r.user.lastName) LIKE %:searchQuery% OR " +
+            "LOWER(r.user.firstName) || ' ' || LOWER(r.user.lastName) LIKE %:searchQuery% OR " +
             "LOWER(r.user.email) LIKE %:searchQuery% OR " +
             "LOWER(r.user.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(r.user.universityId) LIKE %:searchQuery%)"

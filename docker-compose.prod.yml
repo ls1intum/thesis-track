@@ -104,6 +104,7 @@ services:
       - STUDY_PROGRAMS
       - STUDY_DEGREES
       - GENDERS
+      - LANGUAGES
       - CUSTOM_DATA
       - APPLICATION_TITLE
       - CHAIR_NAME

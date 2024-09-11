@@ -3,7 +3,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
-import { Button, Group } from '@mantine/core'
+import { Button, Center, Group } from '@mantine/core'
 import { Trash } from 'phosphor-react'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'
@@ -39,12 +39,15 @@ const ThesisPresentationsTable = () => {
         {
           accessor: 'presentationId',
           title: 'Actions',
+          textAlign: 'center',
+          width: 100,
+          ellipsis: true,
           render: (presentation) => (
-            <Group>
-              <Button loading={deleting} onClick={() => deletePresentation(presentation)}>
+            <Center>
+              <Button loading={deleting} size='xs' onClick={() => deletePresentation(presentation)}>
                 <Trash />
               </Button>
-            </Group>
+            </Center>
           ),
         },
       ]}

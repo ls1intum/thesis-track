@@ -11,6 +11,7 @@ public record PublishedPresentationDto (
         ThesisPresentationType type,
         String location,
         String streamUrl,
+        String language,
         Instant scheduledAt,
         PublishedThesisDto thesis
 ) {
@@ -24,6 +25,7 @@ public record PublishedPresentationDto (
                 presentation.getType(),
                 presentation.getLocation(),
                 presentation.getStreamUrl(),
+                presentation.getLanguage(),
                 presentation.getScheduledAt(),
                 PublishedThesisDto.fromThesisEntity(presentation.getThesis())
         );

@@ -85,6 +85,7 @@ public record ThesisDto (
             ThesisPresentationType type,
             String location,
             String streamUrl,
+            String language,
             Instant scheduledAt,
             Instant createdAt,
             LightUserDto createdBy
@@ -99,6 +100,7 @@ public record ThesisDto (
                     presentation.getType(),
                     presentation.getLocation(),
                     presentation.getStreamUrl(),
+                    presentation.getLanguage(),
                     presentation.getScheduledAt(),
                     presentation.getCreatedAt(),
                     LightUserDto.fromUserEntity(presentation.getCreatedBy())

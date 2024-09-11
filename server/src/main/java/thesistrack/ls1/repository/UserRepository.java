@@ -20,14 +20,13 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     @Query(
             "SELECT DISTINCT u FROM User u LEFT JOIN UserGroup g ON (u.id = g.id.userId) WHERE " +
             "(:groups IS NULL OR g.id.group IN :groups) AND " +
-            "(:searchQuery IS NULL OR LOWER(u.firstName) LIKE %:searchQuery% OR " +
-            "LOWER(u.lastName) LIKE %:searchQuery% OR " +
+            "(:searchQuery IS NULL OR LOWER(u.firstName) || ' ' || LOWER(u.lastName) LIKE %:searchQuery% OR " +
             "LOWER(u.email) LIKE %:searchQuery% OR " +
             "LOWER(u.matriculationNumber) LIKE %:searchQuery% OR " +
             "LOWER(u.universityId) LIKE %:searchQuery%)"
     )
     Page<User> searchUsers(@Param("searchQuery") String searchQuery, @Param("groups") Set<String> groups, Pageable page);
 
-    @Query("SELECT DISTINCT u FROM User u LEFT JOIN UserGroup g ON (u.id = g.id.userId) WHERE g.id.group IN (\"supervisor\", \"advisor\", \"admin\")")
-    List<User> getChairMembers();
+    @Query("SELECT DISTINCT u FROM User u LEFT JOIN UserGroup g ON (u.id = g.id.userId) WHERE g.id.group IN :roles")
+    List<User> getRoleMembers(@Param("roles") Set<String> roles);
 }

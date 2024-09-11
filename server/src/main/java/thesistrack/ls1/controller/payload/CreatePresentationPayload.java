@@ -10,5 +10,6 @@ public record CreatePresentationPayload(
         ThesisPresentationVisibility visibility,
         String location,
         String streamUrl,
+        String language,
         Instant date
 ) { }

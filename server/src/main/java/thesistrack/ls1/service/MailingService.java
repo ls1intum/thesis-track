@@ -1,5 +1,6 @@
 package thesistrack.ls1.service;
 
+import jakarta.mail.util.ByteArrayDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,8 @@ import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.utility.MailBuilder;
 import thesistrack.ls1.utility.MailConfig;
+
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class MailingService {
@@ -154,6 +157,27 @@ public class MailingService {
                 .fillThesisPresentationPlaceholders(presentation)
                 .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
+    }
+
+    public void sendPresentationInvitation(ThesisPresentation presentation, String icsFile) {
+        MailBuilder builder = new MailBuilder(config, "Thesis Presentation Invitation", "thesis-presentation-invitation");
+        builder
+                .sendToChairMembers()
+                .sendToChairStudents()
+                .fillThesisPresentationPlaceholders(presentation);
+
+        for (ThesisRole role : presentation.getThesis().getRoles()) {
+            builder.addPrimarySender(role.getUser());
+        }
+
+        if (icsFile != null && !icsFile.isBlank()) {
+            builder.addRawAttatchment(
+                    "event.ics",
+                    new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
+            );
+        }
+
+        builder.send(javaMailSender, uploadService);
     }
 
     public void sendFinalSubmissionEmail(Thesis thesis) {
