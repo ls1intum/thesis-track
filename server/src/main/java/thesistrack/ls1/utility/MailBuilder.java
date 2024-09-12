@@ -38,7 +38,7 @@ public class MailBuilder {
     private final List<InternetAddress> bccRecipients;
 
     @Getter
-    private final String subject;
+    private String subject;
 
     @Getter
     private String content;
@@ -272,8 +272,7 @@ public class MailBuilder {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
 
-                message.setSubject(subject);
-                message.setSender(config.getSender());
+                message.setFrom("ThesisTrack <" + config.getSender().getAddress() + ">");
                 message.addRecipient(Message.RecipientType.TO, recipient.getEmail());
 
                 for (InternetAddress address : secondaryRecipients) {
@@ -283,6 +282,8 @@ public class MailBuilder {
                 for (InternetAddress address : bccRecipients) {
                     message.addRecipient(Message.RecipientType.BCC, address);
                 }
+
+                message.setSubject(subject);
 
                 Multipart messageContent = new MimeMultipart();
 
@@ -325,27 +326,31 @@ public class MailBuilder {
 
             try {
                 Object value = field.get(dto);
-                String identifier = dtoPrefix + "." + field.getName();
-                String placeholder = "{{" + identifier + "}}";
+                String placeholder = dtoPrefix + "." + field.getName();
 
                 if (value != null) {
-                    if (formatters.get(identifier) != null) {
-                        content = content.replace(placeholder, formatters.get(identifier).apply(value));
+                    if (formatters.get(placeholder) != null) {
+                        replacePlaceholder(placeholder, formatters.get(placeholder).apply(value));
                     } else if (value.getClass().isRecord()) {
                         replaceDtoPlaceholders(value, dtoPrefix + "." + field.getName(), formatters);
                     } else if (value instanceof Instant) {
-                        content = content.replace(placeholder, DataFormatter.formatDateTime(value));
+                        replacePlaceholder(placeholder, DataFormatter.formatDateTime(value));
                     } else if (value.getClass().isEnum()) {
-                        content = content.replace(placeholder, DataFormatter.formatEnum(value));
+                        replacePlaceholder(placeholder, DataFormatter.formatEnum(value));
                     } else {
-                        content = content.replace(placeholder, value.toString().replace("{{", "").replace("}}", ""));
+                        replacePlaceholder(placeholder, value.toString().replace("{{", "").replace("}}", ""));
                     }
                 } else {
-                    content = content.replace(placeholder, "");
+                    replacePlaceholder(placeholder, "");
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to access field: " + field.getName(), e);
             }
         }
+    }
+
+    private void replacePlaceholder(String placeholder, String replacement) {
+        content = content.replace("{{" + placeholder + "}}", Objects.requireNonNullElse(replacement, ""));
+        subject = subject.replace("{{" + placeholder + "}}", Objects.requireNonNullElse(replacement, ""));
     }
 }
