@@ -74,10 +74,10 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendApplicationReminderEmail(long unreviewedApplications) {
+    public void sendApplicationReminderEmail(User user, long unreviewedApplications) {
         MailBuilder builder = new MailBuilder(config, "Unreviewed Thesis Applications", "application-reminder");
         builder
-                .sendToChairMembers()
+                .addPrimaryRecipient(user)
                 .fillPlaceholder("unreviewedApplications", String.valueOf(unreviewedApplications))
                 .fillPlaceholder("reviewApplicationsLink", config.getClientHost() + "/applications")
                 .send(javaMailSender, uploadService);

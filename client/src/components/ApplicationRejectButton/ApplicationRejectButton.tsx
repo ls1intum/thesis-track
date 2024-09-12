@@ -1,7 +1,7 @@
 import { doRequest } from '../../requests/request'
 import { ApplicationState, IApplication } from '../../requests/responses/application'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
-import { Button, Checkbox, Modal, Select, Stack, Text } from '@mantine/core'
+import { Button, Checkbox, Modal, Radio, Select, Stack, Text } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { ButtonProps } from '@mantine/core/lib/components/Button/Button'
 import { useApplicationsContextUpdater } from '../../contexts/ApplicationsProvider/hooks'
@@ -28,7 +28,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
     mode: 'controlled',
     initialValues: {
       notifyUser: true,
-      reason: null,
+      reason: application.topic ? 'FAILED_TOPIC_REQUIREMENTS' : 'TITLE_NOT_INTERESTING',
     },
     validateInputOnBlur: true,
     validate: {
@@ -43,6 +43,26 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
   if (application.state !== ApplicationState.NOT_ASSESSED) {
     return <></>
   }
+
+  const reasons: Array<{ value: string; label: string }> = [
+    application.topic
+      ? {
+          value: 'FAILED_TOPIC_REQUIREMENTS',
+          label: 'Topic Requirements not met',
+        }
+      : {
+          value: 'TITLE_NOT_INTERESTING',
+          label: 'Suggested topic is not interesting',
+        },
+    {
+      value: 'NO_CAPACITY',
+      label: 'No capacity at the moment',
+    },
+    {
+      value: 'FAILED_STUDENT_REQUIREMENTS',
+      label: 'General requirement not met (This will reject all applications of this student!)',
+    },
+  ]
 
   return (
     <Button
@@ -99,31 +119,13 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
         >
           <Stack>
             <Text>Please specify a reason why you want to reject the student</Text>
-            <Select
-              label='Reason'
-              required
-              data={[
-                {
-                  value: 'NO_CAPACITY',
-                  label: 'No capacity at the moment',
-                },
-                application.topic
-                  ? {
-                      value: 'FAILED_TOPIC_REQUIREMENTS',
-                      label: 'Student does not fulfil the requirements of the topic',
-                    }
-                  : {
-                      value: 'TITLE_NOT_INTERESTING',
-                      label: 'Suggested thesis topic is not interesting',
-                    },
-                {
-                  value: 'FAILED_STUDENT_REQUIREMENTS',
-                  label:
-                    'Student does not fulfil general requirements (This will reject all applications of the student)',
-                },
-              ]}
-              {...form.getInputProps('reason')}
-            />
+            <Radio.Group label='Reason' required {...form.getInputProps('reason')}>
+              <Stack gap='cs'>
+                {reasons.map((reason) => (
+                  <Radio key={reason.value} value={reason.value} label={reason.label} />
+                ))}
+              </Stack>
+            </Radio.Group>
             <Checkbox
               label='Notify Student'
               required

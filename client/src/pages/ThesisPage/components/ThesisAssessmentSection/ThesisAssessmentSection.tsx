@@ -1,14 +1,18 @@
 import { ThesisState } from '../../../../requests/responses/thesis'
-import { useState } from 'react'
-import { Accordion, Button, Stack, Text } from '@mantine/core'
+import { useRef, useState } from 'react'
+import { Accordion, Button, Center, Stack, Text } from '@mantine/core'
 import SubmitAssessmentModal from './components/SubmitAssessmentModal/SubmitAssessmentModal'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
 import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
+import generatePDF, { Margin } from 'react-to-pdf'
+import { formatThesisFilename } from '../../../../utils/format'
 
 const ThesisAssessmentSection = () => {
   const { thesis, access } = useLoadedThesisContext()
+
+  const targetRef = useRef<HTMLDivElement>(null)
 
   const [assessmentModal, setAssessmentModal] = useState(false)
 
@@ -23,7 +27,7 @@ const ThesisAssessmentSection = () => {
         <Accordion.Panel>
           <Stack gap='md'>
             {thesis.assessment ? (
-              <Stack>
+              <Stack ref={targetRef}>
                 <DocumentEditor label='Summary' value={thesis.assessment.summary} />
                 <DocumentEditor label='Positives' value={thesis.assessment.positives} />
                 <DocumentEditor label='Negatives' value={thesis.assessment.negatives} />
@@ -36,6 +40,23 @@ const ThesisAssessmentSection = () => {
               <Button ml='auto' onClick={() => setAssessmentModal(true)}>
                 Add Assessment
               </Button>
+            )}
+            {thesis.assessment && (
+              <Center>
+                <Button
+                  variant='outline'
+                  onClick={() =>
+                    generatePDF(targetRef, {
+                      filename: formatThesisFilename(thesis, 'assessment'),
+                      page: {
+                        margin: Margin.SMALL,
+                      },
+                    })
+                  }
+                >
+                  Download as PDF
+                </Button>
+              </Center>
             )}
           </Stack>
           <SubmitAssessmentModal

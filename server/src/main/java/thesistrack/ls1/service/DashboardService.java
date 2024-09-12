@@ -62,7 +62,7 @@ public class DashboardService {
         }
 
         // general advisor, supervisor tasks
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR, ThesisRoleName.SUPERVISOR), null)) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR), null)) {
             if (thesis.getState().equals(ThesisState.PROPOSAL)) {
                 continue;
             }
@@ -89,7 +89,7 @@ public class DashboardService {
             ));
         }
 
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR, ThesisRoleName.SUPERVISOR), Set.of(ThesisState.PROPOSAL))) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR), Set.of(ThesisState.PROPOSAL))) {
             if (thesis.getProposals().isEmpty()) {
                 continue;
             }
@@ -111,7 +111,7 @@ public class DashboardService {
         }
 
         // presentation tasks
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), null, Set.of(ThesisState.WRITING, ThesisState.SUBMITTED))) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.STUDENT, ThesisRoleName.ADVISOR), Set.of(ThesisState.WRITING, ThesisState.SUBMITTED))) {
             if (!thesis.getPresentations().isEmpty() || thesis.getEndDate() == null) {
                 continue;
             }
@@ -128,7 +128,7 @@ public class DashboardService {
         }
 
         // thesis assessment task
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR, ThesisRoleName.SUPERVISOR), Set.of(ThesisState.SUBMITTED))) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR), Set.of(ThesisState.SUBMITTED))) {
             tasks.add(new TaskDto(
                     "Thesis \"" + thesis.getTitle() + "\" was submitted. Please review the thesis and add an assessment.",
                     getThesisLink(thesis),

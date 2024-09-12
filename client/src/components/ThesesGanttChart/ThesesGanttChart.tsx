@@ -1,6 +1,6 @@
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
 import GanttChart, { IGanttChartDataElement } from '../GanttChart/GanttChart'
-import { useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { formatDate, formatPresentationType, formatThesisType } from '../../utils/format'
 import { ThesisStateColor, ThesisTypeColor } from '../../config/colors'
 import ThesisPreviewModal from '../ThesisPreviewModal/ThesisPreviewModal'
@@ -12,6 +12,7 @@ import { arrayUnique } from '../../utils/array'
 import ThesisData from '../ThesisData/ThesisData'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import AvatarUser from '../AvatarUser/AvatarUser'
+import LabeledItem from '../LabeledItem/LabeledItem'
 
 const ThesesGanttChart = () => {
   const { theses } = useThesesContext()
@@ -167,7 +168,7 @@ const ThesesGanttChart = () => {
                   {formatDate(presentation.scheduledAt)}
                 </Text>
               )}
-              <ThesisData thesis={thesis} additionalInformation={['title', 'state', 'keywords']} />
+              <LabeledItem label='Title' value={thesis.title} />
             </Stack>
           )
         }}

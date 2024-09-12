@@ -5,12 +5,13 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
-import { Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
+import { Alert, Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
 import { ApiError } from '../../../../../../requests/handler'
 import { formatPresentationType } from '../../../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../../../config/global'
+import { Info } from 'phosphor-react'
 
 interface ICreatePresentationModalProps {
   opened: boolean
@@ -102,6 +103,17 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
     <Modal opened={opened} onClose={onClose} title='Create Presentation'>
       <form onSubmit={form.onSubmit(() => onCreatePresentation())}>
         <Stack gap='md'>
+          {thesis.abstractText ? (
+            <Alert variant='light' color='blue' title='Notice'>
+              Please make sure that the thesis title and abstract are up to date before scheduling a
+              presentation.
+            </Alert>
+          ) : (
+            <Alert variant='light' color='red' title='Error'>
+              The thesis does not have an abstract yet. Please add one before scheduling a
+              presentation.
+            </Alert>
+          )}
           <Select
             label='Presentation Type'
             required
@@ -136,7 +148,7 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
             <Button
               type='submit'
               onClick={onCreatePresentation}
-              disabled={!form.isValid()}
+              disabled={!thesis.abstractText || !form.isValid()}
               loading={creating}
             >
               Schedule Presentation

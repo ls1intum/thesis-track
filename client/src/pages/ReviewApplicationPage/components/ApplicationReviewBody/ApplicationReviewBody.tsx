@@ -26,6 +26,7 @@ const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
         application={application}
         rightTitleSection={
           <ApplicationRejectButton
+            key={application.applicationId}
             application={application}
             onUpdate={(newApplication) => {
               onChange(newApplication)

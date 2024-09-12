@@ -213,6 +213,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
 
           <Group grow>
             <ApplicationRejectButton
+              key={application.applicationId}
               application={application}
               onUpdate={(newApplication) => {
                 onUpdate(newApplication)
