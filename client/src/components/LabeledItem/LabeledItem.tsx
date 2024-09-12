@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { ActionIcon, CopyButton, Group, Stack, Text, Tooltip } from '@mantine/core'
+import { ActionIcon, CopyButton, Group, Input, Text, Tooltip } from '@mantine/core'
 import { Check, Copy } from 'phosphor-react'
 
 interface ILabeledItemProps {
@@ -12,13 +12,10 @@ const LabeledItem = (props: ILabeledItemProps) => {
   const { label, value, copyText } = props
 
   return (
-    <Stack gap={2}>
-      <Text c='dimmed' fz='xs' fw={700}>
-        {label}
-      </Text>
-      <Group gap={4} style={{ width: '100%' }} wrap='nowrap'>
+    <Input.Wrapper label={label}>
+      <Group gap={4} wrap='nowrap'>
         {typeof value === 'string' || typeof value === 'number' ? (
-          <Text fz='sm' truncate style={{ flexGrow: 1 }}>
+          <Text fz='sm' truncate>
             {value}
           </Text>
         ) : (
@@ -36,7 +33,7 @@ const LabeledItem = (props: ILabeledItemProps) => {
           </CopyButton>
         )}
       </Group>
-    </Stack>
+    </Input.Wrapper>
   )
 }
 

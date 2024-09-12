@@ -5,7 +5,6 @@ import React, { useEffect } from 'react'
 import { IApplication } from '../../../../requests/responses/application'
 import { useWindowScroll } from '@mantine/hooks'
 import ApplicationRejectButton from '../../../../components/ApplicationRejectButton/ApplicationRejectButton'
-import { useApplicationsContext } from '../../../../contexts/ApplicationsProvider/hooks'
 
 interface IApplicationReviewBodyProps {
   application: IApplication

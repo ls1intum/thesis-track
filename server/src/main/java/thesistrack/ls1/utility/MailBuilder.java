@@ -210,7 +210,6 @@ public class MailBuilder {
         formatters.put("thesis.startDate", DataFormatter::formatDate);
         formatters.put("thesis.endDate", DataFormatter::formatDate);
         formatters.put("thesis.type", DataFormatter::formatConstantName);
-        formatters.put("thesis.visibility", DataFormatter::formatConstantName);
 
         formatters.put("thesis.students", DataFormatter::formatUsers);
         formatters.put("thesis.advisors", DataFormatter::formatUsers);
@@ -235,7 +234,6 @@ public class MailBuilder {
 
         HashMap<String, Function<Object, String>> formatters = new HashMap<>();
 
-        formatters.put("presentation.type", DataFormatter::formatEnum);
         formatters.put("presentation.language", DataFormatter::formatConstantName);
         formatters.put("presentation.streamUrl", DataFormatter::formatOptionalString);
         formatters.put("presentation.location", DataFormatter::formatOptionalString);

@@ -18,8 +18,6 @@ import { GLOBAL_CONFIG } from '../../../../config/global'
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
 
-  const [opened, setOpened] = useState(thesis.state === ThesisState.PROPOSAL)
-
   const [uploadModal, setUploadModal] = useState(false)
 
   const [accepting, onAccept] = useThesisUpdateAction(async () => {
@@ -58,8 +56,7 @@ const ThesisProposalSection = () => {
   return (
     <Accordion
       variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
+      defaultValue={thesis.state === ThesisState.PROPOSAL ? 'open' : ''}
     >
       <Accordion.Item value='open'>
         <Accordion.Control>Proposal</Accordion.Control>

@@ -43,22 +43,10 @@ const ApplicationData = (props: IApplicationDataProps) => {
           ) : (
             <LabeledItem label='Thesis Title' value={application.thesisTitle} />
           )}
-          <LabeledItem
-            label='Motivation'
-            value={<DocumentEditor value={application.motivation} />}
-          />
-          <LabeledItem
-            label='Interests'
-            value={<DocumentEditor value={application.user.interests || ''} />}
-          />
-          <LabeledItem
-            label='Projects'
-            value={<DocumentEditor value={application.user.projects || ''} />}
-          />
-          <LabeledItem
-            label='Special Skills'
-            value={<DocumentEditor value={application.user.specialSkills || ''} />}
-          />
+          <DocumentEditor label='Motivation' value={application.motivation} />
+          <DocumentEditor label='Interests' value={application.user.interests || ''} />
+          <DocumentEditor label='Projects' value={application.user.projects || ''} />
+          <DocumentEditor label='Special Skills' value={application.user.specialSkills || ''} />
           <Grid>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem

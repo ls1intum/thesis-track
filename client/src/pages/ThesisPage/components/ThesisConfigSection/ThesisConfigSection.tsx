@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { Accordion, Button, Group, Select, Stack, TagsInput, Text, TextInput } from '@mantine/core'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { DateInput, DateTimePicker, DateValue } from '@mantine/dates'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
@@ -128,8 +128,6 @@ const ThesisConfigSection = () => {
     form.reset()
   }, [thesis.thesisId])
 
-  const [opened, setOpened] = useState(false)
-
   const [closing, onClose] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
       method: 'DELETE',
@@ -174,11 +172,7 @@ const ThesisConfigSection = () => {
   }, 'Thesis updated successfully')
 
   return (
-    <Accordion
-      variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
-    >
+    <Accordion variant='separated' defaultValue=''>
       <Accordion.Item value='open'>
         <Accordion.Control>Configuration</Accordion.Control>
         <Accordion.Panel>

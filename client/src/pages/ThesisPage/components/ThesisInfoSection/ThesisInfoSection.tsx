@@ -13,7 +13,6 @@ import { ApiError } from '../../../../requests/handler'
 const ThesisInfoSection = () => {
   const { thesis, access } = useLoadedThesisContext()
 
-  const [opened, setOpened] = useState(true)
   const [editMode, setEditMode] = useState(false)
 
   const [infoText, setInfoText] = useState(thesis.infoText)
@@ -44,11 +43,7 @@ const ThesisInfoSection = () => {
   }, 'Thesis info updated successfully')
 
   return (
-    <Accordion
-      variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
-    >
+    <Accordion variant='separated' defaultValue='open'>
       <Accordion.Item value='open'>
         <Accordion.Control>Info</Accordion.Control>
         <Accordion.Panel>

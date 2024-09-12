@@ -1,15 +1,14 @@
 import { ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Stack, Text, Title } from '@mantine/core'
+import { Accordion, Button, Stack, Text } from '@mantine/core'
 import SubmitAssessmentModal from './components/SubmitAssessmentModal/SubmitAssessmentModal'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
 import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
+import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 
 const ThesisAssessmentSection = () => {
   const { thesis, access } = useLoadedThesisContext()
-
-  const [opened, setOpened] = useState(true)
 
   const [assessmentModal, setAssessmentModal] = useState(false)
 
@@ -18,25 +17,17 @@ const ThesisAssessmentSection = () => {
   }
 
   return (
-    <Accordion
-      variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
-    >
+    <Accordion variant='separated' defaultValue='open'>
       <Accordion.Item value='open'>
         <Accordion.Control>Assessment (Not visible to student)</Accordion.Control>
         <Accordion.Panel>
           <Stack gap='md'>
             {thesis.assessment ? (
               <Stack>
-                <Title order={3}>Summary</Title>
-                <DocumentEditor value={thesis.assessment.summary} />
-                <Title order={3}>Positives</Title>
-                <DocumentEditor value={thesis.assessment.positives} />
-                <Title order={3}>Negatives</Title>
-                <DocumentEditor value={thesis.assessment.negatives} />
-                <Title order={3}>Grade Suggestion</Title>
-                <Text>{thesis.assessment.gradeSuggestion}</Text>
+                <DocumentEditor label='Summary' value={thesis.assessment.summary} />
+                <DocumentEditor label='Positives' value={thesis.assessment.positives} />
+                <DocumentEditor label='Negatives' value={thesis.assessment.negatives} />
+                <LabeledItem label='Grade Suggestion' value={thesis.assessment.gradeSuggestion} />
               </Stack>
             ) : (
               <Text ta='center'>No assessment added yet</Text>

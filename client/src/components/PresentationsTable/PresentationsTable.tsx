@@ -52,7 +52,8 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
       title: 'Language',
       width: 120,
       ellipsis: true,
-      render: (presentation) => GLOBAL_CONFIG.languages[presentation.language] ?? presentation.language,
+      render: (presentation) =>
+        GLOBAL_CONFIG.languages[presentation.language] ?? presentation.language,
     },
     {
       accessor: 'scheduledAt',

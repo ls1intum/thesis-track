@@ -22,8 +22,6 @@ import { formatThesisFilename } from '../../../../utils/format'
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
 
-  const [opened, setOpened] = useState(true)
-
   const [uploadThesisModal, setUploadThesisModal] = useState(false)
   const [uploadPresentationModal, setUploadPresentationModal] = useState(false)
   const [createPresentationModal, setCreatePresentationModal] = useState(false)
@@ -89,114 +87,125 @@ const ThesisWritingSection = () => {
   }
 
   return (
-    <Accordion
-      variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
-    >
+    <Accordion variant='separated' defaultValue='open'>
       <Accordion.Item value='open'>
         <Accordion.Control>Thesis</Accordion.Control>
         <Accordion.Panel>
-          <Stack>
-            <Grid>
-              <Grid.Col span={{ lg: 6 }}>
-                <UploadFileModal
-                  title='Upload Thesis'
-                  opened={uploadThesisModal}
-                  onClose={() => setUploadThesisModal(false)}
-                  onUpload={onThesisUpload}
-                  maxSize={20 * 1024 * 1024}
-                />
-                {thesis.files.thesis ? (
-                  <AuthenticatedFilePreview
-                    key={thesis.files.thesis}
-                    title='Thesis'
-                    url={`/v2/theses/${thesis.thesisId}/thesis`}
-                    filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? '' : 'final')}.pdf`}
-                    height={400}
+          <Accordion variant='separated' defaultValue='thesis'>
+            <Accordion.Item value='thesis'>
+              <Accordion.Control>Files</Accordion.Control>
+              <Accordion.Panel>
+                <Stack>
+                  <Grid>
+                    <Grid.Col span={{ lg: 6 }}>
+                      <UploadFileModal
+                        title='Upload Thesis'
+                        opened={uploadThesisModal}
+                        onClose={() => setUploadThesisModal(false)}
+                        onUpload={onThesisUpload}
+                        maxSize={20 * 1024 * 1024}
+                      />
+                      {thesis.files.thesis ? (
+                        <AuthenticatedFilePreview
+                          key={thesis.files.thesis}
+                          title='Thesis'
+                          url={`/v2/theses/${thesis.thesisId}/thesis`}
+                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? '' : 'final')}.pdf`}
+                          height={400}
+                        />
+                      ) : (
+                        <Text ta='center' mb='md'>
+                          No thesis uploaded yet
+                        </Text>
+                      )}
+                      {access.student && thesis.state === ThesisState.WRITING && (
+                        <Center mt='md'>
+                          <Button onClick={() => setUploadThesisModal(true)}>Upload Thesis</Button>
+                        </Center>
+                      )}
+                    </Grid.Col>
+                    <Grid.Col span={{ lg: 6 }}>
+                      <UploadFileModal
+                        title='Upload Presentation'
+                        opened={uploadPresentationModal}
+                        onClose={() => setUploadPresentationModal(false)}
+                        onUpload={onPresentationUpload}
+                        maxSize={20 * 1024 * 1024}
+                      />
+                      {thesis.files.presentation ? (
+                        <AuthenticatedFilePreview
+                          key={thesis.files.presentation}
+                          title='Presentation'
+                          url={`/v2/theses/${thesis.thesisId}/presentation`}
+                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'presentation' : 'final-presentation')}.pdf`}
+                          height={400}
+                        />
+                      ) : (
+                        <Text ta='center' mb='md'>
+                          No presentation uploaded yet
+                        </Text>
+                      )}
+                      {access.student && thesis.state === ThesisState.WRITING && (
+                        <Center mt='md'>
+                          <Button onClick={() => setUploadPresentationModal(true)}>
+                            Upload Presentation
+                          </Button>
+                        </Center>
+                      )}
+                    </Grid.Col>
+                  </Grid>
+                  <Group grow>
+                    {access.student &&
+                      thesis.state === ThesisState.WRITING &&
+                      thesis.files.thesis &&
+                      thesis.files.presentation && (
+                        <Stack>
+                          <Divider />
+                          <ConfirmationButton
+                            confirmationTitle='Final Submission'
+                            confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
+                            ml='auto'
+                            onClick={onFinalSubmission}
+                            loading={submitting}
+                          >
+                            Mark Submission as final
+                          </ConfirmationButton>
+                        </Stack>
+                      )}
+                  </Group>
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value='comments'>
+              <Accordion.Control>Comments</Accordion.Control>
+              <Accordion.Panel>
+                <Stack>
+                  <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
+                    <ThesisCommentsList />
+                    {access.student && <ThesisCommentsForm />}
+                  </ThesisCommentsProvider>
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value='presentations'>
+              <Accordion.Control>Presentations</Accordion.Control>
+              <Accordion.Panel>
+                <Stack>
+                  <CreatePresentationModal
+                    opened={createPresentationModal}
+                    onClose={() => setCreatePresentationModal(false)}
                   />
-                ) : (
-                  <Text ta='center' mb='md'>
-                    No thesis uploaded yet
-                  </Text>
-                )}
-                {access.student && thesis.state === ThesisState.WRITING && (
-                  <Center mt='md'>
-                    <Button onClick={() => setUploadThesisModal(true)}>Upload Thesis</Button>
-                  </Center>
-                )}
-              </Grid.Col>
-              <Grid.Col span={{ lg: 6 }}>
-                <UploadFileModal
-                  title='Upload Presentation'
-                  opened={uploadPresentationModal}
-                  onClose={() => setUploadPresentationModal(false)}
-                  onUpload={onPresentationUpload}
-                  maxSize={20 * 1024 * 1024}
-                />
-                {thesis.files.presentation ? (
-                  <AuthenticatedFilePreview
-                    key={thesis.files.presentation}
-                    title='Presentation'
-                    url={`/v2/theses/${thesis.thesisId}/presentation`}
-                    filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'presentation' : 'final-presentation')}.pdf`}
-                    height={400}
-                  />
-                ) : (
-                  <Text ta='center' mb='md'>
-                    No presentation uploaded yet
-                  </Text>
-                )}
-                {access.student && thesis.state === ThesisState.WRITING && (
-                  <Center mt='md'>
-                    <Button onClick={() => setUploadPresentationModal(true)}>
-                      Upload Presentation
-                    </Button>
-                  </Center>
-                )}
-              </Grid.Col>
-            </Grid>
-            <Group grow>
-              {access.student &&
-                thesis.state === ThesisState.WRITING &&
-                thesis.files.thesis &&
-                thesis.files.presentation && (
-                  <Stack>
-                    <Divider />
-                    <ConfirmationButton
-                      confirmationTitle='Final Submission'
-                      confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
-                      ml='auto'
-                      onClick={onFinalSubmission}
-                      loading={submitting}
-                    >
-                      Mark Submission as final
-                    </ConfirmationButton>
-                  </Stack>
-                )}
-            </Group>
-            <Divider />
-            <Stack>
-              <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
-                <ThesisCommentsList />
-                {access.student && <ThesisCommentsForm />}
-              </ThesisCommentsProvider>
-            </Stack>
-            <Stack>
-              <Divider />
-              <CreatePresentationModal
-                opened={createPresentationModal}
-                onClose={() => setCreatePresentationModal(false)}
-              />
-              <ThesisPresentationsTable />
-              {access.advisor &&
-                [ThesisState.WRITING, ThesisState.SUBMITTED].includes(thesis.state) && (
-                  <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
-                    Schedule Presentation
-                  </Button>
-                )}
-            </Stack>
-          </Stack>
+                  <ThesisPresentationsTable />
+                  {access.advisor &&
+                    [ThesisState.WRITING, ThesisState.SUBMITTED].includes(thesis.state) && (
+                      <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
+                        Schedule Presentation
+                      </Button>
+                    )}
+                </Stack>
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>

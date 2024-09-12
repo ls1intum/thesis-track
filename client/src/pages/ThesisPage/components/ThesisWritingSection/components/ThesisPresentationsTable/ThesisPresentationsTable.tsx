@@ -3,7 +3,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
-import { Button, Center, Group } from '@mantine/core'
+import { Button, Center } from '@mantine/core'
 import { Trash } from 'phosphor-react'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'

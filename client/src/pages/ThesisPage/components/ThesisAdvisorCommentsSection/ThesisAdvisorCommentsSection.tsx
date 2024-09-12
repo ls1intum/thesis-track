@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Accordion, Stack } from '@mantine/core'
 import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
@@ -8,18 +7,12 @@ import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
 const ThesisAdvisorCommentsSection = () => {
   const { thesis, access } = useLoadedThesisContext()
 
-  const [opened, setOpened] = useState(false)
-
   if (!access.advisor) {
     return null
   }
 
   return (
-    <Accordion
-      variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
-    >
+    <Accordion variant='separated' defaultValue=''>
       <Accordion.Item value='open'>
         <Accordion.Control>Advisor Comments (Not visible to student)</Accordion.Control>
         <Accordion.Panel>
