@@ -1,6 +1,6 @@
 import { ThesisState } from '../../../../requests/responses/thesis'
 import { useRef, useState } from 'react'
-import { Accordion, Button, Center, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Center, Stack, Text, Badge, Group } from '@mantine/core'
 import SubmitAssessmentModal from './components/SubmitAssessmentModal/SubmitAssessmentModal'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
@@ -23,7 +23,12 @@ const ThesisAssessmentSection = () => {
   return (
     <Accordion variant='separated' defaultValue='open'>
       <Accordion.Item value='open'>
-        <Accordion.Control>Assessment (Not visible to student)</Accordion.Control>
+        <Accordion.Control>
+          <Group gap='xs'>
+            <Text>Assessment</Text>
+            <Badge color='grey'>Not visible to student</Badge>
+          </Group>
+        </Accordion.Control>
         <Accordion.Panel>
           <Stack gap='md'>
             {thesis.assessment ? (

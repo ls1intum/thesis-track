@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import thesistrack.ls1.constants.ThesisPresentationState;
 import thesistrack.ls1.constants.ThesisPresentationType;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
 
@@ -36,12 +37,18 @@ public class ThesisPresentation {
     @Column(name = "visibility", nullable = false)
     private ThesisPresentationVisibility visibility;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "state", nullable = false)
+    private ThesisPresentationState state;
+
     @Column(name = "location")
     private String location;
 
     @Column(name = "stream_url")
     private String streamUrl;
 
+    @NotNull
     @Column(name = "language")
     private String language;
 

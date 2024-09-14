@@ -15,9 +15,9 @@ import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
-import CreatePresentationModal from './components/CreatePresentationModal/CreatePresentationModal'
 import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
 import { formatThesisFilename } from '../../../../utils/format'
+import ReplacePresentationModal from './components/ReplacePresentationModal/ReplacePresentationModal'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -154,25 +154,6 @@ const ThesisWritingSection = () => {
                       )}
                     </Grid.Col>
                   </Grid>
-                  <Group grow>
-                    {access.student &&
-                      thesis.state === ThesisState.WRITING &&
-                      thesis.files.thesis &&
-                      thesis.files.presentation && (
-                        <Stack>
-                          <Divider />
-                          <ConfirmationButton
-                            confirmationTitle='Final Submission'
-                            confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
-                            ml='auto'
-                            onClick={onFinalSubmission}
-                            loading={submitting}
-                          >
-                            Mark Submission as final
-                          </ConfirmationButton>
-                        </Stack>
-                      )}
-                  </Group>
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>
@@ -191,21 +172,36 @@ const ThesisWritingSection = () => {
               <Accordion.Control>Presentations</Accordion.Control>
               <Accordion.Panel>
                 <Stack>
-                  <CreatePresentationModal
+                  <ReplacePresentationModal
                     opened={createPresentationModal}
                     onClose={() => setCreatePresentationModal(false)}
                   />
                   <ThesisPresentationsTable />
-                  {access.advisor &&
-                    [ThesisState.WRITING, ThesisState.SUBMITTED].includes(thesis.state) && (
-                      <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
-                        Schedule Presentation
-                      </Button>
-                    )}
+                  {access.student && (
+                    <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
+                      Create Presentation Draft
+                    </Button>
+                  )}
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>
           </Accordion>
+          <Stack mt='md'>
+            {access.student &&
+              thesis.state === ThesisState.WRITING &&
+              thesis.files.thesis &&
+              thesis.files.presentation && (
+                <ConfirmationButton
+                  confirmationTitle='Final Submission'
+                  confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
+                  ml='auto'
+                  onClick={onFinalSubmission}
+                  loading={submitting}
+                >
+                  Mark Submission as final
+                </ConfirmationButton>
+              )}
+          </Stack>
         </Accordion.Panel>
       </Accordion.Item>
     </Accordion>

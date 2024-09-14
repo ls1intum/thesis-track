@@ -34,12 +34,17 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
   const selected: string[] = inputProps.value || []
 
   const [loading, setLoading] = useState(false)
+  const [focused, setFocused] = useState(false)
   const [data, setData] = useState<Array<{ value: string; label: string; user: ILightUser }>>([])
   const [searchValue, setSearchValue] = useState('')
 
   const [debouncedSearchValue] = useDebouncedValue(searchValue, 500)
 
   useEffect(() => {
+    if (!focused) {
+      return
+    }
+
     setLoading(true)
 
     return doRequest<PaginationResponse<ILightUser>>(
@@ -75,7 +80,7 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
         }
       },
     )
-  }, [groups.join(','), debouncedSearchValue])
+  }, [groups.join(','), debouncedSearchValue, focused])
 
   const mergedData = arrayUnique(
     [
@@ -107,6 +112,7 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
       searchable={selected.length < maxValues}
       clearable={true}
       searchValue={searchValue}
+      onClick={() => setFocused(true)}
       onSearchChange={setSearchValue}
       hidePickedOptions={selected.length < maxValues}
       maxValues={maxValues}

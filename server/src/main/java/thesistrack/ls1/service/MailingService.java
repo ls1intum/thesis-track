@@ -6,11 +6,13 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import thesistrack.ls1.constants.ThesisCommentType;
 import thesistrack.ls1.constants.ApplicationRejectReason;
+import thesistrack.ls1.constants.ThesisPresentationVisibility;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.utility.MailBuilder;
 import thesistrack.ls1.utility.MailConfig;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 
 @Service
 public class MailingService {
@@ -139,17 +141,54 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendNewScheduledPresentationEmail(ThesisPresentation presentation) {
-        MailBuilder builder = new MailBuilder(config, "New Presentation scheduled", "thesis-presentation-scheduled");
-        builder
+    public void sendScheduledPresentationEmail(String action, ThesisPresentation presentation, String icsFile) {
+        if (presentation.getScheduledAt().isBefore(Instant.now())) {
+            return;
+        }
+
+        MailBuilder privateBuilder = new MailBuilder(
+                config,
+                action.equals("UPDATED") ? "Presentation updated" : "New Presentation scheduled",
+                action.equals("UPDATED") ? "thesis-presentation-updated" : "thesis-presentation-scheduled"
+        );
+        privateBuilder
                 .addPrimarySender(presentation.getCreatedBy())
                 .sendToThesisStudents(presentation.getThesis())
                 .addDefaultBccRecipients()
                 .fillThesisPresentationPlaceholders(presentation)
                 .send(javaMailSender, uploadService);
+
+        if (presentation.getVisibility() == ThesisPresentationVisibility.PUBLIC) {
+            MailBuilder publicBuilder = new MailBuilder(
+                    config,
+                    action.equals("UPDATED") ? "Thesis Presentation Updated" : "Thesis Presentation Invitation",
+                    "thesis-presentation-invitation"
+            );
+            publicBuilder
+                    .sendToChairMembers()
+                    .sendToChairStudents()
+                    .fillThesisPresentationPlaceholders(presentation);
+
+            for (ThesisRole role : presentation.getThesis().getRoles()) {
+                publicBuilder.addPrimarySender(role.getUser());
+            }
+
+            if (icsFile != null && !icsFile.isBlank()) {
+                publicBuilder.addRawAttatchment(
+                        "event.ics",
+                        new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
+                );
+            }
+
+            publicBuilder.send(javaMailSender, uploadService);
+        }
     }
 
     public void sendPresentationDeletedEmail(User deletingUser, ThesisPresentation presentation) {
+        if (presentation.getScheduledAt().isBefore(Instant.now())) {
+            return;
+        }
+
         MailBuilder builder = new MailBuilder(config, "Presentation deleted", "thesis-presentation-deleted");
         builder
                 .sendToThesisStudents(presentation.getThesis())
@@ -157,27 +196,20 @@ public class MailingService {
                 .fillThesisPresentationPlaceholders(presentation)
                 .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
-    }
 
-    public void sendPresentationInvitation(ThesisPresentation presentation, String icsFile) {
-        MailBuilder builder = new MailBuilder(config, "Thesis Presentation Invitation", "thesis-presentation-invitation");
-        builder
-                .sendToChairMembers()
-                .sendToChairStudents()
-                .fillThesisPresentationPlaceholders(presentation);
+        if (presentation.getVisibility() == ThesisPresentationVisibility.PUBLIC) {
+            MailBuilder publicBuilder = new MailBuilder(config, "Thesis Presentation Cancelled ", "thesis-presentation-invitation-cancelled");
+            publicBuilder
+                    .sendToChairMembers()
+                    .sendToChairStudents()
+                    .fillThesisPresentationPlaceholders(presentation);
 
-        for (ThesisRole role : presentation.getThesis().getRoles()) {
-            builder.addPrimarySender(role.getUser());
+            for (ThesisRole role : presentation.getThesis().getRoles()) {
+                publicBuilder.addPrimarySender(role.getUser());
+            }
+
+            publicBuilder.send(javaMailSender, uploadService);
         }
-
-        if (icsFile != null && !icsFile.isBlank()) {
-            builder.addRawAttatchment(
-                    "event.ics",
-                    new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
-            );
-        }
-
-        builder.send(javaMailSender, uploadService);
     }
 
     public void sendFinalSubmissionEmail(Thesis thesis) {

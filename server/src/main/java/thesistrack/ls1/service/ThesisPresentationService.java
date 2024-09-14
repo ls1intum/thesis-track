@@ -7,11 +7,13 @@ import net.fortuna.ical4j.model.property.immutable.ImmutableMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import thesistrack.ls1.constants.ThesisPresentationState;
 import thesistrack.ls1.constants.ThesisPresentationType;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
 import thesistrack.ls1.entity.Thesis;
 import thesistrack.ls1.entity.ThesisPresentation;
 import thesistrack.ls1.entity.User;
+import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.ThesisPresentationRepository;
 import thesistrack.ls1.repository.ThesisRepository;
@@ -73,6 +75,7 @@ public class ThesisPresentationService {
         ThesisPresentation presentation = new ThesisPresentation();
 
         presentation.setThesis(thesis);
+        presentation.setState(ThesisPresentationState.DRAFTED);
         presentation.setType(type);
         presentation.setVisibility(visibility);
         presentation.setLocation(location);
@@ -84,21 +87,65 @@ public class ThesisPresentationService {
 
         presentation = thesisPresentationRepository.save(presentation);
 
-        if (visibility.equals(ThesisPresentationVisibility.PUBLIC)) {
-            presentation.setCalendarEvent(calendarService.createEvent(createPresentationCalendarEvent(presentation)));
-            presentation = thesisPresentationRepository.save(presentation);
-
-            mailingService.sendPresentationInvitation(presentation, getPresentationEvent(presentation).toString());
-        }
-
         List<ThesisPresentation> presentations = thesis.getPresentations();
         presentations.add(presentation);
         presentations.sort(Comparator.comparing(ThesisPresentation::getScheduledAt));
         thesis.setPresentations(presentations);
 
-        thesis = thesisRepository.save(thesis);
+        return thesisRepository.save(thesis);
+    }
 
-        mailingService.sendNewScheduledPresentationEmail(presentation);
+    @Transactional
+    public Thesis updatePresentation(
+            ThesisPresentation presentation,
+            ThesisPresentationType type,
+            ThesisPresentationVisibility visibility,
+            String location,
+            String streamUrl,
+            String language,
+            Instant date
+    ) {
+        Thesis thesis = presentation.getThesis();
+        presentation = thesis.getPresentation(presentation.getId()).orElseThrow();
+
+        presentation.setType(type);
+        presentation.setVisibility(visibility);
+        presentation.setLocation(location);
+        presentation.setStreamUrl(streamUrl);
+        presentation.setLanguage(language);
+        presentation.setScheduledAt(date);
+
+        thesisPresentationRepository.save(presentation);
+
+        if (presentation.getState() == ThesisPresentationState.SCHEDULED) {
+            mailingService.sendScheduledPresentationEmail("UPDATED", presentation, getPresentationEvent(presentation).toString());
+        }
+
+        updateThesisCalendarEvents(thesis);
+
+        return thesis;
+    }
+
+    @Transactional
+    public Thesis schedulePresentation(ThesisPresentation presentation) {
+        Thesis thesis = presentation.getThesis();
+        presentation = thesis.getPresentation(presentation.getId()).orElseThrow();
+
+        if (presentation.getState() == ThesisPresentationState.SCHEDULED) {
+            throw new ResourceInvalidParametersException("Presentation is already scheduled");
+        }
+
+        presentation.setState(ThesisPresentationState.SCHEDULED);
+
+        calendarService.deleteEvent(presentation.getCalendarEvent());
+
+        if (presentation.getVisibility().equals(ThesisPresentationVisibility.PUBLIC)) {
+            presentation.setCalendarEvent(calendarService.createEvent(createPresentationCalendarEvent(presentation)));
+        }
+
+        presentation = thesisPresentationRepository.save(presentation);
+
+        mailingService.sendScheduledPresentationEmail("CREATED", presentation, getPresentationEvent(presentation).toString());
 
         return thesis;
     }
@@ -118,7 +165,10 @@ public class ThesisPresentationService {
         thesis = thesisRepository.save(thesis);
 
         calendarService.deleteEvent(presentation.getCalendarEvent());
-        mailingService.sendPresentationDeletedEmail(deletingUser, presentation);
+
+        if (presentation.getState() == ThesisPresentationState.SCHEDULED) {
+            mailingService.sendPresentationDeletedEmail(deletingUser, presentation);
+        }
 
         return thesis;
     }

@@ -1,9 +1,6 @@
 package thesistrack.ls1.dto;
 
-import thesistrack.ls1.constants.ThesisPresentationType;
-import thesistrack.ls1.constants.ThesisRoleName;
-import thesistrack.ls1.constants.ThesisState;
-import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.constants.*;
 import thesistrack.ls1.entity.*;
 
 import java.time.Instant;
@@ -82,7 +79,9 @@ public record ThesisDto (
 
     public record ThesisPresentationDto(
             UUID presentationId,
+            ThesisPresentationState state,
             ThesisPresentationType type,
+            ThesisPresentationVisibility visibility,
             String location,
             String streamUrl,
             String language,
@@ -97,7 +96,9 @@ public record ThesisDto (
 
             return new ThesisPresentationDto(
                     presentation.getId(),
+                    presentation.getState(),
                     presentation.getType(),
+                    presentation.getVisibility(),
                     presentation.getLocation(),
                     presentation.getStreamUrl(),
                     presentation.getLanguage(),

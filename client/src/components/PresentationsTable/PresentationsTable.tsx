@@ -1,13 +1,28 @@
 import React from 'react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
-import { IPublishedPresentation, IThesisPresentation } from '../../requests/responses/thesis'
+import {
+  IPublishedPresentation,
+  isThesisPresentation,
+  IThesisPresentation,
+} from '../../requests/responses/thesis'
 import { formatDate, formatPresentationType } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
+import { Anchor, Badge, Center } from '@mantine/core'
+
+type PresentationColumn =
+  | 'state'
+  | 'type'
+  | 'location'
+  | 'streamUrl'
+  | 'language'
+  | 'scheduledAt'
+  | string
 
 interface IPresentationsTableProps<T> {
   presentations: T[] | undefined
   onRowClick?: (presentation: T) => unknown
-  extraColumns?: Array<DataTableColumn<T>>
+  columns?: PresentationColumn[]
+  extraColumns?: Record<PresentationColumn, DataTableColumn<T>>
   pagination?: {
     totalRecords: number
     recordsPerPage: number
@@ -19,10 +34,32 @@ interface IPresentationsTableProps<T> {
 const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentation>(
   props: IPresentationsTableProps<T>,
 ) => {
-  const { presentations, onRowClick, extraColumns, pagination } = props
+  const {
+    presentations,
+    onRowClick,
+    columns = ['type', 'location', 'streamUrl', 'language', 'scheduledAt'],
+    extraColumns,
+    pagination,
+  } = props
 
-  const columns: Array<DataTableColumn<T>> = [
-    {
+  const columnConfig: Record<PresentationColumn, DataTableColumn<T>> = {
+    state: {
+      accessor: 'state',
+      title: 'State',
+      textAlign: 'center',
+      width: 120,
+      ellipsis: true,
+      render: (presentation) => (
+        <Center>
+          {isThesisPresentation(presentation) && (
+            <Badge color={presentation.state === 'DRAFTED' ? 'grey' : undefined}>
+              {presentation.state}
+            </Badge>
+          )}
+        </Center>
+      ),
+    },
+    type: {
       accessor: 'type',
       title: 'Type',
       textAlign: 'center',
@@ -30,24 +67,24 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
       ellipsis: true,
       render: (presentation) => formatPresentationType(presentation.type),
     },
-    {
+    location: {
       accessor: 'location',
       title: 'Location',
     },
-    {
+    streamUrl: {
       accessor: 'streamUrl',
       title: 'Stream URL',
       render: (presentation) => (
-        <a
+        <Anchor
           href={presentation.streamUrl || undefined}
           target='_blank'
           rel='noopener noreferrer nofollow'
         >
           {presentation.streamUrl}
-        </a>
+        </Anchor>
       ),
     },
-    {
+    language: {
       accessor: 'language',
       title: 'Language',
       width: 120,
@@ -55,15 +92,15 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
       render: (presentation) =>
         GLOBAL_CONFIG.languages[presentation.language] ?? presentation.language,
     },
-    {
+    scheduledAt: {
       accessor: 'scheduledAt',
       title: 'Scheduled At',
       width: 160,
       ellipsis: true,
       render: (presentation) => formatDate(presentation.scheduledAt),
     },
-    ...(extraColumns ?? []),
-  ]
+    ...(extraColumns ?? {}),
+  }
 
   if (pagination) {
     return (
@@ -81,7 +118,7 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
         page={pagination.page}
         onPageChange={pagination.onPageChange}
         idAccessor='presentationId'
-        columns={columns}
+        columns={columns.map((column) => columnConfig[column])}
         onRowClick={onRowClick ? ({ record }) => onRowClick(record) : undefined}
       />
     )
@@ -97,7 +134,7 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
         highlightOnHover
         records={presentations}
         idAccessor='presentationId'
-        columns={columns}
+        columns={columns.map((column) => columnConfig[column])}
       />
     )
   }

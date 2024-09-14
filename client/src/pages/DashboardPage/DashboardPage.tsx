@@ -14,6 +14,7 @@ import ApplicationModal from '../../components/ApplicationModal/ApplicationModal
 import MyTasksSection from './components/MyTasksSection/MyTasksSection'
 import PublicPresentationsSection from './components/PublicPresentationsSection/PublicPresentationsSection'
 import { Pencil } from 'phosphor-react'
+import { ThesisState } from '../../requests/responses/thesis'
 
 const DashboardPage = () => {
   usePageTitle('Dashboard')
@@ -29,7 +30,20 @@ const DashboardPage = () => {
       </Title>
       <MyTasksSection />
       <Space mb='md' />
-      <ThesesProvider hideIfEmpty={!managementAccess}>
+      <ThesesProvider
+        hideIfEmpty={!managementAccess}
+        defaultStates={
+          managementAccess
+            ? [
+                ThesisState.PROPOSAL,
+                ThesisState.WRITING,
+                ThesisState.SUBMITTED,
+                ThesisState.ASSESSED,
+                ThesisState.GRADED,
+              ]
+            : undefined
+        }
+      >
         <Title order={2}>My Theses</Title>
         {managementAccess && (
           <>

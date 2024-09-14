@@ -226,4 +226,14 @@ public class Thesis {
 
         return false;
     }
+
+    public Optional<ThesisPresentation> getPresentation(UUID presentationId) {
+        for (ThesisPresentation presentation : getPresentations()) {
+            if (presentation.getId().equals(presentationId)) {
+                return Optional.of(presentation);
+            }
+        }
+
+        return Optional.empty();
+    }
 }

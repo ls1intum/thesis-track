@@ -1,4 +1,4 @@
-import { Alert, Space, Title } from '@mantine/core'
+import { Alert, Stack, Title } from '@mantine/core'
 import { ThesisState } from '../../../../requests/responses/thesis'
 import { Info } from 'phosphor-react'
 import React from 'react'
@@ -11,13 +11,12 @@ const ThesisHeader = () => {
   usePageTitle(thesis.title)
 
   return (
-    <>
+    <Stack>
       <Title>{thesis.title}</Title>
-      <Space my='md' />
       {thesis.state === ThesisState.DROPPED_OUT && (
         <Alert variant='light' color='red' title='This thesis is closed' icon={<Info />} mb='md' />
       )}
-    </>
+    </Stack>
   )
 }
 

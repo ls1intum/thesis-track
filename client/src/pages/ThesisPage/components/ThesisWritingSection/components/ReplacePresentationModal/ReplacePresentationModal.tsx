@@ -7,19 +7,19 @@ import {
 } from '../../../../../../contexts/ThesisProvider/hooks'
 import { Alert, Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
-import { IThesis } from '../../../../../../requests/responses/thesis'
+import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'
 import { ApiError } from '../../../../../../requests/handler'
 import { formatPresentationType } from '../../../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../../../config/global'
-import { Info } from 'phosphor-react'
 
-interface ICreatePresentationModalProps {
+interface IReplacePresentationModalProps {
   opened: boolean
   onClose: () => unknown
+  presentation?: IThesisPresentation
 }
 
-const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
-  const { opened, onClose } = props
+const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
+  const { presentation, opened, onClose } = props
 
   const { thesis } = useLoadedThesisContext()
 
@@ -73,22 +73,47 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
   }, [form.values.streamUrl, form.values.location])
 
   useEffect(() => {
-    form.reset()
-  }, [opened])
+    if (presentation) {
+      form.setInitialValues({
+        type: presentation.type,
+        visibility: presentation.visibility,
+        location: presentation.location || '',
+        streamUrl: presentation.streamUrl || '',
+        language: presentation.language,
+        date: new Date(presentation.scheduledAt),
+      })
+    } else {
+      form.setInitialValues({
+        type: 'INTERMEDIATE',
+        visibility: 'PUBLIC',
+        location: '',
+        streamUrl: '',
+        language: null,
+        date: null,
+      })
+    }
 
-  const [creating, onCreatePresentation] = useThesisUpdateAction(async () => {
-    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/presentations`, {
-      method: 'POST',
-      requiresAuth: true,
-      data: {
-        type: form.values.type,
-        visibility: form.values.visibility,
-        location: form.values.location,
-        streamUrl: form.values.streamUrl,
-        language: form.values.language,
-        date: form.values.date,
+    form.reset()
+  }, [opened, presentation])
+
+  const [replacing, onReplacePresentation] = useThesisUpdateAction(async () => {
+    const response = await doRequest<IThesis>(
+      presentation
+        ? `/v2/theses/${thesis.thesisId}/presentations/${presentation.presentationId}`
+        : `/v2/theses/${thesis.thesisId}/presentations`,
+      {
+        method: presentation ? 'PUT' : 'POST',
+        requiresAuth: true,
+        data: {
+          type: form.values.type,
+          visibility: form.values.visibility,
+          location: form.values.location,
+          streamUrl: form.values.streamUrl,
+          language: form.values.language,
+          date: form.values.date,
+        },
       },
-    })
+    )
 
     if (response.ok) {
       onClose()
@@ -100,8 +125,12 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
   }, 'Presentation successfully scheduled')
 
   return (
-    <Modal opened={opened} onClose={onClose} title='Create Presentation'>
-      <form onSubmit={form.onSubmit(() => onCreatePresentation())}>
+    <Modal
+      opened={opened}
+      onClose={onClose}
+      title={presentation ? 'Update Presentation' : 'Create Presentation'}
+    >
+      <form onSubmit={form.onSubmit(() => onReplacePresentation())}>
         <Stack gap='md'>
           {thesis.abstractText ? (
             <Alert variant='light' color='blue' title='Notice'>
@@ -147,11 +176,11 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
           <Group grow>
             <Button
               type='submit'
-              onClick={onCreatePresentation}
+              onClick={onReplacePresentation}
               disabled={!thesis.abstractText || !form.isValid()}
-              loading={creating}
+              loading={replacing}
             >
-              Schedule Presentation
+              {presentation ? 'Update Presentation' : 'Create Presentation Draft'}
             </Button>
           </Group>
         </Stack>
@@ -160,4 +189,4 @@ const CreatePresentationModal = (props: ICreatePresentationModalProps) => {
   )
 }
 
-export default CreatePresentationModal
+export default ReplacePresentationModal
