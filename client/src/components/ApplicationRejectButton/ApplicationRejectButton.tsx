@@ -48,7 +48,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
     application.topic
       ? {
           value: 'FAILED_TOPIC_REQUIREMENTS',
-          label: 'Topic Requirements not met',
+          label: 'Topic requirements not met',
         }
       : {
           value: 'TITLE_NOT_INTERESTING',
@@ -60,7 +60,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
     },
     {
       value: 'FAILED_STUDENT_REQUIREMENTS',
-      label: 'General requirement not met (This will reject all applications of this student!)',
+      label: 'General requirements not met (This will reject all applications of this student!)',
     },
   ]
 
@@ -109,6 +109,8 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
                 if (currentApplication) {
                   onUpdate(currentApplication)
                 }
+
+                setConfirmationModal(false)
               } else {
                 showSimpleError(getApiResponseErrorMessage(response))
               }

@@ -5,12 +5,15 @@ import { GLOBAL_CONFIG } from '../../config/global'
 import React, { useEffect, useState } from 'react'
 import { useDebouncedValue } from '@mantine/hooks'
 import { doRequest } from '../../requests/request'
-import { Button, Checkbox, Group, Select, Stack, Text, Textarea, TextInput } from '@mantine/core'
+import { Button, Checkbox, Divider, Group, Select, Space, Stack, Text, Textarea, TextInput } from '@mantine/core'
 import UserMultiSelect from '../UserMultiSelect/UserMultiSelect'
 import { isNotEmptyUserList } from '../../utils/validation'
 import { showSimpleError, showSimpleSuccess } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
 import ApplicationRejectButton from '../ApplicationRejectButton/ApplicationRejectButton'
+import { useLoggedInUser } from '../../hooks/authentication'
+import AvatarUser from '../AvatarUser/AvatarUser'
+import { formatDate } from '../../utils/format'
 
 interface IApplicationReviewFormProps {
   application: IApplication
@@ -31,6 +34,7 @@ interface IApplicationReviewForm {
 const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   const { application, onUpdate } = props
 
+  const user = useLoggedInUser()
   const updateApplicationContext = useApplicationsContextUpdater()
 
   const form = useForm<IApplicationReviewForm>({
@@ -150,10 +154,82 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     }
   }
 
+  const onReviewReasonChange = async (reason: string) => {
+    setLoading(true)
+
+    try {
+      const response = await doRequest<IApplication>(
+        `/v2/applications/${application.applicationId}/review`,
+        {
+          method: 'PUT',
+          requiresAuth: true,
+          data: {
+            reason,
+          },
+        },
+      )
+
+      if (response.ok) {
+        showSimpleSuccess('Application review reason updated successfully')
+
+        updateApplicationContext(response.data)
+        onUpdate(response.data)
+      } else {
+        showSimpleError(getApiResponseErrorMessage(response))
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const reviewers = application.reviewers || []
+
+  if (!reviewers.some((row) => row.user.userId === user.userId)) {
+    reviewers.unshift({
+      user: user,
+      reason: 'NOT_REVIEWED',
+      reviewedAt: '',
+    })
+  }
+
   return (
     <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
+      <Stack gap='sm'>
+        {reviewers.map((reviewer) => (
+          <Group key={reviewer.user.userId} grow wrap='nowrap'>
+            <AvatarUser user={reviewer.user} />
+            <Select
+              value={reviewer.reason}
+              data={[
+                { value: 'NOT_REVIEWED', label: 'Not reviewed' },
+                { value: 'INTERESTED', label: 'Interested' },
+                { value: 'NOT_INTERESTED', label: 'Not interested' },
+              ]}
+              onChange={(reason) => reason && onReviewReasonChange(reason)}
+              disabled={
+                reviewer.user.userId !== user.userId || application.state !== 'NOT_ASSESSED'
+              }
+            />
+            <Text truncate>{reviewer.reviewedAt && formatDate(reviewer.reviewedAt)}</Text>
+          </Group>
+        ))}
+        <Stack gap='0'>
+          <Textarea
+            label='Comment'
+            placeholder='Add a comment'
+            autosize={true}
+            minRows={5}
+            {...form.getInputProps('comment')}
+          />
+          <Text ta='right' fz='xs'>
+            {form.values.comment !== application.comment ? 'Saving...' : 'Saved!'}
+          </Text>
+        </Stack>
+      </Stack>
       {application?.state === ApplicationState.NOT_ASSESSED && (
         <Stack gap='sm'>
+          <Space />
+          <Divider />
           <TextInput
             type='text'
             required={true}
@@ -187,19 +263,6 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             initialUsers={application.topic?.advisors}
             {...form.getInputProps('advisors')}
           />
-
-          <Stack gap='0'>
-            <Textarea
-              label='Comment'
-              placeholder='Add a comment'
-              autosize={true}
-              minRows={5}
-              {...form.getInputProps('comment')}
-            />
-            <Text ta='right' fz='xs'>
-              {form.values.comment !== application.comment ? 'Saving...' : 'Saved!'}
-            </Text>
-          </Stack>
 
           <Checkbox
             label='Notify Student'

@@ -18,6 +18,10 @@ export interface IApplication {
   desiredStartDate: string
   comment: string
   createdAt: string
-  reviewedBy: ILightUser | null
-  reviewedAt: string
+  reviewers: Array<{
+    user: ILightUser
+    reason: string
+    reviewedAt: string
+  }> | null
+  reviewedAt: string | null
 }

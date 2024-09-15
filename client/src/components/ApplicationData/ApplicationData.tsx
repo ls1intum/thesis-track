@@ -135,6 +135,12 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 }
               />
             </Grid.Col>
+            {application.reviewedAt && (
+              <LabeledItem
+                label='Reviewed At'
+                value={formatDate(application.reviewedAt, { withTime: true })}
+              />
+            )}
             {application.user.customData &&
               Object.entries(application.user.customData).map(([key, value]) => (
                 <Grid.Col key={key} span={{ md: 6 }}>
@@ -142,28 +148,6 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 </Grid.Col>
               ))}
           </Grid>
-          {(application.reviewedBy || application.reviewedAt || application.comment) && (
-            <Stack gap='md'>
-              <Divider />
-              <Group grow>
-                {application.reviewedBy && (
-                  <LabeledItem
-                    label='Reviewer'
-                    value={<AvatarUser user={application.reviewedBy} withUniversityId={true} />}
-                  />
-                )}
-                {application.reviewedAt && (
-                  <LabeledItem
-                    label='Reviewed At'
-                    value={formatDate(application.reviewedAt, { withTime: true })}
-                  />
-                )}
-                {application.comment && (
-                  <LabeledItem label='Review Comment' value={application.comment} />
-                )}
-              </Group>
-            </Stack>
-          )}
           {bottomSection}
         </Stack>
       </Grid.Col>

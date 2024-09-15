@@ -18,7 +18,7 @@ const ThesisPreviewModal = (props: IThesisPreviewModalProps) => {
         <Stack gap='md'>
           <ThesisData
             thesis={thesis}
-            additionalInformation={['info', 'abstract', 'state', 'keywords']}
+            additionalInformation={['info', 'abstract', 'state', 'keywords', 'advisor-comments']}
           />
           <Button component={Link} to={`/theses/${thesis.thesisId}`} variant='outline' fullWidth>
             View All Details

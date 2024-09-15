@@ -44,12 +44,13 @@ public class MailBuilder {
     private String content;
 
     @Getter
-    private final List<String> fileAttachments;
+    private final List<StoredAttachment> fileAttachments;
 
     @Getter
     private final List<RawAttachment> rawAttachments;
 
-    private record RawAttachment(String name, ByteArrayDataSource file) {}
+    private record RawAttachment(String filename, ByteArrayDataSource file) {}
+    private record StoredAttachment(String filename, String file) {}
 
     public MailBuilder(MailConfig config, String subject, String template) {
         this.config = config;
@@ -65,17 +66,17 @@ public class MailBuilder {
         this.rawAttachments = new ArrayList<>();
     }
 
-    public MailBuilder addAttachmentFile(String filename) {
-        if (filename == null || filename.isBlank()) {
+    public MailBuilder addStoredAttachment(String storedFile, String filename) {
+        if (storedFile == null || storedFile.isBlank()) {
             return this;
         }
 
-        fileAttachments.add(filename);
+        fileAttachments.add(new StoredAttachment(filename, storedFile));
 
         return this;
     }
 
-    public MailBuilder addRawAttatchment(String filename, ByteArrayDataSource file) {
+    public MailBuilder addRawAttatchment(ByteArrayDataSource file, String filename) {
         if (filename == null || filename.isBlank()) {
             return this;
         }
@@ -168,7 +169,7 @@ public class MailBuilder {
     }
 
     public MailBuilder fillPlaceholder(String placeholder, String value) {
-        content = content.replace("{{" + placeholder + "}}", value);
+        replacePlaceholder(placeholder, value);
 
         return this;
     }
@@ -199,7 +200,7 @@ public class MailBuilder {
 
         replaceDtoPlaceholders(ApplicationDto.fromApplicationEntity(application, false), "application", formatters);
 
-        content = content.replace("{{applicationUrl}}", config.getClientHost() + "/applications/" + application.getId());
+        replacePlaceholder("applicationUrl", config.getClientHost() + "/applications/" + application.getId());
 
         return this;
     }
@@ -217,7 +218,7 @@ public class MailBuilder {
 
         replaceDtoPlaceholders(ThesisDto.fromThesisEntity(thesis, false), "thesis", formatters);
 
-        content = content.replace("{{thesisUrl}}", config.getClientHost() + "/theses/" + thesis.getId());
+        replacePlaceholder("thesisUrl", config.getClientHost() + "/theses/" + thesis.getId());
 
         return this;
     }
@@ -258,10 +259,6 @@ public class MailBuilder {
     }
 
     public void send(JavaMailSender mailSender, UploadService uploadService) throws MailingException {
-        if (!config.isEnabled()) {
-            return;
-        }
-
         for (User recipient : primaryRecipients) {
             if (primarySenders.contains(recipient) && secondaryRecipients.isEmpty()) {
                 continue;
@@ -270,7 +267,9 @@ public class MailBuilder {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
 
-                message.setFrom("ThesisTrack <" + config.getSender().getAddress() + ">");
+                message.setFrom("Thesis Track <" + config.getSender().getAddress() + ">");
+                message.setSender(config.getSender());
+
                 message.addRecipient(Message.RecipientType.TO, recipient.getEmail());
 
                 for (InternetAddress address : secondaryRecipients) {
@@ -292,9 +291,9 @@ public class MailBuilder {
                 );
                 messageContent.addBodyPart(messageBody);
 
-                for (String filename : fileAttachments) {
+                for (StoredAttachment data : fileAttachments) {
                     MimeBodyPart attachment = new MimeBodyPart();
-                    attachment.attachFile(uploadService.load(filename).getFile());
+                    attachment.attachFile(uploadService.load(data.file).getFile());
                     messageContent.addBodyPart(attachment);
                 }
 
@@ -302,14 +301,18 @@ public class MailBuilder {
                     MimeBodyPart attachment = new MimeBodyPart();
 
                     attachment.setDataHandler(new DataHandler(data.file()));
-                    attachment.setFileName(data.name());
+                    attachment.setFileName(data.filename());
 
                     messageContent.addBodyPart(attachment);
                 }
 
                 message.setContent(messageContent);
 
-                mailSender.send(message);
+                if (config.isEnabled()) {
+                    mailSender.send(message);
+                } else {
+                    log.info("Sending mail (postfix disabled) {}", message);
+                }
             } catch (MessagingException | IOException exception) {
                 log.warn("Failed to send email", exception);
             }

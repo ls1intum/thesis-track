@@ -37,16 +37,6 @@ public class DashboardService {
         this.topicRepository = topicRepository;
     }
 
-    public Page<ThesisPresentation> getPresentations(Integer page, Integer limit, String sortBy, String sortOrder) {
-        Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
-
-        return thesisPresentationRepository.findFuturePresentations(
-                Instant.now(),
-                Set.of(ThesisPresentationVisibility.PUBLIC),
-                PageRequest.of(page, limit, Sort.by(order))
-        );
-    }
-
     public List<TaskDto> getTasks(User user) {
         List<TaskDto> tasks = new ArrayList<>();
 
@@ -158,13 +148,11 @@ public class DashboardService {
             // review application task
             long unreviewedApplications = applicationRepository.countUnreviewedApplications(user.hasAnyGroup("admin") ? null : user.getId());
 
-            if (unreviewedApplications > 10) {
-                tasks.add(new TaskDto(
-                        "You have " + unreviewedApplications + " unreviewed applications.",
-                        "/applications",
-                        10
-                ));
-            }
+            tasks.add(new TaskDto(
+                    "You have " + unreviewedApplications + " unreviewed applications.",
+                    "/applications",
+                    10
+            ));
 
             // no open topic task
             long openTopics = topicRepository.countOpenTopics();

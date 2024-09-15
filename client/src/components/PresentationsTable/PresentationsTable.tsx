@@ -70,19 +70,23 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
     location: {
       accessor: 'location',
       title: 'Location',
+      render: (presentation) => presentation.location || 'Not available',
     },
     streamUrl: {
       accessor: 'streamUrl',
       title: 'Stream URL',
-      render: (presentation) => (
-        <Anchor
-          href={presentation.streamUrl || undefined}
-          target='_blank'
-          rel='noopener noreferrer nofollow'
-        >
-          {presentation.streamUrl}
-        </Anchor>
-      ),
+      render: (presentation) =>
+        presentation.streamUrl ? (
+          <Anchor
+            href={presentation.streamUrl || undefined}
+            target='_blank'
+            rel='noopener noreferrer nofollow'
+          >
+            {presentation.streamUrl}
+          </Anchor>
+        ) : (
+          'Not available'
+        ),
     },
     language: {
       accessor: 'language',

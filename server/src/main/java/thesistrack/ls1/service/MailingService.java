@@ -1,6 +1,7 @@
 package thesistrack.ls1.service;
 
 import jakarta.mail.util.ByteArrayDataSource;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -35,18 +36,18 @@ public class MailingService {
         MailBuilder chairMailBuilder = new MailBuilder(config, "New Thesis Application", "application-created-chair");
         chairMailBuilder
                 .sendToChairMembers()
-                .addAttachmentFile(application.getUser().getCvFilename())
-                .addAttachmentFile(application.getUser().getExaminationFilename())
-                .addAttachmentFile(application.getUser().getDegreeFilename())
+                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "cv", application.getUser().getCvFilename()))
+                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "examination-report", application.getUser().getExaminationFilename()))
+                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "degree-report", application.getUser().getDegreeFilename()))
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
 
         MailBuilder studentMailBuilder = new MailBuilder(config, "Thesis Application Confirmation", "application-created-student");
         studentMailBuilder
                 .addPrimaryRecipient(application.getUser())
-                .addAttachmentFile(application.getUser().getCvFilename())
-                .addAttachmentFile(application.getUser().getExaminationFilename())
-                .addAttachmentFile(application.getUser().getDegreeFilename())
+                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "cv", application.getUser().getCvFilename()))
+                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "examination-report", application.getUser().getExaminationFilename()))
+                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "degree-report", application.getUser().getDegreeFilename()))
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
     }
@@ -64,6 +65,7 @@ public class MailingService {
                 .addDefaultBccRecipients()
                 .fillUserPlaceholders(advisor, "advisor")
                 .fillApplicationPlaceholders(application)
+                .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
     }
 
@@ -111,7 +113,7 @@ public class MailingService {
                 .addPrimarySender(proposal.getCreatedBy())
                 .sendToThesisAdvisors(proposal.getThesis())
                 .fillThesisProposalPlaceholders(proposal)
-                .addAttachmentFile(proposal.getProposalFilename())
+                .addStoredAttachment(proposal.getProposalFilename(), getThesisFilename(proposal.getThesis(), "proposal", proposal.getProposalFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -137,7 +139,7 @@ public class MailingService {
         builder
                 .addPrimarySender(comment.getCreatedBy())
                 .fillThesisCommentPlaceholders(comment)
-                .addAttachmentFile(comment.getFilename())
+                .addStoredAttachment(comment.getFilename(), getUserFilename(comment.getCreatedBy(), "comment", comment.getFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -162,7 +164,7 @@ public class MailingService {
             MailBuilder publicBuilder = new MailBuilder(
                     config,
                     action.equals("UPDATED") ? "Thesis Presentation Updated" : "Thesis Presentation Invitation",
-                    "thesis-presentation-invitation"
+                    action.equals("UPDATED") ? "thesis-presentation-invitation-updated" : "thesis-presentation-invitation"
             );
             publicBuilder
                     .sendToChairMembers()
@@ -175,8 +177,8 @@ public class MailingService {
 
             if (icsFile != null && !icsFile.isBlank()) {
                 publicBuilder.addRawAttatchment(
-                        "event.ics",
-                        new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
+                        new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream"),
+                        "event.ics"
                 );
             }
 
@@ -218,8 +220,8 @@ public class MailingService {
                 .sendToThesisAdvisors(thesis)
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
-                .addAttachmentFile(thesis.getFinalThesisFilename())
-                .addAttachmentFile(thesis.getFinalPresentationFilename())
+                .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "thesis", thesis.getFinalThesisFilename()))
+                .addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "presentation", thesis.getFinalPresentationFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -239,5 +241,36 @@ public class MailingService {
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
+    }
+
+    private String getUserFilename(User user, String name, String originalFilename) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(name);
+
+        if (user.getFirstName() != null) {
+            builder.append("-");
+            builder.append(user.getFirstName());
+        }
+
+        if (user.getLastName() != null) {
+            builder.append("-");
+            builder.append(user.getLastName());
+        }
+
+        if (originalFilename != null && !originalFilename.isBlank()) {
+            builder.append(".");
+            builder.append(FilenameUtils.getExtension(originalFilename));
+        } else {
+            builder.append(".pdf");
+        }
+
+        return builder.toString();
+    }
+
+    private String getThesisFilename(Thesis thesis, String name, String originalFilename) {
+        User student = thesis.getStudents().getFirst();
+
+        return getUserFilename(student, name, originalFilename);
     }
 }

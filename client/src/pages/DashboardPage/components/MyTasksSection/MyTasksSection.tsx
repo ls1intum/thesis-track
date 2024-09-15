@@ -1,4 +1,4 @@
-import { ActionIcon, Center, Group, Skeleton, Title } from '@mantine/core'
+import { ActionIcon, Center, Group, Skeleton, Stack, Title } from '@mantine/core'
 import React, { useEffect, useState } from 'react'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
@@ -41,10 +41,8 @@ const MyTasksSection = () => {
   }
 
   return (
-    <div>
-      <Title order={2} mb='xs'>
-        My Tasks
-      </Title>
+    <Stack gap='xs'>
+      <Title order={2}>My Tasks</Title>
       <DataTable
         withTableBorder
         striped
@@ -75,7 +73,7 @@ const MyTasksSection = () => {
         ]}
         onRowClick={({ record }) => navigate(record.link)}
       />
-    </div>
+    </Stack>
   )
 }
 

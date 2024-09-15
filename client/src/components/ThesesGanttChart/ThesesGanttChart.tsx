@@ -140,6 +140,7 @@ const ThesesGanttChart = () => {
         ]}
         data={data}
         minRange={[currentTime - 1000 * 3600 * 24 * 365 * 2, currentTime + 1000 * 3600 * 24 * 365]}
+        rangeStorageKey='thesis-gantt-chart'
         itemPopover={(item, timeline, event) => {
           const thesis = theses?.content.find((row) => row.thesisId === item.id)
 

@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -45,4 +47,7 @@ public class ThesisProposal {
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
 
+    @OneToMany(mappedBy = "proposal", fetch = FetchType.EAGER)
+    @OrderBy("requestedAt ASC")
+    private List<ThesisProposalFeedback> feedback = new ArrayList<>();
 }

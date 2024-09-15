@@ -5,6 +5,7 @@ import { IThesisContext, ThesisContext } from './context'
 import { useUser } from '../../hooks/authentication'
 import NotFound from '../../components/NotFound/NotFound'
 import PageLoader from '../../components/PageLoader/PageLoader'
+import { useThesisAccess } from './hooks'
 
 interface IThesisProviderProps {
   thesisId: string | undefined
@@ -23,30 +24,9 @@ const ThesisProvider = (props: PropsWithChildren<IThesisProviderProps>) => {
     setThesis(loadedThesis)
   }, [loadedThesis])
 
+  const access = useThesisAccess(thesis)
+
   const contextState = useMemo<IThesisContext>(() => {
-    const access = {
-      supervisor: false,
-      advisor: false,
-      student: false,
-    }
-
-    if (user && thesis) {
-      if (
-        user.groups.includes('admin') ||
-        thesis.supervisors.some((supervisor) => user.userId === supervisor.userId)
-      ) {
-        access.supervisor = true
-      }
-
-      if (access.supervisor || thesis.advisors.some((advisor) => user.userId === advisor.userId)) {
-        access.advisor = true
-      }
-
-      if (access.advisor || thesis.students.some((student) => user.userId === student.userId)) {
-        access.student = true
-      }
-    }
-
     return {
       thesis,
       updateThesis: (newThesis: IThesis) => {
@@ -58,7 +38,7 @@ const ThesisProvider = (props: PropsWithChildren<IThesisProviderProps>) => {
       },
       access,
     }
-  }, [thesis, thesisId, user])
+  }, [thesis, thesisId, access])
 
   if (requireLoadedThesis) {
     if (thesis === false) {

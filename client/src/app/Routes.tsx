@@ -16,6 +16,7 @@ const ReplaceApplicationPage = lazy(
 )
 const ManageTopicsPage = lazy(() => import('../pages/ManageTopicsPage/ManageTopicsPage'))
 const TopicPage = lazy(() => import('../pages/TopicPage/TopicPage'))
+const PresentationPage = lazy(() => import('../pages/PresentationPage/PresentationPage'))
 const ReviewApplicationPage = lazy(
   () => import('../pages/ReviewApplicationPage/ReviewApplicationPage'),
 )
@@ -61,6 +62,14 @@ const AppRoutes = () => {
             element={
               <AuthenticatedArea>
                 <ReplaceApplicationPage />
+              </AuthenticatedArea>
+            }
+          />
+          <Route
+            path='/presentations/:presentationId'
+            element={
+              <AuthenticatedArea requireAuthentication={false}>
+                <PresentationPage />
               </AuthenticatedArea>
             }
           />

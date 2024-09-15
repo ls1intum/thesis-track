@@ -13,10 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.constants.StringLimits;
-import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
-import thesistrack.ls1.controller.payload.CreateApplicationPayload;
-import thesistrack.ls1.controller.payload.RejectApplicationPayload;
-import thesistrack.ls1.controller.payload.UpdateApplicationCommentPayload;
+import thesistrack.ls1.controller.payload.*;
 import thesistrack.ls1.dto.ApplicationDto;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.entity.Application;
@@ -89,6 +86,7 @@ public class ApplicationController {
 
         Page<Application> applications = applicationService.getAll(
                 fetchAll && authenticatedUser.hasAnyGroup("admin", "supervisor", "advisor") ? null : authenticatedUser.getId(),
+                fetchAll && authenticatedUser.hasAnyGroup("admin", "supervisor", "advisor") ? authenticatedUser.getId() : null,
                 search,
                 state,
                 previous,
@@ -163,6 +161,28 @@ public class ApplicationController {
         application =  applicationService.updateComment(
                 application,
                 RequestValidator.validateStringMaxLength(payload.comment(), StringLimits.LONGTEXT.getLimit())
+        );
+
+        return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));
+    }
+
+    @PutMapping("/{applicationId}/review")
+    public ResponseEntity<ApplicationDto> reviewApplication(
+            @PathVariable UUID applicationId,
+            @RequestBody ReviewApplicationPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
+        Application application = applicationService.findById(applicationId);
+
+        if (!application.hasManagementAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have access to review this application");
+        }
+
+        application =  applicationService.reviewApplication(
+                application,
+                authenticatedUser,
+                RequestValidator.validateNotNull(payload.reason())
         );
 
         return ResponseEntity.ok(ApplicationDto.fromApplicationEntity(application, application.hasManagementAccess(authenticatedUser)));

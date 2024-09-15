@@ -9,6 +9,9 @@ import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.constants.ApplicationState;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -62,12 +65,12 @@ public class Application {
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reviewed_by")
-    private User reviewedBy;
-
     @Column(name = "reviewed_at")
     private Instant reviewedAt;
+
+    @OneToMany(mappedBy = "application", fetch = FetchType.EAGER)
+    @OrderBy("reviewedAt ASC")
+    private List<ApplicationReviewer> reviewers = new ArrayList<>();
 
     public boolean hasReadAccess(User user) {
         if (user.hasAnyGroup("admin", "advisor", "supervisor")) {
@@ -87,5 +90,15 @@ public class Application {
 
     public boolean hasManagementAccess(User user) {
         return user.hasAnyGroup("admin", "advisor", "supervisor");
+    }
+
+    public Optional<ApplicationReviewer> getReviewer(User user) {
+        for (ApplicationReviewer reviewer : getReviewers()) {
+            if (reviewer.getUser().getId().equals(user.getId())) {
+                return Optional.of(reviewer);
+            }
+        }
+
+        return Optional.empty();
     }
 }

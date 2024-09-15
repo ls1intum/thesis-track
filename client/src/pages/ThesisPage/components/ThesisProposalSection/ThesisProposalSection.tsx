@@ -85,32 +85,38 @@ const ThesisProposalSection = () => {
                           copyText={student.universityId}
                         />
                       </Grid.Col>
-                      <Grid.Col span={{ md: 2 }}>
-                        <LabeledItem
-                          label='Matriculation Number'
-                          value={student.matriculationNumber}
-                          copyText={student.matriculationNumber || undefined}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={{ md: 2 }}>
-                        <LabeledItem
-                          label='E-Mail'
-                          value={student.email}
-                          copyText={student.email || undefined}
-                        />
-                      </Grid.Col>
-                      <Grid.Col span={{ md: 2 }}>
-                        <LabeledItem
-                          label='Study Degree'
-                          value={`${
-                            GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
-                            student.studyProgram
-                          } ${
-                            GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
-                            student.studyDegree
-                          } `}
-                        />
-                      </Grid.Col>
+                      {student.matriculationNumber && (
+                        <Grid.Col span={{ md: 2 }}>
+                          <LabeledItem
+                            label='Matriculation Number'
+                            value={student.matriculationNumber}
+                            copyText={student.matriculationNumber || undefined}
+                          />
+                        </Grid.Col>
+                      )}
+                      {student.email && (
+                        <Grid.Col span={{ md: 2 }}>
+                          <LabeledItem
+                            label='E-Mail'
+                            value={student.email}
+                            copyText={student.email || undefined}
+                          />
+                        </Grid.Col>
+                      )}
+                      {student.studyProgram && student.studyDegree && (
+                        <Grid.Col span={{ md: 2 }}>
+                          <LabeledItem
+                            label='Study Degree'
+                            value={`${
+                              GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
+                              student.studyProgram
+                            } ${
+                              GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
+                              student.studyDegree
+                            } `}
+                          />
+                        </Grid.Col>
+                      )}
                       {student.customData &&
                         Object.entries(student.customData).map(([key, value]) => (
                           <Grid.Col key={key} span={{ md: 6 }}>

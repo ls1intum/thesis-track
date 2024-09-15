@@ -1,8 +1,8 @@
 import { Accordion, Badge, Group, Stack, Text } from '@mantine/core'
 import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
-import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
-import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
+import ThesisCommentsList from '../../../../components/ThesisCommentsList/ThesisCommentsList'
+import ThesisCommentsForm from '../../../../components/ThesisCommentsForm/ThesisCommentsForm'
 
 const ThesisAdvisorCommentsSection = () => {
   const { thesis, access } = useLoadedThesisContext()

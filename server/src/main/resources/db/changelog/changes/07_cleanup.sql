@@ -47,3 +47,17 @@ CREATE TABLE application_reviewers
     FOREIGN KEY (application_id) REFERENCES applications (application_id),
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
+
+--changeset emilius:07-cleanup-10
+INSERT INTO application_reviewers (
+    application_id, user_id, reason, reviewed_at
+)
+SELECT DISTINCT ON (t1.application_id)
+    t1.application_id,
+    t1.reviewed_by,
+    CASE WHEN t1.state = 'ACCEPTED' THEN 'INTERESTED' ELSE 'NOT_INTERESTED' END,
+    t1.reviewed_at
+FROM applications t1
+WHERE t1.reviewed_by IS NOT NULL AND t1.reviewed_at IS NOT NULL;
+
+ALTER TABLE applications DROP COLUMN reviewed_by;

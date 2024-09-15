@@ -3,6 +3,7 @@ import {
   CopyButton,
   Group,
   Modal,
+  Stack,
   Text,
   TextInput,
   Title,
@@ -17,24 +18,24 @@ import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { Check, Copy } from 'phosphor-react'
-import ThesisData from '../../../../components/ThesisData/ThesisData'
+import { useNavigate } from 'react-router-dom'
 
 const PublicPresentationsSection = () => {
   const limit = 10
 
+  const navigate = useNavigate()
+
   const [presentations, setPresentations] = useState<PaginationResponse<IPublishedPresentation>>()
   const [page, setPage] = useState(0)
-
-  const [openedPresentation, setOpenenedPresentation] = useState<IPublishedPresentation>()
 
   useEffect(() => {
     setPresentations(undefined)
 
     return doRequest<PaginationResponse<IPublishedPresentation>>(
-      `/v2/dashboard/presentations`,
+      `/v2/published-presentations`,
       {
         method: 'GET',
-        requiresAuth: true,
+        requiresAuth: false,
         params: {
           page,
           limit,
@@ -54,11 +55,9 @@ const PublicPresentationsSection = () => {
     GLOBAL_CONFIG.calendar_url || `${GLOBAL_CONFIG.server_host}/api/v2/calendar/presentations`
 
   return (
-    <div>
-      <Title order={2} mb='xs'>
-        Public Presentations
-      </Title>
-      <Group mb='xs'>
+    <Stack gap='xs'>
+      <Title order={2}>Public Presentations</Title>
+      <Group>
         <Text c='dimmed'>Subscribe to Calendar</Text>
         <div style={{ flexGrow: 1 }}>
           <CopyButton value={calendarUrl}>
@@ -79,19 +78,9 @@ const PublicPresentationsSection = () => {
           </CopyButton>
         </div>
       </Group>
-      <Modal
-        title={openedPresentation?.thesis.title}
-        opened={!!openedPresentation}
-        size='xl'
-        onClose={() => setOpenenedPresentation(undefined)}
-      >
-        {openedPresentation && (
-          <ThesisData thesis={openedPresentation.thesis} additionalInformation={['abstract']} />
-        )}
-      </Modal>
       <PresentationsTable
         presentations={presentations?.content}
-        onRowClick={setOpenenedPresentation}
+        onRowClick={(presentation) => navigate(`/presentations/${presentation.presentationId}`)}
         pagination={{
           totalRecords: presentations?.totalElements ?? 0,
           recordsPerPage: limit,
@@ -99,7 +88,7 @@ const PublicPresentationsSection = () => {
           onPageChange: (newPage) => setPage(newPage - 1),
         }}
       />
-    </div>
+    </Stack>
   )
 }
 
