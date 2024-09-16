@@ -289,7 +289,7 @@ public class MailingService {
             builder.append(".pdf");
         }
 
-        return builder.toString().toLowerCase();
+        return builder.toString().toLowerCase().replace(" ", "-");
     }
 
     private String getThesisFilename(Thesis thesis, String name, String originalFilename) {
@@ -313,6 +313,6 @@ public class MailingService {
             builder.append(".pdf");
         }
 
-        return builder.toString().toLowerCase();
+        return builder.toString().toLowerCase().replace(" ", "-");
     }
 }
