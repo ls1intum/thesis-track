@@ -129,7 +129,11 @@ public class MailingService {
     }
 
     public void sendProposalChangeRequestEmail(User reviewingUser, Thesis thesis) {
-        MailBuilder builder = new MailBuilder(config, "Changes Requested for Proposal", "thesis-proposal-rejected");
+        MailBuilder builder = new MailBuilder(
+                config,
+                "{{reviewingUser.firstName}} {{reviewingUser.lastName}} requested Changes for Proposal",
+                "thesis-proposal-rejected"
+        );
         builder
                 .sendToThesisStudents(thesis)
                 .fillUserPlaceholders(reviewingUser, "reviewingUser")
@@ -147,7 +151,11 @@ public class MailingService {
     }
 
     public void sendNewCommentEmail(ThesisComment comment) {
-        MailBuilder builder = new MailBuilder(config, "New Thesis Comment", "thesis-comment-posted");
+        MailBuilder builder = new MailBuilder(
+                config,
+                "{{comment.createdBy.firstName}} {{comment.createdBy.lastName}} posted a Comment",
+                "thesis-comment-posted"
+        );
 
         if (comment.getType() == ThesisCommentType.ADVISOR) {
             builder.sendToThesisAdvisors(comment.getThesis());

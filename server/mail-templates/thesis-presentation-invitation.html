@@ -1,32 +1,21 @@
-<p>Dear {{recipientName}},</p>
-
-<p>
-  As part of their {{thesis.type}}'s thesis <strong>{{thesis.students}}</strong> will give their {{presentation.type}} presentation.
-</p>
-
-<p>
-  The presentation will be in {{presentation.language}}. Everybody is cordially invited to attend.
-</p>
-
-<p>
-  <strong>Title</strong><br />
-  {{thesis.title}}
-</p>
-
-<p>
-  <strong>Offline Location</strong><br />
-  {{presentation.location}}
-</p>
-
-<p>
-  <strong>Online Stream URL</strong><br />
-  {{presentation.streamUrl}}
-</p>
-
-<p>
-  <strong>Scheduled At</strong><br />
-  {{presentation.scheduledAt}}
-</p>
+<div style="text-align: center">
+  <h2>INVITATION</h2>
+  <div>As part of their {{thesis.type}}'s thesis</div>
+  <div><strong>{{thesis.students}}</strong></div>
+  <div>will give their {{presentation.type}} presentation on</div>
+  <div><strong>{{presentation.scheduledAt}}</strong></div>
+  <div>online at {{presentation.streamUrl}}</div>
+  <div>and offline in {{presentation.location}}</div>
+  <br/>
+  <div>Title:</div>
+  <div>{{thesis.title}}</div>
+  <br/>
+  <div>Supervisor: {{thesis.supervisors}}</div>
+  <br/>
+  <div>
+    The presentation will be in {{presentation.language}}. Everybody is cordially invited to attend.
+  </div>
+</div>
 
 <p>
   <strong>Abstract</strong><br />
