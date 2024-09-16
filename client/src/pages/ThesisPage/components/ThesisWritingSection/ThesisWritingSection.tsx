@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Center, Divider, Grid, Group, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Center, Grid, Stack, Text } from '@mantine/core'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 import { doRequest } from '../../../../requests/request'
 import { checkMinimumThesisState } from '../../../../utils/thesis'

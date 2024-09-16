@@ -2,7 +2,6 @@ import {
   ActionIcon,
   CopyButton,
   Group,
-  Modal,
   Stack,
   Text,
   TextInput,
