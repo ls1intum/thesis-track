@@ -5,7 +5,7 @@ import ApplicationsTable from '../../components/ApplicationsTable/ApplicationsTa
 import ThesesTable from '../../components/ThesesTable/ThesesTable'
 import ApplicationsProvider from '../../contexts/ApplicationsProvider/ApplicationsProvider'
 import ThesesProvider from '../../contexts/ThesesProvider/ThesesProvider'
-import { Button, Center, Group, Space, Stack, Title } from '@mantine/core'
+import { Button, Center, Group, Stack, Title } from '@mantine/core'
 import { ApplicationState, IApplication } from '../../requests/responses/application'
 import ThesesGanttChart from '../../components/ThesesGanttChart/ThesesGanttChart'
 import { useHasGroupAccess } from '../../hooks/authentication'

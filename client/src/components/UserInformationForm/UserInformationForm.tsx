@@ -81,22 +81,22 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       specialSkills: (value) => {
         if (!value && requireCompletion) {
           return 'Please state your special skills.'
-        } else if (getHtmlTextLength(value) > 500) {
-          return 'The maximum allowed number of characters is 500'
+        } else if (getHtmlTextLength(value) > 1000) {
+          return 'The maximum allowed number of characters is 1000'
         }
       },
       interests: (value) => {
         if (!value && requireCompletion) {
           return 'Please state your interests.'
-        } else if (getHtmlTextLength(value) > 500) {
-          return 'The maximum allowed number of characters is 500'
+        } else if (getHtmlTextLength(value) > 1000) {
+          return 'The maximum allowed number of characters is 1000'
         }
       },
       projects: (value) => {
         if (!value && requireCompletion) {
           return 'Please state your projects.'
-        } else if (getHtmlTextLength(value) > 500) {
-          return 'The maximum allowed number of characters is 500'
+        } else if (getHtmlTextLength(value) > 1000) {
+          return 'The maximum allowed number of characters is 1000'
         }
       },
       declarationOfConsentAccepted: (value) => !value,
@@ -304,21 +304,21 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
         ))}
         <DocumentEditor
           label='Interests (What are you interested in?)'
-          maxLength={500}
+          maxLength={1000}
           required={requireCompletion}
           editMode={true}
           {...form.getInputProps('interests')}
         />
         <DocumentEditor
           label='Projects (What projects have you worked on?)'
-          maxLength={500}
+          maxLength={1000}
           required={requireCompletion}
           editMode={true}
           {...form.getInputProps('projects')}
         />
         <DocumentEditor
           label='Special Skills (Programming languages, certificates, etc.)'
-          maxLength={500}
+          maxLength={1000}
           required={requireCompletion}
           editMode={true}
           {...form.getInputProps('specialSkills')}

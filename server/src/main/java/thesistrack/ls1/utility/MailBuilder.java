@@ -268,7 +268,7 @@ public class MailBuilder {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
 
-                message.setFrom("Thesis Track <" + config.getSender().getAddress() + ">");
+                message.setFrom("ThesisTrack <" + config.getSender().getAddress() + ">");
                 message.setSender(config.getSender());
 
                 message.addRecipient(Message.RecipientType.TO, recipient.getEmail());

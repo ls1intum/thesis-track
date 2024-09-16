@@ -7,7 +7,7 @@ import ThesisAssessmentSection from './components/ThesisAssessmentSection/Thesis
 import ThesisFinalGradeSection from './components/ThesisFinalGradeSection/ThesisFinalGradeSection'
 import { useParams } from 'react-router-dom'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
-import { Space, Stack } from '@mantine/core'
+import { Stack } from '@mantine/core'
 import ThesisHeader from './components/ThesisHeader/ThesisHeader'
 import ThesisProvider from '../../contexts/ThesisProvider/ThesisProvider'
 import ThesisAdvisorCommentsSection from './components/ThesisAdvisorCommentsSection/ThesisAdvisorCommentsSection'

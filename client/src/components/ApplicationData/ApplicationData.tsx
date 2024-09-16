@@ -1,5 +1,5 @@
 import { IApplication } from '../../requests/responses/application'
-import { Stack, Group, Divider, Grid, Title, Badge, Accordion } from '@mantine/core'
+import { Stack, Group, Grid, Title, Badge, Accordion } from '@mantine/core'
 import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
@@ -14,7 +14,6 @@ import LabeledItem from '../LabeledItem/LabeledItem'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
 import TopicAccordionItem from '../TopicAccordionItem/TopicAccordionItem'
-import AvatarUser from '../AvatarUser/AvatarUser'
 import { enrollmentDateToSemester } from '../../utils/converter'
 
 interface IApplicationDataProps {

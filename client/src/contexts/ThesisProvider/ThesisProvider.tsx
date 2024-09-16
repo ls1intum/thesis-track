@@ -2,7 +2,6 @@ import React, { PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { IThesis } from '../../requests/responses/thesis'
 import { useThesis } from '../../hooks/fetcher'
 import { IThesisContext, ThesisContext } from './context'
-import { useUser } from '../../hooks/authentication'
 import NotFound from '../../components/NotFound/NotFound'
 import PageLoader from '../../components/PageLoader/PageLoader'
 import { useThesisAccess } from './hooks'
@@ -16,7 +15,6 @@ const ThesisProvider = (props: PropsWithChildren<IThesisProviderProps>) => {
   const { children, thesisId, requireLoadedThesis = false } = props
 
   const loadedThesis = useThesis(thesisId)
-  const user = useUser()
 
   const [thesis, setThesis] = useState<IThesis | undefined | false>(loadedThesis)
 

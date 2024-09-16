@@ -53,8 +53,8 @@ const MotivationStep = (props: IMotivationStepProps) => {
       motivation: (value) => {
         if (!value) {
           return 'Please state your motivation'
-        } else if (getHtmlTextLength(value) > 500) {
-          return 'The maximum allowed number of characters is 500'
+        } else if (getHtmlTextLength(value) > 1000) {
+          return 'The maximum allowed number of characters is 1000'
         }
       },
     },
@@ -134,7 +134,7 @@ const MotivationStep = (props: IMotivationStepProps) => {
           label='Motivation'
           required={true}
           editMode={true}
-          maxLength={500}
+          maxLength={1000}
           {...form.getInputProps('motivation')}
         />
         <Button type='submit' ml='auto' disabled={!form.isValid()} loading={loading}>
