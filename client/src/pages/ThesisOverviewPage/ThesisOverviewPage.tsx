@@ -12,7 +12,7 @@ import { Plus } from 'phosphor-react'
 import { useHasGroupAccess } from '../../hooks/authentication'
 
 const ThesisOverviewPage = () => {
-  usePageTitle('Theses Overview')
+  usePageTitle('Theses')
 
   const [openCreateThesisModal, setOpenCreateThesisModal] = useState(false)
 
@@ -39,7 +39,7 @@ const ThesisOverviewPage = () => {
         }
       >
         <Group>
-          <Title mb='md'>Theses Overview</Title>
+          <Title mb='md'>Theses</Title>
           {managementAccess && (
             <Button
               ml='auto'
