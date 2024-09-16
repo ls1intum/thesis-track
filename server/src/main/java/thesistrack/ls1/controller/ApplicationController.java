@@ -133,6 +133,10 @@ public class ApplicationController {
             throw new ResourceInvalidParametersException("Only applications that are not assessed can be edited");
         }
 
+        if (!application.getReviewers().isEmpty()) {
+            throw new ResourceInvalidParametersException("The review of this application has already started. You cannot edit it anymore.");
+        }
+
         application = applicationService.updateApplication(
                 application,
                 payload.topicId(),

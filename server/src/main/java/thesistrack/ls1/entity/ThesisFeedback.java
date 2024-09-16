@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import thesistrack.ls1.constants.ThesisFeedbackType;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -11,16 +12,22 @@ import java.util.UUID;
 @Getter
 @Setter
 @Entity
-@Table(name = "thesis_proposal_feedback")
-public class ThesisProposalFeedback {
+@Table(name = "thesis_feedback")
+public class ThesisFeedback {
     @Id
-    @Column(name = "proposal_feedback_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "feedback_id", nullable = false)
     private UUID id;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "proposal_id", nullable = false)
-    private ThesisProposal proposal;
+    @JoinColumn(name = "thesis_id", nullable = false)
+    private Thesis thesis;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type", nullable = false)
+    private ThesisFeedbackType type;
 
     @NotNull
     @Column(name = "feedback", nullable = false)
@@ -37,5 +44,4 @@ public class ThesisProposalFeedback {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "requested_by", nullable = false)
     private User requestedBy;
-
 }

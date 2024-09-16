@@ -136,10 +136,12 @@ const ApplicationData = (props: IApplicationDataProps) => {
               />
             </Grid.Col>
             {application.reviewedAt && (
-              <LabeledItem
-                label='Reviewed At'
-                value={formatDate(application.reviewedAt, { withTime: true })}
-              />
+              <Grid.Col span={{ xs: 4, sm: 3 }}>
+                <LabeledItem
+                  label='Reviewed At'
+                  value={formatDate(application.reviewedAt, { withTime: true })}
+                />
+              </Grid.Col>
             )}
             {application.user.customData &&
               Object.entries(application.user.customData).map(([key, value]) => (

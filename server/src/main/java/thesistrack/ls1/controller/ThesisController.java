@@ -203,6 +203,49 @@ public class ThesisController {
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
+    /* FEEDBACK ENDPOINTS */
+    @PutMapping("/{thesisId}/feedback/{feedbackId}/{action}")
+    public ResponseEntity<ThesisDto> completeFeedback(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID feedbackId,
+            @PathVariable String action,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of this thesis to complete a feedback item");
+        }
+
+        thesis = thesisService.completeFeedback(thesis, feedbackId, action.equals("complete"));
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
+    @PostMapping("/{thesisId}/feedback")
+    public ResponseEntity<ThesisDto> requestChanges(
+            @PathVariable UUID thesisId,
+            @RequestBody RequestChangesPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be an advisor of this thesis to request changes");
+        }
+
+        thesis = thesisService.requestChanges(
+                authenticatedUser,
+                thesis,
+                RequestValidator.validateNotNull(payload.type()),
+                RequestValidator.validateNotNull(payload.requestedChanges())
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
     /* PROPOSAL ENDPOINTS */
 
     @GetMapping("/{thesisId}/proposal")

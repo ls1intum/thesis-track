@@ -311,7 +311,7 @@ public class MailBuilder {
                 if (config.isEnabled()) {
                     mailSender.send(message);
                 } else {
-                    log.info("Sending mail (postfix disabled) {}", message);
+                    log.info("Sending Mail (postfix disabled)\n{}", MailLogger.getTextFromMimeMessage(message));
                 }
             } catch (MessagingException | IOException exception) {
                 log.warn("Failed to send email", exception);

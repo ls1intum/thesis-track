@@ -15,6 +15,8 @@ import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 import { formatThesisFilename, formatUser } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
+import ThesisFeedbackRequestButton from '../ThesisFeedbackRequestButton/ThesisFeedbackRequestButton'
+import ThesisFeedbackOverview from '../ThesisFeedbackOverview/ThesisFeedbackOverview'
 
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -141,6 +143,10 @@ const ThesisProposalSection = () => {
             ) : (
               <Text ta='center'>No proposal uploaded yet</Text>
             )}
+            <ThesisFeedbackOverview
+              type='PROPOSAL'
+              allowEdit={thesis.state === ThesisState.PROPOSAL}
+            />
             <Group>
               <UploadFileModal
                 opened={uploadModal}
@@ -161,6 +167,9 @@ const ThesisProposalSection = () => {
                 >
                   Accept Proposal
                 </ConfirmationButton>
+              )}
+              {thesis.state === ThesisState.PROPOSAL && (
+                <ThesisFeedbackRequestButton type='PROPOSAL' />
               )}
               {access.student && thesis.state === ThesisState.PROPOSAL && (
                 <Button ml='auto' onClick={() => setUploadModal(true)}>

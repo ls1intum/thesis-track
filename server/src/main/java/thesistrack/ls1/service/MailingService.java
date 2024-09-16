@@ -7,6 +7,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import thesistrack.ls1.constants.ThesisCommentType;
 import thesistrack.ls1.constants.ApplicationRejectReason;
+import thesistrack.ls1.constants.ThesisFeedbackType;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.utility.MailBuilder;
@@ -124,6 +125,24 @@ public class MailingService {
                 .sendToThesisStudents(proposal.getThesis())
                 .fillThesisPlaceholders(proposal.getThesis())
                 .fillThesisProposalPlaceholders(proposal)
+                .send(javaMailSender, uploadService);
+    }
+
+    public void sendProposalChangeRequestEmail(User reviewingUser, Thesis thesis) {
+        MailBuilder builder = new MailBuilder(config, "Changes Requested for Proposal", "thesis-proposal-rejected");
+        builder
+                .sendToThesisStudents(thesis)
+                .fillUserPlaceholders(reviewingUser, "reviewingUser")
+                .fillThesisPlaceholders(thesis)
+                .fillThesisProposalPlaceholders(thesis.getProposals().getFirst())
+                .fillPlaceholder(
+                        "requestedChanges",
+                        String.join("\n", thesis.getFeedback().stream()
+                                .filter((item) -> item.getType() == ThesisFeedbackType.PROPOSAL && item.getCompletedAt() == null)
+                                .map(ThesisFeedback::getFeedback)
+                                .map((item) -> "<li>" + item + "</li>")
+                                .toList())
+                )
                 .send(javaMailSender, uploadService);
     }
 
@@ -249,18 +268,15 @@ public class MailingService {
         builder.append(name);
 
         if (user.getFirstName() != null) {
-            builder.append("-");
-            builder.append(user.getFirstName());
+            builder.append("-").append(user.getFirstName());
         }
 
         if (user.getLastName() != null) {
-            builder.append("-");
-            builder.append(user.getLastName());
+            builder.append("-").append(user.getLastName());
         }
 
         if (originalFilename != null && !originalFilename.isBlank()) {
-            builder.append(".");
-            builder.append(FilenameUtils.getExtension(originalFilename));
+            builder.append(".").append(FilenameUtils.getExtension(originalFilename));
         } else {
             builder.append(".pdf");
         }

@@ -58,6 +58,14 @@ export interface IThesis {
     approvedAt: string | null
     approvedBy: ILightUser | null
   }
+  feedback: Array<{
+    feedbackId: string
+    type: string
+    feedback: string
+    requestedBy: ILightUser
+    requestedAt: string
+    completedAt: string | null
+  }>
   grade: null | {
     finalGrade: string
     feedback: string
