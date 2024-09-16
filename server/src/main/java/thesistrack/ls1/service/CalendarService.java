@@ -101,7 +101,7 @@ public class CalendarService {
             return;
         }
 
-        if (eventId == null) {
+        if (eventId == null || eventId.isBlank()) {
             return;
         }
 

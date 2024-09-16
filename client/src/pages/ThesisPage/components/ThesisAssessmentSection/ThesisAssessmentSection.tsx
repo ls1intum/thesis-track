@@ -1,15 +1,18 @@
 import { ThesisState } from '../../../../requests/responses/thesis'
-import { useState } from 'react'
-import { Accordion, Button, Stack, Text, Title } from '@mantine/core'
+import { useRef, useState } from 'react'
+import { Accordion, Button, Center, Stack, Text, Badge, Group } from '@mantine/core'
 import SubmitAssessmentModal from './components/SubmitAssessmentModal/SubmitAssessmentModal'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
 import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
+import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
+import generatePDF, { Margin } from 'react-to-pdf'
+import { formatThesisFilename } from '../../../../utils/format'
 
 const ThesisAssessmentSection = () => {
   const { thesis, access } = useLoadedThesisContext()
 
-  const [opened, setOpened] = useState(true)
+  const targetRef = useRef<HTMLDivElement>(null)
 
   const [assessmentModal, setAssessmentModal] = useState(false)
 
@@ -18,25 +21,22 @@ const ThesisAssessmentSection = () => {
   }
 
   return (
-    <Accordion
-      variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
-    >
+    <Accordion variant='separated' defaultValue='open'>
       <Accordion.Item value='open'>
-        <Accordion.Control>Assessment (Not visible to student)</Accordion.Control>
+        <Accordion.Control>
+          <Group gap='xs'>
+            <Text>Assessment</Text>
+            <Badge color='grey'>Not visible to student</Badge>
+          </Group>
+        </Accordion.Control>
         <Accordion.Panel>
           <Stack gap='md'>
             {thesis.assessment ? (
-              <Stack>
-                <Title order={3}>Summary</Title>
-                <DocumentEditor value={thesis.assessment.summary} />
-                <Title order={3}>Positives</Title>
-                <DocumentEditor value={thesis.assessment.positives} />
-                <Title order={3}>Negatives</Title>
-                <DocumentEditor value={thesis.assessment.negatives} />
-                <Title order={3}>Grade Suggestion</Title>
-                <Text>{thesis.assessment.gradeSuggestion}</Text>
+              <Stack ref={targetRef}>
+                <DocumentEditor label='Summary' value={thesis.assessment.summary} />
+                <DocumentEditor label='Positives' value={thesis.assessment.positives} />
+                <DocumentEditor label='Negatives' value={thesis.assessment.negatives} />
+                <LabeledItem label='Grade Suggestion' value={thesis.assessment.gradeSuggestion} />
               </Stack>
             ) : (
               <Text ta='center'>No assessment added yet</Text>
@@ -45,6 +45,23 @@ const ThesisAssessmentSection = () => {
               <Button ml='auto' onClick={() => setAssessmentModal(true)}>
                 Add Assessment
               </Button>
+            )}
+            {thesis.assessment && (
+              <Center>
+                <Button
+                  variant='outline'
+                  onClick={() =>
+                    generatePDF(targetRef, {
+                      filename: formatThesisFilename(thesis, 'assessment'),
+                      page: {
+                        margin: Margin.SMALL,
+                      },
+                    })
+                  }
+                >
+                  Download as PDF
+                </Button>
+              </Center>
             )}
           </Stack>
           <SubmitAssessmentModal

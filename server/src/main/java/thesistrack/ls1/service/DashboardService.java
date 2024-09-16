@@ -37,16 +37,6 @@ public class DashboardService {
         this.topicRepository = topicRepository;
     }
 
-    public Page<ThesisPresentation> getPresentations(Integer page, Integer limit, String sortBy, String sortOrder) {
-        Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
-
-        return thesisPresentationRepository.findFuturePresentations(
-                Instant.now(),
-                Set.of(ThesisPresentationVisibility.PUBLIC),
-                PageRequest.of(page, limit, Sort.by(order))
-        );
-    }
-
     public List<TaskDto> getTasks(User user) {
         List<TaskDto> tasks = new ArrayList<>();
 
@@ -62,7 +52,7 @@ public class DashboardService {
         }
 
         // general advisor, supervisor tasks
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR, ThesisRoleName.SUPERVISOR), null)) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR), null)) {
             if (thesis.getState().equals(ThesisState.PROPOSAL)) {
                 continue;
             }
@@ -89,7 +79,7 @@ public class DashboardService {
             ));
         }
 
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR, ThesisRoleName.SUPERVISOR), Set.of(ThesisState.PROPOSAL))) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR), Set.of(ThesisState.PROPOSAL))) {
             if (thesis.getProposals().isEmpty()) {
                 continue;
             }
@@ -111,7 +101,7 @@ public class DashboardService {
         }
 
         // presentation tasks
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), null, Set.of(ThesisState.WRITING, ThesisState.SUBMITTED))) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.STUDENT, ThesisRoleName.ADVISOR), Set.of(ThesisState.WRITING, ThesisState.SUBMITTED))) {
             if (!thesis.getPresentations().isEmpty() || thesis.getEndDate() == null) {
                 continue;
             }
@@ -128,7 +118,7 @@ public class DashboardService {
         }
 
         // thesis assessment task
-        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR, ThesisRoleName.SUPERVISOR), Set.of(ThesisState.SUBMITTED))) {
+        for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.ADVISOR), Set.of(ThesisState.SUBMITTED))) {
             tasks.add(new TaskDto(
                     "Thesis \"" + thesis.getTitle() + "\" was submitted. Please review the thesis and add an assessment.",
                     getThesisLink(thesis),
@@ -158,13 +148,11 @@ public class DashboardService {
             // review application task
             long unreviewedApplications = applicationRepository.countUnreviewedApplications(user.hasAnyGroup("admin") ? null : user.getId());
 
-            if (unreviewedApplications > 10) {
-                tasks.add(new TaskDto(
-                        "You have " + unreviewedApplications + " unreviewed applications.",
-                        "/applications",
-                        10
-                ));
-            }
+            tasks.add(new TaskDto(
+                    "You have " + unreviewedApplications + " unreviewed applications.",
+                    "/applications",
+                    10
+            ));
 
             // no open topic task
             long openTopics = topicRepository.countOpenTopics();

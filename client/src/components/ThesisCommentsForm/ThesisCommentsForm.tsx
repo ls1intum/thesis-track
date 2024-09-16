@@ -1,7 +1,7 @@
 import { Button, Stack, Textarea } from '@mantine/core'
 import { useState } from 'react'
-import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
-import { useThesisCommentsContext } from '../../../../contexts/ThesisCommentsProvider/hooks'
+import UploadFileModal from '../UploadFileModal/UploadFileModal'
+import { useThesisCommentsContext } from '../../contexts/ThesisCommentsProvider/hooks'
 import { Upload } from 'phosphor-react'
 
 const ThesisCommentsForm = () => {

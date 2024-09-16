@@ -28,7 +28,7 @@ public class DataFormatter {
             return "";
         }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss z")
                 .withZone(ZoneId.systemDefault());
 
         return formatter.format((Instant) time);

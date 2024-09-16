@@ -1,6 +1,7 @@
 package thesistrack.ls1.utility;
 
 import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
@@ -38,18 +39,19 @@ public class MailBuilder {
     private final List<InternetAddress> bccRecipients;
 
     @Getter
-    private final String subject;
+    private String subject;
 
     @Getter
     private String content;
 
     @Getter
-    private final List<String> fileAttachments;
+    private final List<StoredAttachment> fileAttachments;
 
     @Getter
     private final List<RawAttachment> rawAttachments;
 
-    private record RawAttachment(String name, ByteArrayDataSource file) {}
+    private record RawAttachment(String filename, ByteArrayDataSource file) {}
+    private record StoredAttachment(String filename, String file) {}
 
     public MailBuilder(MailConfig config, String subject, String template) {
         this.config = config;
@@ -65,17 +67,17 @@ public class MailBuilder {
         this.rawAttachments = new ArrayList<>();
     }
 
-    public MailBuilder addAttachmentFile(String filename) {
-        if (filename == null || filename.isBlank()) {
+    public MailBuilder addStoredAttachment(String storedFile, String filename) {
+        if (storedFile == null || storedFile.isBlank()) {
             return this;
         }
 
-        fileAttachments.add(filename);
+        fileAttachments.add(new StoredAttachment(filename, storedFile));
 
         return this;
     }
 
-    public MailBuilder addRawAttatchment(String filename, ByteArrayDataSource file) {
+    public MailBuilder addRawAttatchment(ByteArrayDataSource file, String filename) {
         if (filename == null || filename.isBlank()) {
             return this;
         }
@@ -168,7 +170,7 @@ public class MailBuilder {
     }
 
     public MailBuilder fillPlaceholder(String placeholder, String value) {
-        content = content.replace("{{" + placeholder + "}}", value);
+        replacePlaceholder(placeholder, value);
 
         return this;
     }
@@ -199,7 +201,7 @@ public class MailBuilder {
 
         replaceDtoPlaceholders(ApplicationDto.fromApplicationEntity(application, false), "application", formatters);
 
-        content = content.replace("{{applicationUrl}}", config.getClientHost() + "/applications/" + application.getId());
+        replacePlaceholder("applicationUrl", config.getClientHost() + "/applications/" + application.getId());
 
         return this;
     }
@@ -210,7 +212,6 @@ public class MailBuilder {
         formatters.put("thesis.startDate", DataFormatter::formatDate);
         formatters.put("thesis.endDate", DataFormatter::formatDate);
         formatters.put("thesis.type", DataFormatter::formatConstantName);
-        formatters.put("thesis.visibility", DataFormatter::formatConstantName);
 
         formatters.put("thesis.students", DataFormatter::formatUsers);
         formatters.put("thesis.advisors", DataFormatter::formatUsers);
@@ -218,7 +219,7 @@ public class MailBuilder {
 
         replaceDtoPlaceholders(ThesisDto.fromThesisEntity(thesis, false), "thesis", formatters);
 
-        content = content.replace("{{thesisUrl}}", config.getClientHost() + "/theses/" + thesis.getId());
+        replacePlaceholder("thesisUrl", config.getClientHost() + "/theses/" + thesis.getId());
 
         return this;
     }
@@ -235,7 +236,6 @@ public class MailBuilder {
 
         HashMap<String, Function<Object, String>> formatters = new HashMap<>();
 
-        formatters.put("presentation.type", DataFormatter::formatEnum);
         formatters.put("presentation.language", DataFormatter::formatConstantName);
         formatters.put("presentation.streamUrl", DataFormatter::formatOptionalString);
         formatters.put("presentation.location", DataFormatter::formatOptionalString);
@@ -260,10 +260,6 @@ public class MailBuilder {
     }
 
     public void send(JavaMailSender mailSender, UploadService uploadService) throws MailingException {
-        if (!config.isEnabled()) {
-            return;
-        }
-
         for (User recipient : primaryRecipients) {
             if (primarySenders.contains(recipient) && secondaryRecipients.isEmpty()) {
                 continue;
@@ -272,8 +268,9 @@ public class MailBuilder {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
 
-                message.setSubject(subject);
+                message.setFrom("Thesis Track <" + config.getSender().getAddress() + ">");
                 message.setSender(config.getSender());
+
                 message.addRecipient(Message.RecipientType.TO, recipient.getEmail());
 
                 for (InternetAddress address : secondaryRecipients) {
@@ -284,6 +281,8 @@ public class MailBuilder {
                     message.addRecipient(Message.RecipientType.BCC, address);
                 }
 
+                message.setSubject(subject);
+
                 Multipart messageContent = new MimeMultipart();
 
                 BodyPart messageBody = new MimeBodyPart();
@@ -293,9 +292,12 @@ public class MailBuilder {
                 );
                 messageContent.addBodyPart(messageBody);
 
-                for (String filename : fileAttachments) {
+                for (StoredAttachment data : fileAttachments) {
                     MimeBodyPart attachment = new MimeBodyPart();
-                    attachment.attachFile(uploadService.load(filename).getFile());
+
+                    attachment.setDataHandler(new DataHandler(new FileDataSource(uploadService.load(data.file()).getFile())));
+                    attachment.setFileName(data.filename());
+
                     messageContent.addBodyPart(attachment);
                 }
 
@@ -303,15 +305,19 @@ public class MailBuilder {
                     MimeBodyPart attachment = new MimeBodyPart();
 
                     attachment.setDataHandler(new DataHandler(data.file()));
-                    attachment.setFileName(data.name());
+                    attachment.setFileName(data.filename());
 
                     messageContent.addBodyPart(attachment);
                 }
 
                 message.setContent(messageContent);
 
-                mailSender.send(message);
-            } catch (MessagingException | IOException exception) {
+                if (config.isEnabled()) {
+                    mailSender.send(message);
+                } else {
+                    log.info("Sending Mail (postfix disabled)\n{}", MailLogger.getTextFromMimeMessage(message));
+                }
+            } catch (MessagingException exception) {
                 log.warn("Failed to send email", exception);
             }
         }
@@ -325,27 +331,31 @@ public class MailBuilder {
 
             try {
                 Object value = field.get(dto);
-                String identifier = dtoPrefix + "." + field.getName();
-                String placeholder = "{{" + identifier + "}}";
+                String placeholder = dtoPrefix + "." + field.getName();
 
                 if (value != null) {
-                    if (formatters.get(identifier) != null) {
-                        content = content.replace(placeholder, formatters.get(identifier).apply(value));
+                    if (formatters.get(placeholder) != null) {
+                        replacePlaceholder(placeholder, formatters.get(placeholder).apply(value));
                     } else if (value.getClass().isRecord()) {
                         replaceDtoPlaceholders(value, dtoPrefix + "." + field.getName(), formatters);
                     } else if (value instanceof Instant) {
-                        content = content.replace(placeholder, DataFormatter.formatDateTime(value));
+                        replacePlaceholder(placeholder, DataFormatter.formatDateTime(value));
                     } else if (value.getClass().isEnum()) {
-                        content = content.replace(placeholder, DataFormatter.formatEnum(value));
+                        replacePlaceholder(placeholder, DataFormatter.formatEnum(value));
                     } else {
-                        content = content.replace(placeholder, value.toString().replace("{{", "").replace("}}", ""));
+                        replacePlaceholder(placeholder, value.toString().replace("{{", "").replace("}}", ""));
                     }
                 } else {
-                    content = content.replace(placeholder, "");
+                    replacePlaceholder(placeholder, "");
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException("Failed to access field: " + field.getName(), e);
             }
         }
+    }
+
+    private void replacePlaceholder(String placeholder, String replacement) {
+        content = content.replace("{{" + placeholder + "}}", Objects.requireNonNullElse(replacement, ""));
+        subject = subject.replace("{{" + placeholder + "}}", Objects.requireNonNullElse(replacement, ""));
     }
 }

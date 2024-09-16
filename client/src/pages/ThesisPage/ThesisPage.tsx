@@ -7,7 +7,7 @@ import ThesisAssessmentSection from './components/ThesisAssessmentSection/Thesis
 import ThesisFinalGradeSection from './components/ThesisFinalGradeSection/ThesisFinalGradeSection'
 import { useParams } from 'react-router-dom'
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
-import { Space } from '@mantine/core'
+import { Space, Stack } from '@mantine/core'
 import ThesisHeader from './components/ThesisHeader/ThesisHeader'
 import ThesisProvider from '../../contexts/ThesisProvider/ThesisProvider'
 import ThesisAdvisorCommentsSection from './components/ThesisAdvisorCommentsSection/ThesisAdvisorCommentsSection'
@@ -20,20 +20,16 @@ const ThesisPage = () => {
   return (
     <ThesisProvider thesisId={thesisId} requireLoadedThesis>
       <ContentContainer>
-        <ThesisHeader />
-        <ThesisConfigSection />
-        <Space my='md' />
-        <ThesisAdvisorCommentsSection />
-        <Space my='md' />
-        <ThesisInfoSection />
-        <Space my='md' />
-        <ThesisProposalSection />
-        <Space my='md' />
-        <ThesisWritingSection />
-        <Space my='md' />
-        <ThesisAssessmentSection />
-        <Space my='md' />
-        <ThesisFinalGradeSection />
+        <Stack>
+          <ThesisHeader />
+          <ThesisConfigSection />
+          <ThesisAdvisorCommentsSection />
+          <ThesisInfoSection />
+          <ThesisProposalSection />
+          <ThesisWritingSection />
+          <ThesisAssessmentSection />
+          <ThesisFinalGradeSection />
+        </Stack>
       </ContentContainer>
     </ThesisProvider>
   )

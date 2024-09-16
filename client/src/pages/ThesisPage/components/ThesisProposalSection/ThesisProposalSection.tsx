@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Divider, Grid, Group, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Divider, Grid, Group, Paper, Stack, Text } from '@mantine/core'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
@@ -14,11 +14,14 @@ import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handl
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 import { formatThesisFilename, formatUser } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
+import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
+import ThesisFeedbackRequestButton from '../ThesisFeedbackRequestButton/ThesisFeedbackRequestButton'
+import ThesisFeedbackOverview from '../ThesisFeedbackOverview/ThesisFeedbackOverview'
 
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
 
-  const [opened, setOpened] = useState(thesis.state === ThesisState.PROPOSAL)
+  const studentBackgroundColor = useHighlightedBackgroundColor(false)
 
   const [uploadModal, setUploadModal] = useState(false)
 
@@ -58,66 +61,75 @@ const ThesisProposalSection = () => {
   return (
     <Accordion
       variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
+      defaultValue={thesis.state === ThesisState.PROPOSAL ? 'open' : ''}
     >
       <Accordion.Item value='open'>
         <Accordion.Control>Proposal</Accordion.Control>
         <Accordion.Panel>
           <Stack>
             {access.advisor && (
-              <Stack gap='md'>
+              <Stack gap='sm'>
                 {thesis.students.map((student) => (
-                  <Grid key={student.userId}>
-                    <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem label='Student' value={formatUser(student)} />
-                    </Grid.Col>
-                    <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem
-                        label='University ID'
-                        value={student.universityId}
-                        copyText={student.universityId}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem
-                        label='Matriculation Number'
-                        value={student.matriculationNumber}
-                        copyText={student.matriculationNumber || undefined}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem
-                        label='E-Mail'
-                        value={student.email}
-                        copyText={student.email || undefined}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={{ md: 2 }}>
-                      <LabeledItem
-                        label='Study Degree'
-                        value={`${
-                          GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
-                          student.studyProgram
-                        } ${
-                          GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
-                          student.studyDegree
-                        } `}
-                      />
-                    </Grid.Col>
-                    {student.customData &&
-                      Object.entries(student.customData).map(([key, value]) => (
-                        <Grid.Col key={key} span={{ md: 6 }}>
+                  <Paper
+                    key={student.userId}
+                    p='md'
+                    radius='sm'
+                    style={{ backgroundColor: studentBackgroundColor }}
+                  >
+                    <Grid>
+                      <Grid.Col span={{ md: 2 }}>
+                        <LabeledItem label='Student' value={formatUser(student)} />
+                      </Grid.Col>
+                      <Grid.Col span={{ md: 2 }}>
+                        <LabeledItem
+                          label='University ID'
+                          value={student.universityId}
+                          copyText={student.universityId}
+                        />
+                      </Grid.Col>
+                      {student.matriculationNumber && (
+                        <Grid.Col span={{ md: 2 }}>
                           <LabeledItem
-                            label={GLOBAL_CONFIG.custom_data[key] ?? key}
-                            value={value}
+                            label='Matriculation Number'
+                            value={student.matriculationNumber}
+                            copyText={student.matriculationNumber || undefined}
                           />
                         </Grid.Col>
-                      ))}
-                    <Grid.Col span={12}>
-                      <Divider />
-                    </Grid.Col>
-                  </Grid>
+                      )}
+                      {student.email && (
+                        <Grid.Col span={{ md: 2 }}>
+                          <LabeledItem
+                            label='E-Mail'
+                            value={student.email}
+                            copyText={student.email || undefined}
+                          />
+                        </Grid.Col>
+                      )}
+                      {student.studyProgram && student.studyDegree && (
+                        <Grid.Col span={{ md: 2 }}>
+                          <LabeledItem
+                            label='Study Degree'
+                            value={`${
+                              GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
+                              student.studyProgram
+                            } ${
+                              GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
+                              student.studyDegree
+                            } `}
+                          />
+                        </Grid.Col>
+                      )}
+                      {student.customData &&
+                        Object.entries(student.customData).map(([key, value]) => (
+                          <Grid.Col key={key} span={{ md: 6 }}>
+                            <LabeledItem
+                              label={GLOBAL_CONFIG.custom_data[key] ?? key}
+                              value={value}
+                            />
+                          </Grid.Col>
+                        ))}
+                    </Grid>
+                  </Paper>
                 ))}
               </Stack>
             )}
@@ -131,6 +143,10 @@ const ThesisProposalSection = () => {
             ) : (
               <Text ta='center'>No proposal uploaded yet</Text>
             )}
+            <ThesisFeedbackOverview
+              type='PROPOSAL'
+              allowEdit={thesis.state === ThesisState.PROPOSAL}
+            />
             <Group>
               <UploadFileModal
                 opened={uploadModal}
@@ -151,6 +167,9 @@ const ThesisProposalSection = () => {
                 >
                   Accept Proposal
                 </ConfirmationButton>
+              )}
+              {thesis.state === ThesisState.PROPOSAL && (
+                <ThesisFeedbackRequestButton type='PROPOSAL' />
               )}
               {access.student && thesis.state === ThesisState.PROPOSAL && (
                 <Button ml='auto' onClick={() => setUploadModal(true)}>

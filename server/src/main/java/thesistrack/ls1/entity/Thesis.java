@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
+import thesistrack.ls1.constants.ThesisFeedbackType;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
@@ -97,6 +98,10 @@ public class Thesis {
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("scheduledAt ASC")
     private List<ThesisPresentation> presentations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    @OrderBy("requestedAt ASC")
+    private List<ThesisFeedback> feedback = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     private Set<ThesisStateChange> states = new HashSet<>();
@@ -225,5 +230,25 @@ public class Thesis {
         }
 
         return false;
+    }
+
+    public Optional<ThesisPresentation> getPresentation(UUID presentationId) {
+        for (ThesisPresentation presentation : getPresentations()) {
+            if (presentation.getId().equals(presentationId)) {
+                return Optional.of(presentation);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<ThesisFeedback> getFeedbackItem(UUID feedbackId) {
+        for (ThesisFeedback item : getFeedback()) {
+            if (item.getId().equals(feedbackId)) {
+                return Optional.of(item);
+            }
+        }
+
+        return Optional.empty();
     }
 }

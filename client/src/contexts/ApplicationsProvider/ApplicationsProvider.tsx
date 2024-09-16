@@ -18,6 +18,7 @@ interface IApplicationsProviderProps {
   fetchAll?: boolean
   limit?: number
   defaultStates?: ApplicationState[]
+  defaultTopics?: string[]
   hideIfEmpty?: boolean
   emptyComponent?: ReactNode
 }
@@ -28,6 +29,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
     fetchAll = false,
     limit = 50,
     defaultStates,
+    defaultTopics,
     hideIfEmpty = false,
     emptyComponent,
   } = props
@@ -41,7 +43,8 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
   const previousContent = useRef<string[]>([])
 
   const [filters, setFilters] = useState<IApplicationsFilters>({
-    states: defaultStates || [],
+    states: defaultStates,
+    topics: defaultTopics,
   })
   const [sort, setSort] = useState<IApplicationsSort>({
     column: 'createdAt',

@@ -5,7 +5,7 @@ import thesistrack.ls1.constants.ThesisPresentationVisibility;
 
 import java.time.Instant;
 
-public record CreatePresentationPayload(
+public record ReplacePresentationPayload(
         ThesisPresentationType type,
         ThesisPresentationVisibility visibility,
         String location,

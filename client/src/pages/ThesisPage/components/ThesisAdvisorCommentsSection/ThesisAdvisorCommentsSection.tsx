@@ -1,27 +1,25 @@
-import { useState } from 'react'
-import { Accordion, Stack } from '@mantine/core'
+import { Accordion, Badge, Group, Stack, Text } from '@mantine/core'
 import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
 import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
-import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
-import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
+import ThesisCommentsList from '../../../../components/ThesisCommentsList/ThesisCommentsList'
+import ThesisCommentsForm from '../../../../components/ThesisCommentsForm/ThesisCommentsForm'
 
 const ThesisAdvisorCommentsSection = () => {
   const { thesis, access } = useLoadedThesisContext()
-
-  const [opened, setOpened] = useState(false)
 
   if (!access.advisor) {
     return null
   }
 
   return (
-    <Accordion
-      variant='separated'
-      value={opened ? 'open' : ''}
-      onChange={(value) => setOpened(value === 'open')}
-    >
+    <Accordion variant='separated' defaultValue=''>
       <Accordion.Item value='open'>
-        <Accordion.Control>Advisor Comments (Not visible to student)</Accordion.Control>
+        <Accordion.Control>
+          <Group gap='xs'>
+            <Text>Advisor Comments</Text>
+            <Badge color='grey'>Not visible to student</Badge>
+          </Group>
+        </Accordion.Control>
         <Accordion.Panel>
           <Stack>
             <ThesisCommentsProvider thesis={thesis} commentType='ADVISOR'>

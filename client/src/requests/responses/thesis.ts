@@ -12,7 +12,9 @@ export enum ThesisState {
 
 export interface IThesisPresentation {
   presentationId: string
+  state: string
   type: string
+  visibility: string
   location: string | null
   streamUrl: string | null
   language: string
@@ -56,6 +58,14 @@ export interface IThesis {
     approvedAt: string | null
     approvedBy: ILightUser | null
   }
+  feedback: Array<{
+    feedbackId: string
+    type: string
+    feedback: string
+    requestedBy: ILightUser
+    requestedAt: string
+    completedAt: string | null
+  }>
   grade: null | {
     finalGrade: string
     feedback: string
@@ -100,4 +110,8 @@ export interface IPublishedPresentation {
 
 export function isThesis(thesis: any): thesis is IThesis {
   return thesis.thesisId && !!thesis.states
+}
+
+export function isThesisPresentation(presentation: any): presentation is IThesisPresentation {
+  return presentation.presentationId && !!presentation.state
 }

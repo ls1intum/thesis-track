@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import thesistrack.ls1.constants.ThesisPresentationState;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
 import thesistrack.ls1.entity.ThesisPresentation;
 
@@ -16,9 +17,15 @@ import java.util.UUID;
 
 @Repository
 public interface ThesisPresentationRepository extends JpaRepository<ThesisPresentation, UUID> {
-    @Query("SELECT p FROM ThesisPresentation p WHERE p.scheduledAt >= :time AND (:visibilities IS NULL OR p.visibility IN :visibilities)")
+    @Query(
+            "SELECT p FROM ThesisPresentation p WHERE " +
+                    "p.scheduledAt >= :time AND " +
+                    "(:states IS NULL OR p.state IN :states) AND " +
+                    "(:visibilities IS NULL OR p.visibility IN :visibilities)"
+    )
     Page<ThesisPresentation> findFuturePresentations(
             @Param("time") Instant time,
+            @Param("states") Set<ThesisPresentationState> states,
             @Param("visibilities") Set<ThesisPresentationVisibility> visibilities,
             Pageable page
     );

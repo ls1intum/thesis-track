@@ -55,7 +55,7 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
   },
 
   custom_data: getEnvironmentVariable<Record<string, string>>('CUSTOM_DATA', true) || {
-    GITHUB: 'Github Profile',
+    GITHUB: 'Github Username',
   },
 
   privacy_text: getEnvironmentVariable('PRIVACY') || '',

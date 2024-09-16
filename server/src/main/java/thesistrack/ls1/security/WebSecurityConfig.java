@@ -43,9 +43,9 @@ public class WebSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers(HttpMethod.POST, "/v1/applications").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v2/topics/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v2/published-theses/**").permitAll()
+                                .requestMatchers(HttpMethod.GET, "/v2/published-presentations/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v2/calendar/**").permitAll()
                                 .anyRequest().authenticated()
                 );

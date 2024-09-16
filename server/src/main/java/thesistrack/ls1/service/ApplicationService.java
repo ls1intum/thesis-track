@@ -6,17 +6,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.constants.ApplicationRejectReason;
-import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
+import thesistrack.ls1.constants.ApplicationReviewReason;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.constants.ApplicationState;
+import thesistrack.ls1.entity.key.ApplicationReviewerId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.ApplicationRepository;
+import thesistrack.ls1.repository.ApplicationReviewerRepository;
 import thesistrack.ls1.repository.TopicRepository;
-import thesistrack.ls1.repository.UserRepository;
-import thesistrack.ls1.utility.RequestValidator;
 
 import java.time.Instant;
 import java.util.*;
@@ -24,35 +23,31 @@ import java.util.*;
 @Service
 public class ApplicationService {
     private final ApplicationRepository applicationRepository;
-    private final UserRepository userRepository;
-    private final UploadService uploadService;
     private final MailingService mailingService;
     private final TopicRepository topicRepository;
     private final ThesisService thesisService;
     private final TopicService topicService;
+    private final ApplicationReviewerRepository applicationReviewerRepository;
 
     @Autowired
     public ApplicationService(
             ApplicationRepository applicationRepository,
-            UserRepository userRepository,
-            UploadService storageService,
             MailingService mailingService,
             TopicRepository topicRepository,
             ThesisService thesisService,
-            TopicService topicService
-    ) {
+            TopicService topicService,
+            ApplicationReviewerRepository applicationReviewerRepository) {
         this.applicationRepository = applicationRepository;
-        this.userRepository = userRepository;
-
-        this.uploadService = storageService;
         this.mailingService = mailingService;
         this.topicRepository = topicRepository;
         this.thesisService = thesisService;
         this.topicService = topicService;
+        this.applicationReviewerRepository = applicationReviewerRepository;
     }
 
     public Page<Application> getAll(
             UUID userId,
+            UUID reviewerId,
             String searchQuery,
             ApplicationState[] states,
             String[] previous,
@@ -74,6 +69,7 @@ public class ApplicationService {
 
         return applicationRepository.searchApplications(
                 userId,
+                statesFilter != null && !statesFilter.contains(ApplicationState.REJECTED) ? reviewerId : null,
                 searchQueryFilter,
                 statesFilter,
                 previousFilter,
@@ -82,64 +78,6 @@ public class ApplicationService {
                 includeSuggestedTopics,
                 PageRequest.of(page, limit, Sort.by(order))
         );
-    }
-
-    @Transactional
-    public Application createLegacyApplication(
-            LegacyCreateApplicationPayload payload,
-            MultipartFile examinationReport,
-            MultipartFile cv,
-            MultipartFile degreeReport
-    ) {
-        Instant currentTime = Instant.now();
-
-        User student = userRepository.findByUniversityId(payload.universityId()).orElseGet(() -> {
-            User user = new User();
-
-            user.setJoinedAt(currentTime);
-
-            return user;
-        });
-
-        student.setUniversityId(RequestValidator.validateStringMaxLength(payload.universityId(), 30));
-        student.setMatriculationNumber(RequestValidator.validateStringMaxLength(payload.matriculationNumber(), 30));
-        student.setFirstName(RequestValidator.validateStringMaxLength(payload.firstName(), 100));
-        student.setLastName(RequestValidator.validateStringMaxLength(payload.lastName(), 100));
-        student.setGender(RequestValidator.validateStringMaxLength(payload.gender(), 100));
-        student.setNationality(RequestValidator.validateStringMaxLength(payload.nationality(), 100));
-        student.setEmail(RequestValidator.validateEmail(payload.email()));
-        student.setStudyDegree(RequestValidator.validateStringMaxLength(payload.studyDegree(), 1000));
-        student.setStudyProgram(RequestValidator.validateStringMaxLength(payload.studyProgram(), 1000));
-        student.setSpecialSkills(RequestValidator.validateStringMaxLength(payload.specialSkills(), 1000));
-        student.setInterests(RequestValidator.validateStringMaxLength(payload.interests(), 1000));
-        student.setProjects(RequestValidator.validateStringMaxLength(payload.projects(), 1000));
-
-        student.setEnrolledAt(payload.enrolledAt());
-        student.setUpdatedAt(currentTime);
-
-        student.setExaminationFilename(uploadService.store(examinationReport, 3 * 1024 * 1024));
-        student.setCvFilename(uploadService.store(cv, 3 * 1024 * 1024));
-
-        if (degreeReport != null && !degreeReport.isEmpty()) {
-            student.setDegreeFilename(uploadService.store(degreeReport, 3 * 1024 * 1024));
-        }
-
-        Application application = new Application();
-        application.setUser(userRepository.save(student));
-
-        application.setThesisTitle(RequestValidator.validateStringMaxLength(payload.thesisTitle(), 500));
-        application.setThesisType(RequestValidator.validateStringMaxLength(payload.thesisType(), 500));
-        application.setMotivation(RequestValidator.validateStringMaxLength(payload.motivation(), 1000));
-        application.setComment("");
-        application.setState(ApplicationState.NOT_ASSESSED);
-        application.setDesiredStartDate(payload.desiredStartDate());
-        application.setCreatedAt(currentTime);
-
-        application = applicationRepository.save(application);
-
-        mailingService.sendApplicationCreatedEmail(application);
-
-        return application;
     }
 
     @Transactional
@@ -197,7 +135,8 @@ public class ApplicationService {
 
         application.setState(ApplicationState.ACCEPTED);
         application.setReviewedAt(Instant.now());
-        application.setReviewedBy(reviewingUser);
+
+        application = reviewApplication(application, reviewingUser, ApplicationReviewReason.INTERESTED);
 
         Thesis thesis = thesisService.createThesis(
                 reviewingUser,
@@ -236,7 +175,8 @@ public class ApplicationService {
         application.setState(ApplicationState.REJECTED);
         application.setRejectReason(reason);
         application.setReviewedAt(Instant.now());
-        application.setReviewedBy(reviewingUser);
+
+        application = reviewApplication(application, reviewingUser, ApplicationReviewReason.NOT_INTERESTED);
 
         List<Application> result = new ArrayList<>();
 
@@ -248,7 +188,8 @@ public class ApplicationService {
                     item.setState(ApplicationState.REJECTED);
                     item.setRejectReason(reason);
                     item.setReviewedAt(Instant.now());
-                    item.setReviewedBy(reviewingUser);
+
+                    item = reviewApplication(item, reviewingUser, ApplicationReviewReason.NOT_INTERESTED);
 
                     result.add(applicationRepository.save(item));
                 }
@@ -287,6 +228,39 @@ public class ApplicationService {
         }
 
         return result;
+    }
+
+    @Transactional
+    public Application reviewApplication(Application application, User reviewer, ApplicationReviewReason reason) {
+        ApplicationReviewer entity = application.getReviewer(reviewer).orElseGet(() -> {
+            ApplicationReviewerId id = new ApplicationReviewerId();
+            id.setApplicationId(application.getId());
+            id.setUserId(reviewer.getId());
+
+            ApplicationReviewer element = new ApplicationReviewer();
+            element.setId(id);
+            element.setApplication(application);
+            element.setUser(reviewer);
+
+            return element;
+        });
+
+        ApplicationReviewerId entityId = entity.getId();
+
+        entity.setReason(reason);
+        entity.setReviewedAt(Instant.now());
+
+        application.setReviewers(new ArrayList<>(application.getReviewers().stream().filter((element) -> !element.getId().equals(entityId)).toList()));
+
+        if (reason == ApplicationReviewReason.NOT_REVIEWED) {
+            applicationReviewerRepository.delete(entity);
+        } else {
+            entity = applicationReviewerRepository.save(entity);
+
+            application.getReviewers().add(entity);
+        }
+
+        return applicationRepository.save(application);
     }
 
     @Transactional

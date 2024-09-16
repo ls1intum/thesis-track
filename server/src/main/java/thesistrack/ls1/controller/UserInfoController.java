@@ -2,15 +2,12 @@ package thesistrack.ls1.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import thesistrack.ls1.constants.StringLimits;
-import thesistrack.ls1.controller.payload.LegacyCreateApplicationPayload;
 import thesistrack.ls1.controller.payload.UpdateUserInformationPayload;
 import thesistrack.ls1.dto.UserDto;
 import thesistrack.ls1.entity.User;

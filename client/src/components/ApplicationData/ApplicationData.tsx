@@ -43,22 +43,10 @@ const ApplicationData = (props: IApplicationDataProps) => {
           ) : (
             <LabeledItem label='Thesis Title' value={application.thesisTitle} />
           )}
-          <LabeledItem
-            label='Motivation'
-            value={<DocumentEditor value={application.motivation} />}
-          />
-          <LabeledItem
-            label='Interests'
-            value={<DocumentEditor value={application.user.interests || ''} />}
-          />
-          <LabeledItem
-            label='Projects'
-            value={<DocumentEditor value={application.user.projects || ''} />}
-          />
-          <LabeledItem
-            label='Special Skills'
-            value={<DocumentEditor value={application.user.specialSkills || ''} />}
-          />
+          <DocumentEditor label='Motivation' value={application.motivation} />
+          <DocumentEditor label='Interests' value={application.user.interests || ''} />
+          <DocumentEditor label='Projects' value={application.user.projects || ''} />
+          <DocumentEditor label='Special Skills' value={application.user.specialSkills || ''} />
           <Grid>
             <Grid.Col span={{ xs: 4, sm: 3 }}>
               <LabeledItem
@@ -147,6 +135,14 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 }
               />
             </Grid.Col>
+            {application.reviewedAt && (
+              <Grid.Col span={{ xs: 4, sm: 3 }}>
+                <LabeledItem
+                  label='Reviewed At'
+                  value={formatDate(application.reviewedAt, { withTime: true })}
+                />
+              </Grid.Col>
+            )}
             {application.user.customData &&
               Object.entries(application.user.customData).map(([key, value]) => (
                 <Grid.Col key={key} span={{ md: 6 }}>
@@ -154,28 +150,6 @@ const ApplicationData = (props: IApplicationDataProps) => {
                 </Grid.Col>
               ))}
           </Grid>
-          {(application.reviewedBy || application.reviewedAt || application.comment) && (
-            <Stack gap='md'>
-              <Divider />
-              <Group grow>
-                {application.reviewedBy && (
-                  <LabeledItem
-                    label='Reviewer'
-                    value={<AvatarUser user={application.reviewedBy} withUniversityId={true} />}
-                  />
-                )}
-                {application.reviewedAt && (
-                  <LabeledItem
-                    label='Reviewed At'
-                    value={formatDate(application.reviewedAt, { withTime: true })}
-                  />
-                )}
-                {application.comment && (
-                  <LabeledItem label='Review Comment' value={application.comment} />
-                )}
-              </Group>
-            </Stack>
-          )}
           {bottomSection}
         </Stack>
       </Grid.Col>

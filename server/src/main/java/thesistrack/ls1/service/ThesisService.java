@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.constants.*;
+import thesistrack.ls1.controller.payload.RequestChangesPayload;
 import thesistrack.ls1.controller.payload.ThesisStatePayload;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.entity.key.ThesisRoleId;
@@ -16,9 +17,9 @@ import thesistrack.ls1.entity.key.ThesisStateChangeId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.*;
+import thesistrack.ls1.utility.RequestValidator;
 
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -33,6 +34,7 @@ public class ThesisService {
     private final MailingService mailingService;
     private final AccessManagementService accessManagementService;
     private final ThesisPresentationService thesisPresentationService;
+    private final ThesisFeedbackRepository thesisFeedbackRepository;
 
     @Autowired
     public ThesisService(
@@ -45,8 +47,8 @@ public class ThesisService {
             UploadService uploadService,
             MailingService mailingService,
             AccessManagementService accessManagementService,
-            ThesisPresentationService thesisPresentationService
-    ) {
+            ThesisPresentationService thesisPresentationService,
+            ThesisFeedbackRepository thesisFeedbackRepository) {
         this.thesisRoleRepository = thesisRoleRepository;
         this.thesisRepository = thesisRepository;
         this.thesisStateChangeRepository = thesisStateChangeRepository;
@@ -57,6 +59,7 @@ public class ThesisService {
         this.mailingService = mailingService;
         this.accessManagementService = accessManagementService;
         this.thesisPresentationService = thesisPresentationService;
+        this.thesisFeedbackRepository = thesisFeedbackRepository;
     }
 
     public Page<Thesis> getAll(
@@ -199,6 +202,43 @@ public class ThesisService {
         thesis = thesisRepository.save(thesis);
 
         thesisPresentationService.updateThesisCalendarEvents(thesis);
+
+        return thesis;
+    }
+
+    /* FEEDBACK */
+    public Thesis completeFeedback(Thesis thesis, UUID feedbackId, boolean completed) {
+        ThesisFeedback feedback = thesis.getFeedbackItem(feedbackId)
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback id not found"));
+
+        feedback.setCompletedAt(completed ? Instant.now() : null);
+
+        thesisFeedbackRepository.save(feedback);
+
+        return thesis;
+    }
+
+    @Transactional
+    public Thesis requestChanges(User authenticatedUser, Thesis thesis, ThesisFeedbackType type, List<RequestChangesPayload.RequestedChange> requestedChanges) {
+        for (var requestedChange : requestedChanges) {
+            ThesisFeedback feedback = new ThesisFeedback();
+
+            feedback.setRequestedAt(Instant.now());
+            feedback.setRequestedBy(authenticatedUser);
+            feedback.setThesis(thesis);
+            feedback.setType(type);
+            feedback.setFeedback(RequestValidator.validateStringMaxLength(requestedChange.feedback(), StringLimits.LONGTEXT.getLimit()));
+            feedback.setCompletedAt(requestedChange.completed() ? Instant.now() : null);
+
+            feedback = thesisFeedbackRepository.save(feedback);
+
+            thesis.getFeedback().add(feedback);
+            thesis.setFeedback(thesis.getFeedback());
+        }
+
+        if (type == ThesisFeedbackType.PROPOSAL) {
+            mailingService.sendProposalChangeRequestEmail(authenticatedUser, thesis);
+        }
 
         return thesis;
     }

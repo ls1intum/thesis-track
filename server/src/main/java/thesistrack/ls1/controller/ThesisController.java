@@ -12,10 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import thesistrack.ls1.constants.StringLimits;
-import thesistrack.ls1.constants.ThesisCommentType;
-import thesistrack.ls1.constants.ThesisState;
-import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.constants.*;
 import thesistrack.ls1.controller.payload.*;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisCommentDto;
@@ -206,6 +203,49 @@ public class ThesisController {
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
+    /* FEEDBACK ENDPOINTS */
+    @PutMapping("/{thesisId}/feedback/{feedbackId}/{action}")
+    public ResponseEntity<ThesisDto> completeFeedback(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID feedbackId,
+            @PathVariable String action,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of this thesis to complete a feedback item");
+        }
+
+        thesis = thesisService.completeFeedback(thesis, feedbackId, action.equals("complete"));
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
+    @PostMapping("/{thesisId}/feedback")
+    public ResponseEntity<ThesisDto> requestChanges(
+            @PathVariable UUID thesisId,
+            @RequestBody RequestChangesPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be an advisor of this thesis to request changes");
+        }
+
+        thesis = thesisService.requestChanges(
+                authenticatedUser,
+                thesis,
+                RequestValidator.validateNotNull(payload.type()),
+                RequestValidator.validateNotNull(payload.requestedChanges())
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
     /* PROPOSAL ENDPOINTS */
 
     @GetMapping("/{thesisId}/proposal")
@@ -355,14 +395,14 @@ public class ThesisController {
     @PostMapping("/{thesisId}/presentations")
     public ResponseEntity<ThesisDto> createPresentation(
             @PathVariable UUID thesisId,
-            @RequestBody CreatePresentationPayload payload,
+            @RequestBody ReplacePresentationPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.findById(thesisId);
 
-        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to perform this action");
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a advisor of this thesis to create a presentation");
         }
 
         thesis = thesisPresentationService.createPresentation(
@@ -375,6 +415,57 @@ public class ThesisController {
                 RequestValidator.validateStringMaxLength(payload.language(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.date())
         );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
+    @PutMapping("/{thesisId}/presentations/{presentationId}")
+    public ResponseEntity<ThesisDto> updatePresentation(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID presentationId,
+            @RequestBody ReplacePresentationPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        ThesisPresentation presentation = thesisPresentationService.findById(thesisId, presentationId);
+        Thesis thesis = presentation.getThesis();
+
+        if (!thesis.hasStudentAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a student of this thesis to update a presentation");
+        }
+
+        if (presentation.getState() == ThesisPresentationState.SCHEDULED && !thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be an advisor of this thesis to update a scheduled presentation");
+        }
+
+        thesis = thesisPresentationService.updatePresentation(
+                presentation,
+                RequestValidator.validateNotNull(payload.type()),
+                RequestValidator.validateNotNull(payload.visibility()),
+                RequestValidator.validateStringMaxLength(payload.location(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.streamUrl(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.language(), StringLimits.SHORTTEXT.getLimit()),
+                presentation.getState() == ThesisPresentationState.SCHEDULED ? presentation.getScheduledAt() : RequestValidator.validateNotNull(payload.date())
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
+    @PostMapping("/{thesisId}/presentations/{presentationId}/schedule")
+    public ResponseEntity<ThesisDto> updatePresentation(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID presentationId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        ThesisPresentation presentation = thesisPresentationService.findById(thesisId, presentationId);
+        Thesis thesis = presentation.getThesis();
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be an advisor of this thesis to schedule a presentation");
+        }
+
+        thesis = thesisPresentationService.schedulePresentation(presentation);
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }

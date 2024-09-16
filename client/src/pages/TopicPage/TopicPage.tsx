@@ -1,18 +1,21 @@
 import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React from 'react'
 import { usePageTitle } from '../../hooks/theme'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useTopic } from '../../hooks/fetcher'
 import NotFound from '../../components/NotFound/NotFound'
 import PageLoader from '../../components/PageLoader/PageLoader'
-import { Button, Group, Stack, Title } from '@mantine/core'
+import { Button, Divider, Group, Stack, Title } from '@mantine/core'
 import TopicData from '../../components/TopicData/TopicData'
-import { useUser } from '../../hooks/authentication'
+import { useHasGroupAccess } from '../../hooks/authentication'
+import ApplicationsProvider from '../../contexts/ApplicationsProvider/ApplicationsProvider'
+import ApplicationsTable from '../../components/ApplicationsTable/ApplicationsTable'
 
 const TopicPage = () => {
   const { topicId } = useParams<{ topicId: string }>()
 
-  const user = useUser()
+  const navigate = useNavigate()
+  const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
 
   const topic = useTopic(topicId)
 
@@ -32,7 +35,7 @@ const TopicPage = () => {
         <Title>{topic.title}</Title>
         <TopicData topic={topic} />
         <Group>
-          {['admin', 'supervisor', 'advisor'].some((group) => user?.groups.includes(group)) && (
+          {managementAccess && (
             <Button variant='outline' component={Link} to='/topics'>
               Manage Topics
             </Button>
@@ -41,6 +44,18 @@ const TopicPage = () => {
             Apply Now
           </Button>
         </Group>
+        {managementAccess && (
+          <Stack>
+            <Divider />
+            <ApplicationsProvider fetchAll={true} limit={10} defaultTopics={[topic.topicId]}>
+              <ApplicationsTable
+                onApplicationClick={(application) =>
+                  navigate(`/applications/${application.applicationId}`)
+                }
+              />
+            </ApplicationsProvider>
+          </Stack>
+        )}
       </Stack>
     </ContentContainer>
   )

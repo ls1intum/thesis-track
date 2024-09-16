@@ -5,8 +5,8 @@ const ThesisVisibilitySelect = (props: SelectProps) => {
 
   const descriptions: Record<string, string> = {
     PUBLIC:
-      'Everyone can see the thesis. If thesis is completed, it will be publicly available on the landing page',
-    STUDENT: 'All students that are currently writing a thesis can see the thesis',
+      'Every authenticated user can see the thesis. If thesis is completed, it will be publicly visible on the landing page',
+    STUDENT: 'All students that have a not completed thesis assigned can see the thesis',
     INTERNAL: 'All advisors and supervisors of the chair can see the thesis',
     PRIVATE: 'Only assigned users can see the thesis',
   }

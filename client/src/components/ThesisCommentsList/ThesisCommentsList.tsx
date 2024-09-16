@@ -1,4 +1,4 @@
-import { useThesisCommentsContext } from '../../../../contexts/ThesisCommentsProvider/hooks'
+import { useThesisCommentsContext } from '../../contexts/ThesisCommentsProvider/hooks'
 import {
   Button,
   Center,
@@ -10,13 +10,13 @@ import {
   Stack,
   Text,
 } from '@mantine/core'
-import { IThesisComment } from '../../../../requests/responses/thesis'
+import { IThesisComment } from '../../requests/responses/thesis'
 import { useState } from 'react'
-import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
-import { useLoggedInUser } from '../../../../hooks/authentication'
-import { formatDate, formatUser } from '../../../../utils/format'
+import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
+import { useLoggedInUser } from '../../hooks/authentication'
+import { formatDate, formatUser } from '../../utils/format'
 import { Download } from 'phosphor-react'
-import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
+import { useHighlightedBackgroundColor } from '../../hooks/theme'
 
 const ThesisCommentsList = () => {
   const { thesis, comments, deleteComment, limit, page, setPage } = useThesisCommentsContext()

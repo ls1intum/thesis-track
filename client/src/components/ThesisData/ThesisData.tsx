@@ -1,13 +1,23 @@
 import { IPublishedThesis, isThesis, IThesis } from '../../requests/responses/thesis'
-import { Grid, Stack } from '@mantine/core'
+import { Divider, Grid, Stack, Title } from '@mantine/core'
 import LabeledItem from '../LabeledItem/LabeledItem'
 import { formatDate, formatThesisType, pluralize } from '../../utils/format'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import React from 'react'
+import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
+import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
+import ThesisCommentsProvider from '../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
+import { useThesisAccess } from '../../contexts/ThesisProvider/hooks'
 
-type availableAdditionalInformation = 'title' | 'abstract' | 'info' | 'state' | 'keywords'
+type availableAdditionalInformation =
+  | 'title'
+  | 'abstract'
+  | 'info'
+  | 'state'
+  | 'keywords'
+  | 'advisor-comments'
 
 interface IThesisDataProps {
   thesis: IThesis | IPublishedThesis
@@ -16,6 +26,8 @@ interface IThesisDataProps {
 
 const ThesisData = (props: IThesisDataProps) => {
   const { thesis, additionalInformation = [] } = props
+
+  const access = useThesisAccess(thesis)
 
   return (
     <Stack gap='md'>
@@ -75,6 +87,14 @@ const ThesisData = (props: IThesisDataProps) => {
       )}
       {additionalInformation.includes('info') && isThesis(thesis) && (
         <DocumentEditor label='Additional Information' value={thesis.infoText} />
+      )}
+      {additionalInformation.includes('advisor-comments') && access.advisor && isThesis(thesis) && (
+        <ThesisCommentsProvider thesis={thesis} commentType='ADVISOR'>
+          <Divider />
+          <Title order={4}>Advisor Comments (Not visible to student)</Title>
+          <ThesisCommentsList />
+          <ThesisCommentsForm />
+        </ThesisCommentsProvider>
       )}
     </Stack>
   )

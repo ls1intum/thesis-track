@@ -1,9 +1,6 @@
 package thesistrack.ls1.dto;
 
-import thesistrack.ls1.constants.ThesisPresentationType;
-import thesistrack.ls1.constants.ThesisRoleName;
-import thesistrack.ls1.constants.ThesisState;
-import thesistrack.ls1.constants.ThesisVisibility;
+import thesistrack.ls1.constants.*;
 import thesistrack.ls1.entity.*;
 
 import java.time.Instant;
@@ -25,6 +22,7 @@ public record ThesisDto (
 
         ThesisAssessmentDto assessment,
         ThesisProposalDto proposal,
+        List<ThesisFeedbackDto> feedback,
         ThesisFilesDto files,
         ThesisGradeDto grade,
 
@@ -82,7 +80,9 @@ public record ThesisDto (
 
     public record ThesisPresentationDto(
             UUID presentationId,
+            ThesisPresentationState state,
             ThesisPresentationType type,
+            ThesisPresentationVisibility visibility,
             String location,
             String streamUrl,
             String language,
@@ -97,13 +97,39 @@ public record ThesisDto (
 
             return new ThesisPresentationDto(
                     presentation.getId(),
+                    presentation.getState(),
                     presentation.getType(),
+                    presentation.getVisibility(),
                     presentation.getLocation(),
                     presentation.getStreamUrl(),
                     presentation.getLanguage(),
                     presentation.getScheduledAt(),
                     presentation.getCreatedAt(),
                     LightUserDto.fromUserEntity(presentation.getCreatedBy())
+            );
+        }
+    }
+
+    public record ThesisFeedbackDto(
+            UUID feedbackId,
+            ThesisFeedbackType type,
+            String feedback,
+            LightUserDto requestedBy,
+            Instant requestedAt,
+            Instant completedAt
+    ) {
+        public static ThesisFeedbackDto fromThesisFeedbackEntity(ThesisFeedback feedback) {
+            if (feedback == null) {
+                return null;
+            }
+
+            return new ThesisFeedbackDto(
+                    feedback.getId(),
+                    feedback.getType(),
+                    feedback.getFeedback(),
+                    LightUserDto.fromUserEntity(feedback.getRequestedBy()),
+                    feedback.getRequestedAt(),
+                    feedback.getCompletedAt()
             );
         }
     }
@@ -179,6 +205,7 @@ public record ThesisDto (
                 thesis.getCreatedAt(),
                 protectedAccess && !assessments.isEmpty() ? ThesisAssessmentDto.fromAssessmentEntity(assessments.getFirst()) : null,
                 ThesisProposalDto.fromProposalEntity(!proposals.isEmpty() ? proposals.getFirst() : null),
+                thesis.getFeedback().stream().map(ThesisFeedbackDto::fromThesisFeedbackEntity).toList(),
                 new ThesisFilesDto(
                         thesis.getFinalThesisFilename(),
                         thesis.getFinalPresentationFilename(),

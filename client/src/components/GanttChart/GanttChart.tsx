@@ -31,6 +31,7 @@ interface IGanttChartProps {
   initialRangeDuration?: number
   maxTicks?: number
   minRange?: DateRange
+  rangeStorageKey?: string
 }
 
 export interface IGanttChartDataElement {
@@ -69,9 +70,29 @@ const GanttChart = (props: IGanttChartProps) => {
     initialRangeDuration = 3600 * 24 * 30 * 3 * 1000,
     maxTicks = 6,
     minRange,
+    rangeStorageKey,
   } = props
 
-  const [range, setRange] = useState<DateRange>()
+  const storedRangeKey = rangeStorageKey ? `gantt-chart-range-${rangeStorageKey}` : undefined
+  const storedRange = useMemo<DateRange | undefined>(() => {
+    if (!storedRangeKey) {
+      return undefined
+    }
+
+    const rawRange = localStorage.getItem(storedRangeKey)
+
+    if (rawRange === null) {
+      return undefined
+    }
+
+    try {
+      return JSON.parse(rawRange)
+    } catch {
+      return undefined
+    }
+  }, [storedRangeKey && localStorage.getItem(storedRangeKey)])
+
+  const [range, setRange] = useState<DateRange | undefined>(storedRange)
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([])
 
   const [popover, setPopover] = useState<string>()
@@ -81,6 +102,12 @@ const GanttChart = (props: IGanttChartProps) => {
   const initialTouch = useRef<{ initialDistance: number; initialRange: DateRange } | null>(null)
 
   const currentTime = useMemo(() => Date.now(), [])
+
+  useEffect(() => {
+    if (storedRangeKey && range) {
+      localStorage.setItem(storedRangeKey, JSON.stringify(range))
+    }
+  }, [range, storedRangeKey])
 
   // Disable page zooming to prevent that page zooms on pinch gesture
   useEffect(() => {

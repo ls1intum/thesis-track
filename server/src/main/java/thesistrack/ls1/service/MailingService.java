@@ -1,16 +1,20 @@
 package thesistrack.ls1.service;
 
 import jakarta.mail.util.ByteArrayDataSource;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import thesistrack.ls1.constants.ThesisCommentType;
 import thesistrack.ls1.constants.ApplicationRejectReason;
+import thesistrack.ls1.constants.ThesisFeedbackType;
+import thesistrack.ls1.constants.ThesisPresentationVisibility;
 import thesistrack.ls1.entity.*;
 import thesistrack.ls1.utility.MailBuilder;
 import thesistrack.ls1.utility.MailConfig;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 
 @Service
 public class MailingService {
@@ -33,18 +37,18 @@ public class MailingService {
         MailBuilder chairMailBuilder = new MailBuilder(config, "New Thesis Application", "application-created-chair");
         chairMailBuilder
                 .sendToChairMembers()
-                .addAttachmentFile(application.getUser().getCvFilename())
-                .addAttachmentFile(application.getUser().getExaminationFilename())
-                .addAttachmentFile(application.getUser().getDegreeFilename())
+                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "cv", application.getUser().getCvFilename()))
+                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "examination-report", application.getUser().getExaminationFilename()))
+                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "degree-report", application.getUser().getDegreeFilename()))
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
 
         MailBuilder studentMailBuilder = new MailBuilder(config, "Thesis Application Confirmation", "application-created-student");
         studentMailBuilder
                 .addPrimaryRecipient(application.getUser())
-                .addAttachmentFile(application.getUser().getCvFilename())
-                .addAttachmentFile(application.getUser().getExaminationFilename())
-                .addAttachmentFile(application.getUser().getDegreeFilename())
+                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "cv", application.getUser().getCvFilename()))
+                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "examination-report", application.getUser().getExaminationFilename()))
+                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "degree-report", application.getUser().getDegreeFilename()))
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
     }
@@ -62,6 +66,7 @@ public class MailingService {
                 .addDefaultBccRecipients()
                 .fillUserPlaceholders(advisor, "advisor")
                 .fillApplicationPlaceholders(application)
+                .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
     }
 
@@ -74,10 +79,10 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendApplicationReminderEmail(long unreviewedApplications) {
+    public void sendApplicationReminderEmail(User user, long unreviewedApplications) {
         MailBuilder builder = new MailBuilder(config, "Unreviewed Thesis Applications", "application-reminder");
         builder
-                .sendToChairMembers()
+                .addPrimaryRecipient(user)
                 .fillPlaceholder("unreviewedApplications", String.valueOf(unreviewedApplications))
                 .fillPlaceholder("reviewApplicationsLink", config.getClientHost() + "/applications")
                 .send(javaMailSender, uploadService);
@@ -109,7 +114,7 @@ public class MailingService {
                 .addPrimarySender(proposal.getCreatedBy())
                 .sendToThesisAdvisors(proposal.getThesis())
                 .fillThesisProposalPlaceholders(proposal)
-                .addAttachmentFile(proposal.getProposalFilename())
+                .addStoredAttachment(proposal.getProposalFilename(), getThesisFilename(proposal.getThesis(), "proposal", proposal.getProposalFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -123,8 +128,34 @@ public class MailingService {
                 .send(javaMailSender, uploadService);
     }
 
+    public void sendProposalChangeRequestEmail(User reviewingUser, Thesis thesis) {
+        MailBuilder builder = new MailBuilder(
+                config,
+                "{{reviewingUser.firstName}} {{reviewingUser.lastName}} requested Changes for Proposal",
+                "thesis-proposal-rejected"
+        );
+        builder
+                .sendToThesisStudents(thesis)
+                .fillUserPlaceholders(reviewingUser, "reviewingUser")
+                .fillThesisPlaceholders(thesis)
+                .fillThesisProposalPlaceholders(thesis.getProposals().getFirst())
+                .fillPlaceholder(
+                        "requestedChanges",
+                        String.join("\n", thesis.getFeedback().stream()
+                                .filter((item) -> item.getType() == ThesisFeedbackType.PROPOSAL && item.getCompletedAt() == null)
+                                .map(ThesisFeedback::getFeedback)
+                                .map((item) -> "<li>" + item + "</li>")
+                                .toList())
+                )
+                .send(javaMailSender, uploadService);
+    }
+
     public void sendNewCommentEmail(ThesisComment comment) {
-        MailBuilder builder = new MailBuilder(config, "New Thesis Comment", "thesis-comment-posted");
+        MailBuilder builder = new MailBuilder(
+                config,
+                "{{comment.createdBy.firstName}} {{comment.createdBy.lastName}} posted a Comment",
+                "thesis-comment-posted"
+        );
 
         if (comment.getType() == ThesisCommentType.ADVISOR) {
             builder.sendToThesisAdvisors(comment.getThesis());
@@ -135,21 +166,58 @@ public class MailingService {
         builder
                 .addPrimarySender(comment.getCreatedBy())
                 .fillThesisCommentPlaceholders(comment)
-                .addAttachmentFile(comment.getFilename())
+                .addStoredAttachment(comment.getFilename(), getUserFilename(comment.getCreatedBy(), "comment", comment.getFilename()))
                 .send(javaMailSender, uploadService);
     }
 
-    public void sendNewScheduledPresentationEmail(ThesisPresentation presentation) {
-        MailBuilder builder = new MailBuilder(config, "New Presentation scheduled", "thesis-presentation-scheduled");
-        builder
+    public void sendScheduledPresentationEmail(String action, ThesisPresentation presentation, String icsFile) {
+        if (presentation.getScheduledAt().isBefore(Instant.now())) {
+            return;
+        }
+
+        MailBuilder privateBuilder = new MailBuilder(
+                config,
+                action.equals("UPDATED") ? "Presentation updated" : "New Presentation scheduled",
+                action.equals("UPDATED") ? "thesis-presentation-updated" : "thesis-presentation-scheduled"
+        );
+        privateBuilder
                 .addPrimarySender(presentation.getCreatedBy())
                 .sendToThesisStudents(presentation.getThesis())
                 .addDefaultBccRecipients()
                 .fillThesisPresentationPlaceholders(presentation)
                 .send(javaMailSender, uploadService);
+
+        if (presentation.getVisibility() == ThesisPresentationVisibility.PUBLIC) {
+            MailBuilder publicBuilder = new MailBuilder(
+                    config,
+                    action.equals("UPDATED") ? "Thesis Presentation Updated" : "Thesis Presentation Invitation",
+                    action.equals("UPDATED") ? "thesis-presentation-invitation-updated" : "thesis-presentation-invitation"
+            );
+            publicBuilder
+                    .sendToChairMembers()
+                    .sendToChairStudents()
+                    .fillThesisPresentationPlaceholders(presentation);
+
+            for (ThesisRole role : presentation.getThesis().getRoles()) {
+                publicBuilder.addPrimarySender(role.getUser());
+            }
+
+            if (icsFile != null && !icsFile.isBlank()) {
+                publicBuilder.addRawAttatchment(
+                        new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream"),
+                        "event.ics"
+                );
+            }
+
+            publicBuilder.send(javaMailSender, uploadService);
+        }
     }
 
     public void sendPresentationDeletedEmail(User deletingUser, ThesisPresentation presentation) {
+        if (presentation.getScheduledAt().isBefore(Instant.now())) {
+            return;
+        }
+
         MailBuilder builder = new MailBuilder(config, "Presentation deleted", "thesis-presentation-deleted");
         builder
                 .sendToThesisStudents(presentation.getThesis())
@@ -157,27 +225,20 @@ public class MailingService {
                 .fillThesisPresentationPlaceholders(presentation)
                 .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
-    }
 
-    public void sendPresentationInvitation(ThesisPresentation presentation, String icsFile) {
-        MailBuilder builder = new MailBuilder(config, "Thesis Presentation Invitation", "thesis-presentation-invitation");
-        builder
-                .sendToChairMembers()
-                .sendToChairStudents()
-                .fillThesisPresentationPlaceholders(presentation);
+        if (presentation.getVisibility() == ThesisPresentationVisibility.PUBLIC) {
+            MailBuilder publicBuilder = new MailBuilder(config, "Thesis Presentation Cancelled ", "thesis-presentation-invitation-cancelled");
+            publicBuilder
+                    .sendToChairMembers()
+                    .sendToChairStudents()
+                    .fillThesisPresentationPlaceholders(presentation);
 
-        for (ThesisRole role : presentation.getThesis().getRoles()) {
-            builder.addPrimarySender(role.getUser());
+            for (ThesisRole role : presentation.getThesis().getRoles()) {
+                publicBuilder.addPrimarySender(role.getUser());
+            }
+
+            publicBuilder.send(javaMailSender, uploadService);
         }
-
-        if (icsFile != null && !icsFile.isBlank()) {
-            builder.addRawAttatchment(
-                    "event.ics",
-                    new ByteArrayDataSource(icsFile.getBytes(StandardCharsets.UTF_8), "application/octet-stream")
-            );
-        }
-
-        builder.send(javaMailSender, uploadService);
     }
 
     public void sendFinalSubmissionEmail(Thesis thesis) {
@@ -186,8 +247,8 @@ public class MailingService {
                 .sendToThesisAdvisors(thesis)
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
-                .addAttachmentFile(thesis.getFinalThesisFilename())
-                .addAttachmentFile(thesis.getFinalPresentationFilename())
+                .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "file", thesis.getFinalThesisFilename()))
+                .addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "presentation", thesis.getFinalPresentationFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -207,5 +268,51 @@ public class MailingService {
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
+    }
+
+    private String getUserFilename(User user, String name, String originalFilename) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(name);
+
+        if (user.getFirstName() != null) {
+            builder.append("-").append(user.getFirstName());
+        }
+
+        if (user.getLastName() != null) {
+            builder.append("-").append(user.getLastName());
+        }
+
+        if (originalFilename != null && !originalFilename.isBlank()) {
+            builder.append(".").append(FilenameUtils.getExtension(originalFilename));
+        } else {
+            builder.append(".pdf");
+        }
+
+        return builder.toString().toLowerCase();
+    }
+
+    private String getThesisFilename(Thesis thesis, String name, String originalFilename) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(thesis.getType().replace("_", "-"));
+        builder.append("-thesis");
+
+        if (name != null && !name.isBlank()) {
+            builder.append("-").append(name);
+        }
+
+        for (User student : thesis.getStudents()) {
+            builder.append("-").append(student.getFirstName());
+            builder.append("-").append(student.getLastName());
+        }
+
+        if (originalFilename != null && !originalFilename.isBlank()) {
+            builder.append(".").append(FilenameUtils.getExtension(originalFilename));
+        } else {
+            builder.append(".pdf");
+        }
+
+        return builder.toString().toLowerCase();
     }
 }
