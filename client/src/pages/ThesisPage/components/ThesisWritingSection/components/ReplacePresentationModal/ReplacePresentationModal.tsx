@@ -59,10 +59,6 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
         if (!value) {
           return 'Date is required'
         }
-
-        if (value.getTime() <= Date.now()) {
-          return 'Date must be in the future'
-        }
       },
     },
   })
