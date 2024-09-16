@@ -34,7 +34,11 @@ public class MailingService {
     }
 
     public void sendApplicationCreatedEmail(Application application) {
-        MailBuilder chairMailBuilder = new MailBuilder(config, "New Thesis Application", "application-created-chair");
+        MailBuilder chairMailBuilder = new MailBuilder(
+                config,
+                "New Thesis Application ({{application.user.firstName}} {{application.user.lastName}})",
+                "application-created-chair"
+        );
         chairMailBuilder
                 .sendToChairMembers()
                 .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "cv", application.getUser().getCvFilename()))
