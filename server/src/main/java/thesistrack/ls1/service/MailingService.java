@@ -247,7 +247,7 @@ public class MailingService {
                 .sendToThesisAdvisors(thesis)
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
-                .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "thesis", thesis.getFinalThesisFilename()))
+                .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "file", thesis.getFinalThesisFilename()))
                 .addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "presentation", thesis.getFinalPresentationFilename()))
                 .send(javaMailSender, uploadService);
     }
@@ -293,8 +293,26 @@ public class MailingService {
     }
 
     private String getThesisFilename(Thesis thesis, String name, String originalFilename) {
-        User student = thesis.getStudents().getFirst();
+        StringBuilder builder = new StringBuilder();
 
-        return getUserFilename(student, name, originalFilename);
+        builder.append(thesis.getType().replace("_", "-"));
+        builder.append("-thesis");
+
+        if (name != null && !name.isBlank()) {
+            builder.append("-").append(name);
+        }
+
+        for (User student : thesis.getStudents()) {
+            builder.append("-").append(student.getFirstName());
+            builder.append("-").append(student.getLastName());
+        }
+
+        if (originalFilename != null && !originalFilename.isBlank()) {
+            builder.append(".").append(FilenameUtils.getExtension(originalFilename));
+        } else {
+            builder.append(".pdf");
+        }
+
+        return builder.toString().toLowerCase();
     }
 }
