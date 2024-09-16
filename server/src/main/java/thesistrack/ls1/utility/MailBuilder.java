@@ -1,6 +1,7 @@
 package thesistrack.ls1.utility;
 
 import jakarta.activation.DataHandler;
+import jakarta.activation.FileDataSource;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeBodyPart;
@@ -293,7 +294,10 @@ public class MailBuilder {
 
                 for (StoredAttachment data : fileAttachments) {
                     MimeBodyPart attachment = new MimeBodyPart();
-                    attachment.attachFile(uploadService.load(data.file).getFile());
+
+                    attachment.setDataHandler(new DataHandler(new FileDataSource(uploadService.load(data.file()).getFile())));
+                    attachment.setFileName(data.filename());
+
                     messageContent.addBodyPart(attachment);
                 }
 
@@ -313,7 +317,7 @@ public class MailBuilder {
                 } else {
                     log.info("Sending Mail (postfix disabled)\n{}", MailLogger.getTextFromMimeMessage(message));
                 }
-            } catch (MessagingException | IOException exception) {
+            } catch (MessagingException exception) {
                 log.warn("Failed to send email", exception);
             }
         }
