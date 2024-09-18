@@ -22,7 +22,7 @@
     "@mantine/notifications": "7.12.2",
     "@mantine/tiptap": "7.12.2",
     "@tiptap/extension-highlight": "2.6.6",
-    "@tiptap/extension-subscript": "2.6.6",
+    "@tiptap/extension-subscript": "2.7.1",
     "@tiptap/extension-superscript": "2.6.6",
     "@tiptap/extension-text-align": "2.6.6",
     "@tiptap/extension-underline": "2.6.6",
