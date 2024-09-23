@@ -125,7 +125,6 @@ $chart-row-spacing: rem(0.5rem);
     position: relative;
     height: calc($chart-timeline-height + 2 * $chart-row-spacing);
     flex-grow: 1;
-    margin-left: var(--mantine-spacing-xs);
 }
 
 .timelinePart {
