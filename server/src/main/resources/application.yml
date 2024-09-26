@@ -81,3 +81,4 @@ thesis-track:
     mail-template-location: ${MAIL_TEMPLATE_FOLDER:server/mail-templates}
   storage:
     upload-location: ${UPLOAD_FOLDER:uploads}
+  scientific-writing-guide: ${SCIENTIFIC_WRITING_GUIDE:}

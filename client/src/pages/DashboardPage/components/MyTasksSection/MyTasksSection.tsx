@@ -40,6 +40,14 @@ const MyTasksSection = () => {
     return null
   }
 
+  const redirectTask = (task: ITask) => {
+    if (task.link.startsWith('http')) {
+      window.location.replace(task.link)
+    } else {
+      navigate(task.link)
+    }
+  }
+
   return (
     <Stack gap='xs'>
       <Title order={2}>My Tasks</Title>
@@ -63,7 +71,7 @@ const MyTasksSection = () => {
             render: (record) => (
               <Center>
                 <Group gap='xs' onClick={(e) => e.stopPropagation()} wrap='nowrap'>
-                  <ActionIcon onClick={() => navigate(record.link)}>
+                  <ActionIcon onClick={() => redirectTask(record)}>
                     <LinkIcon />
                   </ActionIcon>
                 </Group>
@@ -71,7 +79,7 @@ const MyTasksSection = () => {
             ),
           },
         ]}
-        onRowClick={({ record }) => navigate(record.link)}
+        onRowClick={({ record }) => redirectTask(record)}
       />
     </Stack>
   )

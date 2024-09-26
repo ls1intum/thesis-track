@@ -30,7 +30,7 @@ public class ApplicationReminder {
         for (User user : userRepository.getRoleMembers(Set.of("admin", "supervisor", "advisor"))) {
             long unreviewedApplications = applicationRepository.countUnreviewedApplications(user.getId());
 
-            if (unreviewedApplications > 10) {
+            if (unreviewedApplications > 0) {
                 mailingService.sendApplicationReminderEmail(user, unreviewedApplications);
             }
         }
