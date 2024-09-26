@@ -11,6 +11,7 @@
   <div>{{thesis.title}}</div>
   <br/>
   <div>Supervisor: {{thesis.supervisors}}</div>
+  <div>Advisor(s): {{thesis.advisors}}</div>
   <br/>
   <div>
     The presentation will be in {{presentation.language}}. Everybody is cordially invited to attend.
@@ -20,4 +21,8 @@
 <p>
   <strong>Abstract</strong><br />
   {{thesis.abstractText}}
+</p>
+
+<p>
+  Full Details: <a target="_blank" rel="noopener noreferrer nofollow" href="{{presentationUrl}}">{{presentationUrl}}</a>
 </p>

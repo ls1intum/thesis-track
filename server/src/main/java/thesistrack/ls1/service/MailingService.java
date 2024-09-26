@@ -202,8 +202,8 @@ public class MailingService {
                     .sendToChairStudents()
                     .fillThesisPresentationPlaceholders(presentation);
 
-            for (ThesisRole role : presentation.getThesis().getRoles()) {
-                publicBuilder.addPrimarySender(role.getUser());
+            for (User student : presentation.getThesis().getStudents()) {
+                publicBuilder.addPrimarySender(student);
             }
 
             if (icsFile != null && !icsFile.isBlank()) {
@@ -237,8 +237,8 @@ public class MailingService {
                     .sendToChairStudents()
                     .fillThesisPresentationPlaceholders(presentation);
 
-            for (ThesisRole role : presentation.getThesis().getRoles()) {
-                publicBuilder.addPrimarySender(role.getUser());
+            for (User student : presentation.getThesis().getStudents()) {
+                publicBuilder.addPrimarySender(student);
             }
 
             publicBuilder.send(javaMailSender, uploadService);
