@@ -25,7 +25,7 @@
     "@tiptap/extension-subscript": "2.7.2",
     "@tiptap/extension-superscript": "2.7.2",
     "@tiptap/extension-text-align": "2.7.2",
-    "@tiptap/extension-underline": "2.7.2",
+    "@tiptap/extension-underline": "2.7.3",
     "@tiptap/starter-kit": "2.7.2",
     "i18n-iso-countries": "7.12.0",
     "jwt-decode": "4.0.0",
