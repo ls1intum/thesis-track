@@ -133,6 +133,7 @@ const ReplaceTopicModal = (props: ICreateTopicModalProps) => {
             required
             groups={['supervisor']}
             initialUsers={topic?.supervisors}
+            maxValues={1}
             {...form.getInputProps('supervisorIds')}
           />
           <UserMultiSelect
