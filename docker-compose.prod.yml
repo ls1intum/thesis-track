@@ -75,6 +75,7 @@ services:
       - CALDAV_URL
       - CALDAV_USERNAME
       - CALDAV_PASSWORD
+      - SCIENTIFIC_WRITING_GUIDE
     networks:
       - thesis-track-network
 

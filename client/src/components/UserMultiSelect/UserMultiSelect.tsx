@@ -96,6 +96,12 @@ const UserMultiSelect = (props: IUserMultiSelectProps) => {
     (a, b) => a.value === b.value,
   )
 
+  useEffect(() => {
+    if (selected.some((a) => !mergedData.some((b) => a === b.value))) {
+      setFocused(true)
+    }
+  }, [mergedData.map((row) => row.value).join(','), selected.join(',')])
+
   return (
     <MultiSelect
       data={mergedData}

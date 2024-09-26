@@ -26,7 +26,7 @@ export function getApiResponseErrorMessage(response: ApiResponse<unknown>) {
   } else if (response.status === 501) {
     message = 'Endpoint not implemented yet'
   } else {
-    message = 'Unknown error'
+    message = `Unknown error ${response.status}`
   }
 
   if (!response.ok && response.error) {

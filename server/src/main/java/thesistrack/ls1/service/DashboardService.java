@@ -1,5 +1,6 @@
 package thesistrack.ls1.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -25,20 +26,33 @@ import java.util.Set;
 
 @Service
 public class DashboardService {
-    private final ThesisPresentationRepository thesisPresentationRepository;
     private final ThesisRepository thesisRepository;
     private final ApplicationRepository applicationRepository;
     private final TopicRepository topicRepository;
+    private final String scientificWritingGuide;
 
-    public DashboardService(ThesisPresentationRepository thesisPresentationRepository, ThesisRepository thesisRepository, ApplicationRepository applicationRepository, TopicRepository topicRepository) {
-        this.thesisPresentationRepository = thesisPresentationRepository;
+    public DashboardService(
+            ThesisRepository thesisRepository,
+            ApplicationRepository applicationRepository,
+            TopicRepository topicRepository,
+            @Value("${thesis-track.scientific-writing-guide}") String scientificWritingGuide
+    ) {
         this.thesisRepository = thesisRepository;
         this.applicationRepository = applicationRepository;
         this.topicRepository = topicRepository;
+        this.scientificWritingGuide = scientificWritingGuide;
     }
 
     public List<TaskDto> getTasks(User user) {
         List<TaskDto> tasks = new ArrayList<>();
+
+        if (user.hasAnyGroup("student") && !scientificWritingGuide.isBlank()) {
+            tasks.add(new TaskDto(
+                    "Please make yourself familiar with scientific writing",
+                    scientificWritingGuide,
+                    50
+            ));
+        }
 
         // general student tasks
         for (Thesis thesis : thesisRepository.findActiveThesesForRole(user.getId(), Set.of(ThesisRoleName.STUDENT), null)) {
@@ -146,13 +160,15 @@ public class DashboardService {
 
         if (user.hasAnyGroup("admin", "supervisor", "advisor")) {
             // review application task
-            long unreviewedApplications = applicationRepository.countUnreviewedApplications(user.hasAnyGroup("admin") ? null : user.getId());
+            long unreviewedApplications = applicationRepository.countUnreviewedApplications(user.getId());
 
-            tasks.add(new TaskDto(
-                    "You have " + unreviewedApplications + " unreviewed applications.",
-                    "/applications",
-                    10
-            ));
+            if (unreviewedApplications > 0) {
+                tasks.add(new TaskDto(
+                        "You have " + unreviewedApplications + " unreviewed applications.",
+                        "/applications",
+                        10
+                ));
+            }
 
             // no open topic task
             long openTopics = topicRepository.countOpenTopics();

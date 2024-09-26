@@ -11,7 +11,7 @@ import {
   Tooltip,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import {
   CaretDoubleLeft,
@@ -80,6 +80,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
     requiredGroups,
   } = props
 
+  const navigate = useNavigate()
   const [opened, { toggle, close }] = useDisclosure()
 
   const minimizeAnimationDuration = 200
@@ -154,7 +155,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
           {!minimized && (
             <Group preventGrowOverflow={false}>
               <Logo className={classes.logo} />
-              <Text className={classes.siteName} fw='bold'>
+              <Text className={classes.siteName} fw='bold' style={{cursor: 'pointer'}} onClick={() => navigate('/')}>
                 ThesisTrack
               </Text>
               <ColorSchemeToggleButton ml='auto' />
