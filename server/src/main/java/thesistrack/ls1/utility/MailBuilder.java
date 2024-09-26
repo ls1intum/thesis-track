@@ -102,12 +102,20 @@ public class MailBuilder {
     }
 
     public MailBuilder addPrimaryRecipient(User user) {
+        if (primaryRecipients.contains(user)) {
+            return this;
+        }
+
         primaryRecipients.add(user);
 
         return this;
     }
 
     public MailBuilder addSecondaryRecipient(InternetAddress address) {
+        if (secondaryRecipients.contains(address)) {
+            return this;
+        }
+
         secondaryRecipients.add(address);
 
         return this;
@@ -241,6 +249,8 @@ public class MailBuilder {
         formatters.put("presentation.location", DataFormatter::formatOptionalString);
 
         replaceDtoPlaceholders(ThesisDto.ThesisPresentationDto.fromPresentationEntity(presentation), "presentation", formatters);
+
+        replacePlaceholder("presentationUrl", config.getClientHost() + "/presentations/" + presentation.getId());
 
         return this;
     }
