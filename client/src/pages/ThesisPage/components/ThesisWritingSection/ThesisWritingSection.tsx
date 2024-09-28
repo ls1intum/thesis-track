@@ -110,7 +110,7 @@ const ThesisWritingSection = () => {
                           key={thesis.files.thesis}
                           title='Thesis'
                           url={`/v2/theses/${thesis.thesisId}/thesis`}
-                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? '' : 'final')}.pdf`}
+                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'File' : 'Final')}.pdf`}
                           height={400}
                         />
                       ) : (
@@ -137,7 +137,7 @@ const ThesisWritingSection = () => {
                           key={thesis.files.presentation}
                           title='Presentation'
                           url={`/v2/theses/${thesis.thesisId}/presentation`}
-                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'presentation' : 'final-presentation')}.pdf`}
+                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'Presentation' : 'Final Presentation')}.pdf`}
                           height={400}
                         />
                       ) : (

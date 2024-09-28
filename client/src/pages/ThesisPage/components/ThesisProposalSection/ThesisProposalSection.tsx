@@ -136,7 +136,7 @@ const ThesisProposalSection = () => {
             {thesis.proposal ? (
               <AuthenticatedFilePreview
                 url={`/v2/theses/${thesis.thesisId}/proposal`}
-                filename={`${formatThesisFilename(thesis, 'proposal')}.pdf`}
+                filename={`${formatThesisFilename(thesis, 'Proposal')}.pdf`}
                 height={400}
                 key={thesis.files.proposal}
               />

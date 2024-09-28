@@ -159,7 +159,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               title='CV'
               url={`/v2/users/${application.user.userId}/cv`}
               height={400}
-              filename={`${formatApplicationFilename(application, 'application-cv')}.pdf`}
+              filename={`${formatApplicationFilename(application, 'Application CV')}.pdf`}
               key={application.user.userId}
             />
           )}
@@ -168,7 +168,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               title='Examination Report'
               url={`/v2/users/${application.user.userId}/examination-report`}
               height={400}
-              filename={`${formatApplicationFilename(application, 'application-examination-report')}.pdf`}
+              filename={`${formatApplicationFilename(application, 'Application Examination Report')}.pdf`}
               key={application.user.userId}
             />
           )}
@@ -177,7 +177,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
               title='Degree Report'
               url={`/v2/users/${application.user.userId}/degree-report`}
               height={400}
-              filename={`${formatApplicationFilename(application, 'application-degree-report')}.pdf`}
+              filename={`${formatApplicationFilename(application, 'Application Degree Report')}.pdf`}
               key={application.user.userId}
             />
           )}

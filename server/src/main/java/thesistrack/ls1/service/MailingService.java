@@ -10,6 +10,7 @@ import thesistrack.ls1.constants.ApplicationRejectReason;
 import thesistrack.ls1.constants.ThesisFeedbackType;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
 import thesistrack.ls1.entity.*;
+import thesistrack.ls1.utility.DataFormatter;
 import thesistrack.ls1.utility.MailBuilder;
 import thesistrack.ls1.utility.MailConfig;
 
@@ -41,18 +42,18 @@ public class MailingService {
         );
         chairMailBuilder
                 .sendToChairMembers()
-                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "cv", application.getUser().getCvFilename()))
-                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "examination-report", application.getUser().getExaminationFilename()))
-                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "degree-report", application.getUser().getDegreeFilename()))
+                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "CV", application.getUser().getCvFilename()))
+                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "Examination Report", application.getUser().getExaminationFilename()))
+                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "Degree Report", application.getUser().getDegreeFilename()))
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
 
         MailBuilder studentMailBuilder = new MailBuilder(config, "Thesis Application Confirmation", "application-created-student");
         studentMailBuilder
                 .addPrimaryRecipient(application.getUser())
-                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "cv", application.getUser().getCvFilename()))
-                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "examination-report", application.getUser().getExaminationFilename()))
-                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "degree-report", application.getUser().getDegreeFilename()))
+                .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "CV", application.getUser().getCvFilename()))
+                .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "Examination Report", application.getUser().getExaminationFilename()))
+                .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "Degree Report", application.getUser().getDegreeFilename()))
                 .fillApplicationPlaceholders(application)
                 .send(javaMailSender, uploadService);
     }
@@ -118,7 +119,7 @@ public class MailingService {
                 .addPrimarySender(proposal.getCreatedBy())
                 .sendToThesisAdvisors(proposal.getThesis())
                 .fillThesisProposalPlaceholders(proposal)
-                .addStoredAttachment(proposal.getProposalFilename(), getThesisFilename(proposal.getThesis(), "proposal", proposal.getProposalFilename()))
+                .addStoredAttachment(proposal.getProposalFilename(), getThesisFilename(proposal.getThesis(), "Proposal", proposal.getProposalFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -170,7 +171,7 @@ public class MailingService {
         builder
                 .addPrimarySender(comment.getCreatedBy())
                 .fillThesisCommentPlaceholders(comment)
-                .addStoredAttachment(comment.getFilename(), getUserFilename(comment.getCreatedBy(), "comment", comment.getFilename()))
+                .addStoredAttachment(comment.getFilename(), getUserFilename(comment.getCreatedBy(), "Comment", comment.getFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -251,8 +252,8 @@ public class MailingService {
                 .sendToThesisAdvisors(thesis)
                 .addDefaultBccRecipients()
                 .fillThesisPlaceholders(thesis)
-                .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "file", thesis.getFinalThesisFilename()))
-                .addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "presentation", thesis.getFinalPresentationFilename()))
+                .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "File", thesis.getFinalThesisFilename()))
+                .addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "Presentation", thesis.getFinalPresentationFilename()))
                 .send(javaMailSender, uploadService);
     }
 
@@ -280,11 +281,11 @@ public class MailingService {
         builder.append(name);
 
         if (user.getFirstName() != null) {
-            builder.append("-").append(user.getFirstName());
+            builder.append(" ").append(user.getFirstName());
         }
 
         if (user.getLastName() != null) {
-            builder.append("-").append(user.getLastName());
+            builder.append(" ").append(user.getLastName());
         }
 
         if (originalFilename != null && !originalFilename.isBlank()) {
@@ -293,22 +294,22 @@ public class MailingService {
             builder.append(".pdf");
         }
 
-        return builder.toString().toLowerCase().replace(" ", "-");
+        return builder.toString();
     }
 
     private String getThesisFilename(Thesis thesis, String name, String originalFilename) {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(thesis.getType().replace("_", "-"));
-        builder.append("-thesis");
+        builder.append(DataFormatter.formatConstantName(thesis.getType()));
+        builder.append(" Thesis");
 
         if (name != null && !name.isBlank()) {
-            builder.append("-").append(name);
+            builder.append(" ").append(name);
         }
 
         for (User student : thesis.getStudents()) {
-            builder.append("-").append(student.getFirstName());
-            builder.append("-").append(student.getLastName());
+            builder.append(" ").append(student.getFirstName());
+            builder.append(" ").append(student.getLastName());
         }
 
         if (originalFilename != null && !originalFilename.isBlank()) {
@@ -317,6 +318,6 @@ public class MailingService {
             builder.append(".pdf");
         }
 
-        return builder.toString().toLowerCase().replace(" ", "-");
+        return builder.toString();
     }
 }
