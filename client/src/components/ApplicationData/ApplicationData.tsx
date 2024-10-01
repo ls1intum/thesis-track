@@ -1,6 +1,6 @@
 import { IApplication } from '../../requests/responses/application'
 import { Stack, Group, Grid, Title, Badge, Accordion } from '@mantine/core'
-import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
+import AuthenticatedPdfPreview from '../AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
@@ -155,7 +155,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
       <Grid.Col span={{ md: 4 }}>
         <Stack gap='md' key={application.applicationId}>
           {application.user.hasCv && (
-            <AuthenticatedFilePreview
+            <AuthenticatedPdfPreview
               title='CV'
               url={`/v2/users/${application.user.userId}/cv`}
               height={400}
@@ -164,7 +164,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
             />
           )}
           {application.user.hasExaminationReport && (
-            <AuthenticatedFilePreview
+            <AuthenticatedPdfPreview
               title='Examination Report'
               url={`/v2/users/${application.user.userId}/examination-report`}
               height={400}
@@ -173,7 +173,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
             />
           )}
           {application.user.hasDegreeReport && (
-            <AuthenticatedFilePreview
+            <AuthenticatedPdfPreview
               title='Degree Report'
               url={`/v2/users/${application.user.userId}/degree-report`}
               height={400}

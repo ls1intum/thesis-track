@@ -38,6 +38,7 @@ public class UserInfoController {
             @RequestPart(value = "examinationReport", required = false) MultipartFile examinationReport,
             @RequestPart(value = "cv", required = false) MultipartFile cv,
             @RequestPart(value = "degreeReport", required = false) MultipartFile degreeReport,
+            @RequestPart(value = "avatar", required = false) MultipartFile avatar,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = this.authenticationService.getAuthenticatedUser(jwt);
@@ -57,6 +58,7 @@ public class UserInfoController {
                 RequestValidator.validateStringMaxLengthAllowNull(payload.interests(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateStringMaxLengthAllowNull(payload.projects(), StringLimits.LONGTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.customData()),
+                avatar,
                 examinationReport,
                 cv,
                 degreeReport

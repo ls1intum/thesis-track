@@ -60,7 +60,7 @@ export function useTopic(topicId: string | undefined) {
   return topic
 }
 
-export function useApiFile(
+export function useApiPdfFile(
   url: string | undefined,
   filename: string,
   onLoad: (data: File | undefined) => unknown,

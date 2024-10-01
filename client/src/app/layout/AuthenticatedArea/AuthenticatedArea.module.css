@@ -11,8 +11,10 @@
 
   .linkIcon {
     margin-right: var(--mantine-spacing-sm);
-    width: 25px;
-    height: 25px;
+  }
+
+  .linkAvatar {
+    margin-right: var(--mantine-spacing-sm);
   }
 
   &[data-active], &:hover {

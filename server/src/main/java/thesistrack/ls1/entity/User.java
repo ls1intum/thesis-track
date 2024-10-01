@@ -35,6 +35,9 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -99,7 +102,11 @@ public class User {
         }
     }
 
-    public String getAvatar() {
+    public String getAdjustedAvatar() {
+        if (avatar != null && !avatar.isBlank()) {
+            return avatar;
+        }
+
         if (email == null) {
             return null;
         }
@@ -115,7 +122,7 @@ public class User {
                 sb.append(String.format("%02x", b));
             }
 
-            return "https://www.gravatar.com/avatar/" + sb;
+            return "https://www.gravatar.com/avatar/" + sb + "?s=400";
         } catch (NoSuchAlgorithmException e) {
             return null;
         }

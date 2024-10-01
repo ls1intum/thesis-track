@@ -8,7 +8,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../contexts/ThesisProvider/hooks'
-import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
+import AuthenticatedPdfPreview from '../../../../components/AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import ThesisCommentsForm from '../../../../components/ThesisCommentsForm/ThesisCommentsForm'
@@ -104,9 +104,10 @@ const ThesisWritingSection = () => {
                         onClose={() => setUploadThesisModal(false)}
                         onUpload={onThesisUpload}
                         maxSize={20 * 1024 * 1024}
+                        accept='pdf'
                       />
                       {thesis.files.thesis ? (
-                        <AuthenticatedFilePreview
+                        <AuthenticatedPdfPreview
                           key={thesis.files.thesis}
                           title='Thesis'
                           url={`/v2/theses/${thesis.thesisId}/thesis`}
@@ -131,9 +132,10 @@ const ThesisWritingSection = () => {
                         onClose={() => setUploadPresentationModal(false)}
                         onUpload={onPresentationUpload}
                         maxSize={20 * 1024 * 1024}
+                        accept='pdf'
                       />
                       {thesis.files.presentation ? (
-                        <AuthenticatedFilePreview
+                        <AuthenticatedPdfPreview
                           key={thesis.files.presentation}
                           title='Presentation'
                           url={`/v2/theses/${thesis.thesisId}/presentation`}

@@ -36,7 +36,7 @@ public record UserDto (
         }
 
         return new UserDto(
-                user.getId(), user.getAvatar(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
+                user.getId(), user.getAdjustedAvatar(), user.getUniversityId(), user.getMatriculationNumber(), user.getEmail() != null ? user.getEmail().toString() : null,
                 user.getFirstName(), user.getLastName(), user.getGender(), user.getNationality(),
                 user.getStudyDegree(), user.getStudyProgram(), user.getProjects(), user.getInterests(),
                 user.getSpecialSkills(), user.getCustomData(), user.getEnrolledAt(), user.getUpdatedAt(), user.getJoinedAt(),

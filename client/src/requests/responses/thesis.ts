@@ -81,7 +81,7 @@ export interface IThesis {
 export interface IThesisComment {
   commentId: string
   message: string
-  hasFile: boolean
+  filename: string | null
   createdAt: string
   createdBy: ILightUser
 }

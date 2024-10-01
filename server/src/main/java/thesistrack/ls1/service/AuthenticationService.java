@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import thesistrack.ls1.constants.UploadFileType;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.entity.UserGroup;
 import thesistrack.ls1.entity.key.UserGroupId;
@@ -108,6 +109,7 @@ public class AuthenticationService {
             String interests,
             String projects,
             Map<String, String> customData,
+            MultipartFile avatar,
             MultipartFile examinationReport,
             MultipartFile cv,
             MultipartFile degreeReport
@@ -126,9 +128,13 @@ public class AuthenticationService {
         user.setProjects(projects);
         user.setCustomData(customData);
 
-        user.setExaminationFilename(examinationReport == null ? null : uploadService.store(examinationReport, 3 * 1024 * 1024));
-        user.setCvFilename(cv == null ? null : uploadService.store(cv, 3 * 1024 * 1024));
-        user.setDegreeFilename(degreeReport == null ? null : uploadService.store(degreeReport, 3 * 1024 * 1024));
+        if (avatar != null) {
+            user.setAvatar(avatar.isEmpty() ? null : uploadService.store(avatar, 1024 * 1024, UploadFileType.IMAGE));
+        }
+
+        user.setExaminationFilename(examinationReport == null ? null : uploadService.store(examinationReport, 3 * 1024 * 1024, UploadFileType.PDF));
+        user.setCvFilename(cv == null ? null : uploadService.store(cv, 3 * 1024 * 1024, UploadFileType.PDF));
+        user.setDegreeFilename(degreeReport == null ? null : uploadService.store(degreeReport, 3 * 1024 * 1024, UploadFileType.PDF));
 
         return userRepository.save(user);
     }

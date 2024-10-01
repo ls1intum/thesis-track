@@ -6,7 +6,7 @@ import { IPublishedThesis } from '../../../../requests/responses/thesis'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
-import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
+import AuthenticatedPdfPreview from '../../../../components/AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import { DownloadSimple, Eye } from 'phosphor-react'
 import ThesisData from '../../../../components/ThesisData/ThesisData'
 import AvatarUserList from '../../../../components/AvatarUserList/AvatarUserList'
@@ -124,7 +124,7 @@ const PublishedTheses = () => {
         {openedThesis && (
           <Stack gap='md'>
             <ThesisData thesis={openedThesis} additionalInformation={['abstract']} />
-            <AuthenticatedFilePreview
+            <AuthenticatedPdfPreview
               url={`/v2/published-theses/${openedThesis.thesisId}/thesis`}
               includeLink
               height={500}

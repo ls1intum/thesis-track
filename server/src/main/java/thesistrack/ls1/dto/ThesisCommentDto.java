@@ -8,7 +8,7 @@ import java.util.UUID;
 public record ThesisCommentDto (
         UUID commentId,
         String message,
-        boolean hasFile,
+        String filename,
         Instant createdAt,
         LightUserDto createdBy
 ) {
@@ -20,7 +20,7 @@ public record ThesisCommentDto (
         return new ThesisCommentDto(
                 comment.getId(),
                 comment.getMessage(),
-                comment.getFilename() != null,
+                comment.getFilename(),
                 comment.getCreatedAt(),
                 LightUserDto.fromUserEntity(comment.getCreatedBy())
         );

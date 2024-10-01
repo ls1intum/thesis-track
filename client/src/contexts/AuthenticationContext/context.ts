@@ -10,6 +10,7 @@ export interface IAuthenticationContext {
   groups: string[]
   updateInformation: (
     data: PartialNull<IUpdateUserInformationPayload>,
+    avatar: File | undefined,
     examinationReport: File | undefined,
     cv: File | undefined,
     degreeReport: File | undefined,

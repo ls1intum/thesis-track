@@ -27,7 +27,7 @@ public record LightUserDto (
         }
 
         return new LightUserDto(
-                user.getId(), user.getAvatar(), user.getUniversityId(), user.getMatriculationNumber(),
+                user.getId(), user.getAdjustedAvatar(), user.getUniversityId(), user.getMatriculationNumber(),
                 user.getFirstName(), user.getLastName(), user.getEmail().toString(), user.getStudyDegree(), user.getStudyProgram(),
                 user.getCustomData(),
                 user.getJoinedAt(), user.getGroups().stream().map(x -> x.getId().getGroup()).toList()

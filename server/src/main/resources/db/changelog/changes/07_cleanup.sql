@@ -62,3 +62,6 @@ FROM applications t1
 WHERE t1.reviewed_by IS NOT NULL AND t1.reviewed_at IS NOT NULL;
 
 ALTER TABLE applications DROP COLUMN reviewed_by;
+
+--changeset emilius:07-cleanup-11
+ALTER TABLE users ADD COLUMN avatar TEXT;

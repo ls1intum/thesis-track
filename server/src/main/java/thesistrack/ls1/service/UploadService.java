@@ -8,6 +8,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import thesistrack.ls1.constants.UploadFileType;
 import thesistrack.ls1.exception.UploadException;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class UploadService {
         }
     }
 
-    public String store(MultipartFile file, Integer maxSize) {
+    public String store(MultipartFile file, Integer maxSize, UploadFileType type) {
         try {
             if (file.isEmpty()) {
                 throw new UploadException("Failed to store empty file");
@@ -48,14 +49,27 @@ public class UploadService {
                 throw new UploadException("File size exceeds the maximum allowed size");
             }
 
-            Set<String> allowedContentTypes = Set.of("application/pdf");
-            Set<String> allowedExtensions = Set.of("pdf");
+            Set<String> allowedExtensions = null;
+
+            if (type == UploadFileType.PDF) {
+                allowedExtensions = Set.of("pdf");
+            }
+
+            if (type == UploadFileType.IMAGE) {
+                allowedExtensions = Set.of(
+                        "jpg",
+                        "jpeg",
+                        "png",
+                        "gif",
+                        "webp"
+                );
+            }
 
             String originalFilename = file.getOriginalFilename();
             String extension = FilenameUtils.getExtension(originalFilename);
 
-            if (!allowedContentTypes.contains(file.getContentType()) || !allowedExtensions.contains(extension)) {
-                throw new UploadException("Invalid file type");
+            if (allowedExtensions != null && !allowedExtensions.contains(extension)) {
+                throw new UploadException("File type not allowed");
             }
 
             String filename = StringUtils.cleanPath(computeFileHash(file) + "." + extension);

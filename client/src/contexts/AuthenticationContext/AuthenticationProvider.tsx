@@ -174,10 +174,14 @@ const AuthenticationProvider = (props: PropsWithChildren) => {
       isAuthenticated: !!authenticationTokens?.access_token,
       user: authenticationTokens?.access_token ? user : undefined,
       groups: [],
-      updateInformation: async (data, examinationReport, cv, degreeReport) => {
+      updateInformation: async (data, avatar, examinationReport, cv, degreeReport) => {
         const formData = new FormData()
 
         formData.append('data', new Blob([JSON.stringify(data)], { type: 'application/json' }))
+
+        if (avatar) {
+          formData.append('avatar', avatar)
+        }
 
         if (examinationReport) {
           formData.append('examinationReport', examinationReport!)

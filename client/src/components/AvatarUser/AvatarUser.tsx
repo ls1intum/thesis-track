@@ -1,6 +1,7 @@
 import { ILightUser } from '../../requests/responses/user'
-import { Avatar, Group, MantineSize, Text } from '@mantine/core'
+import { Group, MantineSize, Text } from '@mantine/core'
 import { formatUser } from '../../utils/format'
+import CustomAvatar from '../CustomAvatar/CustomAvatar'
 
 interface IAvatarUserProps {
   user: ILightUser
@@ -13,12 +14,7 @@ const AvatarUser = (props: IAvatarUserProps) => {
 
   return (
     <Group gap={5} preventGrowOverflow wrap='nowrap' style={{ overflow: 'hidden' }}>
-      <Avatar
-        src={user.avatar || undefined}
-        name={`${user.firstName} ${user.lastName}`}
-        color='initials'
-        size={size}
-      />
+      <CustomAvatar user={user} size={size} />
       <Text size={size} truncate style={{ flex: 1, minWidth: 0 }}>
         {formatUser(user, { withUniversityId })}
       </Text>
