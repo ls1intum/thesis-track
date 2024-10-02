@@ -94,6 +94,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserGroup> groups = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<NotificationSetting> notificationSettings = new ArrayList<>();
+
     public InternetAddress getEmail() {
         try {
             return new InternetAddress(email);
@@ -146,5 +149,15 @@ public class User {
         }
 
         return id.equals(user.getId());
+    }
+
+    public boolean isNotificationEnabled(String name) {
+        for (NotificationSetting setting : getNotificationSettings()) {
+            if (setting.getId().getName().equals(name) && setting.getEmail().equals("none")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

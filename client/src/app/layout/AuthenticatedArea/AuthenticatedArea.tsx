@@ -196,9 +196,9 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         {user && (
           <AppShell.Section>
             <Link
-              to='/settings/my-information'
+              to='/settings'
               className={minimized ? classes.minimizedLink : classes.fullLink}
-              data-active={location.pathname.startsWith('/settings/my-information') || undefined}
+              data-active={location.pathname.startsWith('/settings') || undefined}
             >
               <Tooltip label='Settings' disabled={!minimized} position='right' offset={15}>
                 <CustomAvatar

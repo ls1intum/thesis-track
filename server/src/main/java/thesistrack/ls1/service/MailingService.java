@@ -42,6 +42,7 @@ public class MailingService {
         );
         chairMailBuilder
                 .sendToChairMembers()
+                .addNotificationName("new-applications")
                 .addStoredAttachment(application.getUser().getCvFilename(), getUserFilename(application.getUser(), "CV", application.getUser().getCvFilename()))
                 .addStoredAttachment(application.getUser().getExaminationFilename(), getUserFilename(application.getUser(), "Examination Report", application.getUser().getExaminationFilename()))
                 .addStoredAttachment(application.getUser().getDegreeFilename(), getUserFilename(application.getUser(), "Degree Report", application.getUser().getDegreeFilename()))
@@ -67,7 +68,7 @@ public class MailingService {
         MailBuilder builder = new MailBuilder(config, "Thesis Application Acceptance", template);
         builder
                 .addPrimaryRecipient(application.getUser())
-                .addSecondaryRecipient(advisor.getEmail())
+                .addSecondaryRecipient(advisor)
                 .addDefaultBccRecipients()
                 .fillUserPlaceholders(advisor, "advisor")
                 .fillApplicationPlaceholders(application)
@@ -88,6 +89,7 @@ public class MailingService {
         MailBuilder builder = new MailBuilder(config, "Unreviewed Thesis Applications", "application-reminder");
         builder
                 .addPrimaryRecipient(user)
+                .addNotificationName("unreviewed-application-reminder")
                 .fillPlaceholder("unreviewedApplications", String.valueOf(unreviewedApplications))
                 .fillPlaceholder("reviewApplicationsLink", config.getClientHost() + "/applications")
                 .send(javaMailSender, uploadService);
@@ -98,6 +100,7 @@ public class MailingService {
         builder
                 .sendToThesisStudents(thesis)
                 .addDefaultBccRecipients()
+                .addNotificationName("thesis-" + thesis.getId())
                 .fillThesisPlaceholders(thesis)
                 .fillUserPlaceholders(creatingUser, "creatingUser")
                 .send(javaMailSender, uploadService);
@@ -108,6 +111,7 @@ public class MailingService {
         builder
                 .sendToThesisStudents(thesis)
                 .addDefaultBccRecipients()
+                .addNotificationName("thesis-" + thesis.getId())
                 .fillThesisPlaceholders(thesis)
                 .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
@@ -118,6 +122,7 @@ public class MailingService {
         builder
                 .addPrimarySender(proposal.getCreatedBy())
                 .sendToThesisAdvisors(proposal.getThesis())
+                .addNotificationName("thesis-" + proposal.getThesis().getId())
                 .fillThesisProposalPlaceholders(proposal)
                 .addStoredAttachment(proposal.getProposalFilename(), getThesisFilename(proposal.getThesis(), "Proposal", proposal.getProposalFilename()))
                 .send(javaMailSender, uploadService);
@@ -128,6 +133,7 @@ public class MailingService {
         builder
                 .addPrimarySender(proposal.getApprovedBy())
                 .sendToThesisStudents(proposal.getThesis())
+                .addNotificationName("thesis-" + proposal.getThesis().getId())
                 .fillThesisPlaceholders(proposal.getThesis())
                 .fillThesisProposalPlaceholders(proposal)
                 .send(javaMailSender, uploadService);
@@ -141,6 +147,7 @@ public class MailingService {
         );
         builder
                 .sendToThesisStudents(thesis)
+                .addNotificationName("thesis-" + thesis.getId())
                 .fillUserPlaceholders(reviewingUser, "reviewingUser")
                 .fillThesisPlaceholders(thesis)
                 .fillThesisProposalPlaceholders(thesis.getProposals().getFirst())
@@ -170,6 +177,8 @@ public class MailingService {
 
         builder
                 .addPrimarySender(comment.getCreatedBy())
+                .addNotificationName("thesis-comments")
+                .addNotificationName("thesis-" + comment.getThesis().getId())
                 .fillThesisCommentPlaceholders(comment)
                 .addStoredAttachment(comment.getFilename(), getUserFilename(comment.getCreatedBy(), "Comment", comment.getFilename()))
                 .send(javaMailSender, uploadService);
@@ -188,7 +197,7 @@ public class MailingService {
         privateBuilder
                 .addPrimarySender(presentation.getCreatedBy())
                 .sendToThesisStudents(presentation.getThesis())
-                .addDefaultBccRecipients()
+                .addNotificationName("thesis-" + presentation.getThesis().getId())
                 .fillThesisPresentationPlaceholders(presentation)
                 .send(javaMailSender, uploadService);
 
@@ -201,6 +210,7 @@ public class MailingService {
             publicBuilder
                     .sendToChairMembers()
                     .sendToChairStudents()
+                    .addNotificationName("presentation-invitations")
                     .fillThesisPresentationPlaceholders(presentation);
 
             for (User student : presentation.getThesis().getStudents()) {
@@ -226,7 +236,7 @@ public class MailingService {
         MailBuilder builder = new MailBuilder(config, "Presentation deleted", "thesis-presentation-deleted");
         builder
                 .sendToThesisStudents(presentation.getThesis())
-                .addDefaultBccRecipients()
+                .addNotificationName("thesis-" + presentation.getThesis().getId())
                 .fillThesisPresentationPlaceholders(presentation)
                 .fillUserPlaceholders(deletingUser, "deletingUser")
                 .send(javaMailSender, uploadService);
@@ -236,6 +246,7 @@ public class MailingService {
             publicBuilder
                     .sendToChairMembers()
                     .sendToChairStudents()
+                    .addNotificationName("presentation-invitations")
                     .fillThesisPresentationPlaceholders(presentation);
 
             for (User student : presentation.getThesis().getStudents()) {
@@ -250,7 +261,7 @@ public class MailingService {
         MailBuilder builder = new MailBuilder(config, "Thesis Submitted", "thesis-final-submission");
         builder
                 .sendToThesisAdvisors(thesis)
-                .addDefaultBccRecipients()
+                .addNotificationName("thesis-" + thesis.getId())
                 .fillThesisPlaceholders(thesis)
                 .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "File", thesis.getFinalThesisFilename()))
                 .addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "Presentation", thesis.getFinalPresentationFilename()))
@@ -262,6 +273,7 @@ public class MailingService {
         builder
                 .addPrimarySender(assessment.getCreatedBy())
                 .sendToThesisSupervisors(assessment.getThesis())
+                .addNotificationName("thesis-" + assessment.getThesis().getId())
                 .fillThesisAssessmentPlaceholders(assessment)
                 .send(javaMailSender, uploadService);
     }
@@ -270,7 +282,7 @@ public class MailingService {
         MailBuilder builder = new MailBuilder(config, "Final Grade available for Thesis", "thesis-final-grade");
         builder
                 .sendToThesisStudents(thesis)
-                .addDefaultBccRecipients()
+                .addNotificationName("thesis-" + thesis.getId())
                 .fillThesisPlaceholders(thesis)
                 .send(javaMailSender, uploadService);
     }

@@ -10,7 +10,7 @@ const AboutPage = lazy(() => import('../pages/AboutPage/AboutPage'))
 const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/ThesisOverviewPage'))
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
 const LogoutPage = lazy(() => import('../pages/LogoutPage/LogoutPage'))
-const MyInformationPage = lazy(() => import('../pages/MyInformationPage/MyInformationPage'))
+const SettingsPage = lazy(() => import('../pages/SettingsPage/SettingsPage'))
 const ReplaceApplicationPage = lazy(
   () => import('../pages/ReplaceApplicationPage/ReplaceApplicationPage'),
 )
@@ -42,10 +42,10 @@ const AppRoutes = () => {
             }
           />
           <Route
-            path='/settings/my-information'
+            path='/settings/:tab?'
             element={
               <AuthenticatedArea>
-                <MyInformationPage />
+                <SettingsPage />
               </AuthenticatedArea>
             }
           />

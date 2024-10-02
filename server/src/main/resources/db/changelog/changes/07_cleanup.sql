@@ -65,3 +65,14 @@ ALTER TABLE applications DROP COLUMN reviewed_by;
 
 --changeset emilius:07-cleanup-11
 ALTER TABLE users ADD COLUMN avatar TEXT;
+
+--changeset emilius:07-cleanup-12
+CREATE TABLE notification_settings
+(
+    user_id    UUID      NOT NULL,
+    name       TEXT      NOT NULL,
+    email      TEXT      NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    PRIMARY KEY (user_id, name),
+    FOREIGN KEY (user_id) REFERENCES users (user_id)
+);

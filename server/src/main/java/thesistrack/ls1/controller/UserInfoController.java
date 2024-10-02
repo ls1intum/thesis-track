@@ -8,11 +8,16 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.constants.StringLimits;
+import thesistrack.ls1.controller.payload.UpdateNotificationSettingPayload;
 import thesistrack.ls1.controller.payload.UpdateUserInformationPayload;
+import thesistrack.ls1.dto.NotificationSettingDto;
 import thesistrack.ls1.dto.UserDto;
+import thesistrack.ls1.entity.NotificationSetting;
 import thesistrack.ls1.entity.User;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.utility.RequestValidator;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -65,5 +70,34 @@ public class UserInfoController {
         );
 
         return ResponseEntity.ok(UserDto.fromUserEntity(authenticatedUser));
+    }
+
+    @GetMapping("/notifications")
+    public ResponseEntity<List<NotificationSettingDto>> getNotificationSettings(JwtAuthenticationToken jwt) {
+        User user = this.authenticationService.getAuthenticatedUser(jwt);
+
+        List<NotificationSetting> settings = authenticationService.getNotificationSettings(user);
+
+        return ResponseEntity.ok(
+                settings.stream().map(NotificationSettingDto::fromNotificationSettingEntity).toList()
+        );
+    }
+
+    @PutMapping("/notifications")
+    public ResponseEntity<List<NotificationSettingDto>> updateNotificationSettings(
+            @RequestBody UpdateNotificationSettingPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User user = this.authenticationService.getAuthenticatedUser(jwt);
+
+        List<NotificationSetting> settings = authenticationService.updateNotificationSettings(
+                user,
+                RequestValidator.validateStringMaxLength(payload.name(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.email(), StringLimits.SHORTTEXT.getLimit())
+        );
+
+        return ResponseEntity.ok(
+                settings.stream().map(NotificationSettingDto::fromNotificationSettingEntity).toList()
+        );
     }
 }
