@@ -18,7 +18,7 @@ export const ApplicationStateColor: Record<ApplicationState, string> = {
   [ApplicationState.NOT_ASSESSED]: '#6c6c6c',
 }
 
-const availableThesisColors = ['#4db652', '#9d2edf', '#047364', '#ea2626', '#455A64']
+const availableThesisColors = ['#4db652', '#9d2edf', '#f8c13d', '#ea2626', '#455A64']
 export const ThesisTypeColor: Record<string, string> = Object.fromEntries(
   Object.keys(GLOBAL_CONFIG.thesis_types).map((key, index) => [
     key,
