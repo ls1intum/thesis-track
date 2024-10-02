@@ -1,5 +1,5 @@
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
-import GanttChart, { IGanttChartDataElement } from '../GanttChart/GanttChart'
+import GanttChart from '../GanttChart/GanttChart'
 import React, { useMemo, useState } from 'react'
 import { formatDate, formatPresentationType, formatThesisType } from '../../utils/format'
 import { ThesisStateColor, ThesisTypeColor } from '../../config/colors'
@@ -12,6 +12,7 @@ import { arrayUnique } from '../../utils/array'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import AvatarUser from '../AvatarUser/AvatarUser'
 import LabeledItem from '../LabeledItem/LabeledItem'
+import { IGanttChartDataElement } from '../GanttChart/context'
 
 const ThesesGanttChart = () => {
   const { theses } = useThesesContext()
