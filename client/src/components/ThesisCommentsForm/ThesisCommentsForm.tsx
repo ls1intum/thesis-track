@@ -20,6 +20,7 @@ const ThesisCommentsForm = () => {
         onClose={() => setUploadModal(false)}
         onUpload={setFile}
         maxSize={3 * 1024 * 1024}
+        accept='any'
       />
       <Textarea
         label='Comment'

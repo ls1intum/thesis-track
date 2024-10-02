@@ -35,6 +35,9 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "avatar")
+    private String avatar;
+
     @Column(name = "first_name")
     private String firstName;
 
@@ -91,6 +94,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     private Set<UserGroup> groups = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<NotificationSetting> notificationSettings = new ArrayList<>();
+
     public InternetAddress getEmail() {
         try {
             return new InternetAddress(email);
@@ -99,7 +105,11 @@ public class User {
         }
     }
 
-    public String getAvatar() {
+    public String getAdjustedAvatar() {
+        if (avatar != null && !avatar.isBlank()) {
+            return avatar;
+        }
+
         if (email == null) {
             return null;
         }
@@ -115,7 +125,7 @@ public class User {
                 sb.append(String.format("%02x", b));
             }
 
-            return "https://www.gravatar.com/avatar/" + sb;
+            return "https://www.gravatar.com/avatar/" + sb + "?s=400";
         } catch (NoSuchAlgorithmException e) {
             return null;
         }
@@ -139,5 +149,15 @@ public class User {
         }
 
         return id.equals(user.getId());
+    }
+
+    public boolean isNotificationEnabled(String name) {
+        for (NotificationSetting setting : getNotificationSettings()) {
+            if (setting.getId().getName().equals(name) && setting.getEmail().equals("none")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

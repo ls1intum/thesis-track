@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import thesistrack.ls1.constants.ThesisCommentType;
+import thesistrack.ls1.constants.UploadFileType;
 import thesistrack.ls1.entity.Thesis;
 import thesistrack.ls1.entity.ThesisComment;
 import thesistrack.ls1.entity.User;
@@ -48,7 +49,7 @@ public class ThesisCommentService {
         comment.setCreatedBy(postingUser);
 
         if (file != null) {
-            comment.setFilename(uploadService.store(file, 3 * 1024 * 1024));
+            comment.setFilename(uploadService.store(file, 10 * 1024 * 1024, UploadFileType.ANY));
         }
 
         comment = thesisCommentRepository.save(comment);

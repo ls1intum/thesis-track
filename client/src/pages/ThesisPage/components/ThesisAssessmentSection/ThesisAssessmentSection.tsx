@@ -52,7 +52,7 @@ const ThesisAssessmentSection = () => {
                   variant='outline'
                   onClick={() =>
                     generatePDF(targetRef, {
-                      filename: formatThesisFilename(thesis, 'assessment'),
+                      filename: formatThesisFilename(thesis, 'Assessment'),
                       page: {
                         margin: Margin.SMALL,
                       },

@@ -8,10 +8,11 @@ interface IUploadFileModalProps {
   onClose: () => unknown
   onUpload: (file: File) => unknown
   maxSize: number
+  accept: 'pdf' | 'image' | 'any'
 }
 
 const UploadFileModal = (props: IUploadFileModalProps) => {
-  const { title, opened, onClose, onUpload, maxSize } = props
+  const { title, opened, onClose, onUpload, maxSize, accept } = props
 
   const [submitting, setSubmitting] = useState(false)
 
@@ -24,7 +25,7 @@ const UploadFileModal = (props: IUploadFileModalProps) => {
   return (
     <Modal opened={opened} onClose={onClose} title={title}>
       <Stack>
-        <UploadArea value={file} onChange={setFile} maxSize={maxSize} />
+        <UploadArea value={file} onChange={setFile} maxSize={maxSize} accept={accept} />
         <Button
           fullWidth
           onClick={async () => {

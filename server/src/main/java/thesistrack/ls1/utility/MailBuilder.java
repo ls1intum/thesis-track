@@ -34,8 +34,7 @@ public class MailBuilder {
 
     private final List<User> primarySenders;
     private final List<User> primaryRecipients;
-
-    private final List<InternetAddress> secondaryRecipients;
+    private final List<User> secondaryRecipients;
     private final List<InternetAddress> bccRecipients;
 
     @Getter
@@ -43,6 +42,9 @@ public class MailBuilder {
 
     @Getter
     private String content;
+
+    @Getter
+    private final Set<String> notificationNames;
 
     @Getter
     private final List<StoredAttachment> fileAttachments;
@@ -65,6 +67,7 @@ public class MailBuilder {
         this.content = config.getTemplate(template);
         this.fileAttachments = new ArrayList<>();
         this.rawAttachments = new ArrayList<>();
+        this.notificationNames = new HashSet<>();
     }
 
     public MailBuilder addStoredAttachment(String storedFile, String filename) {
@@ -83,6 +86,12 @@ public class MailBuilder {
         }
 
         rawAttachments.add(new RawAttachment(filename, file));
+
+        return this;
+    }
+
+    public MailBuilder addNotificationName(String name) {
+        notificationNames.add(name);
 
         return this;
     }
@@ -111,17 +120,21 @@ public class MailBuilder {
         return this;
     }
 
-    public MailBuilder addSecondaryRecipient(InternetAddress address) {
-        if (secondaryRecipients.contains(address)) {
+    public MailBuilder addSecondaryRecipient(User user) {
+        if (secondaryRecipients.contains(user)) {
             return this;
         }
 
-        secondaryRecipients.add(address);
+        secondaryRecipients.add(user);
 
         return this;
     }
 
     public MailBuilder addBccRecipient(InternetAddress address) {
+        if (bccRecipients.contains(address)) {
+            return this;
+        }
+
         bccRecipients.add(address);
 
         return this;
@@ -158,7 +171,7 @@ public class MailBuilder {
             if (role.getId().getRole() == ThesisRoleName.ADVISOR) {
                 addPrimaryRecipient(role.getUser());
             } else if (role.getId().getRole() == ThesisRoleName.SUPERVISOR) {
-                addSecondaryRecipient(role.getUser().getEmail());
+                addPrimaryRecipient(role.getUser());
             }
         }
 
@@ -170,7 +183,7 @@ public class MailBuilder {
             if (role.getId().getRole() == ThesisRoleName.STUDENT) {
                 addPrimaryRecipient(role.getUser());
             } else {
-                addSecondaryRecipient(role.getUser().getEmail());
+                addSecondaryRecipient(role.getUser());
             }
         }
 
@@ -270,11 +283,39 @@ public class MailBuilder {
     }
 
     public void send(JavaMailSender mailSender, UploadService uploadService) throws MailingException {
-        for (User recipient : primaryRecipients) {
+        List<User> toRecipients = new ArrayList<>();
+        List<User> ccRecipients = new ArrayList<>();
+
+        userLoop: for (User recipient : primaryRecipients) {
+            for (String name : notificationNames) {
+                if (!recipient.isNotificationEnabled(name)) {
+                    continue userLoop;
+                }
+            }
+
             if (primarySenders.contains(recipient) && secondaryRecipients.isEmpty()) {
                 continue;
             }
 
+            toRecipients.add(recipient);
+        }
+
+        userLoop: for (User recipient : secondaryRecipients) {
+            for (String name : notificationNames) {
+                if (!recipient.isNotificationEnabled(name)) {
+                    continue userLoop;
+                }
+            }
+
+            ccRecipients.add(recipient);
+        }
+
+        if (toRecipients.isEmpty()) {
+            toRecipients = ccRecipients;
+            ccRecipients = new ArrayList<>();
+        }
+
+        for (User recipient : toRecipients) {
             try {
                 MimeMessage message = mailSender.createMimeMessage();
 
@@ -283,8 +324,8 @@ public class MailBuilder {
 
                 message.addRecipient(Message.RecipientType.TO, recipient.getEmail());
 
-                for (InternetAddress address : secondaryRecipients) {
-                    message.addRecipient(Message.RecipientType.CC, address);
+                for (User secondaryRecipient : ccRecipients) {
+                    message.addRecipient(Message.RecipientType.CC, secondaryRecipient.getEmail());
                 }
 
                 for (InternetAddress address : bccRecipients) {
@@ -295,11 +336,11 @@ public class MailBuilder {
 
                 Multipart messageContent = new MimeMultipart();
 
+                String contentBuilder = content.replace("{{recipientName}}", Objects.requireNonNullElse(recipient.getFirstName(), "")) +
+                        config.getTemplate("footer").replace("{{notificationSettingsLink}}", config.getClientHost() + "/settings/notifications");
+
                 BodyPart messageBody = new MimeBodyPart();
-                messageBody.setContent(
-                        content.replace("{{recipientName}}", Objects.requireNonNullElse(recipient.getFirstName(), "")),
-                        "text/html; charset=utf-8"
-                );
+                messageBody.setContent(contentBuilder, "text/html; charset=utf-8");
                 messageContent.addBodyPart(messageBody);
 
                 for (StoredAttachment data : fileAttachments) {

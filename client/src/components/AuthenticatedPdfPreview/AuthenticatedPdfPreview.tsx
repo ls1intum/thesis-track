@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Button, Center, Group, Stack, Text } from '@mantine/core'
 import { downloadFile } from '../../utils/blob'
-import { useApiFile } from '../../hooks/fetcher'
+import { useApiPdfFile } from '../../hooks/fetcher'
 import { Link } from 'react-router-dom'
 import { GLOBAL_CONFIG } from '../../config/global'
 
@@ -14,12 +14,12 @@ interface IAuthenticatedIframeProps {
   includeLink?: boolean
 }
 
-const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
+const AuthenticatedPdfPreview = (props: IAuthenticatedIframeProps) => {
   const { url, filename, allowDownload = true, includeLink = false, title, height } = props
 
   const [file, setFile] = useState<File>()
 
-  useApiFile(url, filename, setFile)
+  useApiPdfFile(url, filename, setFile)
 
   const iframeUrl = useMemo(() => {
     return file ? `${URL.createObjectURL(file)}#toolbar=0&navpanes=0` : undefined
@@ -52,4 +52,4 @@ const AuthenticatedFilePreview = (props: IAuthenticatedIframeProps) => {
   )
 }
 
-export default AuthenticatedFilePreview
+export default AuthenticatedPdfPreview

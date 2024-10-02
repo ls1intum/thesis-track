@@ -51,7 +51,7 @@ export function formatUser(user: ILightUser, options: Partial<IFormatUserOptions
 }
 
 export function wordsToFilename(words: string) {
-  return words.toLowerCase().replace(' ', '-')
+  return words.replace(' ', ' ')
 }
 
 export function formatUserFilename(user: ILightUser): string {
@@ -59,30 +59,29 @@ export function formatUserFilename(user: ILightUser): string {
 }
 
 export function formatUsersFilename(users: ILightUser[]) {
-  return users.map((user) => formatUserFilename(user)).join('-')
+  return users.map((user) => formatUserFilename(user)).join(' ')
 }
 
 export function formatThesisFilename(thesis: IThesis, name: string, version?: number) {
   let text = `${wordsToFilename(formatThesisType(thesis.type))}`
 
   if (name) {
-    text += `-${name.toLowerCase()}`
+    text += ` ${name}`
   }
 
-  text += `-${formatUsersFilename(thesis.students)}`
+  text += ` ${formatUsersFilename(thesis.students)}`
 
   if (version) {
-    text += `-v${version}`
+    text += ` v${version}`
   }
 
   return text
 }
 
 export function formatApplicationFilename(application: IApplication, name: string) {
-  let text = `${wordsToFilename(formatThesisType(application.thesisType))}`
+  let text = `${name}`
 
-  text += `-${name.toLowerCase()}`
-  text += `-${formatUserFilename(application.user)}`
+  text += ` ${formatUserFilename(application.user)}`
 
   return text
 }

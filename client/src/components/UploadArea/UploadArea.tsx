@@ -10,7 +10,7 @@ import {
   useMantineTheme,
 } from '@mantine/core'
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
-import { Dropzone, PDF_MIME_TYPE } from '@mantine/dropzone'
+import { Dropzone, IMAGE_MIME_TYPE, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { showSimpleError } from '../../utils/notification'
 import { useMemo } from 'react'
 
@@ -18,18 +18,33 @@ interface IUploadAreaProps {
   value: File | undefined
   onChange: (file: File | undefined) => unknown
   maxSize: number
+  accept: 'pdf' | 'image' | 'any'
   label?: string
   required?: boolean
 }
 
 const UploadArea = (props: IUploadAreaProps) => {
-  const { label, required, value, onChange, maxSize } = props
+  const { label, required, value, onChange, maxSize, accept } = props
 
   const theme = useMantineTheme()
 
   const iframeUrl = useMemo(() => {
     return value ? `${URL.createObjectURL(value)}#toolbar=0&navpanes=0` : undefined
   }, [value])
+
+  const getMimeTypes = () => {
+    if (accept === 'image') {
+      return IMAGE_MIME_TYPE
+    }
+
+    if (accept === 'pdf') {
+      return PDF_MIME_TYPE
+    }
+
+    return undefined
+  }
+
+  const mimeTypes = getMimeTypes()
 
   return (
     <Input.Wrapper label={label} required={required}>
@@ -61,7 +76,7 @@ const UploadArea = (props: IUploadAreaProps) => {
             )
           }}
           maxSize={maxSize}
-          accept={PDF_MIME_TYPE}
+          accept={mimeTypes}
         >
           <Group align='center' gap='xl' style={{ minHeight: rem(150), pointerEvents: 'none' }}>
             <Dropzone.Accept>

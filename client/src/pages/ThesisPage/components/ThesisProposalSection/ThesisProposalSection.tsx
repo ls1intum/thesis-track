@@ -4,7 +4,7 @@ import { Accordion, Button, Grid, Group, Paper, Stack, Text } from '@mantine/cor
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
-import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
+import AuthenticatedPdfPreview from '../../../../components/AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 import {
   useLoadedThesisContext,
@@ -134,9 +134,9 @@ const ThesisProposalSection = () => {
               </Stack>
             )}
             {thesis.proposal ? (
-              <AuthenticatedFilePreview
+              <AuthenticatedPdfPreview
                 url={`/v2/theses/${thesis.thesisId}/proposal`}
-                filename={`${formatThesisFilename(thesis, 'proposal')}.pdf`}
+                filename={`${formatThesisFilename(thesis, 'Proposal')}.pdf`}
                 height={400}
                 key={thesis.files.proposal}
               />
@@ -154,6 +154,7 @@ const ThesisProposalSection = () => {
                 title='Upload Proposal'
                 onUpload={onUpload}
                 maxSize={20 * 1024 * 1024}
+                accept='pdf'
               />
               {access.advisor && thesis.state === ThesisState.PROPOSAL && (
                 <ConfirmationButton

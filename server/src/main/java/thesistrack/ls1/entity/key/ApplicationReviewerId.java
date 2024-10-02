@@ -14,7 +14,6 @@ import java.util.UUID;
 @Setter
 @Embeddable
 public class ApplicationReviewerId implements java.io.Serializable {
-    private static final long serialVersionUID = -393570193354962297L;
     @NotNull
     @Column(name = "application_id", nullable = false)
     private UUID applicationId;

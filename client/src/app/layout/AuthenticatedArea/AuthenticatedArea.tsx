@@ -21,17 +21,18 @@ import {
   Scroll,
   SignOut,
   FolderSimplePlus,
-  User,
   PaperPlaneTilt,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
-import { useAuthenticationContext } from '../../../hooks/authentication'
+import { useAuthenticationContext, useUser } from '../../../hooks/authentication'
 import { useNavigationType } from 'react-router'
 import ScrollToTop from '../ScrollToTop/ScrollToTop'
 import PageLoader from '../../../components/PageLoader/PageLoader'
 import { useLocalStorage } from '../../../hooks/local-storage'
 import Logo from '../../../components/Logo/Logo'
 import ColorSchemeToggleButton from '../../../components/ColorSchemeToggleButton/ColorSchemeToggleButton'
+import CustomAvatar from '../../../components/CustomAvatar/CustomAvatar'
+import { formatUser } from '../../../utils/format'
 
 export interface IAuthenticatedAreaProps {
   requireAuthentication?: boolean
@@ -81,6 +82,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
   } = props
 
   const navigate = useNavigate()
+  const user = useUser()
   const [opened, { toggle, close }] = useDisclosure()
 
   const minimizeAnimationDuration = 200
@@ -155,7 +157,12 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
           {!minimized && (
             <Group preventGrowOverflow={false}>
               <Logo className={classes.logo} />
-              <Text className={classes.siteName} fw='bold' style={{cursor: 'pointer'}} onClick={() => navigate('/')}>
+              <Text
+                className={classes.siteName}
+                fw='bold'
+                style={{ cursor: 'pointer' }}
+                onClick={() => navigate('/')}
+              >
                 ThesisTrack
               </Text>
               <ColorSchemeToggleButton ml='auto' />
@@ -180,43 +187,54 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
                 to={item.link}
               >
                 <Tooltip label={item.label} disabled={!minimized} position='right' offset={15}>
-                  <item.icon className={classes.linkIcon} size={32} />
+                  <item.icon className={classes.linkIcon} size={25} />
                 </Tooltip>
                 {!minimized && <span>{item.label}</span>}
               </Link>
             ))}
         </AppShell.Section>
-        <AppShell.Section>
-          <Link
-            to='/settings/my-information'
-            className={minimized ? classes.minimizedLink : classes.fullLink}
-            data-active={location.pathname.startsWith('/settings/my-information') || undefined}
-          >
-            <Tooltip label='My Information' disabled={!minimized} position='right' offset={15}>
-              <User className={classes.linkIcon} size={32} />
-            </Tooltip>
-            {!minimized && <span>My Information</span>}
-          </Link>
-          <Link to='/logout' className={minimized ? classes.minimizedLink : classes.fullLink}>
-            <Tooltip label='Logout' disabled={!minimized} position='right' offset={15}>
-              <SignOut className={classes.linkIcon} size={32} />
-            </Tooltip>
-            {!minimized && <span>Logout</span>}
-          </Link>
-          {!collapseNavigation && (
-            <Group>
-              <ActionIcon
-                visibleFrom='md'
-                ml='auto'
-                mr={minimized ? 'auto' : undefined}
-                variant='transparent'
-                onClick={() => setMinimized((prev) => !prev)}
-              >
-                {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
-              </ActionIcon>
-            </Group>
-          )}
-        </AppShell.Section>
+        {user && (
+          <AppShell.Section>
+            <Link
+              to='/settings'
+              className={minimized ? classes.minimizedLink : classes.fullLink}
+              data-active={location.pathname.startsWith('/settings') || undefined}
+            >
+              <Tooltip label='Settings' disabled={!minimized} position='right' offset={15}>
+                <CustomAvatar
+                  user={user}
+                  size={minimized ? 18 : 32}
+                  className={classes.linkAvatar}
+                />
+              </Tooltip>
+              {!minimized && (
+                <Stack gap={2}>
+                  <Text size='sm'>{formatUser(user)}</Text>
+                  <Text size='xs'>Settings</Text>
+                </Stack>
+              )}
+            </Link>
+            <Link to='/logout' className={minimized ? classes.minimizedLink : classes.fullLink}>
+              <Tooltip label='Logout' disabled={!minimized} position='right' offset={15}>
+                <SignOut className={classes.linkIcon} size={25} />
+              </Tooltip>
+              {!minimized && <span>Logout</span>}
+            </Link>
+            {!collapseNavigation && (
+              <Group>
+                <ActionIcon
+                  visibleFrom='md'
+                  ml='auto'
+                  mr={minimized ? 'auto' : undefined}
+                  variant='transparent'
+                  onClick={() => setMinimized((prev) => !prev)}
+                >
+                  {minimized ? <CaretDoubleRight /> : <CaretDoubleLeft />}
+                </ActionIcon>
+              </Group>
+            )}
+          </AppShell.Section>
+        )}
       </AppShell.Navbar>
 
       <AppShell.Main>

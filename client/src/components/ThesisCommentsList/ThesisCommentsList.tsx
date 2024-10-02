@@ -1,43 +1,45 @@
 import { useThesisCommentsContext } from '../../contexts/ThesisCommentsProvider/hooks'
-import {
-  Button,
-  Center,
-  Group,
-  Modal,
-  Pagination,
-  Paper,
-  Skeleton,
-  Stack,
-  Text,
-} from '@mantine/core'
+import { Button, Center, Group, Pagination, Paper, Skeleton, Stack, Text } from '@mantine/core'
 import { IThesisComment } from '../../requests/responses/thesis'
-import { useState } from 'react'
-import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
 import { useLoggedInUser } from '../../hooks/authentication'
 import { formatDate, formatUser } from '../../utils/format'
 import { Download } from 'phosphor-react'
 import { useHighlightedBackgroundColor } from '../../hooks/theme'
+import { downloadFile } from '../../utils/blob'
+import { doRequest } from '../../requests/request'
+import { showSimpleError } from '../../utils/notification'
+import { getApiResponseErrorMessage } from '../../requests/handler'
 
 const ThesisCommentsList = () => {
   const { thesis, comments, deleteComment, limit, page, setPage } = useThesisCommentsContext()
 
   const user = useLoggedInUser()
 
-  const [openedComment, setOpenedComment] = useState<IThesisComment>()
-
   const commentBackgroundColor = useHighlightedBackgroundColor(false)
+
+  const downloadCommentFile = async (comment: IThesisComment) => {
+    if (!comment.filename) {
+      return
+    }
+
+    const response = await doRequest<Blob>(
+      `/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`,
+      {
+        method: 'GET',
+        requiresAuth: true,
+        responseType: 'blob',
+      },
+    )
+
+    if (response.ok) {
+      downloadFile(new File([response.data], comment.filename))
+    } else {
+      showSimpleError(getApiResponseErrorMessage(response))
+    }
+  }
 
   return (
     <Stack>
-      <Modal opened={!!openedComment} onClose={() => setOpenedComment(undefined)} size='xl'>
-        {openedComment && (
-          <AuthenticatedFilePreview
-            url={`/v2/theses/${thesis.thesisId}/comments/${openedComment.commentId}/file`}
-            filename={`comment-${openedComment.commentId}.pdf`}
-            height={400}
-          />
-        )}
-      </Modal>
       {!comments &&
         Array.from(Array(limit).keys()).map((index) => <Skeleton key={index} height={50} />)}
       {comments && comments.content.length === 0 && <Text ta='center'>No comments added yet</Text>}
@@ -47,8 +49,8 @@ const ThesisCommentsList = () => {
             <Paper p='md' radius='sm' style={{ backgroundColor: commentBackgroundColor }}>
               <Group style={{ width: '100%' }}>
                 <Text>{comment.message}</Text>
-                {comment.hasFile && (
-                  <Button onClick={() => setOpenedComment(comment)} ml='auto'>
+                {comment.filename && (
+                  <Button onClick={() => downloadCommentFile(comment)} ml='auto'>
                     <Download />
                   </Button>
                 )}

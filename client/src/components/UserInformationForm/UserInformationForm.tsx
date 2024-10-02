@@ -16,19 +16,21 @@ import { AVAILABLE_COUNTRIES } from '../../config/countries'
 import UploadArea from '../UploadArea/UploadArea'
 import { useEffect, useState } from 'react'
 import DocumentEditor from '../DocumentEditor/DocumentEditor'
-import { useApiFile } from '../../hooks/fetcher'
+import { useApiPdfFile } from '../../hooks/fetcher'
 import { showSimpleError } from '../../utils/notification'
 import { getHtmlTextLength } from '../../utils/validation'
 import { enrollmentDateToSemester, semesterToEnrollmentDate } from '../../utils/converter'
 import { Link } from 'react-router-dom'
+import AvatarInput from './components/AvatarInput/AvatarInput'
 
 interface IUserInformationFormProps {
   requireCompletion: boolean
+  includeAvatar?: boolean
   onComplete?: () => unknown
 }
 
 const UserInformationForm = (props: IUserInformationFormProps) => {
-  const { requireCompletion, onComplete } = props
+  const { requireCompletion, includeAvatar, onComplete } = props
 
   const { updateInformation } = useAuthenticationContext()
   const user = useLoggedInUser()
@@ -38,6 +40,7 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       semester: string
       customData: Record<string, string>
       declarationOfConsentAccepted: boolean
+      avatar: File | undefined
       examinationReport: File | undefined
       cv: File | undefined
       degreeReport: File | undefined
@@ -58,6 +61,7 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       projects: '',
       interests: '',
       declarationOfConsentAccepted: localStorage.getItem('declarationOfConsentAccepted') === 'true',
+      avatar: undefined,
       examinationReport: undefined,
       cv: undefined,
       degreeReport: undefined,
@@ -150,17 +154,17 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
     })
   }, [user])
 
-  useApiFile(
+  useApiPdfFile(
     user.hasCv ? `/v2/users/${user.userId}/cv` : undefined,
     `cv-${user.userId}.pdf`,
     (file) => form.setFieldValue('cv', file),
   )
-  useApiFile(
+  useApiPdfFile(
     user.hasExaminationReport ? `/v2/users/${user.userId}/examination-report` : undefined,
     `examination-report-${user.userId}.pdf`,
     (file) => form.setFieldValue('examinationReport', file),
   )
-  useApiFile(
+  useApiPdfFile(
     user.hasDegreeReport ? `/v2/users/${user.userId}/degree-report` : undefined,
     `degree-report-${user.userId}.pdf`,
     (file) => form.setFieldValue('degreeReport', file),
@@ -190,6 +194,7 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
               projects: values.projects || null,
               customData: values.customData,
             },
+            values.avatar,
             values.examinationReport,
             values.cv,
             values.degreeReport,
@@ -206,6 +211,14 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
       })}
     >
       <Stack gap='md'>
+        {includeAvatar && (
+          <AvatarInput
+            label='Avatar'
+            required={requireCompletion}
+            value={form.values.avatar}
+            onChange={(file) => form.setFieldValue('avatar', file)}
+          />
+        )}
         <Group grow align='flex-start'>
           <TextInput
             type='email'
@@ -327,23 +340,26 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           label='Examination Report'
           required={requireCompletion}
           value={form.values.examinationReport}
-          onChange={(file) => form.setValues({ examinationReport: file })}
+          onChange={(file) => form.setFieldValue('examinationReport', file)}
           maxSize={2 * 1024 * 1024}
+          accept='pdf'
         />
         <UploadArea
           label='CV'
           required={requireCompletion}
           value={form.values.cv}
-          onChange={(file) => form.setValues({ cv: file })}
+          onChange={(file) => form.setFieldValue('cv', file)}
           maxSize={2 * 1024 * 1024}
+          accept='pdf'
         />
         {form.values.studyDegree !== 'BACHELOR' && (
           <UploadArea
             label='Bachelor Report'
             required={requireCompletion}
             value={form.values.degreeReport}
-            onChange={(file) => form.setValues({ degreeReport: file })}
+            onChange={(file) => form.setFieldValue('degreeReport', file)}
             maxSize={2 * 1024 * 1024}
+            accept='pdf'
           />
         )}
         <Checkbox

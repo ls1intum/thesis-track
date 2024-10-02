@@ -1,5 +1,5 @@
 import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
-import GanttChart, { IGanttChartDataElement } from '../GanttChart/GanttChart'
+import GanttChart from '../GanttChart/GanttChart'
 import React, { useMemo, useState } from 'react'
 import { formatDate, formatPresentationType, formatThesisType } from '../../utils/format'
 import { ThesisStateColor, ThesisTypeColor } from '../../config/colors'
@@ -12,6 +12,7 @@ import { arrayUnique } from '../../utils/array'
 import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import AvatarUser from '../AvatarUser/AvatarUser'
 import LabeledItem from '../LabeledItem/LabeledItem'
+import { IGanttChartDataElement } from '../GanttChart/context'
 
 const ThesesGanttChart = () => {
   const { theses } = useThesesContext()
@@ -36,7 +37,12 @@ const ThesesGanttChart = () => {
 
         if (state === ThesisState.WRITING && thesis.startDate) {
           // Use thesis start date if before writing phase has been started
-          return new Date(Math.min(startDate.getTime(), new Date(thesis.startDate).getTime()))
+          return new Date(thesis.startDate)
+        }
+
+        if (state === ThesisState.SUBMITTED && thesis.endDate) {
+          // Use thesis end date if thesis was submitted after end date
+          return new Date(Math.min(startDate.getTime(), new Date(thesis.endDate).getTime()))
         }
 
         return startDate
@@ -51,9 +57,13 @@ const ThesesGanttChart = () => {
           return new Date(thesis.startDate)
         }
 
-        if (state === ThesisState.WRITING && state === thesis.state && thesis.endDate) {
+        if (state === ThesisState.WRITING && thesis.endDate) {
           // Writing phase should end at endDate if not completed yet
-          return new Date(Math.max(currentTime, new Date(thesis.endDate).getTime()))
+          if (thesis.state === ThesisState.WRITING) {
+            return new Date(thesis.endDate)
+          }
+
+          return new Date(Math.min(endDate.getTime(), new Date(thesis.endDate).getTime()))
         }
 
         return endDate
