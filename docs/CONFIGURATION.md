@@ -1,5 +1,7 @@
 # Configuration
 
+These are all environment variables that can be used to configure the application.
+
 ## Environment variables
 
 | Variable Name                       | Services       | Default Value                                                                                                                                                                                         | Description                                                                                               |

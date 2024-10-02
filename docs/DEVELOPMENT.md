@@ -10,7 +10,7 @@ docker compose up keycloak -d
 2. Open http://localhost:8081 and sign in with admin credentials
     * Username: `admin`
     * Password: `admin`
-3. Import the [keycloak-realm-config-example-json](/keycloak-realm-config-example.json) or create a new real `thesis-track` manually.
+3. Import the [keycloak-realm-config-example-json](/keycloak-realm-config-example.json) or create a new realm `thesis-track` manually.
 4. Assign roles `admin`, `supervisor`, `advisor` to the admin user
 
 ## PostgreSQL Database
