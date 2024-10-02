@@ -1,4 +1,4 @@
-# Thesis Track
+# ThesisTrack
 
 Web Application that represents the complete thesis lifecycle of theses applied for and supervised at the chair.
 

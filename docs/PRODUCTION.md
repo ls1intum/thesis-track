@@ -4,11 +4,12 @@ Example production [docker-compose.prod.yml](/docker-compose.prod.yml) file
 
 ## Requirements
 
-1. Setup a production postgres database to store data
-2. Setup a production postfix instance to send mails
-3. Setup a production keycloak instance. Guide can be found in [Development Setup](DEVELOPMENT.md)
+1. Setup a production PostgreSQL database
+2. Setup a production Postfix instance for sending mails. Sending mails can be disabled
+3. Setup a production keycloak instance. Guide for first time setup can be found in [Development Setup](DEVELOPMENT.md)
 
 ## Running Server
+Minimal docker configuration to start a server
 ```yaml
 image: "ghcr.io/ls1intum/thesis-track/thesis-track-server:latest"
 container_name: thesis-track-server
@@ -45,6 +46,7 @@ environment:
 ```
 
 ## Running Client
+Minimal docker configuration to start the client
 ```yaml
 image: "ghcr.io/ls1intum/thesis-track/thesis-track-client:latest"
 container_name: thesis-track-client
@@ -93,6 +95,13 @@ volumes:
   - ./letsencrypt:/letsencrypt
 ```
 
+## Backup Strategy
+There are 2 places that require backups:
+- The PostgreSQL database. The backup strategy depends on the database setup, but the whole public schema of the connected database should be included in the backup. Example command: `pg_dump -U thesistrack --schema="public" thesistrack > backup_thesistrack_1.sql`
+- The files stored at `/uploads`. In the docker example, these files are mounted to `./thesis_uploads` and backup system should collect the files from the mounted folder
+
 ## Further Configuration
 
-All configuration options can be found [here](CONFIGURATION.md)
+All further configuration options can be found [here](CONFIGURATION.md) 
+
+If you want to modify the emails, you can read about that [here](MAILS.md) 
