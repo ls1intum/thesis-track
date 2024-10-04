@@ -12,11 +12,14 @@ import { Anchor, Divider, Grid, Stack, Title } from '@mantine/core'
 import LabeledItem from '../../components/LabeledItem/LabeledItem'
 import { formatDate, formatPresentationType } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
+import { usePageTitle } from '../../hooks/theme'
 
 const PresentationPage = () => {
   const { presentationId } = useParams<{ presentationId: string }>()
 
   const [presentation, setPresentation] = useState<IPublishedPresentation | false>()
+
+  usePageTitle(presentation ? presentation.thesis.title : 'Presentation')
 
   useEffect(() => {
     setPresentation(undefined)

@@ -1,6 +1,7 @@
-import { useDocumentTitle, useMediaQuery } from '@mantine/hooks'
+import { useMediaQuery } from '@mantine/hooks'
 import { useMantineColorScheme, useMantineTheme } from '@mantine/core'
 import { GLOBAL_CONFIG } from '../config/global'
+import { useEffect } from 'react'
 
 export function useIsSmallerBreakpoint(breakpoint: string) {
   const theme = useMantineTheme()
@@ -15,7 +16,15 @@ export function useIsBiggerThanBreakpoint(breakpoint: string) {
 }
 
 export function usePageTitle(title: string) {
-  useDocumentTitle(`${title} - ${GLOBAL_CONFIG.title}`)
+  useEffect(() => {
+    const previousTitle = document.title
+
+    document.title = `${title} - ${GLOBAL_CONFIG.title}`
+
+    return () => {
+      document.title = previousTitle
+    }
+  }, [title])
 }
 
 export function useHighlightedBackgroundColor(selected: boolean) {

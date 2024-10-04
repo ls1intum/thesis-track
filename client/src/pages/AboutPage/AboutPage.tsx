@@ -3,8 +3,11 @@ import { Anchor, Center, Image, List, Stack, Text, Title } from '@mantine/core'
 import { Link } from 'react-router-dom'
 import flowchart from './flowchart.svg'
 import { CaretLeft } from 'phosphor-react'
+import { usePageTitle } from '../../hooks/theme'
 
 const AboutPage = () => {
+  usePageTitle('About')
+
   return (
     <ContentContainer size='md'>
       <Stack>

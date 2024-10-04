@@ -19,7 +19,7 @@ const TopicPage = () => {
 
   const topic = useTopic(topicId)
 
-  usePageTitle('Topic')
+  usePageTitle(topic ? topic.title : 'Topic')
 
   if (topic === false) {
     return <NotFound />

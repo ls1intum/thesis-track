@@ -10,9 +10,12 @@ import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
 import { useWindowScroll } from '@mantine/hooks'
 import { IApplication } from '../../requests/responses/application'
 import { doRequest } from '../../requests/request'
+import { usePageTitle } from '../../hooks/theme'
 
 const ReplaceApplicationPage = () => {
   const { topicId, applicationId } = useParams<{ topicId: string; applicationId: string }>()
+
+  usePageTitle('Submit Application')
 
   const [application, setApplication] = useState<IApplication>()
 
