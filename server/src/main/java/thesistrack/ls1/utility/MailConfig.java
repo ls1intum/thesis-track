@@ -87,7 +87,7 @@ public class MailConfig {
         return userRepository.getRoleMembers(Set.of("student"));
     }
 
-    public String getTemplate(String name) {
+    public String getTemplate(String name, boolean replacePlaceholders) {
         Path filePath = templateLocation.resolve(name + ".html");
 
         try {
@@ -95,9 +95,24 @@ public class MailConfig {
 
             String template = new String(fileBytes, StandardCharsets.UTF_8);
 
+            if (!replacePlaceholders) {
+                return template;
+            }
+
             return template
-                    .replace("{{config.signature}}", Objects.requireNonNullElse(signature, ""))
-                    .replace("{{config.workspaceUrl}}", Objects.requireNonNullElse(workspaceUrl, ""));
+                    .replace(
+                            "{{config.signature}}",
+                            Objects.requireNonNullElse(signature, "")
+                    )
+                    .replace(
+                            "{{config.workspaceUrl}}",
+                            Objects.requireNonNullElse(workspaceUrl, "")
+                    )
+                    .replace(
+                            "{{notificationFooter}}",
+                            getTemplate("notification-settings", false)
+                                    .replace("{{notificationSettingsLink}}", getClientHost() + "/settings/notifications")
+                    );
         } catch (IOException e) {
             throw new MailingException("Mail template not found", e);
         }
