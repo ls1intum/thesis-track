@@ -11,6 +11,7 @@ import jakarta.mail.util.ByteArrayDataSource;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.dto.ApplicationDto;
@@ -368,7 +369,7 @@ public class MailBuilder {
                 } else {
                     log.info("Sending Mail (postfix disabled)\n{}", MailLogger.getTextFromMimeMessage(message));
                 }
-            } catch (MessagingException exception) {
+            } catch (Exception exception) {
                 log.warn("Failed to send email", exception);
             }
         }

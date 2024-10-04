@@ -263,8 +263,8 @@ public class MailingService {
                 .sendToThesisAdvisors(thesis)
                 .addNotificationName("thesis-" + thesis.getId())
                 .fillThesisPlaceholders(thesis)
-                .addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "File", thesis.getFinalThesisFilename()))
-                .addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "Presentation", thesis.getFinalPresentationFilename()))
+                //.addStoredAttachment(thesis.getFinalThesisFilename(), getThesisFilename(thesis, "File", thesis.getFinalThesisFilename()))
+                //.addStoredAttachment(thesis.getFinalPresentationFilename(), getThesisFilename(thesis, "Presentation", thesis.getFinalPresentationFilename()))
                 .send(javaMailSender, uploadService);
     }
 
