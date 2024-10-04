@@ -65,7 +65,7 @@ public class MailBuilder {
         this.bccRecipients = new ArrayList<>();
 
         this.subject = subject;
-        this.content = config.getTemplate(template);
+        this.content = config.getTemplate(template, true);
         this.fileAttachments = new ArrayList<>();
         this.rawAttachments = new ArrayList<>();
         this.notificationNames = new HashSet<>();
@@ -337,8 +337,7 @@ public class MailBuilder {
 
                 Multipart messageContent = new MimeMultipart();
 
-                String contentBuilder = content.replace("{{recipientName}}", Objects.requireNonNullElse(recipient.getFirstName(), "")) +
-                        config.getTemplate("footer").replace("{{notificationSettingsLink}}", config.getClientHost() + "/settings/notifications");
+                String contentBuilder = content.replace("{{recipientName}}", Objects.requireNonNullElse(recipient.getFirstName(), ""));
 
                 BodyPart messageBody = new MimeBodyPart();
                 messageBody.setContent(contentBuilder, "text/html; charset=utf-8");
