@@ -13,6 +13,11 @@ interface IApplicationRejectButtonProps extends ButtonProps {
   onUpdate: (application: IApplication) => unknown
 }
 
+interface IFormValues {
+  notifyUser: boolean
+  reason: string | null
+}
+
 const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
   const { application, onUpdate, ...buttonProps } = props
 
@@ -21,10 +26,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
   const [confirmationModal, setConfirmationModal] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const form = useForm<{
-    notifyUser: boolean
-    reason: string | null
-  }>({
+  const form = useForm<IFormValues>({
     mode: 'controlled',
     initialValues: {
       notifyUser: true,
@@ -42,6 +44,46 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
 
   if (application.state !== ApplicationState.NOT_ASSESSED) {
     return <></>
+  }
+
+  const onReject = async (values: IFormValues) => {
+    setLoading(true)
+
+    try {
+      const response = await doRequest<IApplication[]>(
+        `/v2/applications/${application.applicationId}/reject`,
+        {
+          method: 'PUT',
+          requiresAuth: true,
+          data: {
+            reason: values.reason,
+            notifyUser: values.notifyUser,
+          },
+        },
+      )
+
+      if (response.ok) {
+        showSimpleSuccess('Application rejected successfully')
+
+        for (const item of response.data) {
+          updateApplicationContext(item)
+        }
+
+        const currentApplication = response.data.find(
+          (item) => item.applicationId === application.applicationId,
+        )
+
+        if (currentApplication) {
+          onUpdate(currentApplication)
+        }
+
+        setConfirmationModal(false)
+      } else {
+        showSimpleError(getApiResponseErrorMessage(response))
+      }
+    } finally {
+      setLoading(false)
+    }
   }
 
   const reasons: Array<{ value: string; label: string }> = [
@@ -78,47 +120,7 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
         onClick={(e) => e.stopPropagation()}
         onClose={() => setConfirmationModal(false)}
       >
-        <form
-          onSubmit={form.onSubmit(async (values) => {
-            setLoading(true)
-
-            try {
-              const response = await doRequest<IApplication[]>(
-                `/v2/applications/${application.applicationId}/reject`,
-                {
-                  method: 'PUT',
-                  requiresAuth: true,
-                  data: {
-                    reason: values.reason,
-                    notifyUser: values.notifyUser,
-                  },
-                },
-              )
-
-              if (response.ok) {
-                showSimpleSuccess('Application rejected successfully')
-
-                for (const item of response.data) {
-                  updateApplicationContext(item)
-                }
-
-                const currentApplication = response.data.find(
-                  (item) => item.applicationId === application.applicationId,
-                )
-
-                if (currentApplication) {
-                  onUpdate(currentApplication)
-                }
-
-                setConfirmationModal(false)
-              } else {
-                showSimpleError(getApiResponseErrorMessage(response))
-              }
-            } finally {
-              setLoading(false)
-            }
-          })}
-        >
+        <form>
           <Stack>
             <Text>Please specify a reason why you want to reject the student</Text>
             <Radio.Group label='Reason' required {...form.getInputProps('reason')}>
@@ -133,7 +135,12 @@ const ApplicationRejectButton = (props: IApplicationRejectButtonProps) => {
               required
               {...form.getInputProps('notifyUser', { type: 'checkbox' })}
             />
-            <Button type='submit' loading={loading} disabled={!form.isValid()} fullWidth>
+            <Button
+              onClick={() => onReject(form.getValues())}
+              loading={loading}
+              disabled={!form.isValid()}
+              fullWidth
+            >
               Reject Application
             </Button>
           </Stack>

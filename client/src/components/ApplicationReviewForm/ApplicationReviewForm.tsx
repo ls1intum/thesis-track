@@ -123,7 +123,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
     }
   }, [debouncedComment, application?.applicationId])
 
-  const onSubmit = async (values: IApplicationReviewForm) => {
+  const onAccept = async (values: IApplicationReviewForm) => {
     setLoading(true)
 
     try {
@@ -204,7 +204,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
   }
 
   return (
-    <form onSubmit={form.onSubmit((values) => onSubmit(values))}>
+    <form>
       <Stack gap='sm'>
         {reviewers.map((reviewer) => (
           <Group key={reviewer.user.userId} grow wrap='nowrap'>
@@ -296,7 +296,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
               }}
             />
             <Button
-              type='submit'
+              onClick={() => onAccept(form.getValues())}
               variant='outline'
               color='green'
               loading={loading}
