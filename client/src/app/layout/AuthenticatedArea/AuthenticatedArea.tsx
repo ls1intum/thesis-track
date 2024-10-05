@@ -124,10 +124,10 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
   if (!requireAuthentication && !auth.isAuthenticated) {
     return (
-      <Stack px='md'>
+      <div>
         {children}
         <ScrollToTop />
-      </Stack>
+      </div>
     )
   }
 
