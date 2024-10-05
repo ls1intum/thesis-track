@@ -6,12 +6,14 @@ import ApplicationsProvider from '../../contexts/ApplicationsProvider/Applicatio
 import { Grid, Text, Center } from '@mantine/core'
 import ApplicationsSidebar from './components/ApplicationsSidebar/ApplicationsSidebar'
 import ApplicationReviewBody from './components/ApplicationReviewBody/ApplicationReviewBody'
-import { useIsSmallerBreakpoint } from '../../hooks/theme'
+import { useIsSmallerBreakpoint, usePageTitle } from '../../hooks/theme'
 import ApplicationModal from '../../components/ApplicationModal/ApplicationModal'
 
 const ReviewApplicationPage = () => {
   const navigate = useNavigate()
   const { applicationId } = useParams<{ applicationId: string }>()
+
+  usePageTitle('Review Applications')
 
   const isSmallScreen = useIsSmallerBreakpoint('md')
 
@@ -58,6 +60,7 @@ const ReviewApplicationPage = () => {
         <Grid.Col span={{ md: 3 }}>
           <ApplicationsSidebar
             selected={application}
+            isSmallScreen={isSmallScreen}
             onSelect={(newApplication) => {
               navigate(`/applications/${newApplication.applicationId}`, {
                 replace: true,

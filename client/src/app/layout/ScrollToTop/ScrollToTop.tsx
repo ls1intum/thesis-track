@@ -1,10 +1,8 @@
 import React, { useEffect } from 'react'
-import { useWindowScroll } from '@mantine/hooks'
 import { useLocation } from 'react-router-dom'
 import { useNavigationType } from 'react-router'
 
 const ScrollToTop = () => {
-  const [, scrollTo] = useWindowScroll()
   const navigationType = useNavigationType()
   const location = useLocation()
 
@@ -13,7 +11,7 @@ const ScrollToTop = () => {
       return
     }
 
-    scrollTo({ y: 0 })
+    window.scrollTo(0, 0)
   }, [location.pathname, navigationType])
 
   return <></>

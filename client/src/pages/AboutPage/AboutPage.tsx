@@ -1,24 +1,22 @@
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { Anchor, Center, Image, List, Stack, Text, Title } from '@mantine/core'
-import { Link } from 'react-router-dom'
 import flowchart from './flowchart.svg'
-import { CaretLeft } from 'phosphor-react'
+import { usePageTitle } from '../../hooks/theme'
+import PublicArea from '../../app/layout/PublicArea/PublicArea'
 
 const AboutPage = () => {
+  usePageTitle('About')
+
   return (
-    <ContentContainer size='md'>
+    <PublicArea withBackButton={true}>
       <Stack>
-        <Anchor component={Link} c='dimmed' fz='xs' to='/'>
-          <CaretLeft size={10} /> Back
-        </Anchor>
-        <Title>Thesis Track</Title>
+        <Title>ThesisTrack</Title>
         <Text>
-          Thesis Track is an{' '}
+          ThesisTrack is an{' '}
           <Anchor href='https://github.com/ls1intum/thesis-track' target='_blank' rel='noreferrer'>
             open source
           </Anchor>{' '}
-          web application that represents the complete thesis lifecycle of theses applied for and
-          supervised at the chair.
+          web application that integrates the complete thesis lifecycle for theses supervised at a
+          chair. It should help advisors and supervisors to save time on reoccurring processes.
         </Text>
         <Title order={3}>Contributors</Title>
         <List>
@@ -38,7 +36,7 @@ const AboutPage = () => {
           <Image src={flowchart} style={{ maxWidth: '600px' }} />
         </Center>
       </Stack>
-    </ContentContainer>
+    </PublicArea>
   )
 }
 

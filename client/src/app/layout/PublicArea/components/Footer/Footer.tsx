@@ -1,8 +1,8 @@
 import * as classes from './Footer.module.css'
 import { Anchor, Container, Group } from '@mantine/core'
-import { GLOBAL_CONFIG } from '../../../../config/global'
+import { GLOBAL_CONFIG } from '../../../../../config/global'
 import { Link } from 'react-router-dom'
-import ColorSchemeToggleButton from '../../../../components/ColorSchemeToggleButton/ColorSchemeToggleButton'
+import ColorSchemeToggleButton from '../../../../../components/ColorSchemeToggleButton/ColorSchemeToggleButton'
 
 const links = [
   { link: '/about', label: 'About', visible: true },

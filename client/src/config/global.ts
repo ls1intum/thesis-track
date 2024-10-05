@@ -15,9 +15,9 @@ const getEnvironmentVariable = <T = string>(key: string, useJson = false): T | u
 }
 
 export const GLOBAL_CONFIG: IGlobalConfig = {
-  title: getEnvironmentVariable('APPLICATION_TITLE') || 'Thesis Track',
+  title: getEnvironmentVariable('APPLICATION_TITLE') || 'ThesisTrack',
 
-  chair_name: getEnvironmentVariable('CHAIR_NAME') || 'Thesis Track',
+  chair_name: getEnvironmentVariable('CHAIR_NAME') || 'ThesisTrack',
   chair_url: getEnvironmentVariable('CHAIR_URL') || window.origin,
 
   allow_suggested_topics: (getEnvironmentVariable('ALLOW_SUGGESTED_TOPICS') || 'true') === 'true',

@@ -1,18 +1,20 @@
 import HeroSection from './components/HeroSection/HeroSection'
 import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
 import TopicsTable from '../../components/TopicsTable/TopicsTable'
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { Button, Group, Space, Title } from '@mantine/core'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PublishedTheses from './components/PublishedTheses/PublishedTheses'
-import Footer from './components/Footer/Footer'
+import { usePageTitle } from '../../hooks/theme'
+import PublicArea from '../../app/layout/PublicArea/PublicArea'
 
 const LandingPage = () => {
+  usePageTitle('Find or Propose a Thesis Topic')
+
   return (
     <div>
       <HeroSection />
-      <ContentContainer size='md'>
+      <PublicArea>
         <TopicsProvider limit={10}>
           <Title order={2} mb='sm'>
             Open Topics
@@ -50,8 +52,7 @@ const LandingPage = () => {
         </TopicsProvider>
         <Space my='md' />
         <PublishedTheses />
-      </ContentContainer>
-      <Footer />
+      </PublicArea>
     </div>
   )
 }
