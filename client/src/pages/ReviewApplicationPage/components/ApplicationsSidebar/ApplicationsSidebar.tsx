@@ -7,11 +7,12 @@ import ApplicationListItem from '../ApplicationListItem/ApplicationListItem'
 
 interface IApplicationsSidebarProps {
   selected: IApplication | undefined
+  isSmallScreen: boolean
   onSelect: (application: IApplication) => unknown
 }
 
 const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
-  const { selected, onSelect } = props
+  const { selected, isSmallScreen, onSelect } = props
 
   const { page, setPage, applications } = useApplicationsContext()
 
@@ -54,6 +55,10 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
   }, [applications, page, selectedIndex])
 
   useEffect(() => {
+    if (isSmallScreen) {
+      return
+    }
+
     if (page === 0 && !startAtLastApplication) {
       return
     }
@@ -65,7 +70,12 @@ const ApplicationsSidebar = (props: IApplicationsSidebarProps) => {
           : applications.content[0],
       )
     }
-  }, [page, startAtLastApplication, applications?.content.map((x) => x.applicationId).join(',')])
+  }, [
+    page,
+    startAtLastApplication,
+    isSmallScreen,
+    applications?.content.map((x) => x.applicationId).join(','),
+  ])
 
   return (
     <Stack gap='sm'>

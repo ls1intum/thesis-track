@@ -7,7 +7,6 @@ import SelectTopicStep from './components/SelectTopicStep/SelectTopicStep'
 import StudentInformationStep from './components/StudentInformationStep/StudentInformationStep'
 import MotivationStep from './components/MotivationStep/MotivationStep'
 import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
-import { useWindowScroll } from '@mantine/hooks'
 import { IApplication } from '../../requests/responses/application'
 import { doRequest } from '../../requests/request'
 import { usePageTitle } from '../../hooks/theme'
@@ -38,7 +37,6 @@ const ReplaceApplicationPage = () => {
     }
   }, [applicationId])
 
-  const [, scrollTo] = useWindowScroll()
   const navigate = useNavigate()
   const topic = useTopic(topicId)
 
@@ -53,7 +51,7 @@ const ReplaceApplicationPage = () => {
       navigate(`/submit-application`, { replace: true })
     }
 
-    scrollTo({ y: 0 })
+    window.scrollTo(0, 0)
     setStep(value)
   }
 

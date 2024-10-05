@@ -21,7 +21,7 @@ export function HeroSection() {
 
         <Container p={0} size={700}>
           <Text size='lg' c='dimmed' className={classes.description}>
-            Whether you&apos;re looking for inspiration or have a unique idea in mind, Thesis Track
+            Whether you&apos;re looking for inspiration or have a unique idea in mind, ThesisTrack
             makes it easy. Explore topics posted by instructors or suggest your own.
           </Text>
         </Container>

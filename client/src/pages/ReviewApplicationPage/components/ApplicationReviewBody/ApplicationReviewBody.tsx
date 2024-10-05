@@ -3,7 +3,6 @@ import ApplicationReviewForm from '../../../../components/ApplicationReviewForm/
 import { Divider, Stack } from '@mantine/core'
 import React, { useEffect } from 'react'
 import { IApplication } from '../../../../requests/responses/application'
-import { useWindowScroll } from '@mantine/hooks'
 import ApplicationRejectButton from '../../../../components/ApplicationRejectButton/ApplicationRejectButton'
 
 interface IApplicationReviewBodyProps {
@@ -14,10 +13,8 @@ interface IApplicationReviewBodyProps {
 const ApplicationReviewBody = (props: IApplicationReviewBodyProps) => {
   const { application, onChange } = props
 
-  const [, scrollTo] = useWindowScroll()
-
   useEffect(() => {
-    scrollTo({ y: 0 })
+    window.scrollTo(0, 0)
   }, [application.applicationId])
 
   return (

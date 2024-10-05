@@ -60,6 +60,7 @@ const ReviewApplicationPage = () => {
         <Grid.Col span={{ md: 3 }}>
           <ApplicationsSidebar
             selected={application}
+            isSmallScreen={isSmallScreen}
             onSelect={(newApplication) => {
               navigate(`/applications/${newApplication.applicationId}`, {
                 replace: true,

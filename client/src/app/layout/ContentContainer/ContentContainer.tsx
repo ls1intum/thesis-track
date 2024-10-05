@@ -1,8 +1,8 @@
 import { PropsWithChildren } from 'react'
-import { Container } from '@mantine/core'
+import { Container, MantineSize } from '@mantine/core'
 
 interface IContentContainerProps {
-  size?: 'xl' | 'md'
+  size?: MantineSize
 }
 
 const ContentContainer = (props: PropsWithChildren<IContentContainerProps>) => {
