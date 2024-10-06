@@ -2,7 +2,6 @@ import { useParams } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { IPublishedPresentation } from '../../requests/responses/thesis'
 import { doRequest } from '../../requests/request'
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import ThesisData from '../../components/ThesisData/ThesisData'
 import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
@@ -53,44 +52,42 @@ const PresentationPage = () => {
   }
 
   return (
-    <ContentContainer size='md'>
-      <Stack gap='md'>
-        <Title>{presentation.thesis.title}</Title>
-        <Grid>
-          <Grid.Col span={{ md: 4 }}>
-            <LabeledItem label='Presentation Date' value={formatDate(presentation.scheduledAt)} />
-          </Grid.Col>
-          <Grid.Col span={{ md: 4 }}>
-            <LabeledItem label='Location' value={presentation.location || 'Not available'} />
-          </Grid.Col>
-          <Grid.Col span={{ md: 4 }}>
-            <LabeledItem
-              label='Stream URL'
-              value={
-                presentation.streamUrl ? (
-                  <Anchor target='_blank' href={presentation.streamUrl}>
-                    {presentation.streamUrl}
-                  </Anchor>
-                ) : (
-                  'Not available'
-                )
-              }
-            />
-          </Grid.Col>
-          <Grid.Col span={{ md: 4 }}>
-            <LabeledItem
-              label='Language'
-              value={GLOBAL_CONFIG.languages[presentation.language] ?? presentation.language}
-            />
-          </Grid.Col>
-          <Grid.Col span={{ md: 4 }}>
-            <LabeledItem label='Type' value={formatPresentationType(presentation.type)} />
-          </Grid.Col>
-        </Grid>
-        <Divider />
-        <ThesisData thesis={presentation.thesis} additionalInformation={['abstract']} />
-      </Stack>
-    </ContentContainer>
+    <Stack gap='md'>
+      <Title>{presentation.thesis.title}</Title>
+      <Grid>
+        <Grid.Col span={{ md: 4 }}>
+          <LabeledItem label='Presentation Date' value={formatDate(presentation.scheduledAt)} />
+        </Grid.Col>
+        <Grid.Col span={{ md: 4 }}>
+          <LabeledItem label='Location' value={presentation.location || 'Not available'} />
+        </Grid.Col>
+        <Grid.Col span={{ md: 4 }}>
+          <LabeledItem
+            label='Stream URL'
+            value={
+              presentation.streamUrl ? (
+                <Anchor target='_blank' href={presentation.streamUrl}>
+                  {presentation.streamUrl}
+                </Anchor>
+              ) : (
+                'Not available'
+              )
+            }
+          />
+        </Grid.Col>
+        <Grid.Col span={{ md: 4 }}>
+          <LabeledItem
+            label='Language'
+            value={GLOBAL_CONFIG.languages[presentation.language] ?? presentation.language}
+          />
+        </Grid.Col>
+        <Grid.Col span={{ md: 4 }}>
+          <LabeledItem label='Type' value={formatPresentationType(presentation.type)} />
+        </Grid.Col>
+      </Grid>
+      <Divider />
+      <ThesisData thesis={presentation.thesis} additionalInformation={['abstract']} />
+    </Stack>
   )
 }
 

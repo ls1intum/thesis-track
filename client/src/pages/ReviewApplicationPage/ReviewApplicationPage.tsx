@@ -56,7 +56,7 @@ const ReviewApplicationPage = () => {
           }}
         />
       )}
-      <Grid p='md'>
+      <Grid>
         <Grid.Col span={{ md: 3 }}>
           <ApplicationsSidebar
             selected={application}

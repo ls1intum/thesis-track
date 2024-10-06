@@ -68,7 +68,7 @@ const AppRoutes = () => {
           <Route
             path='/presentations/:presentationId'
             element={
-              <AuthenticatedArea requireAuthentication={false}>
+              <AuthenticatedArea size='md' requireAuthentication={false}>
                 <PresentationPage />
               </AuthenticatedArea>
             }
@@ -84,7 +84,7 @@ const AppRoutes = () => {
           <Route
             path='/topics/:topicId'
             element={
-              <AuthenticatedArea requireAuthentication={false}>
+              <AuthenticatedArea size='md' requireAuthentication={false}>
                 <TopicPage />
               </AuthenticatedArea>
             }

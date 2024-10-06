@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTopic } from '../../hooks/fetcher'
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { Card, Center, Stack, Stepper, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import SelectTopicStep from './components/SelectTopicStep/SelectTopicStep'
@@ -56,8 +55,8 @@ const ReplaceApplicationPage = () => {
   }
 
   return (
-    <ContentContainer>
-      <Title mb='md'>{applicationId ? 'Edit Application' : 'Submit Application'}</Title>
+    <Stack>
+      <Title>{applicationId ? 'Edit Application' : 'Submit Application'}</Title>
       <Stepper active={Math.max(step, topicId || applicationId ? 1 : 0)} onStepClick={updateStep}>
         <Stepper.Step label='First Step' description='Select Topic'>
           <TopicsProvider limit={100}>
@@ -96,7 +95,7 @@ const ReplaceApplicationPage = () => {
           </Center>
         </Stepper.Completed>
       </Stepper>
-    </ContentContainer>
+    </Stack>
   )
 }
 

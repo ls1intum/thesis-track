@@ -1,4 +1,3 @@
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React, { useState } from 'react'
 import { usePageTitle } from '../../hooks/theme'
 import { Button, Group, Stack, Title } from '@mantine/core'
@@ -17,54 +16,52 @@ const ManageTopicsPage = () => {
   const [createTopicModal, setCreateTopicModal] = useState(false)
 
   return (
-    <ContentContainer>
-      <TopicsProvider>
-        <Stack gap='md'>
-          <Group>
-            <Title>Manage Topics</Title>
-            <Button ml='auto' onClick={() => setCreateTopicModal(true)} visibleFrom='md'>
-              Create Topic
-            </Button>
-          </Group>
-          <ReplaceTopicModal opened={createTopicModal} onClose={() => setCreateTopicModal(false)} />
-          <ReplaceTopicModal
-            opened={!!editingTopic}
-            onClose={() => setEditingTopic(undefined)}
-            topic={editingTopic}
-          />
-          <Button ml='auto' onClick={() => setCreateTopicModal(true)} hiddenFrom='md'>
+    <TopicsProvider>
+      <Stack gap='md'>
+        <Group>
+          <Title>Manage Topics</Title>
+          <Button ml='auto' onClick={() => setCreateTopicModal(true)} visibleFrom='md'>
             Create Topic
           </Button>
-          <TopicsFilters visible={['closed']} />
-          <TopicsTable
-            columns={['state', 'title', 'types', 'supervisor', 'advisor', 'createdAt', 'actions']}
-            extraColumns={{
-              actions: {
-                accessor: 'actions',
-                title: 'Actions',
-                textAlign: 'center',
-                noWrap: true,
-                width: 120,
-                render: (topic) => (
-                  <Group
-                    preventGrowOverflow={false}
-                    justify='center'
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {!topic.closedAt && (
-                      <Button size='xs' onClick={() => setEditingTopic(topic)}>
-                        <Pencil />
-                      </Button>
-                    )}
-                    <CloseTopicButton size='xs' topic={topic} />
-                  </Group>
-                ),
-              },
-            }}
-          />
-        </Stack>
-      </TopicsProvider>
-    </ContentContainer>
+        </Group>
+        <ReplaceTopicModal opened={createTopicModal} onClose={() => setCreateTopicModal(false)} />
+        <ReplaceTopicModal
+          opened={!!editingTopic}
+          onClose={() => setEditingTopic(undefined)}
+          topic={editingTopic}
+        />
+        <Button ml='auto' onClick={() => setCreateTopicModal(true)} hiddenFrom='md'>
+          Create Topic
+        </Button>
+        <TopicsFilters visible={['closed']} />
+        <TopicsTable
+          columns={['state', 'title', 'types', 'supervisor', 'advisor', 'createdAt', 'actions']}
+          extraColumns={{
+            actions: {
+              accessor: 'actions',
+              title: 'Actions',
+              textAlign: 'center',
+              noWrap: true,
+              width: 120,
+              render: (topic) => (
+                <Group
+                  preventGrowOverflow={false}
+                  justify='center'
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {!topic.closedAt && (
+                    <Button size='xs' onClick={() => setEditingTopic(topic)}>
+                      <Pencil />
+                    </Button>
+                  )}
+                  <CloseTopicButton size='xs' topic={topic} />
+                </Group>
+              ),
+            },
+          }}
+        />
+      </Stack>
+    </TopicsProvider>
   )
 }
 

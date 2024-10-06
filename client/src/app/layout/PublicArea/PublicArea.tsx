@@ -7,8 +7,8 @@ import ContentContainer from '../ContentContainer/ContentContainer'
 import ScrollToTop from '../ScrollToTop/ScrollToTop'
 
 interface IPublicAreaProps {
-  withBackButton?: boolean
   size?: MantineSize
+  withBackButton?: boolean
 }
 
 const PublicArea = (props: PropsWithChildren<IPublicAreaProps>) => {

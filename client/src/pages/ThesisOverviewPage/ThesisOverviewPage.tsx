@@ -2,10 +2,9 @@ import React, { useState } from 'react'
 import ThesesFilters from '../../components/ThesesFilters/ThesesFilters'
 import ThesesProvider from '../../contexts/ThesesProvider/ThesesProvider'
 import { usePageTitle } from '../../hooks/theme'
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import ThesesTable from '../../components/ThesesTable/ThesesTable'
 import ThesesGanttChart from '../../components/ThesesGanttChart/ThesesGanttChart'
-import { Button, Group, Space, Title } from '@mantine/core'
+import { Button, Group, Space, Stack, Title } from '@mantine/core'
 import { ThesisState } from '../../requests/responses/thesis'
 import CreateThesisModal from './components/CreateThesisModal/CreateThesisModal'
 import { Plus } from 'phosphor-react'
@@ -19,7 +18,7 @@ const ThesisOverviewPage = () => {
   const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
 
   return (
-    <ContentContainer>
+    <Stack>
       <CreateThesisModal
         opened={openCreateThesisModal}
         onClose={() => setOpenCreateThesisModal(false)}
@@ -73,7 +72,7 @@ const ThesisOverviewPage = () => {
         )}
         <ThesesTable />
       </ThesesProvider>
-    </ContentContainer>
+    </Stack>
   )
 }
 

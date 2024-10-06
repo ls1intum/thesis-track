@@ -6,6 +6,7 @@ import {
   Center,
   Divider,
   Group,
+  MantineSize,
   Stack,
   Text,
   Tooltip,
@@ -33,8 +34,10 @@ import Logo from '../../../components/Logo/Logo'
 import ColorSchemeToggleButton from '../../../components/ColorSchemeToggleButton/ColorSchemeToggleButton'
 import CustomAvatar from '../../../components/CustomAvatar/CustomAvatar'
 import { formatUser } from '../../../utils/format'
+import ContentContainer from '../ContentContainer/ContentContainer'
 
 export interface IAuthenticatedAreaProps {
+  size?: MantineSize
   requireAuthentication?: boolean
   collapseNavigation?: boolean
   requiredGroups?: string[]
@@ -76,6 +79,7 @@ const links: Array<{
 const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) => {
   const {
     children,
+    size,
     requireAuthentication = true,
     collapseNavigation = false,
     requiredGroups,
@@ -124,10 +128,10 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
 
   if (!requireAuthentication && !auth.isAuthenticated) {
     return (
-      <Stack px='md'>
+      <ContentContainer size={size}>
         {children}
         <ScrollToTop />
-      </Stack>
+      </ContentContainer>
     )
   }
 
@@ -241,7 +245,7 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
         {auth.user ? (
           <Suspense fallback={<PageLoader />}>
             {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
-              children
+              <ContentContainer size={size}>{children}</ContentContainer>
             ) : (
               <Center className={classes.fullHeight}>
                 <h1>403 - Unauthorized</h1>
