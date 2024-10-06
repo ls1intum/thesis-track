@@ -24,98 +24,96 @@ const DashboardPage = () => {
   const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
 
   return (
-    <ContentContainer>
-      <Stack gap='md'>
-        <Title order={1}>Dashboard</Title>
-        <MyTasksSection />
-        <ThesesProvider
-          hideIfEmpty={!managementAccess}
-          defaultStates={
-            managementAccess
-              ? [
-                  ThesisState.PROPOSAL,
-                  ThesisState.WRITING,
-                  ThesisState.SUBMITTED,
-                  ThesisState.ASSESSED,
-                  ThesisState.GRADED,
-                ]
-              : undefined
-          }
-        >
-          <Stack gap='xs'>
-            <Title order={2}>My Theses</Title>
-            {managementAccess && <ThesesGanttChart />}
-            <ThesesTable />
-          </Stack>
-        </ThesesProvider>
-        <ApplicationsProvider
-          hideIfEmpty={true}
-          emptyComponent={
-            !managementAccess ? (
-              <Stack>
-                <Title order={2} mb='sm'>
-                  My Applications
-                </Title>
-                <Center>
-                  <Button mb='md' component={Link} to='/applications/thesis'>
-                    New Application
-                  </Button>
-                </Center>
-              </Stack>
-            ) : undefined
-          }
-        >
-          <Stack gap='xs'>
-            <Title order={2}>My Applications</Title>
-            <ApplicationsTable
-              onApplicationClick={setApplication}
-              columns={[
-                'state',
-                'thesis_title',
-                'thesis_type',
-                'user',
-                'reviewed_at',
-                'created_at',
-                'actions',
-              ]}
-              extraColumns={{
-                actions: {
-                  accessor: 'actions',
-                  title: 'Actions',
-                  textAlign: 'center',
-                  noWrap: true,
-                  width: 80,
-                  render: (row) => (
-                    <Group
-                      preventGrowOverflow={false}
-                      justify='center'
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {row.state === ApplicationState.NOT_ASSESSED && (
-                        <Button
-                          size='xs'
-                          component={Link}
-                          to={`/edit-application/${row.applicationId}`}
-                        >
-                          <Pencil />
-                        </Button>
-                      )}
-                    </Group>
-                  ),
-                },
-              }}
-            />
-            <ApplicationModal
-              application={application}
-              onClose={() => setApplication(undefined)}
-              allowReviews={false}
-              allowEdit={true}
-            />
-          </Stack>
-        </ApplicationsProvider>
-        <PublicPresentationsSection />
-      </Stack>
-    </ContentContainer>
+    <Stack gap='md'>
+      <Title order={1}>Dashboard</Title>
+      <MyTasksSection />
+      <ThesesProvider
+        hideIfEmpty={!managementAccess}
+        defaultStates={
+          managementAccess
+            ? [
+                ThesisState.PROPOSAL,
+                ThesisState.WRITING,
+                ThesisState.SUBMITTED,
+                ThesisState.ASSESSED,
+                ThesisState.GRADED,
+              ]
+            : undefined
+        }
+      >
+        <Stack gap='xs'>
+          <Title order={2}>My Theses</Title>
+          {managementAccess && <ThesesGanttChart />}
+          <ThesesTable />
+        </Stack>
+      </ThesesProvider>
+      <ApplicationsProvider
+        hideIfEmpty={true}
+        emptyComponent={
+          !managementAccess ? (
+            <Stack>
+              <Title order={2} mb='sm'>
+                My Applications
+              </Title>
+              <Center>
+                <Button mb='md' component={Link} to='/applications/thesis'>
+                  New Application
+                </Button>
+              </Center>
+            </Stack>
+          ) : undefined
+        }
+      >
+        <Stack gap='xs'>
+          <Title order={2}>My Applications</Title>
+          <ApplicationsTable
+            onApplicationClick={setApplication}
+            columns={[
+              'state',
+              'thesis_title',
+              'thesis_type',
+              'user',
+              'reviewed_at',
+              'created_at',
+              'actions',
+            ]}
+            extraColumns={{
+              actions: {
+                accessor: 'actions',
+                title: 'Actions',
+                textAlign: 'center',
+                noWrap: true,
+                width: 80,
+                render: (row) => (
+                  <Group
+                    preventGrowOverflow={false}
+                    justify='center'
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {row.state === ApplicationState.NOT_ASSESSED && (
+                      <Button
+                        size='xs'
+                        component={Link}
+                        to={`/edit-application/${row.applicationId}`}
+                      >
+                        <Pencil />
+                      </Button>
+                    )}
+                  </Group>
+                ),
+              },
+            }}
+          />
+          <ApplicationModal
+            application={application}
+            onClose={() => setApplication(undefined)}
+            allowReviews={false}
+            allowEdit={true}
+          />
+        </Stack>
+      </ApplicationsProvider>
+      <PublicPresentationsSection />
+    </Stack>
   )
 }
 

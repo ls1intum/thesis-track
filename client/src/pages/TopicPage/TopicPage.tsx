@@ -30,34 +30,32 @@ const TopicPage = () => {
   }
 
   return (
-    <ContentContainer size='md'>
-      <Stack gap='md'>
-        <Title>{topic.title}</Title>
-        <TopicData topic={topic} />
-        <Group>
-          {managementAccess && (
-            <Button variant='outline' component={Link} to='/topics'>
-              Manage Topics
-            </Button>
-          )}
-          <Button ml='auto' component={Link} to={`/submit-application/${topic.topicId}`}>
-            Apply Now
-          </Button>
-        </Group>
+    <Stack>
+      <Title>{topic.title}</Title>
+      <TopicData topic={topic} />
+      <Group>
         {managementAccess && (
-          <Stack>
-            <Divider />
-            <ApplicationsProvider fetchAll={true} limit={10} defaultTopics={[topic.topicId]}>
-              <ApplicationsTable
-                onApplicationClick={(application) =>
-                  navigate(`/applications/${application.applicationId}`)
-                }
-              />
-            </ApplicationsProvider>
-          </Stack>
+          <Button variant='outline' component={Link} to='/topics'>
+            Manage Topics
+          </Button>
         )}
-      </Stack>
-    </ContentContainer>
+        <Button ml='auto' component={Link} to={`/submit-application/${topic.topicId}`}>
+          Apply Now
+        </Button>
+      </Group>
+      {managementAccess && (
+        <Stack>
+          <Divider />
+          <ApplicationsProvider fetchAll={true} limit={10} defaultTopics={[topic.topicId]}>
+            <ApplicationsTable
+              onApplicationClick={(application) =>
+                navigate(`/applications/${application.applicationId}`)
+              }
+            />
+          </ApplicationsProvider>
+        </Stack>
+      )}
+    </Stack>
   )
 }
 

@@ -19,18 +19,16 @@ const ThesisPage = () => {
 
   return (
     <ThesisProvider thesisId={thesisId} requireLoadedThesis>
-      <ContentContainer>
-        <Stack>
-          <ThesisHeader />
-          <ThesisConfigSection />
-          <ThesisAdvisorCommentsSection />
-          <ThesisInfoSection />
-          <ThesisProposalSection />
-          <ThesisWritingSection />
-          <ThesisAssessmentSection />
-          <ThesisFinalGradeSection />
-        </Stack>
-      </ContentContainer>
+      <Stack>
+        <ThesisHeader />
+        <ThesisConfigSection />
+        <ThesisAdvisorCommentsSection />
+        <ThesisInfoSection />
+        <ThesisProposalSection />
+        <ThesisWritingSection />
+        <ThesisAssessmentSection />
+        <ThesisFinalGradeSection />
+      </Stack>
     </ThesisProvider>
   )
 }
