@@ -1,4 +1,3 @@
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React from 'react'
 import { Space, Tabs } from '@mantine/core'
 import { EnvelopeOpen, User } from 'phosphor-react'

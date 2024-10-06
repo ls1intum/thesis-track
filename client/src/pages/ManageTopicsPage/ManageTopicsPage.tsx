@@ -1,4 +1,3 @@
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React, { useState } from 'react'
 import { usePageTitle } from '../../hooks/theme'
 import { Button, Group, Stack, Title } from '@mantine/core'

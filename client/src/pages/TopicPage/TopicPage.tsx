@@ -1,4 +1,3 @@
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import React from 'react'
 import { usePageTitle } from '../../hooks/theme'
 import { Link, useNavigate, useParams } from 'react-router-dom'

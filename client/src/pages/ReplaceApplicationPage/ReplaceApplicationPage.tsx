@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useTopic } from '../../hooks/fetcher'
-import ContentContainer from '../../app/layout/ContentContainer/ContentContainer'
 import { Card, Center, Stack, Stepper, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'
 import SelectTopicStep from './components/SelectTopicStep/SelectTopicStep'
