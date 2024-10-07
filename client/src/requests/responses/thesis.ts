@@ -100,6 +100,7 @@ export interface IPublishedThesis {
 
 export interface IPublishedPresentation {
   presentationId: string
+  state: string
   type: string
   location: string | null
   streamUrl: string | null
@@ -113,5 +114,9 @@ export function isThesis(thesis: any): thesis is IThesis {
 }
 
 export function isThesisPresentation(presentation: any): presentation is IThesisPresentation {
-  return presentation.presentationId && !!presentation.state
+  return presentation.presentationId && !presentation.thesis
+}
+
+export function isPublishedPresentation(presentation: any): presentation is IPublishedPresentation {
+  return presentation.presentationId && presentation.thesis
 }

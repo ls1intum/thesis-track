@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import thesistrack.ls1.constants.ThesisPresentationState;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
@@ -77,6 +78,16 @@ public class DashboardService {
                         getThesisLink(thesis),
                         50
                 ));
+            }
+
+            for (ThesisPresentation presentation : thesis.getPresentations()) {
+                if (presentation.getState() == ThesisPresentationState.DRAFTED) {
+                    tasks.add(new TaskDto(
+                            "There is a presentation draft for thesis \"" + thesis.getTitle() + "\". Please review and confirm it.",
+                            getThesisLink(thesis),
+                            80
+                    ));
+                }
             }
         }
 

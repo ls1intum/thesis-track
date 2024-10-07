@@ -5,12 +5,13 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
-import { Alert, Button, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
+import { Accordion, Alert, Button, Divider, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'
 import { ApiError } from '../../../../../../requests/handler'
 import { formatPresentationType } from '../../../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../../../config/global'
+import PublicPresentationsTable from '../../../../../../components/PublicPresentationsTable/PublicPresentationsTable'
 
 interface IReplacePresentationModalProps {
   opened: boolean
@@ -18,19 +19,21 @@ interface IReplacePresentationModalProps {
   presentation?: IThesisPresentation
 }
 
+interface IFormValues {
+  type: string
+  visibility: string
+  location: string
+  streamUrl: string
+  language: string | null
+  date: DateValue
+}
+
 const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
   const { presentation, opened, onClose } = props
 
   const { thesis } = useLoadedThesisContext()
 
-  const form = useForm<{
-    type: string
-    visibility: string
-    location: string
-    streamUrl: string
-    language: string | null
-    date: DateValue
-  }>({
+  const form = useForm<IFormValues>({
     mode: 'controlled',
     initialValues: {
       type: 'INTERMEDIATE',
@@ -122,6 +125,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
 
   return (
     <Modal
+      size='xl'
       opened={opened}
       onClose={onClose}
       title={presentation ? 'Update Presentation' : 'Create Presentation'}
@@ -139,6 +143,14 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
               presentation.
             </Alert>
           )}
+          <Accordion variant='separated'>
+            <Accordion.Item value='presentations'>
+              <Accordion.Control>Currently Scheduled Presentations</Accordion.Control>
+              <Accordion.Panel>
+                <PublicPresentationsTable includeDrafts={true} reducedData={true} />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
           <Select
             label='Presentation Type'
             required
@@ -169,16 +181,15 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
             {...form.getInputProps('language')}
           />
           <DateTimePicker label='Scheduled At' required {...form.getInputProps('date')} />
-          <Group grow>
-            <Button
-              type='submit'
-              onClick={onReplacePresentation}
-              disabled={!thesis.abstractText || !form.isValid()}
-              loading={replacing}
-            >
-              {presentation ? 'Update Presentation' : 'Create Presentation Draft'}
-            </Button>
-          </Group>
+          <Button
+            type='submit'
+            fullWidth
+            onClick={onReplacePresentation}
+            disabled={!thesis.abstractText || !form.isValid()}
+            loading={replacing}
+          >
+            {presentation ? 'Update Presentation' : 'Create Presentation Draft'}
+          </Button>
         </Stack>
       </form>
     </Modal>

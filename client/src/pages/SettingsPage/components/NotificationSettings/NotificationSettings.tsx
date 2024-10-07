@@ -1,6 +1,6 @@
 import { Group, Stack, Text } from '@mantine/core'
 import { usePageTitle } from '../../../../hooks/theme'
-import { useHasGroupAccess, useLoggedInUser } from '../../../../hooks/authentication'
+import { useHasGroupAccess, useLoggedInUser, useManagementAccess } from '../../../../hooks/authentication'
 import ThesesTable from '../../../../components/ThesesTable/ThesesTable'
 import ThesesProvider from '../../../../contexts/ThesesProvider/ThesesProvider'
 import React, { useEffect, useState } from 'react'
@@ -12,7 +12,7 @@ const NotificationSettings = () => {
   usePageTitle('Notification Settings')
 
   const user = useLoggedInUser()
-  const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
+  const managementAccess = useManagementAccess()
 
   const [settings, setSettings] = useState<Array<{ name: string; email: string }>>()
 

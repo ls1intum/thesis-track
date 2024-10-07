@@ -2,15 +2,19 @@ import React from 'react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import {
   IPublishedPresentation,
+  isPublishedPresentation,
   isThesisPresentation,
+  IThesis,
   IThesisPresentation,
 } from '../../requests/responses/thesis'
 import { formatDate, formatPresentationType } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { Anchor, Badge, Center } from '@mantine/core'
+import AvatarUserList from '../AvatarUserList/AvatarUserList'
 
 type PresentationColumn =
   | 'state'
+  | 'students'
   | 'type'
   | 'location'
   | 'streamUrl'
@@ -51,13 +55,21 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
       ellipsis: true,
       render: (presentation) => (
         <Center>
-          {isThesisPresentation(presentation) && (
-            <Badge color={presentation.state === 'DRAFTED' ? 'grey' : undefined}>
-              {presentation.state}
-            </Badge>
-          )}
+          <Badge color={presentation.state === 'DRAFTED' ? 'grey' : undefined}>
+            {presentation.state}
+          </Badge>
         </Center>
       ),
+    },
+    students: {
+      accessor: 'students',
+      title: 'Student',
+      width: 180,
+      ellipsis: true,
+      render: (presentation) =>
+        isPublishedPresentation(presentation) && (
+          <AvatarUserList users={presentation.thesis.students} />
+        ),
     },
     type: {
       accessor: 'type',
@@ -122,7 +134,7 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
         page={pagination.page}
         onPageChange={pagination.onPageChange}
         idAccessor='presentationId'
-        columns={columns.map((column) => columnConfig[column])}
+        columns={columns.filter((column) => column).map((column) => columnConfig[column])}
         onRowClick={onRowClick ? ({ record }) => onRowClick(record) : undefined}
       />
     )
@@ -138,7 +150,7 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
         highlightOnHover
         records={presentations}
         idAccessor='presentationId'
-        columns={columns.map((column) => columnConfig[column])}
+        columns={columns.filter((column) => column).map((column) => columnConfig[column])}
       />
     )
   }

@@ -45,7 +45,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       title: 'State',
       textAlign: 'center',
       width: 150,
-      render: (thesis: IThesis) => {
+      render: (thesis) => {
         return (
           <Center>
             <ThesisStateBadge state={thesis.state} />
@@ -57,28 +57,28 @@ const ThesesTable = (props: IThesesTableProps) => {
       accessor: 'supervisors',
       title: 'Supervisor',
       width: 180,
-      render: (thesis: IThesis) => <AvatarUserList users={thesis.supervisors} />,
+      render: (thesis) => <AvatarUserList users={thesis.supervisors} />,
     },
     advisors: {
       accessor: 'advisors',
       title: 'Advisor(s)',
       ellipsis: true,
       width: 180,
-      render: (thesis: IThesis) => <AvatarUserList users={thesis.advisors} />,
+      render: (thesis) => <AvatarUserList users={thesis.advisors} />,
     },
     students: {
       accessor: 'students',
       title: 'Student(s)',
       ellipsis: true,
       width: 180,
-      render: (thesis: IThesis) => <AvatarUserList users={thesis.students} />,
+      render: (thesis) => <AvatarUserList users={thesis.students} />,
     },
     type: {
       accessor: 'type',
       title: 'Type',
       ellipsis: true,
       width: 150,
-      render: (thesis: IThesis) => formatThesisType(thesis.type),
+      render: (thesis) => formatThesisType(thesis.type),
     },
     title: {
       accessor: 'title',
@@ -91,7 +91,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       sortable: true,
       ellipsis: true,
       width: 130,
-      render: (thesis: IThesis) => formatDate(thesis.startDate, { withTime: false }),
+      render: (thesis) => formatDate(thesis.startDate, { withTime: false }),
     },
     end_date: {
       accessor: 'endDate',
@@ -99,7 +99,7 @@ const ThesesTable = (props: IThesesTableProps) => {
       sortable: true,
       ellipsis: true,
       width: 130,
-      render: (thesis: IThesis) => formatDate(thesis.endDate, { withTime: false }),
+      render: (thesis) => formatDate(thesis.endDate, { withTime: false }),
     },
     ...extraColumns,
   }

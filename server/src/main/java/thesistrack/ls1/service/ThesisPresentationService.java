@@ -51,12 +51,12 @@ public class ThesisPresentationService {
         this.clientHost = clientHost;
     }
 
-    public Page<ThesisPresentation> getPublicPresentations(Integer page, Integer limit, String sortBy, String sortOrder) {
+    public Page<ThesisPresentation> getPublicPresentations(Boolean includeDrafts, Integer page, Integer limit, String sortBy, String sortOrder) {
         Sort.Order order = new Sort.Order(sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC, sortBy);
 
         return thesisPresentationRepository.findFuturePresentations(
                 Instant.now(),
-                Set.of(ThesisPresentationState.SCHEDULED),
+                includeDrafts ? Set.of(ThesisPresentationState.DRAFTED, ThesisPresentationState.SCHEDULED) : Set.of(ThesisPresentationState.SCHEDULED),
                 Set.of(ThesisPresentationVisibility.PUBLIC),
                 PageRequest.of(page, limit, Sort.by(order))
         );
@@ -68,10 +68,6 @@ public class ThesisPresentationService {
 
         if (presentation.getVisibility() != ThesisPresentationVisibility.PUBLIC) {
             throw new AccessDeniedException("Presentation is not public");
-        }
-
-        if (presentation.getState() != ThesisPresentationState.SCHEDULED) {
-            throw new AccessDeniedException("Presentation is not scheduled yet");
         }
 
         return presentation;

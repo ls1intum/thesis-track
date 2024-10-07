@@ -7,7 +7,7 @@ import ThesesProvider from '../../contexts/ThesesProvider/ThesesProvider'
 import { Button, Center, Group, Stack, Title } from '@mantine/core'
 import { ApplicationState, IApplication } from '../../requests/responses/application'
 import ThesesGanttChart from '../../components/ThesesGanttChart/ThesesGanttChart'
-import { useHasGroupAccess } from '../../hooks/authentication'
+import { useHasGroupAccess, useManagementAccess } from '../../hooks/authentication'
 import { Link } from 'react-router-dom'
 import ApplicationModal from '../../components/ApplicationModal/ApplicationModal'
 import MyTasksSection from './components/MyTasksSection/MyTasksSection'
@@ -20,7 +20,7 @@ const DashboardPage = () => {
 
   const [application, setApplication] = useState<IApplication>()
 
-  const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
+  const managementAccess = useManagementAccess()
 
   return (
     <Stack gap='md'>

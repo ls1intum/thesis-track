@@ -59,3 +59,7 @@ export function useHasGroupAccess(...groups: string[]) {
 
   return user?.groups.some((group) => groups.includes(group)) ?? false
 }
+
+export function useManagementAccess() {
+  return useHasGroupAccess('admin', 'supervisor', 'advisor')
+}
