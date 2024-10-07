@@ -6,7 +6,7 @@ import NotFound from '../../components/NotFound/NotFound'
 import PageLoader from '../../components/PageLoader/PageLoader'
 import { Button, Divider, Group, Stack, Title } from '@mantine/core'
 import TopicData from '../../components/TopicData/TopicData'
-import { useHasGroupAccess } from '../../hooks/authentication'
+import { useManagementAccess } from '../../hooks/authentication'
 import ApplicationsProvider from '../../contexts/ApplicationsProvider/ApplicationsProvider'
 import ApplicationsTable from '../../components/ApplicationsTable/ApplicationsTable'
 
@@ -14,7 +14,7 @@ const TopicPage = () => {
   const { topicId } = useParams<{ topicId: string }>()
 
   const navigate = useNavigate()
-  const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
+  const managementAccess = useManagementAccess()
 
   const topic = useTopic(topicId)
 

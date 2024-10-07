@@ -8,14 +8,14 @@ import { Button, Group, Space, Stack, Title } from '@mantine/core'
 import { ThesisState } from '../../requests/responses/thesis'
 import CreateThesisModal from './components/CreateThesisModal/CreateThesisModal'
 import { Plus } from 'phosphor-react'
-import { useHasGroupAccess } from '../../hooks/authentication'
+import { useManagementAccess } from '../../hooks/authentication'
 
 const ThesisOverviewPage = () => {
   usePageTitle('Theses')
 
   const [openCreateThesisModal, setOpenCreateThesisModal] = useState(false)
 
-  const managementAccess = useHasGroupAccess('admin', 'supervisor', 'advisor')
+  const managementAccess = useManagementAccess()
 
   return (
     <Stack>

@@ -1,5 +1,6 @@
 package thesistrack.ls1.dto;
 
+import thesistrack.ls1.constants.ThesisPresentationState;
 import thesistrack.ls1.constants.ThesisPresentationType;
 import thesistrack.ls1.entity.ThesisPresentation;
 
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 public record PublishedPresentationDto (
         UUID presentationId,
+        ThesisPresentationState state,
         ThesisPresentationType type,
         String location,
         String streamUrl,
@@ -22,6 +24,7 @@ public record PublishedPresentationDto (
 
         return new PublishedPresentationDto(
                 presentation.getId(),
+                presentation.getState(),
                 presentation.getType(),
                 presentation.getLocation(),
                 presentation.getStreamUrl(),
