@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ThesesFilters from '../../components/ThesesFilters/ThesesFilters'
-import ThesesProvider from '../../contexts/ThesesProvider/ThesesProvider'
+import ThesesProvider from '../../providers/ThesesProvider/ThesesProvider'
 import { usePageTitle } from '../../hooks/theme'
 import ThesesTable from '../../components/ThesesTable/ThesesTable'
 import ThesesGanttChart from '../../components/ThesesGanttChart/ThesesGanttChart'

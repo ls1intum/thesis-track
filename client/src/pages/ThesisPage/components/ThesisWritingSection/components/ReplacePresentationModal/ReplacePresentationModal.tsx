@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../../../contexts/ThesisProvider/hooks'
+} from '../../../../../../providers/ThesisProvider/hooks'
 import { Accordion, Alert, Button, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'
@@ -95,33 +95,36 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
     form.reset()
   }, [opened, presentation])
 
-  const [replacing, onReplacePresentation] = useThesisUpdateAction(async () => {
-    const response = await doRequest<IThesis>(
-      presentation
-        ? `/v2/theses/${thesis.thesisId}/presentations/${presentation.presentationId}`
-        : `/v2/theses/${thesis.thesisId}/presentations`,
-      {
-        method: presentation ? 'PUT' : 'POST',
-        requiresAuth: true,
-        data: {
-          type: form.values.type,
-          visibility: form.values.visibility,
-          location: form.values.location,
-          streamUrl: form.values.streamUrl,
-          language: form.values.language,
-          date: form.values.date,
+  const [replacing, onReplacePresentation] = useThesisUpdateAction(
+    async () => {
+      const response = await doRequest<IThesis>(
+        presentation
+          ? `/v2/theses/${thesis.thesisId}/presentations/${presentation.presentationId}`
+          : `/v2/theses/${thesis.thesisId}/presentations`,
+        {
+          method: presentation ? 'PUT' : 'POST',
+          requiresAuth: true,
+          data: {
+            type: form.values.type,
+            visibility: form.values.visibility,
+            location: form.values.location,
+            streamUrl: form.values.streamUrl,
+            language: form.values.language,
+            date: form.values.date,
+          },
         },
-      },
-    )
+      )
 
-    if (response.ok) {
-      onClose()
+      if (response.ok) {
+        onClose()
 
-      return response.data
-    } else {
-      throw new ApiError(response)
-    }
-  }, 'Presentation successfully scheduled')
+        return response.data
+      } else {
+        throw new ApiError(response)
+      }
+    },
+    presentation ? 'Presentation successfully updated' : 'Presentation successfully created',
+  )
 
   return (
     <Modal

@@ -8,7 +8,7 @@ import { checkMinimumThesisState } from '../../../../utils/thesis'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+} from '../../../../providers/ThesisProvider/hooks'
 import { ApiError } from '../../../../requests/handler'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 

@@ -7,12 +7,12 @@ import { checkMinimumThesisState } from '../../../../utils/thesis'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+} from '../../../../providers/ThesisProvider/hooks'
 import AuthenticatedPdfPreview from '../../../../components/AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import ThesisCommentsForm from '../../../../components/ThesisCommentsForm/ThesisCommentsForm'
-import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
+import ThesisCommentsProvider from '../../../../providers/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../../../../components/ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'

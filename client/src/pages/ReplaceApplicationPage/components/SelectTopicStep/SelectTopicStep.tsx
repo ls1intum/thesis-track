@@ -1,6 +1,6 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { Accordion, Button, Center, Skeleton, Space, Stack, Text } from '@mantine/core'
-import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
+import { useTopicsContext } from '../../../../providers/TopicsProvider/hooks'
 import React from 'react'
 import TopicAccordionItem from '../../../../components/TopicAccordionItem/TopicAccordionItem'
 import TopicsFilters from '../../../../components/TopicsFilters/TopicsFilters'

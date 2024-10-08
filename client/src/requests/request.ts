@@ -1,5 +1,5 @@
 import { GLOBAL_CONFIG } from '../config/global'
-import { keycloak } from '../contexts/AuthenticationContext/AuthenticationProvider'
+import { keycloak } from '../providers/AuthenticationContext/AuthenticationProvider'
 
 export type ApiResponse<T> =
   | { ok: true; status: number; data: T }

@@ -6,7 +6,7 @@ import DocumentEditor from '../../../../../../components/DocumentEditor/Document
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../../../contexts/ThesisProvider/hooks'
+} from '../../../../../../providers/ThesisProvider/hooks'
 import { ApiError } from '../../../../../../requests/handler'
 import ThesisVisibilitySelect from '../../../ThesisVisibilitySelect/ThesisVisibilitySelect'
 

@@ -9,7 +9,7 @@ import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import UserMultiSelect from '../../../../components/UserMultiSelect/UserMultiSelect'
-import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
+import { useTopicsContext } from '../../../../providers/TopicsProvider/hooks'
 import { formatThesisType } from '../../../../utils/format'
 
 interface ICreateTopicModalProps {

@@ -9,7 +9,7 @@ import ConfirmationButton from '../../../../components/ConfirmationButton/Confir
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+} from '../../../../providers/ThesisProvider/hooks'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 import { formatThesisFilename, formatUser } from '../../../../utils/format'

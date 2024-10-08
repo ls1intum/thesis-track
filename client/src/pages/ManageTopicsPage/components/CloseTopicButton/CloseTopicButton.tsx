@@ -1,7 +1,7 @@
 import { ITopic } from '../../../../requests/responses/topic'
 import { X } from 'phosphor-react'
 import React, { useEffect, useState } from 'react'
-import { useTopicsContext } from '../../../../contexts/TopicsProvider/hooks'
+import { useTopicsContext } from '../../../../providers/TopicsProvider/hooks'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'

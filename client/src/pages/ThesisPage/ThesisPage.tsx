@@ -8,7 +8,7 @@ import ThesisFinalGradeSection from './components/ThesisFinalGradeSection/Thesis
 import { useParams } from 'react-router-dom'
 import { Stack } from '@mantine/core'
 import ThesisHeader from './components/ThesisHeader/ThesisHeader'
-import ThesisProvider from '../../contexts/ThesisProvider/ThesisProvider'
+import ThesisProvider from '../../providers/ThesisProvider/ThesisProvider'
 import ThesisAdvisorCommentsSection from './components/ThesisAdvisorCommentsSection/ThesisAdvisorCommentsSection'
 
 const ThesisPage = () => {

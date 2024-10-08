@@ -1,7 +1,7 @@
 import { Grid, MultiSelect, Select, TextInput } from '@mantine/core'
 import { MagnifyingGlass } from 'phosphor-react'
 import { ApplicationState } from '../../requests/responses/application'
-import { useApplicationsContext } from '../../contexts/ApplicationsProvider/hooks'
+import { useApplicationsContext } from '../../providers/ApplicationsProvider/hooks'
 import React from 'react'
 import { formatApplicationState, formatThesisType } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../../../contexts/ThesisProvider/hooks'
+} from '../../../../../../providers/ThesisProvider/hooks'
 import { Button, Center, Group, Stack, Tooltip } from '@mantine/core'
 import { Check, Pencil, Trash } from 'phosphor-react'
 import { doRequest } from '../../../../../../requests/request'
