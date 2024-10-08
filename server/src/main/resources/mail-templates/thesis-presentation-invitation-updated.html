@@ -4,11 +4,11 @@
   <div><strong>[[${DataFormatter.formatUsers(thesis.students)}]]</strong></div>
   <div>will give their [[${DataFormatter.formatEnum(presentation.type)}]] presentation on</div>
   <div><strong>[[${DataFormatter.formatDateTime(presentation.scheduledAt)}]]</strong></div>
-  <div th:if="${presentation.streamUrl}" th:inline="text">
+  <div th:if="${presentation.streamUrl != null and !#strings.isEmpty(presentation.streamUrl)}" th:inline="text">
     online at [[${presentation.streamUrl}]]
   </div>
-  <div th:if="${presentation.location}">
-    <span th:if="${presentation.streamUrl}">and&nbsp;</span>offline in <strong>[[${presentation.location}]]</strong>
+  <div th:if="${presentation.location != null and !#strings.isEmpty(presentation.location)}">
+    <span th:if="${presentation.streamUrl != null and !#strings.isEmpty(presentation.streamUrl)}">and&nbsp;</span>offline in <strong>[[${presentation.location}]]</strong>
   </div>
   <br/>
   <div>Title:</div>

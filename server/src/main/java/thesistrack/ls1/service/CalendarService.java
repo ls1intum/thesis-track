@@ -6,6 +6,8 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.parameter.Role;
+import net.fortuna.ical4j.model.parameter.Rsvp;
 import net.fortuna.ical4j.model.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,12 +146,21 @@ public class CalendarService {
         }
 
         if (data.organizer != null) {
-            event.add(new Organizer(URI.create("mailto:" + data.organizer.getAddress())));
+            Organizer organizer = new Organizer(URI.create("mailto:" + data.organizer.getAddress()));
+
+            organizer.add(Rsvp.TRUE);
+
+            event.add(organizer);
         }
 
         if (data.participants != null) {
             for (InternetAddress address : data.participants) {
-                event.add(new Attendee(URI.create("mailto:" + address.getAddress())));
+                Attendee attendee = new Attendee(URI.create("mailto:" + address.getAddress()));
+
+                attendee.add(Role.REQ_PARTICIPANT);
+                attendee.add(Rsvp.TRUE);
+
+                event.add(attendee);
             }
         }
 

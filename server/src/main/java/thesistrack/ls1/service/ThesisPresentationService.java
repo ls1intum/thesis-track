@@ -4,6 +4,7 @@ import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.immutable.ImmutableCalScale;
 import net.fortuna.ical4j.model.property.immutable.ImmutableMethod;
+import net.fortuna.ical4j.model.property.immutable.ImmutableVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -89,8 +90,10 @@ public class ThesisPresentationService {
         return calendar;
     }
 
-    public Calendar getPresentationEvent(ThesisPresentation presentation) {
+    public Calendar getPresentationInvite(ThesisPresentation presentation) {
         Calendar calendar = createEmptyCalendar();
+
+        calendar.add(ImmutableMethod.REQUEST);
 
         calendar.add(calendarService.createVEvent(presentation.getId().toString(), createPresentationCalendarEvent(presentation)));
 
@@ -154,7 +157,7 @@ public class ThesisPresentationService {
         thesisPresentationRepository.save(presentation);
 
         if (presentation.getState() == ThesisPresentationState.SCHEDULED) {
-            mailingService.sendScheduledPresentationEmail("UPDATED", presentation, getPresentationEvent(presentation).toString());
+            mailingService.sendScheduledPresentationEmail("UPDATED", presentation, getPresentationInvite(presentation).toString());
         }
 
         updateThesisCalendarEvents(thesis);
@@ -181,7 +184,7 @@ public class ThesisPresentationService {
 
         presentation = thesisPresentationRepository.save(presentation);
 
-        mailingService.sendScheduledPresentationEmail("CREATED", presentation, getPresentationEvent(presentation).toString());
+        mailingService.sendScheduledPresentationEmail("CREATED", presentation, getPresentationInvite(presentation).toString());
 
         return thesis;
     }
@@ -234,6 +237,7 @@ public class ThesisPresentationService {
         Calendar calendar = new Calendar();
 
         calendar.add(new ProdId("-//Thesis Track//Thesis Presentations//EN"));
+        calendar.add(ImmutableVersion.VERSION_2_0);
         calendar.add(ImmutableCalScale.GREGORIAN);
 
         return calendar;
@@ -253,7 +257,7 @@ public class ThesisPresentationService {
                         "Abstract:\n" + presentation.getThesis().getAbstractField(),
                 presentation.getScheduledAt(),
                 presentation.getScheduledAt().plus(60, ChronoUnit.MINUTES),
-                presentation.getThesis().getSupervisors().getFirst().getEmail(),
+                presentation.getThesis().getStudents().getFirst().getEmail(),
                 presentation.getThesis().getRoles().stream().map((role) -> role.getUser().getEmail()).toList()
         );
     }
