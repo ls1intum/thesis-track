@@ -5,7 +5,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../../../contexts/ThesisProvider/hooks'
-import { Accordion, Alert, Button, Divider, Group, Modal, Select, Stack, TextInput } from '@mantine/core'
+import { Accordion, Alert, Button, Modal, Select, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'
 import { ApiError } from '../../../../../../requests/handler'

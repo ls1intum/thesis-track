@@ -3,8 +3,6 @@ import { DataTable, DataTableColumn } from 'mantine-datatable'
 import {
   IPublishedPresentation,
   isPublishedPresentation,
-  isThesisPresentation,
-  IThesis,
   IThesisPresentation,
 } from '../../requests/responses/thesis'
 import { formatDate, formatPresentationType } from '../../utils/format'
