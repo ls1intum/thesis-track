@@ -1,12 +1,12 @@
-<p>Dear {{recipientName}},</p>
+<div th:replace="fragments/salutation :: main"></div>
 
-<p>
+<p th:inline="text">
   Thank you for your interest in pursuing your thesis under my supervision.
   I have carefully reviewed your application and supporting documents.
   Unfortunately, I must inform you that you do not currently meet the necessary requirements for thesis supervision under my guidance.
 </p>
-<p>
+<p th:inline="text">
   I recommend reaching out to other faculty members who may align more closely with your qualifications and area of interest.
 </p>
 
-{{config.signature}}
+<div th:text="${config.signature}"></div>

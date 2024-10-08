@@ -37,7 +37,7 @@ public class MailingService {
     public void sendApplicationCreatedEmail(Application application) {
         MailBuilder chairMailBuilder = new MailBuilder(
                 config,
-                "New Thesis Application ({{application.user.firstName}} {{application.user.lastName}})",
+                "New Thesis Application",
                 "application-created-chair"
         );
         chairMailBuilder
@@ -142,7 +142,7 @@ public class MailingService {
     public void sendProposalChangeRequestEmail(User reviewingUser, Thesis thesis) {
         MailBuilder builder = new MailBuilder(
                 config,
-                "{{reviewingUser.firstName}} {{reviewingUser.lastName}} requested Changes for Proposal",
+                "Changes were requested for Proposal",
                 "thesis-proposal-rejected"
         );
         builder
@@ -153,11 +153,10 @@ public class MailingService {
                 .fillThesisProposalPlaceholders(thesis.getProposals().getFirst())
                 .fillPlaceholder(
                         "requestedChanges",
-                        String.join("\n", thesis.getFeedback().stream()
+                        thesis.getFeedback().stream()
                                 .filter((item) -> item.getType() == ThesisFeedbackType.PROPOSAL && item.getCompletedAt() == null)
                                 .map(ThesisFeedback::getFeedback)
-                                .map((item) -> "<li>" + item + "</li>")
-                                .toList())
+                                .toList()
                 )
                 .send(javaMailSender, uploadService);
     }
@@ -165,7 +164,7 @@ public class MailingService {
     public void sendNewCommentEmail(ThesisComment comment) {
         MailBuilder builder = new MailBuilder(
                 config,
-                "{{comment.createdBy.firstName}} {{comment.createdBy.lastName}} posted a Comment",
+                "A Comment was posted",
                 "thesis-comment-posted"
         );
 

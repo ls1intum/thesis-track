@@ -1,0 +1,16 @@
+<div th:replace="fragments/salutation :: main"></div>
+
+<p th:inline="text">
+  [[${reviewingUser.firstName}]] [[${reviewingUser.lastName}]] reviewed your proposal for thesis "[[${thesis.title}]]".
+</p>
+
+<p th:inline="text">
+  The following changes were requested:<br />
+  <ul>
+    <li th:each="requestedChange : ${requestedChanges}" th:text="${requestedChange}"></li>
+  </ul>
+</p>
+
+<div th:replace="fragments/thesis-link :: main"></div>
+
+<div th:replace="fragments/notification-settings :: main"></div>

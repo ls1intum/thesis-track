@@ -1,0 +1,34 @@
+<div th:replace="fragments/salutation :: main"></div>
+
+<p th:inline="text">
+  [[${presentation.createdBy.firstName}]] [[${presentation.createdBy.lastName}]] updated a presentation for thesis "[[${thesis.title}]]"
+</p>
+
+<p th:inline="text">
+  <strong>Type</strong><br />
+  [[${DataFormatter.formatEnum(presentation.type)}]]
+</p>
+
+<p th:inline="text">
+  <strong>Location</strong><br />
+  [[${DataFormatter.formatOptionalString(presentation.location)}]]
+</p >
+
+<p th:inline="text">
+  <strong>Stream URL</strong><br />
+  [[${DataFormatter.formatOptionalString(presentation.streamUrl)}]]
+</p>
+
+<p th:inline="text">
+  <strong>Language</strong><br />
+  [[${DataFormatter.formatConstantName(presentation.language)}]]
+</p>
+
+<p th:inline="text">
+  <strong>Scheduled At</strong><br />
+  [[${DataFormatter.formatDateTime(presentation.scheduledAt)}]]
+</p>
+
+<div th:replace="fragments/thesis-link :: main"></div>
+
+<div th:replace="fragments/notification-settings :: main"></div>

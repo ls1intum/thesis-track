@@ -1,15 +1,15 @@
-<p>Dear {{recipientName}},</p>
+<div th:replace="fragments/salutation :: main"></div>
 
-<p>
+<p th:inline="text">
   Thank you for your interest in pursuing your thesis under my supervision.
 </p>
 
-<p>
+<p th:inline="text">
   We found a student for the specific topic you applied for.
 </p>
 
-<p>
+<p th:inline="text">
   You can explore other topics or suggest a topic yourself in your area of interest.
 </p>
 
-{{config.signature}}
+<div th:text="${config.signature}"></div>

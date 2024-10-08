@@ -6,15 +6,11 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.thymeleaf.ITemplateEngine;
+import org.thymeleaf.TemplateEngine;
 import thesistrack.ls1.entity.User;
-import thesistrack.ls1.exception.MailingException;
 import thesistrack.ls1.repository.UserRepository;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 @Component
@@ -22,7 +18,6 @@ public class MailConfig {
     private final UserRepository userRepository;
 
     private final Boolean enabled;
-    private final Path templateLocation;
 
     @Getter
     private final String clientHost;
@@ -39,15 +34,18 @@ public class MailConfig {
     @Getter
     private final List<InternetAddress> defaultBccRecipients;
 
+    @Getter
+    private final TemplateEngine templateEngine;
+
     @Autowired
     public MailConfig(
             @Value("${thesis-track.mail.enabled}") boolean enabled,
-            @Value("${thesis-track.mail.mail-template-location}") String mailTemplateLocation,
             @Value("${thesis-track.mail.sender}") InternetAddress sender,
             @Value("${thesis-track.mail.bcc-recipients}") String bccRecipientsList,
             @Value("${thesis-track.mail.signature}") String mailSignature,
             @Value("${thesis-track.mail.workspace-url}") String workspaceUrl,
             @Value("${thesis-track.client.host}") String clientHost,
+            TemplateEngine templateEngine,
             UserRepository userRepository
     ) {
         this.enabled = enabled;
@@ -56,8 +54,8 @@ public class MailConfig {
         this.signature = mailSignature;
         this.clientHost = clientHost;
 
+        this.templateEngine = templateEngine;
         this.userRepository = userRepository;
-        this.templateLocation = Paths.get(mailTemplateLocation);
 
         if (bccRecipientsList != null && !bccRecipientsList.isEmpty()) {
             List<String> addresses = Arrays.asList(bccRecipientsList.split(";"));
@@ -87,34 +85,17 @@ public class MailConfig {
         return userRepository.getRoleMembers(Set.of("student"));
     }
 
-    public String getTemplate(String name, boolean replacePlaceholders) {
-        Path filePath = templateLocation.resolve(name + ".html");
+    public record MailConfigDto(
+            String signature,
+            String workspaceUrl,
+            String clientHost
+    ) {}
 
-        try {
-            byte[] fileBytes = Files.readAllBytes(filePath);
-
-            String template = new String(fileBytes, StandardCharsets.UTF_8);
-
-            if (!replacePlaceholders) {
-                return template;
-            }
-
-            return template
-                    .replace(
-                            "{{config.signature}}",
-                            Objects.requireNonNullElse(signature, "")
-                    )
-                    .replace(
-                            "{{config.workspaceUrl}}",
-                            Objects.requireNonNullElse(workspaceUrl, "")
-                    )
-                    .replace(
-                            "{{notificationFooter}}",
-                            getTemplate("notification-settings", false)
-                                    .replace("{{notificationSettingsLink}}", getClientHost() + "/settings/notifications")
-                    );
-        } catch (IOException e) {
-            throw new MailingException("Mail template not found", e);
-        }
+    public MailConfigDto getConfigDto() {
+        return new MailConfigDto(
+                Objects.requireNonNullElse(signature, ""),
+                Objects.requireNonNullElse(workspaceUrl, ""),
+                Objects.requireNonNullElse(getClientHost(), "")
+        );
     }
 }

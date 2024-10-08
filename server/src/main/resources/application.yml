@@ -13,13 +13,16 @@ spring:
     enabled: true
     change-log: db/changelog/db.changelog-master.xml
   jpa:
+    open-in-view: true
     hibernate:
       ddl-auto: validate
     show-sql: ${DEBUG_MODE:false}
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: ${DEBUG_MODE:false}
+  thymeleaf:
+    prefix: ${MAIL_TEMPLATE_FOLDER:classpath:/mail-templates/}
+    suffix: .html
   servlet:
     multipart:
       max-file-size: 20MB
@@ -78,7 +81,6 @@ thesis-track:
     signature: ${MAIL_SIGNATURE:}
     workspace-url: ${MAIL_WORKSPACE_URL:https://slack.com}
     bcc-recipients: ${MAIL_BCC_RECIPIENTS:}
-    mail-template-location: ${MAIL_TEMPLATE_FOLDER:server/mail-templates}
   storage:
     upload-location: ${UPLOAD_FOLDER:uploads}
   scientific-writing-guide: ${SCIENTIFIC_WRITING_GUIDE:}

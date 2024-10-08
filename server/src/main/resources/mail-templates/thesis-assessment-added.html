@@ -1,0 +1,28 @@
+<div th:replace="fragments/salutation :: main"></div>
+
+<p th:inline="text">
+  [[${assessment.createdBy.firstName}]] [[${assessment.createdBy.lastName}]] added an assessment to thesis "[[${thesis.title}]]"
+</p>
+
+<p th:inline="text">
+  <strong>Summary</strong><br />
+  [[${assessment.summary}]]
+</p>
+
+<p th:inline="text">
+  <strong>Positives</strong><br />
+  [[${assessment.positives}]]
+</p>
+
+<p th:inline="text">
+  <strong>Negatives</strong><br />
+  [[${assessment.negatives}]]
+</p>
+
+<p th:inline="text">
+  <strong>Grade Suggestion</strong>: [[${assessment.gradeSuggestion}]]
+</p>
+
+<div th:replace="fragments/thesis-link :: main"></div>
+
+<div th:replace="fragments/notification-settings :: main"></div>

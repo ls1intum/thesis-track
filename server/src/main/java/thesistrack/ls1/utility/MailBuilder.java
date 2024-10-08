@@ -11,23 +11,18 @@ import jakarta.mail.util.ByteArrayDataSource;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.MailSendException;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.dto.ApplicationDto;
 import thesistrack.ls1.dto.ThesisCommentDto;
 import thesistrack.ls1.dto.ThesisDto;
 import thesistrack.ls1.dto.UserDto;
 import thesistrack.ls1.entity.*;
-import thesistrack.ls1.exception.MailingException;
 import thesistrack.ls1.service.UploadService;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.time.Instant;
 import java.util.*;
-import java.util.function.Function;
 
 public class MailBuilder {
     private static final Logger log = LoggerFactory.getLogger(MailBuilder.class);
@@ -39,10 +34,13 @@ public class MailBuilder {
     private final List<InternetAddress> bccRecipients;
 
     @Getter
-    private String subject;
+    private final String subject;
 
     @Getter
-    private String content;
+    private final String template;
+
+    @Getter
+    private final Map<String, Object> variables;
 
     @Getter
     private final Set<String> notificationNames;
@@ -65,7 +63,11 @@ public class MailBuilder {
         this.bccRecipients = new ArrayList<>();
 
         this.subject = subject;
-        this.content = config.getTemplate(template, true);
+        this.template = template;
+
+        this.variables = new HashMap<>();
+        this.variables.put("config", config.getConfigDto());
+
         this.fileAttachments = new ArrayList<>();
         this.rawAttachments = new ArrayList<>();
         this.notificationNames = new HashSet<>();
@@ -191,64 +193,36 @@ public class MailBuilder {
         return this;
     }
 
-    public MailBuilder fillPlaceholder(String placeholder, String value) {
-        replacePlaceholder(placeholder, value);
+    public MailBuilder fillPlaceholder(String placeholder, Object value) {
+        this.variables.put(placeholder, value);
 
         return this;
     }
 
     public MailBuilder fillUserPlaceholders(User user, String placeholder) {
-        replaceDtoPlaceholders(UserDto.fromUserEntity(user), placeholder, getUserFormatters(placeholder));
+        fillPlaceholder(placeholder, UserDto.fromUserEntity(user));
 
         return this;
     }
 
-    private HashMap<String, Function<Object, String>> getUserFormatters(String placeholder) {
-        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
-
-        formatters.put(placeholder + ".enrolledAt", DataFormatter::formatSemester);
-        formatters.put(placeholder + ".gender", DataFormatter::formatConstantName);
-        formatters.put(placeholder + ".studyDegree", DataFormatter::formatConstantName);
-        formatters.put(placeholder + ".studyProgram", DataFormatter::formatConstantName);
-
-        return formatters;
-    }
-
     public MailBuilder fillApplicationPlaceholders(Application application) {
-        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
-
-        formatters.put("application.desiredStartDate", DataFormatter::formatDate);
-
-        formatters.putAll(getUserFormatters("application.user"));
-
-        replaceDtoPlaceholders(ApplicationDto.fromApplicationEntity(application, false), "application", formatters);
-
-        replacePlaceholder("applicationUrl", config.getClientHost() + "/applications/" + application.getId());
+        fillPlaceholder("application", ApplicationDto.fromApplicationEntity(application, false));
+        fillPlaceholder("applicationUrl", config.getClientHost() + "/applications/" + application.getId());
 
         return this;
     }
 
     public MailBuilder fillThesisPlaceholders(Thesis thesis) {
-        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
-
-        formatters.put("thesis.startDate", DataFormatter::formatDate);
-        formatters.put("thesis.endDate", DataFormatter::formatDate);
-        formatters.put("thesis.type", DataFormatter::formatConstantName);
-
-        formatters.put("thesis.students", DataFormatter::formatUsers);
-        formatters.put("thesis.advisors", DataFormatter::formatUsers);
-        formatters.put("thesis.supervisors", DataFormatter::formatUsers);
-
-        replaceDtoPlaceholders(ThesisDto.fromThesisEntity(thesis, false), "thesis", formatters);
-
-        replacePlaceholder("thesisUrl", config.getClientHost() + "/theses/" + thesis.getId());
+        fillPlaceholder("thesis", ThesisDto.fromThesisEntity(thesis, false));
+        fillPlaceholder("thesisUrl", config.getClientHost() + "/theses/" + thesis.getId());
 
         return this;
     }
 
     public MailBuilder fillThesisCommentPlaceholders(ThesisComment comment) {
         fillThesisPlaceholders(comment.getThesis());
-        replaceDtoPlaceholders(ThesisCommentDto.fromCommentEntity(comment), "comment", new HashMap<>());
+
+        fillPlaceholder("comment", ThesisCommentDto.fromCommentEntity(comment));
 
         return this;
     }
@@ -256,34 +230,29 @@ public class MailBuilder {
     public MailBuilder fillThesisPresentationPlaceholders(ThesisPresentation presentation) {
         fillThesisPlaceholders(presentation.getThesis());
 
-        HashMap<String, Function<Object, String>> formatters = new HashMap<>();
-
-        formatters.put("presentation.language", DataFormatter::formatConstantName);
-        formatters.put("presentation.streamUrl", DataFormatter::formatOptionalString);
-        formatters.put("presentation.location", DataFormatter::formatOptionalString);
-
-        replaceDtoPlaceholders(ThesisDto.ThesisPresentationDto.fromPresentationEntity(presentation), "presentation", formatters);
-
-        replacePlaceholder("presentationUrl", config.getClientHost() + "/presentations/" + presentation.getId());
+        fillPlaceholder("presentation", ThesisDto.ThesisPresentationDto.fromPresentationEntity(presentation));
+        fillPlaceholder("presentationUrl", config.getClientHost() + "/presentations/" + presentation.getId());
 
         return this;
     }
 
     public MailBuilder fillThesisProposalPlaceholders(ThesisProposal proposal) {
         fillThesisPlaceholders(proposal.getThesis());
-        replaceDtoPlaceholders(ThesisDto.ThesisProposalDto.fromProposalEntity(proposal), "proposal", new HashMap<>());
+
+        fillPlaceholder("proposal", ThesisDto.ThesisProposalDto.fromProposalEntity(proposal));
 
         return this;
     }
 
     public MailBuilder fillThesisAssessmentPlaceholders(ThesisAssessment assessment) {
         fillThesisPlaceholders(assessment.getThesis());
-        replaceDtoPlaceholders(ThesisDto.ThesisAssessmentDto.fromAssessmentEntity(assessment), "assessment", new HashMap<>());
+
+        fillPlaceholder("assessment", ThesisDto.ThesisAssessmentDto.fromAssessmentEntity(assessment));
 
         return this;
     }
 
-    public void send(JavaMailSender mailSender, UploadService uploadService) throws MailingException {
+    public void send(JavaMailSender mailSender, UploadService uploadService) {
         List<User> toRecipients = new ArrayList<>();
         List<User> ccRecipients = new ArrayList<>();
 
@@ -333,14 +302,17 @@ public class MailBuilder {
                     message.addRecipient(Message.RecipientType.BCC, address);
                 }
 
+                Context templateContext = new Context();
+                templateContext.setVariables(this.variables);
+                templateContext.setVariable("recipient", UserDto.fromUserEntity(recipient));
+                templateContext.setVariable("DataFormatter", DataFormatter.class);
+
                 message.setSubject(subject);
 
                 Multipart messageContent = new MimeMultipart();
 
-                String contentBuilder = content.replace("{{recipientName}}", Objects.requireNonNullElse(recipient.getFirstName(), ""));
-
                 BodyPart messageBody = new MimeBodyPart();
-                messageBody.setContent(contentBuilder, "text/html; charset=utf-8");
+                messageBody.setContent(config.getTemplateEngine().process(template, templateContext), "text/html; charset=utf-8");
                 messageContent.addBodyPart(messageBody);
 
                 for (StoredAttachment data : fileAttachments) {
@@ -372,41 +344,5 @@ public class MailBuilder {
                 log.warn("Failed to send email", exception);
             }
         }
-    }
-
-    private void replaceDtoPlaceholders(Object dto, String dtoPrefix, Map<String, Function<Object, String>> formatters) {
-        Field[] fields = dto.getClass().getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true);
-
-            try {
-                Object value = field.get(dto);
-                String placeholder = dtoPrefix + "." + field.getName();
-
-                if (value != null) {
-                    if (formatters.get(placeholder) != null) {
-                        replacePlaceholder(placeholder, formatters.get(placeholder).apply(value));
-                    } else if (value.getClass().isRecord()) {
-                        replaceDtoPlaceholders(value, dtoPrefix + "." + field.getName(), formatters);
-                    } else if (value instanceof Instant) {
-                        replacePlaceholder(placeholder, DataFormatter.formatDateTime(value));
-                    } else if (value.getClass().isEnum()) {
-                        replacePlaceholder(placeholder, DataFormatter.formatEnum(value));
-                    } else {
-                        replacePlaceholder(placeholder, value.toString().replace("{{", "").replace("}}", ""));
-                    }
-                } else {
-                    replacePlaceholder(placeholder, "");
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("Failed to access field: " + field.getName(), e);
-            }
-        }
-    }
-
-    private void replacePlaceholder(String placeholder, String replacement) {
-        content = content.replace("{{" + placeholder + "}}", Objects.requireNonNullElse(replacement, ""));
-        subject = subject.replace("{{" + placeholder + "}}", Objects.requireNonNullElse(replacement, ""));
     }
 }

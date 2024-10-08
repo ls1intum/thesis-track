@@ -1,0 +1,16 @@
+<div th:replace="fragments/salutation :: main"></div>
+
+<p th:inline="text">
+  [[${creatingUser.firstName}]] [[${creatingUser.lastName}]] created and assigned a thesis to you: <a target="_blank" rel="noopener noreferrer nofollow" th:href="${thesisUrl}">[[${thesisUrl}]]</a>
+</p>
+
+<p th:inline="text">
+  <strong>Title</strong>: [[${thesis.title}]]<br />
+  <strong>Supervisor</strong>: [[${DataFormatter.formatUsers(thesis.supervisors)}]]<br />
+  <strong>Advisor</strong>: [[${DataFormatter.formatUsers(thesis.advisors)}]]<br />
+  <strong>Student</strong>: [[${DataFormatter.formatUsers(thesis.students)}]]<br />
+</p>
+
+<p th:inline="text">
+  The next step is that you write a proposal and submit it on <a target="_blank" rel="noopener noreferrer nofollow" th:href="${thesisUrl}">[[${thesisUrl}]]</a>
+</p>
