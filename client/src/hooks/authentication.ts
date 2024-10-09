@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { AuthenticationContext } from '../contexts/AuthenticationContext/context'
+import { AuthenticationContext } from '../providers/AuthenticationContext/context'
 import { useLocalStorage } from './local-storage'
 
 export function useAuthenticationContext() {

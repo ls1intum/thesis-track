@@ -1,5 +1,5 @@
 import { ApplicationState, IApplication } from '../../requests/responses/application'
-import { useApplicationsContextUpdater } from '../../contexts/ApplicationsProvider/hooks'
+import { useApplicationsContextUpdater } from '../../providers/ApplicationsProvider/hooks'
 import { isNotEmpty, useForm } from '@mantine/form'
 import { GLOBAL_CONFIG } from '../../config/global'
 import React, { useEffect, useState } from 'react'

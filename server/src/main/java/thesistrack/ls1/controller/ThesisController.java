@@ -452,9 +452,10 @@ public class ThesisController {
     }
 
     @PostMapping("/{thesisId}/presentations/{presentationId}/schedule")
-    public ResponseEntity<ThesisDto> updatePresentation(
+    public ResponseEntity<ThesisDto> schedulePresentation(
             @PathVariable UUID thesisId,
             @PathVariable UUID presentationId,
+            @RequestBody SchedulePresentationPayload payload,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
@@ -465,7 +466,12 @@ public class ThesisController {
             throw new AccessDeniedException("You need to be an advisor of this thesis to schedule a presentation");
         }
 
-        thesis = thesisPresentationService.schedulePresentation(presentation);
+        thesis = thesisPresentationService.schedulePresentation(
+                presentation,
+                RequestValidator.validateNotNull(payload.inviteChairMembers()),
+                RequestValidator.validateNotNull(payload.inviteThesisStudents()),
+                RequestValidator.validateNotNull(payload.optionalAttendees())
+        );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }

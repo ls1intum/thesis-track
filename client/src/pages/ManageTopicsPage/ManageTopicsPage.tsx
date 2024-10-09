@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { usePageTitle } from '../../hooks/theme'
 import { Button, Group, Stack, Title } from '@mantine/core'
-import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
+import TopicsProvider from '../../providers/TopicsProvider/TopicsProvider'
 import TopicsTable from '../../components/TopicsTable/TopicsTable'
 import { ITopic } from '../../requests/responses/topic'
 import { Pencil } from 'phosphor-react'

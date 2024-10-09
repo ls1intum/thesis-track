@@ -1,0 +1,15 @@
+<div th:replace="fragments/salutation :: main"></div>
+
+<p th:inline="text">
+  Thank you for your interest in pursuing your thesis under my supervision.
+</p>
+
+<p th:inline="text">
+  I wanted to inform you that the topic you applied for is no longer available.
+</p>
+
+<p th:inline="text">
+  You can explore other topics or suggest a topic yourself in your area of interest.
+</p>
+
+<div th:text="${config.signature}"></div>

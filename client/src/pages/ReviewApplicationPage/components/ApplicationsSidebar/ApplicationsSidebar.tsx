@@ -2,7 +2,7 @@ import { Center, Pagination, Stack, Text } from '@mantine/core'
 import ApplicationsFilters from '../../../../components/ApplicationsFilters/ApplicationsFilters'
 import React, { useEffect, useState } from 'react'
 import { IApplication } from '../../../../requests/responses/application'
-import { useApplicationsContext } from '../../../../contexts/ApplicationsProvider/hooks'
+import { useApplicationsContext } from '../../../../providers/ApplicationsProvider/hooks'
 import ApplicationListItem from '../ApplicationListItem/ApplicationListItem'
 
 interface IApplicationsSidebarProps {

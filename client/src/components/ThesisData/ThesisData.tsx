@@ -8,8 +8,8 @@ import AvatarUserList from '../AvatarUserList/AvatarUserList'
 import React from 'react'
 import ThesisCommentsList from '../ThesisCommentsList/ThesisCommentsList'
 import ThesisCommentsForm from '../ThesisCommentsForm/ThesisCommentsForm'
-import ThesisCommentsProvider from '../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
-import { useThesisAccess } from '../../contexts/ThesisProvider/hooks'
+import ThesisCommentsProvider from '../../providers/ThesisCommentsProvider/ThesisCommentsProvider'
+import { useThesisAccess } from '../../providers/ThesisProvider/hooks'
 
 type availableAdditionalInformation =
   | 'title'

@@ -6,6 +6,9 @@ import net.fortuna.ical4j.data.ParserException;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.parameter.PartStat;
+import net.fortuna.ical4j.model.parameter.Role;
+import net.fortuna.ical4j.model.parameter.Rsvp;
 import net.fortuna.ical4j.model.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +54,8 @@ public class CalendarService {
             Instant start,
             Instant end,
             InternetAddress organizer,
-            List<InternetAddress> participants
+            List<InternetAddress> requiredAttendees,
+            List<InternetAddress> optionalAttendees
     ) {}
 
     public String createEvent(CalendarEvent data) {
@@ -112,7 +116,7 @@ public class CalendarService {
             calendar.remove(event);
 
             updateCalendar(calendar);
-        } catch (RuntimeException exception) {
+        } catch (Exception exception) {
             log.warn("Failed to delete calendar event", exception);
         }
     }
@@ -144,12 +148,36 @@ public class CalendarService {
         }
 
         if (data.organizer != null) {
-            event.add(new Organizer(URI.create("mailto:" + data.organizer.getAddress())));
+            Organizer organizer = new Organizer(URI.create("mailto:" + data.organizer.getAddress()));
+
+            organizer.add(Rsvp.TRUE);
+
+            event.add(organizer);
         }
 
-        if (data.participants != null) {
-            for (InternetAddress address : data.participants) {
-                event.add(new Attendee(URI.create("mailto:" + address.getAddress())));
+        if (data.requiredAttendees != null) {
+            for (InternetAddress address : data.requiredAttendees) {
+                Attendee attendee = new Attendee(URI.create("mailto:" + address.getAddress()));
+
+                attendee.add(Role.REQ_PARTICIPANT);
+                attendee.add(PartStat.ACCEPTED);
+
+                event.add(attendee);
+            }
+        }
+
+        if (data.optionalAttendees != null) {
+            for (InternetAddress address : data.optionalAttendees) {
+                if (data.requiredAttendees != null && data.requiredAttendees.contains(address)) {
+                    continue;
+                }
+
+                Attendee attendee = new Attendee(URI.create("mailto:" + address.getAddress()));
+
+                attendee.add(Role.OPT_PARTICIPANT);
+                attendee.add(Rsvp.TRUE);
+
+                event.add(attendee);
             }
         }
 
@@ -171,8 +199,8 @@ public class CalendarService {
             StringReader reader = new StringReader(response);
 
             return builder.build(reader);
-        } catch (IOException | ParserException | RuntimeException e) {
-            throw new RuntimeException("Failed to parse calendar");
+        } catch (IOException | ParserException e) {
+            throw new RuntimeException("Failed to parse calendar", e);
         }
     }
 

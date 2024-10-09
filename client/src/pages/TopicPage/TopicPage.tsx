@@ -7,7 +7,7 @@ import PageLoader from '../../components/PageLoader/PageLoader'
 import { Button, Divider, Group, Stack, Title } from '@mantine/core'
 import TopicData from '../../components/TopicData/TopicData'
 import { useManagementAccess } from '../../hooks/authentication'
-import ApplicationsProvider from '../../contexts/ApplicationsProvider/ApplicationsProvider'
+import ApplicationsProvider from '../../providers/ApplicationsProvider/ApplicationsProvider'
 import ApplicationsTable from '../../components/ApplicationsTable/ApplicationsTable'
 
 const TopicPage = () => {

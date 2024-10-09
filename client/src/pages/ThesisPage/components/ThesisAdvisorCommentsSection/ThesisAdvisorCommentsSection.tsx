@@ -1,6 +1,6 @@
 import { Accordion, Badge, Group, Stack, Text } from '@mantine/core'
-import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
-import ThesisCommentsProvider from '../../../../contexts/ThesisCommentsProvider/ThesisCommentsProvider'
+import { useLoadedThesisContext } from '../../../../providers/ThesisProvider/hooks'
+import ThesisCommentsProvider from '../../../../providers/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../../../../components/ThesisCommentsList/ThesisCommentsList'
 import ThesisCommentsForm from '../../../../components/ThesisCommentsForm/ThesisCommentsForm'
 

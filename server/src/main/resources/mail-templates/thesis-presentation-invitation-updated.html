@@ -1,0 +1,34 @@
+<div style="text-align: center" th:inline="text">
+  <h2>INVITATION</h2>
+  <div>As part of their [[${DataFormatter.formatConstantName(thesis.type)}]]'s thesis</div>
+  <div><strong>[[${DataFormatter.formatUsers(thesis.students)}]]</strong></div>
+  <div>will give their [[${DataFormatter.formatEnum(presentation.type)}]] presentation on</div>
+  <div><strong>[[${DataFormatter.formatDateTime(presentation.scheduledAt)}]]</strong></div>
+  <div th:if="${presentation.streamUrl != null and !#strings.isEmpty(presentation.streamUrl)}" th:inline="text">
+    online at [[${presentation.streamUrl}]]
+  </div>
+  <div th:if="${presentation.location != null and !#strings.isEmpty(presentation.location)}">
+    <span th:if="${presentation.streamUrl != null and !#strings.isEmpty(presentation.streamUrl)}">and&nbsp;</span>offline in <strong>[[${presentation.location}]]</strong>
+  </div>
+  <br/>
+  <div>Title:</div>
+  <div>[[${thesis.title}]]</div>
+  <br/>
+  <div>Supervisor: [[${DataFormatter.formatUsers(thesis.supervisors)}]]</div>
+  <div>Advisor(s): [[${DataFormatter.formatUsers(thesis.advisors)}]]</div>
+  <br/>
+  <div>
+    The presentation will be in [[${DataFormatter.formatConstantName(presentation.language)}]]. Everybody is cordially invited to attend.
+  </div>
+</div>
+
+<p th:inline="text">
+  <strong>Abstract</strong><br />
+  [[${thesis.abstractText}]]
+</p>
+
+<p th:inline="text">
+  Full Details: <a target="_blank" rel="noopener noreferrer nofollow" th:href="${presentationUrl}">[[${presentationUrl}]]</a>
+</p>
+
+<div th:replace="fragments/notification-settings :: main"></div>

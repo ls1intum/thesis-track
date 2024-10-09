@@ -1,7 +1,7 @@
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+} from '../../../../providers/ThesisProvider/hooks'
 import { Checkbox } from '@mantine/core'
 import { IThesis } from '../../../../requests/responses/thesis'
 import { DataTable } from 'mantine-datatable'

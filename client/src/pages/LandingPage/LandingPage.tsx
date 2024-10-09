@@ -1,5 +1,5 @@
 import HeroSection from './components/HeroSection/HeroSection'
-import TopicsProvider from '../../contexts/TopicsProvider/TopicsProvider'
+import TopicsProvider from '../../providers/TopicsProvider/TopicsProvider'
 import TopicsTable from '../../components/TopicsTable/TopicsTable'
 import { Button, Group, Space, Title } from '@mantine/core'
 import React from 'react'

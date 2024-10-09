@@ -1,6 +1,6 @@
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import { formatDate, formatThesisType } from '../../utils/format'
-import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
+import { useTopicsContext } from '../../providers/TopicsProvider/hooks'
 import { ITopic } from '../../requests/responses/topic'
 import { useNavigate } from 'react-router-dom'
 import { Badge, Center, Stack, Text } from '@mantine/core'

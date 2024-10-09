@@ -1,0 +1,66 @@
+<div th:replace="fragments/salutation :: main"></div>
+
+<p th:inline="text">With this email, we confirm your thesis application.</p>
+<p th:inline="text">We received the following details:</p>
+
+<hr>
+
+<p th:inline="text">
+  <strong>Name:</strong><br/>
+  [[${application.user.firstName}]]&nbsp;[[${application.user.lastName}]]
+</p>
+<p th:inline="text">
+  <strong>Email:</strong><br/>
+  [[${application.user.email}]]
+</p>
+<p th:inline="text">
+  <strong>University ID:</strong><br/>
+  [[${application.user.universityId}]]
+</p>
+<p th:inline="text">
+  <strong>Matriculation Number:</strong><br/>
+  [[${application.user.matriculationNumber}]]
+</p>
+<p th:inline="text">
+  <strong>Study program:</strong><br/>
+  [[${DataFormatter.formatConstantName(application.user.studyProgram)}]]&nbsp;
+  [[${DataFormatter.formatConstantName(application.user.studyDegree)}]]&nbsp;
+  (Semester [[${DataFormatter.formatSemester(application.user.enrolledAt)}]])
+</p>
+<p th:inline="text">
+  <strong>Thesis Title:</strong><br/>
+  [[${application.thesisTitle}]]
+</p>
+<p th:inline="text">
+  <strong>Desired Thesis Start Date:</strong><br/>
+  [[${DataFormatter.formatDate(application.desiredStartDate)}]]
+</p>
+<p th:inline="text">
+  <strong>Motivation:</strong><br/>
+  [[${application.motivation}]]
+</p>
+<br/>
+<p th:inline="text">
+  <strong>Special Skills:</strong><br/>
+  [[${application.user.specialSkills}]]
+</p>
+<br/>
+<p th:inline="text">
+  <strong>Interests:</strong><br/>
+  [[${application.user.interests}]]
+</p>
+<br/>
+<p th:inline="text">
+  <strong>Projects:</strong><br/>
+  [[${application.user.projects}]]
+</p>
+<br/>
+
+<p th:inline="text">
+  We are currently experiencing a high volume of thesis applications, and each one requires careful review.
+  While we aim to respond as quickly as possible, the combination of the application volume and the intensive teaching
+  and research commitments of our group may result in a response time of up to four weeks.
+  We appreciate your patience and understanding during this period.
+</p>
+
+<p th:inline="text"><strong>You can find the submitted files in the attachment part of this email.</strong></p>

@@ -76,3 +76,13 @@ CREATE TABLE notification_settings
     PRIMARY KEY (user_id, name),
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 );
+
+--changeset emilius:07-cleanup-13
+CREATE TABLE thesis_presentation_invites
+(
+    presentation_id UUID      NOT NULL,
+    email           TEXT      NOT NULL,
+    invited_at      TIMESTAMP NOT NULL,
+    PRIMARY KEY (presentation_id, email),
+    FOREIGN KEY (presentation_id) REFERENCES thesis_presentations (presentation_id)
+);

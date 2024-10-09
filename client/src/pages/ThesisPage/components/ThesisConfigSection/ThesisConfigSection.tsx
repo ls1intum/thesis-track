@@ -11,7 +11,7 @@ import ConfirmationButton from '../../../../components/ConfirmationButton/Confir
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+} from '../../../../providers/ThesisProvider/hooks'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { ApiError } from '../../../../requests/handler'
 import ThesisStateBadge from '../../../../components/ThesisStateBadge/ThesisStateBadge'

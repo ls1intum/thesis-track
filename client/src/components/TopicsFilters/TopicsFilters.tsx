@@ -1,7 +1,7 @@
 import { Center, Checkbox, Grid, Stack } from '@mantine/core'
 import { GLOBAL_CONFIG } from '../../config/global'
 import React from 'react'
-import { useTopicsContext } from '../../contexts/TopicsProvider/hooks'
+import { useTopicsContext } from '../../providers/TopicsProvider/hooks'
 import { formatThesisType } from '../../utils/format'
 
 interface ITopicsFiltersProps {

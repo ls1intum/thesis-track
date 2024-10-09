@@ -1,9 +1,11 @@
 package thesistrack.ls1.service;
 
+import jakarta.mail.internet.InternetAddress;
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.property.ProdId;
 import net.fortuna.ical4j.model.property.immutable.ImmutableCalScale;
 import net.fortuna.ical4j.model.property.immutable.ImmutableMethod;
+import net.fortuna.ical4j.model.property.immutable.ImmutableVersion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -14,14 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 import thesistrack.ls1.constants.ThesisPresentationState;
 import thesistrack.ls1.constants.ThesisPresentationType;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
-import thesistrack.ls1.entity.Thesis;
-import thesistrack.ls1.entity.ThesisPresentation;
-import thesistrack.ls1.entity.User;
+import thesistrack.ls1.entity.*;
+import thesistrack.ls1.entity.key.ThesisPresentationInviteId;
 import thesistrack.ls1.exception.request.AccessDeniedException;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
+import thesistrack.ls1.repository.ThesisPresentationInviteRepository;
 import thesistrack.ls1.repository.ThesisPresentationRepository;
 import thesistrack.ls1.repository.ThesisRepository;
+import thesistrack.ls1.repository.UserRepository;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -35,6 +38,9 @@ public class ThesisPresentationService {
     private final ThesisPresentationRepository thesisPresentationRepository;
 
     private final String clientHost;
+    private final InternetAddress applicationMail;
+    private final UserRepository userRepository;
+    private final ThesisPresentationInviteRepository thesisPresentationInviteRepository;
 
     @Autowired
     public ThesisPresentationService(
@@ -42,13 +48,18 @@ public class ThesisPresentationService {
             ThesisRepository thesisRepository,
             MailingService mailingService,
             ThesisPresentationRepository thesisPresentationRepository,
-            @Value("${thesis-track.client.host}") String clientHost
-    ) {
+            @Value("${thesis-track.client.host}") String clientHost,
+            @Value("${thesis-track.mail.sender}") InternetAddress applicationMail,
+            UserRepository userRepository, ThesisPresentationInviteRepository thesisPresentationInviteRepository) {
         this.calendarService = calendarService;
         this.thesisRepository = thesisRepository;
         this.mailingService = mailingService;
         this.thesisPresentationRepository = thesisPresentationRepository;
+
         this.clientHost = clientHost;
+        this.applicationMail = applicationMail;
+        this.userRepository = userRepository;
+        this.thesisPresentationInviteRepository = thesisPresentationInviteRepository;
     }
 
     public Page<ThesisPresentation> getPublicPresentations(Boolean includeDrafts, Integer page, Integer limit, String sortBy, String sortOrder) {
@@ -89,8 +100,10 @@ public class ThesisPresentationService {
         return calendar;
     }
 
-    public Calendar getPresentationEvent(ThesisPresentation presentation) {
+    public Calendar getPresentationInvite(ThesisPresentation presentation) {
         Calendar calendar = createEmptyCalendar();
+
+        calendar.add(ImmutableMethod.REQUEST);
 
         calendar.add(calendarService.createVEvent(presentation.getId().toString(), createPresentationCalendarEvent(presentation)));
 
@@ -154,7 +167,7 @@ public class ThesisPresentationService {
         thesisPresentationRepository.save(presentation);
 
         if (presentation.getState() == ThesisPresentationState.SCHEDULED) {
-            mailingService.sendScheduledPresentationEmail("UPDATED", presentation, getPresentationEvent(presentation).toString());
+            mailingService.sendScheduledPresentationEmail("UPDATED", presentation, getPresentationInvite(presentation).toString());
         }
 
         updateThesisCalendarEvents(thesis);
@@ -163,7 +176,12 @@ public class ThesisPresentationService {
     }
 
     @Transactional
-    public Thesis schedulePresentation(ThesisPresentation presentation) {
+    public Thesis schedulePresentation(
+            ThesisPresentation presentation,
+            boolean inviteChairMembers,
+            boolean inviteThesisStudents,
+            List<InternetAddress> additionalInvites
+    ) {
         Thesis thesis = presentation.getThesis();
         presentation = thesis.getPresentation(presentation.getId()).orElseThrow();
 
@@ -181,7 +199,53 @@ public class ThesisPresentationService {
 
         presentation = thesisPresentationRepository.save(presentation);
 
-        mailingService.sendScheduledPresentationEmail("CREATED", presentation, getPresentationEvent(presentation).toString());
+        Set<InternetAddress> addresses = new HashSet<>();
+
+        for (ThesisRole role : presentation.getThesis().getRoles()) {
+            addresses.add(role.getUser().getEmail());
+        }
+
+        if (inviteChairMembers) {
+            for (User user : userRepository.getRoleMembers(Set.of("admin", "supervisor", "advisor"))) {
+                if (!user.isNotificationEnabled("presentation-invitations")) {
+                    continue;
+                }
+
+                addresses.add(user.getEmail());
+            }
+        }
+
+        if (inviteThesisStudents) {
+            for (User user : userRepository.getRoleMembers(Set.of("student"))) {
+                if (!user.isNotificationEnabled("presentation-invitations")) {
+                    continue;
+                }
+
+                addresses.add(user.getEmail());
+            }
+        }
+
+        addresses.addAll(additionalInvites);
+
+        List<ThesisPresentationInvite> invites = new ArrayList<>();
+
+        for (InternetAddress address : addresses) {
+            ThesisPresentationInviteId entityId = new ThesisPresentationInviteId();
+            entityId.setPresentationId(presentation.getId());
+            entityId.setEmail(address.toString());
+
+            ThesisPresentationInvite entity = new ThesisPresentationInvite();
+            entity.setPresentation(presentation);
+            entity.setId(entityId);
+            entity.setInvitedAt(Instant.now());
+
+            invites.add(thesisPresentationInviteRepository.save(entity));
+        }
+
+        presentation.setInvites(invites);
+        presentation = thesisPresentationRepository.save(presentation);
+
+        mailingService.sendScheduledPresentationEmail("CREATED", presentation, getPresentationInvite(presentation).toString());
 
         return thesis;
     }
@@ -234,6 +298,7 @@ public class ThesisPresentationService {
         Calendar calendar = new Calendar();
 
         calendar.add(new ProdId("-//Thesis Track//Thesis Presentations//EN"));
+        calendar.add(ImmutableVersion.VERSION_2_0);
         calendar.add(ImmutableCalScale.GREGORIAN);
 
         return calendar;
@@ -253,8 +318,9 @@ public class ThesisPresentationService {
                         "Abstract:\n" + presentation.getThesis().getAbstractField(),
                 presentation.getScheduledAt(),
                 presentation.getScheduledAt().plus(60, ChronoUnit.MINUTES),
-                presentation.getThesis().getSupervisors().getFirst().getEmail(),
-                presentation.getThesis().getRoles().stream().map((role) -> role.getUser().getEmail()).toList()
+                this.applicationMail,
+                presentation.getThesis().getRoles().stream().map((role) -> role.getUser().getEmail()).toList(),
+                presentation.getInvites().stream().map(ThesisPresentationInvite::getEmail).toList()
         );
     }
 }

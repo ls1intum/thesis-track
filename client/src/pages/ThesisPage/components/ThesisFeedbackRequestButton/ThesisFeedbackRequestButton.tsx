@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+} from '../../../../providers/ThesisProvider/hooks'
 import { ActionIcon, Button, Checkbox, Group, Modal, Stack, TextInput } from '@mantine/core'
 import { doRequest } from '../../../../requests/request'
 import { IThesis } from '../../../../requests/responses/thesis'

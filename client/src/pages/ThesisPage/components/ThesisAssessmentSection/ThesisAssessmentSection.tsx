@@ -4,7 +4,7 @@ import { Accordion, Button, Center, Stack, Text, Badge, Group } from '@mantine/c
 import SubmitAssessmentModal from './components/SubmitAssessmentModal/SubmitAssessmentModal'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { checkMinimumThesisState } from '../../../../utils/thesis'
-import { useLoadedThesisContext } from '../../../../contexts/ThesisProvider/hooks'
+import { useLoadedThesisContext } from '../../../../providers/ThesisProvider/hooks'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 import generatePDF, { Margin } from 'react-to-pdf'
 import { formatThesisFilename } from '../../../../utils/format'

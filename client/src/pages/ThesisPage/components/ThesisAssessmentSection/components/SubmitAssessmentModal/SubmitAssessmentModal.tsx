@@ -6,7 +6,7 @@ import { IThesis } from '../../../../../../requests/responses/thesis'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../../../contexts/ThesisProvider/hooks'
+} from '../../../../../../providers/ThesisProvider/hooks'
 import { ApiError } from '../../../../../../requests/handler'
 
 interface ISubmitAssessmentModalProps {

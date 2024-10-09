@@ -1,4 +1,4 @@
-import { useThesisCommentsContext } from '../../contexts/ThesisCommentsProvider/hooks'
+import { useThesisCommentsContext } from '../../providers/ThesisCommentsProvider/hooks'
 import { Button, Center, Group, Pagination, Paper, Skeleton, Stack, Text } from '@mantine/core'
 import { IThesisComment } from '../../requests/responses/thesis'
 import { useLoggedInUser } from '../../hooks/authentication'

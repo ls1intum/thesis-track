@@ -1,0 +1,32 @@
+<div th:replace="fragments/salutation :: main"></div>
+
+<p th:inline="text">
+  I am delighted to inform you that I would like to take the next steps in
+  supervising your thesis. This includes writing a proposal and familiarizing yourself with the development environment
+  independently. These steps are crucial to ensure that you are well-prepared to start the project.
+</p>
+
+<p th:inline="text">
+  [[${advisor.firstName}]]&nbsp;[[${advisor.lastName}]] would be your advisor. Please coordinate the
+  next steps with [[${advisor.firstName}]] [[${advisor.lastName}]] using the following link:
+  <a target="_blank" rel="noopener noreferrer nofollow" th:href="${config.workspaceUrl}">[[${config.workspaceUrl}]]</a>
+</p>
+
+<p th:inline="text">
+  I would like to emphasize that in undertaking this thesis, you assume the role of project manager for
+  your thesis project. This role requires <b>proactive communication</b>, high dedication, and a strong commitment to the
+  successful completion of the project. I have full confidence in your ability to rise to this challenge and produce
+  exemplary work.
+</p>
+
+<p th:inline="text">
+  I am excited about the opportunity to work with you and am eager to see the contributions you
+  will make to our field. Please reach out if you have any questions or need further clarification on any
+  aspect of the project.
+</p>
+
+<p th:inline="text">
+  You can view your thesis details and tasks on: <a target="_blank" rel="noopener noreferrer nofollow" th:href="${thesisUrl}">[[${thesisUrl}]]</a>
+</p>
+
+<div th:text="${config.signature}"></div>

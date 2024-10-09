@@ -1,4 +1,4 @@
-import { useThesesContext } from '../../contexts/ThesesProvider/hooks'
+import { useThesesContext } from '../../providers/ThesesProvider/hooks'
 import GanttChart from '../GanttChart/GanttChart'
 import React, { useMemo, useState } from 'react'
 import { formatDate, formatPresentationType, formatThesisType } from '../../utils/format'

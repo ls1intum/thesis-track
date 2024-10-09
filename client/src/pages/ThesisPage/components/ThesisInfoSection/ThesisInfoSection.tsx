@@ -6,7 +6,7 @@ import { doRequest } from '../../../../requests/request'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
-} from '../../../../contexts/ThesisProvider/hooks'
+} from '../../../../providers/ThesisProvider/hooks'
 import { Link } from 'react-router-dom'
 import { ApiError } from '../../../../requests/handler'
 
@@ -55,7 +55,7 @@ const ThesisInfoSection = () => {
               onChange={(e) => setAbstractText(e.target.value)}
             />
             <DocumentEditor
-              label='Additional Information'
+              label='Additional Information (Important links, repositories etc.)'
               value={infoText}
               editMode={editMode}
               onChange={(e) => setInfoText(e.target.value)}
