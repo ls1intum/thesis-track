@@ -10,11 +10,13 @@ import { IThesis, IThesisPresentation } from '../../../../../../requests/respons
 import { ApiError } from '../../../../../../requests/handler'
 import PresentationsTable from '../../../../../../components/PresentationsTable/PresentationsTable'
 import ReplacePresentationModal from '../ReplacePresentationModal/ReplacePresentationModal'
+import SchedulePresentationModal from '../SchedulePresentationModal/SchedulePresentationModal'
 
 const ThesisPresentationsTable = () => {
   const { access, thesis } = useLoadedThesisContext()
 
-  const [openedPresentation, setOpenedPresentation] = useState<IThesisPresentation>()
+  const [editPresentationModal, setEditPresentationModal] = useState<IThesisPresentation>()
+  const [schedulePresentationModal, setSchedulePresentationModal] = useState<IThesisPresentation>()
 
   const [deleting, deletePresentation] = useThesisUpdateAction(
     async (presentation: IThesisPresentation) => {
@@ -35,33 +37,18 @@ const ThesisPresentationsTable = () => {
     'Presentation deleted successfully',
   )
 
-  const [scheduling, schedulePresentation] = useThesisUpdateAction(
-    async (presentation: IThesisPresentation) => {
-      const response = await doRequest<IThesis>(
-        `/v2/theses/${thesis.thesisId}/presentations/${presentation.presentationId}/schedule`,
-        {
-          method: 'POST',
-          requiresAuth: true,
-        },
-      )
-
-      if (response.ok) {
-        return response.data
-      } else {
-        throw new ApiError(response)
-      }
-    },
-    'Presentation scheduled successfully',
-  )
-
-  const loading = deleting || scheduling
+  const loading = deleting
 
   return (
     <Stack>
       <ReplacePresentationModal
-        presentation={openedPresentation}
-        opened={!!openedPresentation}
-        onClose={() => setOpenedPresentation(undefined)}
+        presentation={editPresentationModal}
+        opened={!!editPresentationModal}
+        onClose={() => setEditPresentationModal(undefined)}
+      />
+      <SchedulePresentationModal
+        presentation={schedulePresentationModal}
+        onClose={() => setSchedulePresentationModal(undefined)}
       />
       <PresentationsTable
         presentations={thesis.presentations}
@@ -78,43 +65,31 @@ const ThesisPresentationsTable = () => {
                 {access.student && (
                   <Group gap='xs'>
                     {presentation.state === 'DRAFTED' && access.advisor && (
-                      <Tooltip
-                        label={`Schedule Presentation${
-                          presentation.visibility === 'PUBLIC'
-                            ? ' (This will send out emails to all students that are currently writing a thesis)'
-                            : ''
-                        }`}
+                      <Button
+                        loading={loading}
+                        size='xs'
+                        onClick={() => setSchedulePresentationModal(presentation)}
                       >
-                        <Button
-                          loading={loading}
-                          size='xs'
-                          onClick={() => schedulePresentation(presentation)}
-                        >
-                          <Check />
-                        </Button>
-                      </Tooltip>
+                        <Check />
+                      </Button>
                     )}
                     {(presentation.state === 'DRAFTED' || access.advisor) && (
-                      <Tooltip label='Edit Presentation'>
-                        <Button
-                          loading={loading}
-                          size='xs'
-                          onClick={() => setOpenedPresentation(presentation)}
-                        >
-                          <Pencil />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        loading={loading}
+                        size='xs'
+                        onClick={() => setEditPresentationModal(presentation)}
+                      >
+                        <Pencil />
+                      </Button>
                     )}
                     {(presentation.state === 'DRAFTED' || access.advisor) && (
-                      <Tooltip label='Delete Presentation'>
-                        <Button
-                          loading={loading}
-                          size='xs'
-                          onClick={() => deletePresentation(presentation)}
-                        >
-                          <Trash />
-                        </Button>
-                      </Tooltip>
+                      <Button
+                        loading={loading}
+                        size='xs'
+                        onClick={() => deletePresentation(presentation)}
+                      >
+                        <Trash />
+                      </Button>
                     )}
                   </Group>
                 )}

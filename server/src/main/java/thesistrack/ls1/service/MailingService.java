@@ -207,13 +207,11 @@ public class MailingService {
                     action.equals("UPDATED") ? "thesis-presentation-invitation-updated" : "thesis-presentation-invitation"
             );
             publicBuilder
-                    .sendToChairMembers()
-                    .sendToChairStudents()
-                    .addNotificationName("presentation-invitations")
+                    .addPrimaryRecipient(presentation.getThesis().getStudents().getFirst())
                     .fillThesisPresentationPlaceholders(presentation);
 
-            for (User student : presentation.getThesis().getStudents()) {
-                publicBuilder.addPrimarySender(student);
+            for (ThesisPresentationInvite invite : presentation.getInvites()) {
+                publicBuilder.addBccRecipient(invite.getEmail());
             }
 
             if (icsFile != null && !icsFile.isBlank()) {
@@ -243,13 +241,11 @@ public class MailingService {
         if (presentation.getVisibility() == ThesisPresentationVisibility.PUBLIC) {
             MailBuilder publicBuilder = new MailBuilder(config, "Thesis Presentation Cancelled ", "thesis-presentation-invitation-cancelled");
             publicBuilder
-                    .sendToChairMembers()
-                    .sendToChairStudents()
-                    .addNotificationName("presentation-invitations")
+                    .addPrimaryRecipient(presentation.getThesis().getStudents().getFirst())
                     .fillThesisPresentationPlaceholders(presentation);
 
-            for (User student : presentation.getThesis().getStudents()) {
-                publicBuilder.addPrimarySender(student);
+            for (ThesisPresentationInvite invite : presentation.getInvites()) {
+                publicBuilder.addBccRecipient(invite.getEmail());
             }
 
             publicBuilder.send(javaMailSender, uploadService);

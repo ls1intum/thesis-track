@@ -10,6 +10,8 @@ import thesistrack.ls1.constants.ThesisPresentationType;
 import thesistrack.ls1.constants.ThesisPresentationVisibility;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -68,6 +70,10 @@ public class ThesisPresentation {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
+
+    @OneToMany(mappedBy = "presentation", fetch = FetchType.LAZY)
+    @OrderBy("invitedAt ASC")
+    private List<ThesisPresentationInvite> invites = new ArrayList<>();
 
     public boolean hasManagementAccess(User user) {
         return thesis.hasAdvisorAccess(user) || createdBy.getId().equals(user.getId());
