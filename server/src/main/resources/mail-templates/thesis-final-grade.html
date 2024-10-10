@@ -1,4 +1,4 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   [[${DataFormatter.formatUsers(thesis.supervisors)}]] added the final grade to your thesis "[[${thesis.title}]]"
@@ -13,6 +13,6 @@
   [[${thesis.grade.feedback}]]
 </p>
 
-<div th:replace="fragments/thesis-link :: main"></div>
+<div th:replace="~{fragments/thesis-link :: main}"></div>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

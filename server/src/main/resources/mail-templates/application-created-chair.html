@@ -1,4 +1,4 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">there is a new thesis application by <strong>[[${application.user.firstName}]]&nbsp;[[${application.user.lastName}]]</strong>.</p>
 <p th:inline="text">We received the following thesis application details:</p>
@@ -62,4 +62,4 @@
 
 <p th:inline="text"><strong>You can find the submitted files in the attachment part of this email.</strong></p>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

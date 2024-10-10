@@ -1,10 +1,10 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   [[${proposal.createdBy.firstName}]] [[${proposal.createdBy.lastName}]] uploaded a proposal to thesis "[[${thesis.title}]]".
   You can find the submitted file in the attachment part of this email.
 </p>
 
-<div th:replace="fragments/thesis-link :: main"></div>
+<div th:replace="~{fragments/thesis-link :: main}"></div>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

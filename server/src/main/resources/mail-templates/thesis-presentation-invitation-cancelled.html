@@ -1,4 +1,4 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   The [[${DataFormatter.formatConstantName(thesis.type)}]] thesis presentation of
@@ -6,4 +6,4 @@
   [[${DataFormatter.formatDateTime(presentation.scheduledAt)}]] was cancelled.
 </p>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

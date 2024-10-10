@@ -1,10 +1,10 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   [[${deletingUser.firstName}]] [[${deletingUser.lastName}]] closed thesis "[[${thesis.title}]]".
   Please contact your advisor or supervisor if you think that this was a mistake.
 </p>
 
-<div th:replace="fragments/thesis-link :: main"></div>
+<div th:replace="~{fragments/thesis-link :: main}"></div>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

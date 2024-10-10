@@ -1,4 +1,4 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   [[${DataFormatter.formatUsers(thesis.students)}]] submitted thesis "[[${thesis.title}]]".
@@ -8,6 +8,6 @@
   The next step is to write an assessment about the thesis.
 </p>
 
-<div th:replace="fragments/thesis-link :: main"></div>
+<div th:replace="~{fragments/thesis-link :: main}"></div>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>
