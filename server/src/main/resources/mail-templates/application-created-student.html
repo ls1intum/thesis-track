@@ -35,24 +35,24 @@
   <strong>Desired Thesis Start Date:</strong><br/>
   [[${DataFormatter.formatDate(application.desiredStartDate)}]]
 </p>
-<p th:inline="text">
+<p>
   <strong>Motivation:</strong><br/>
-  [[${application.motivation}]]
+  <span th:utext="${application.motivation}"></span>
 </p>
 <br/>
-<p th:inline="text">
+<p>
   <strong>Special Skills:</strong><br/>
-  [[${application.user.specialSkills}]]
+  <span th:utext="${application.specialSkills}"></span>
 </p>
 <br/>
-<p th:inline="text">
+<p>
   <strong>Interests:</strong><br/>
-  [[${application.user.interests}]]
+  <span th:utext="${application.interests}"></span>
 </p>
 <br/>
-<p th:inline="text">
+<p>
   <strong>Projects:</strong><br/>
-  [[${application.user.projects}]]
+  <span th:utext="${application.projects}"></span>
 </p>
 <br/>
 
