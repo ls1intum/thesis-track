@@ -1,4 +1,4 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   [[${comment.createdBy.firstName}]] [[${comment.createdBy.lastName}]] posted a comment on thesis "[[${thesis.title}]]"
@@ -9,6 +9,6 @@
   [[${comment.message}]]
 </p>
 
-<div th:replace="fragments/thesis-link :: main"></div>
+<div th:replace="~{fragments/thesis-link :: main}"></div>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

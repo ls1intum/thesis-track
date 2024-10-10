@@ -1,4 +1,4 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   There are currently <strong>[[${unreviewedApplications}]]</strong> unreviewed thesis applications.
@@ -8,4 +8,4 @@
   Review Applications: <a target="_blank" rel="noopener noreferrer nofollow" th:href="${reviewApplicationsLink}">[[${reviewApplicationsLink}]]</a>
 </p>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

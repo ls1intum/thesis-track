@@ -1,4 +1,4 @@
-<div th:replace="fragments/salutation :: main"></div>
+<div th:replace="~{fragments/salutation :: main}"></div>
 
 <p th:inline="text">
   [[${presentation.createdBy.firstName}]] [[${presentation.createdBy.lastName}]] updated a presentation for thesis "[[${thesis.title}]]"
@@ -29,6 +29,6 @@
   [[${DataFormatter.formatDateTime(presentation.scheduledAt)}]]
 </p>
 
-<div th:replace="fragments/thesis-link :: main"></div>
+<div th:replace="~{fragments/thesis-link :: main}"></div>
 
-<div th:replace="fragments/notification-settings :: main"></div>
+<div th:replace="~{fragments/notification-settings :: main}"></div>

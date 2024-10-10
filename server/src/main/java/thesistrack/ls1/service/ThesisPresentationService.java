@@ -317,7 +317,7 @@ public class ThesisPresentationService {
                         "Details: " + clientHost + "/presentations/" + presentation.getId() + "\n\n" +
                         "Abstract:\n" + presentation.getThesis().getAbstractField(),
                 presentation.getScheduledAt(),
-                presentation.getScheduledAt().plus(60, ChronoUnit.MINUTES),
+                presentation.getScheduledAt().plus(45, ChronoUnit.MINUTES),
                 this.applicationMail,
                 presentation.getThesis().getRoles().stream().map((role) -> role.getUser().getEmail()).toList(),
                 presentation.getInvites().stream().map(ThesisPresentationInvite::getEmail).toList()
