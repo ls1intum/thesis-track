@@ -22,9 +22,9 @@
   </div>
 </div>
 
-<p th:inline="text">
+<p>
   <strong>Abstract</strong><br />
-  [[${thesis.abstractText}]]
+  <span th:utext="${thesis.abstractText}"></span>
 </p>
 
 <p th:inline="text">
