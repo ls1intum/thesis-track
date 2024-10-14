@@ -4,8 +4,9 @@ import { downloadFile } from '../../utils/blob'
 import { useApiPdfFile } from '../../hooks/fetcher'
 import { Link } from 'react-router-dom'
 import { GLOBAL_CONFIG } from '../../config/global'
+import { BoxProps } from '@mantine/core/lib/core'
 
-interface IAuthenticatedIframeProps {
+interface IAuthenticatedIframeProps extends BoxProps{
   url: string
   filename: string
   title?: string
@@ -15,7 +16,7 @@ interface IAuthenticatedIframeProps {
 }
 
 const AuthenticatedPdfPreview = (props: IAuthenticatedIframeProps) => {
-  const { url, filename, allowDownload = true, includeLink = false, title, height } = props
+  const { url, filename, allowDownload = true, includeLink = false, title, height, ...boxProps } = props
 
   const [file, setFile] = useState<File>()
 
@@ -26,7 +27,7 @@ const AuthenticatedPdfPreview = (props: IAuthenticatedIframeProps) => {
   }, [file])
 
   return (
-    <Stack gap={0}>
+    <Stack gap={0} {...boxProps}>
       {title && <Text ta='center'>{title}</Text>}
       <iframe style={{ border: 0 }} height={height} src={iframeUrl} />
       {allowDownload && (

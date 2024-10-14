@@ -1,6 +1,6 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Grid, Group, Paper, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Center, Grid, Group, Paper, Stack, Text } from '@mantine/core'
 import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
@@ -134,12 +134,15 @@ const ThesisProposalSection = () => {
               </Stack>
             )}
             {thesis.proposal ? (
-              <AuthenticatedPdfPreview
-                url={`/v2/theses/${thesis.thesisId}/proposal`}
-                filename={`${formatThesisFilename(thesis, 'Proposal')}.pdf`}
-                height={400}
-                key={thesis.files.proposal}
-              />
+              <Center>
+                <AuthenticatedPdfPreview
+                  url={`/v2/theses/${thesis.thesisId}/proposal`}
+                  filename={`${formatThesisFilename(thesis, 'Proposal')}.pdf`}
+                  height={400}
+                  style={{ maxWidth: '800px' }}
+                  key={thesis.files.proposal}
+                />
+              </Center>
             ) : (
               <Text ta='center'>No proposal uploaded yet</Text>
             )}
