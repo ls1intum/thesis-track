@@ -179,32 +179,32 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
                     <Check />
                   </Button>
                 )}
-              {presentation.state === 'DRAFTED' ||
-                (hasAdvisorAccess(
+              {(presentation.state === 'DRAFTED' ||
+                hasAdvisorAccess(
                   theses.find((thesis) => thesis.thesisId === presentation.thesisId),
                   user,
-                ) && (
-                  <Button
-                    loading={loading}
-                    size='xs'
-                    onClick={() => setEditPresentationModal(presentation)}
-                  >
-                    <Pencil />
-                  </Button>
-                ))}
-              {presentation.state === 'DRAFTED' ||
-                (hasAdvisorAccess(
+                )) && (
+                <Button
+                  loading={loading}
+                  size='xs'
+                  onClick={() => setEditPresentationModal(presentation)}
+                >
+                  <Pencil />
+                </Button>
+              )}
+              {(presentation.state === 'DRAFTED' ||
+                hasAdvisorAccess(
                   theses.find((thesis) => thesis.thesisId === presentation.thesisId),
                   user,
-                ) && (
-                  <Button
-                    loading={loading}
-                    size='xs'
-                    onClick={() => deletePresentation(presentation)}
-                  >
-                    <Trash />
-                  </Button>
-                ))}
+                )) && (
+                <Button
+                  loading={loading}
+                  size='xs'
+                  onClick={() => deletePresentation(presentation)}
+                >
+                  <Trash />
+                </Button>
+              )}
             </Group>
           )}
         </Center>
