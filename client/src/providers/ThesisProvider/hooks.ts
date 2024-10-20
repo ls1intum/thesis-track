@@ -24,21 +24,27 @@ export function useLoadedThesisContext() {
   return { thesis, access, updateThesis }
 }
 
+export function useThesisContextUpdater() {
+  const data = useContext(ThesisContext)
+
+  if (!data) {
+    return () => undefined
+  }
+
+  return data.updateThesis
+}
+
 export function useThesisUpdateAction<T extends (...args: any[]) => any>(
   fn: (...args: Parameters<T>) => PromiseLike<IThesis>,
   successMessage?: string,
 ): [boolean, (...args: Parameters<T>) => unknown] {
-  const { thesis, updateThesis } = useThesisContext()
+  const updateThesis = useThesisContextUpdater()
 
   const [loading, setLoading] = useState(false)
 
   return [
     loading,
     async (...args: Parameters<T>) => {
-      if (!thesis) {
-        return
-      }
-
       setLoading(true)
       try {
         updateThesis(await fn(...args))

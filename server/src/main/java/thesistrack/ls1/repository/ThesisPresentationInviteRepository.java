@@ -11,4 +11,5 @@ import java.util.UUID;
 
 @Repository
 public interface ThesisPresentationInviteRepository extends JpaRepository<ThesisPresentationInvite, ThesisPresentationInviteId> {
+    void deleteByPresentationId(UUID id);
 }

@@ -79,6 +79,7 @@ public record ThesisDto (
     }
 
     public record ThesisPresentationDto(
+            UUID thesisId,
             UUID presentationId,
             ThesisPresentationState state,
             ThesisPresentationType type,
@@ -96,6 +97,7 @@ public record ThesisDto (
             }
 
             return new ThesisPresentationDto(
+                    presentation.getThesis().getId(),
                     presentation.getId(),
                     presentation.getState(),
                     presentation.getType(),

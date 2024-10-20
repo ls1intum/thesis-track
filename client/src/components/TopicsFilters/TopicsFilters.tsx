@@ -27,7 +27,7 @@ const TopicsFilters = (props: ITopicsFiltersProps) => {
         />
       )}
       {visible.includes('type') && (
-        <Grid mb='md' grow>
+        <Grid grow>
           {Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => (
             <Grid.Col key={key} span={{ md: 3 }}>
               <Center>

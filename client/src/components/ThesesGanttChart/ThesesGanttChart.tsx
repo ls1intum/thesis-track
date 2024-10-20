@@ -5,7 +5,7 @@ import { formatDate, formatPresentationType, formatThesisType } from '../../util
 import { ThesisStateColor, ThesisTypeColor } from '../../config/colors'
 import ThesisPreviewModal from '../ThesisPreviewModal/ThesisPreviewModal'
 import { IThesis, ThesisState } from '../../requests/responses/thesis'
-import { Badge, Center, Group, Indicator, Stack, Text } from '@mantine/core'
+import { Badge, Center, Group, Indicator, Pagination, Stack, Text } from '@mantine/core'
 import ThesisStateBadge from '../ThesisStateBadge/ThesisStateBadge'
 import { Presentation } from 'phosphor-react'
 import { arrayUnique } from '../../utils/array'
@@ -15,7 +15,7 @@ import LabeledItem from '../LabeledItem/LabeledItem'
 import { IGanttChartDataElement } from '../GanttChart/context'
 
 const ThesesGanttChart = () => {
-  const { theses } = useThesesContext()
+  const { theses, page, setPage } = useThesesContext()
 
   const [openedThesis, setOpenedThesis] = useState<IThesis>()
 
@@ -140,7 +140,7 @@ const ThesesGanttChart = () => {
   const hasKeywordsColumn = !!theses?.content.some((thesis) => !!thesis.keywords.length)
 
   return (
-    <div>
+    <Stack>
       <GanttChart
         columns={[
           { label: 'Student', width: '10rem' },
@@ -187,7 +187,7 @@ const ThesesGanttChart = () => {
         }
       />
       {visibleStates.length > 0 && (
-        <Center mt='md'>
+        <Center>
           <Group gap='xs'>
             <Text>Legend:</Text>
             {visibleTypes.map((type) => (
@@ -209,12 +209,22 @@ const ThesesGanttChart = () => {
           </Group>
         </Center>
       )}
+      {theses && theses.totalPages > 1 && (
+        <Center>
+          <Pagination
+            size='sm'
+            total={theses?.totalPages || 0}
+            value={page + 1}
+            onChange={(newPage) => setPage(newPage - 1)}
+          />
+        </Center>
+      )}
       <ThesisPreviewModal
         opened={!!openedThesis}
         onClose={() => setOpenedThesis(undefined)}
         thesis={openedThesis}
       />
-    </div>
+    </Stack>
   )
 }
 

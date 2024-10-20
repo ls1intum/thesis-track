@@ -86,3 +86,19 @@ CREATE TABLE thesis_presentation_invites
     PRIMARY KEY (presentation_id, email),
     FOREIGN KEY (presentation_id) REFERENCES thesis_presentations (presentation_id)
 );
+
+--changeset emilius:07-cleanup-14
+CREATE TABLE thesis_files
+(
+    file_id     UUID      NOT NULL,
+    thesis_id   UUID      NOT NULL,
+    type        TEXT      NOT NULL,
+    filename    TEXT      NOT NULL,
+    upload_name TEXT      NOT NULL,
+    uploaded_at TIMESTAMP NOT NULL,
+    uploaded_by UUID      NOT NULL,
+    PRIMARY KEY (file_id),
+    FOREIGN KEY (thesis_id) REFERENCES theses (thesis_id)
+);
+
+ALTER TABLE thesis_comments ADD COLUMN upload_name TEXT;

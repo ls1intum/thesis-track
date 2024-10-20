@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { BoxProps } from '@mantine/core/lib/core'
 
-interface IAuthenticatedIframeProps extends BoxProps{
+interface IAuthenticatedIframeProps extends BoxProps {
   url: string
   filename: string
   title?: string
@@ -16,7 +16,15 @@ interface IAuthenticatedIframeProps extends BoxProps{
 }
 
 const AuthenticatedPdfPreview = (props: IAuthenticatedIframeProps) => {
-  const { url, filename, allowDownload = true, includeLink = false, title, height, ...boxProps } = props
+  const {
+    url,
+    filename,
+    allowDownload = true,
+    includeLink = false,
+    title,
+    height,
+    ...boxProps
+  } = props
 
   const [file, setFile] = useState<File>()
 

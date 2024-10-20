@@ -1,25 +1,25 @@
-import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'
-import { ActionIcon, Button, Checkbox, Group, Input, Modal, Stack, TextInput } from '@mantine/core'
 import {
-  useLoadedThesisContext,
-  useThesisUpdateAction,
-} from '../../../../../../providers/ThesisProvider/hooks'
-import { doRequest } from '../../../../../../requests/request'
-import { ApiError } from '../../../../../../requests/handler'
+  IPublishedPresentation,
+  IThesis,
+  IThesisPresentation,
+} from '../../../../requests/responses/thesis'
+import { ActionIcon, Button, Checkbox, Group, Input, Modal, Stack, TextInput } from '@mantine/core'
+import { useThesisUpdateAction } from '../../../../providers/ThesisProvider/hooks'
+import { doRequest } from '../../../../requests/request'
+import { ApiError } from '../../../../requests/handler'
 import { useEffect, useState } from 'react'
 import { randomId } from '@mantine/hooks'
 import { isEmail } from '@mantine/form'
 import { X } from 'phosphor-react'
 
 interface ISchedulePresentationModalProps {
-  presentation: IThesisPresentation | undefined
+  presentation: IPublishedPresentation | IThesisPresentation | undefined
   onClose: () => unknown
+  onChange?: () => unknown
 }
 
 const SchedulePresentationModal = (props: ISchedulePresentationModalProps) => {
-  const { presentation, onClose } = props
-
-  const { thesis } = useLoadedThesisContext()
+  const { presentation, onClose, onChange } = props
 
   const [inviteChairMembers, setInviteChairMembers] = useState(true)
   const [inviteThesisStudents, setInviteThesisStudents] = useState(true)
@@ -31,7 +31,7 @@ const SchedulePresentationModal = (props: ISchedulePresentationModalProps) => {
     }
 
     const response = await doRequest<IThesis>(
-      `/v2/theses/${thesis.thesisId}/presentations/${presentation.presentationId}/schedule`,
+      `/v2/theses/${presentation.thesisId}/presentations/${presentation.presentationId}/schedule`,
       {
         method: 'POST',
         requiresAuth: true,
@@ -45,6 +45,7 @@ const SchedulePresentationModal = (props: ISchedulePresentationModalProps) => {
 
     if (response.ok) {
       onClose()
+      onChange?.()
 
       return response.data
     } else {

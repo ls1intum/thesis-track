@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import React, { useEffect, useState } from 'react'
 import { IPublishedPresentation } from '../../requests/responses/thesis'
 import { doRequest } from '../../requests/request'
@@ -7,7 +7,7 @@ import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
 import NotFound from '../../components/NotFound/NotFound'
 import PageLoader from '../../components/PageLoader/PageLoader'
-import { Anchor, Divider, Grid, Stack, Title } from '@mantine/core'
+import { Anchor, Button, Divider, Grid, Stack, Title } from '@mantine/core'
 import LabeledItem from '../../components/LabeledItem/LabeledItem'
 import { formatDate, formatPresentationType } from '../../utils/format'
 import { GLOBAL_CONFIG } from '../../config/global'
@@ -87,6 +87,9 @@ const PresentationPage = () => {
       </Grid>
       <Divider />
       <ThesisData thesis={presentation.thesis} additionalInformation={['abstract']} />
+      <Button component={Link} to={`/theses/${presentation.thesis.thesisId}`}>
+        View Thesis Page
+      </Button>
     </Stack>
   )
 }

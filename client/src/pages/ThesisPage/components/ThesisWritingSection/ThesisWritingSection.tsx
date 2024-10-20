@@ -15,9 +15,9 @@ import ThesisCommentsForm from '../../../../components/ThesisCommentsForm/Thesis
 import ThesisCommentsProvider from '../../../../providers/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../../../../components/ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
-import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
 import { formatThesisFilename } from '../../../../utils/format'
-import ReplacePresentationModal from './components/ReplacePresentationModal/ReplacePresentationModal'
+import ReplacePresentationModal from '../../../../components/PresentationsTable/components/ReplacePresentationModal/ReplacePresentationModal'
+import PresentationsTable from '../../../../components/PresentationsTable/PresentationsTable'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
@@ -175,10 +175,23 @@ const ThesisWritingSection = () => {
               <Accordion.Panel>
                 <Stack>
                   <ReplacePresentationModal
+                    thesis={thesis}
                     opened={createPresentationModal}
                     onClose={() => setCreatePresentationModal(false)}
                   />
-                  <ThesisPresentationsTable />
+                  <PresentationsTable
+                    presentations={thesis.presentations}
+                    theses={[thesis]}
+                    columns={[
+                      'state',
+                      'type',
+                      'location',
+                      'streamUrl',
+                      'language',
+                      'scheduledAt',
+                      'actions',
+                    ]}
+                  />
                   {access.student && (
                     <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
                       Create Presentation Draft
