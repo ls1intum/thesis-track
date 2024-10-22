@@ -2,9 +2,8 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../providers/ThesisProvider/hooks'
-import { Checkbox } from '@mantine/core'
+import { Checkbox, Input, Table, Text } from '@mantine/core'
 import { IThesis } from '../../../../requests/responses/thesis'
-import { DataTable } from 'mantine-datatable'
 import React from 'react'
 import AvatarUser from '../../../../components/AvatarUser/AvatarUser'
 import { formatDate } from '../../../../utils/format'
@@ -45,48 +44,42 @@ const ThesisFeedbackOverview = (props: IThesisFeedbackOverviewProps) => {
   }
 
   return (
-    <DataTable
-      withTableBorder={false}
-      borderRadius='sm'
-      verticalSpacing='md'
-      striped
-      records={thesis.feedback.filter((item) => item.type === type)}
-      idAccessor='feedbackId'
-      columns={[
-        {
-          accessor: 'feedbackId',
-          title: '',
-          ellipsis: true,
-          width: 50,
-          textAlign: 'center',
-          render: (item) => (
-            <Checkbox
-              checked={!!item.completedAt}
-              disabled={loading || !access.student || !allowEdit}
-              onChange={() => toggleFeedback(item)}
-            />
-          ),
-        },
-        {
-          accessor: 'feedback',
-          title: 'Requested Change',
-        },
-        {
-          accessor: 'requestedBy',
-          title: 'Requested By',
-          ellipsis: true,
-          width: 180,
-          render: (item) => <AvatarUser user={item.requestedBy} />,
-        },
-        {
-          accessor: 'requestedAt',
-          title: 'Requested At',
-          ellipsis: true,
-          width: 150,
-          render: (item) => formatDate(item.requestedAt),
-        },
-      ]}
-    />
+    <Input.Wrapper label='Feedback'>
+      <Table.ScrollContainer minWidth={600}>
+        <Table>
+          <Table.Thead>
+            <Table.Tr>
+              <Table.Th></Table.Th>
+              <Table.Th>Requested Change</Table.Th>
+              <Table.Th>Requested By</Table.Th>
+              <Table.Th>Requested At</Table.Th>
+            </Table.Tr>
+          </Table.Thead>
+          <Table.Tbody>
+            {thesis.feedback
+              .filter((item) => item.type === type)
+              .map((item) => (
+                <Table.Tr key={item.feedbackId}>
+                  <Table.Td ta='center' width={50}>
+                    <Checkbox
+                      checked={!!item.completedAt}
+                      disabled={loading || !access.student || !allowEdit}
+                      onChange={() => toggleFeedback(item)}
+                    />
+                  </Table.Td>
+                  <Table.Td>
+                    <Text>{item.feedback}</Text>
+                  </Table.Td>
+                  <Table.Td width={200}>
+                    <AvatarUser user={item.requestedBy} />
+                  </Table.Td>
+                  <Table.Td width={170}>{formatDate(item.requestedAt)}</Table.Td>
+                </Table.Tr>
+              ))}
+          </Table.Tbody>
+        </Table>
+      </Table.ScrollContainer>
+    </Input.Wrapper>
   )
 }
 

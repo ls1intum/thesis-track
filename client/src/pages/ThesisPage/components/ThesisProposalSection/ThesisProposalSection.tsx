@@ -1,10 +1,7 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { useState } from 'react'
-import { Accordion, Button, Center, Grid, Group, Paper, Stack, Text } from '@mantine/core'
-import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
+import { Accordion, Center, Grid, Group, Paper, Stack, Text } from '@mantine/core'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
-import AuthenticatedPdfPreview from '../../../../components/AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 import {
   useLoadedThesisContext,
@@ -17,13 +14,15 @@ import { GLOBAL_CONFIG } from '../../../../config/global'
 import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
 import ThesisFeedbackRequestButton from '../ThesisFeedbackRequestButton/ThesisFeedbackRequestButton'
 import ThesisFeedbackOverview from '../ThesisFeedbackOverview/ThesisFeedbackOverview'
+import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
+import UploadFileButton from '../../../../components/UploadFileButton/UploadFileButton'
+import FileHistoryTable from '../FileHistoryTable/FileHistoryTable'
+import { isThesisClosed } from '../../../../utils/thesis'
 
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
 
   const studentBackgroundColor = useHighlightedBackgroundColor(false)
-
-  const [uploadModal, setUploadModal] = useState(false)
 
   const [accepting, onAccept] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/proposal/accept`, {
@@ -57,6 +56,8 @@ const ThesisProposalSection = () => {
       showSimpleError(getApiResponseErrorMessage(response))
     }
   }
+
+  const proposal = thesis.proposals[0]
 
   return (
     <Accordion
@@ -123,7 +124,7 @@ const ThesisProposalSection = () => {
                         Object.entries(student.customData).map(([key, value]) => (
                           <Grid.Col key={key} span={{ md: 6 }}>
                             <LabeledItem
-                              label={GLOBAL_CONFIG.custom_data[key] ?? key}
+                              label={GLOBAL_CONFIG.custom_data[key]?.label ?? key}
                               value={value}
                             />
                           </Grid.Col>
@@ -133,32 +134,67 @@ const ThesisProposalSection = () => {
                 ))}
               </Stack>
             )}
-            {thesis.proposal ? (
-              <Center>
-                <AuthenticatedPdfPreview
-                  url={`/v2/theses/${thesis.thesisId}/proposal`}
-                  filename={`${formatThesisFilename(thesis, 'Proposal')}.pdf`}
-                  height={400}
-                  style={{ maxWidth: '800px' }}
-                  key={thesis.files.proposal}
-                />
-              </Center>
+            {proposal ? (
+              <AuthenticatedFilePreview
+                url={`/v2/theses/${thesis.thesisId}/proposal/${proposal.proposalId}`}
+                filename={formatThesisFilename(
+                  thesis,
+                  'Proposal',
+                  proposal.filename,
+                  thesis.proposals.length,
+                )}
+                type='pdf'
+                aspectRatio={16 / 6}
+                actionButton={
+                  ((access.student && thesis.state === ThesisState.PROPOSAL) || access.advisor) &&
+                  !isThesisClosed(thesis) ? (
+                    <UploadFileButton
+                      onUpload={onUpload}
+                      maxSize={20 * 1024 * 1024}
+                      accept='pdf'
+                      ml='auto'
+                    >
+                      Upload Proposal
+                    </UploadFileButton>
+                  ) : undefined
+                }
+                key={proposal.proposalId}
+              />
             ) : (
-              <Text ta='center'>No proposal uploaded yet</Text>
+              <Stack>
+                <Text ta='center'>No proposal uploaded yet</Text>
+                <Center>
+                  <UploadFileButton onUpload={onUpload} maxSize={20 * 1024 * 1024} accept='pdf'>
+                    Upload Proposal
+                  </UploadFileButton>
+                </Center>
+              </Stack>
             )}
             <ThesisFeedbackOverview
               type='PROPOSAL'
               allowEdit={thesis.state === ThesisState.PROPOSAL}
             />
-            <Group>
-              <UploadFileModal
-                opened={uploadModal}
-                onClose={() => setUploadModal(false)}
-                title='Upload Proposal'
-                onUpload={onUpload}
-                maxSize={20 * 1024 * 1024}
-                accept='pdf'
+            {thesis.proposals.length > 1 && (
+              <FileHistoryTable
+                data={thesis.proposals.map((row, index) => ({
+                  filename: formatThesisFilename(
+                    thesis,
+                    'Proposal',
+                    row.filename,
+                    thesis.proposals.length - index,
+                  ),
+                  url: `/v2/theses/${thesis.thesisId}/proposal/${row.proposalId}`,
+                  type: 'pdf',
+                  uploadedBy: row.createdBy,
+                  uploadedAt: row.createdAt,
+                  name: `Proposal v${thesis.proposals.length - index}`,
+                }))}
               />
+            )}
+            <Group ml='auto'>
+              {proposal && access.advisor && thesis.state === ThesisState.PROPOSAL && (
+                <ThesisFeedbackRequestButton type='PROPOSAL' />
+              )}
               {access.advisor && thesis.state === ThesisState.PROPOSAL && (
                 <ConfirmationButton
                   confirmationTitle='Accept Proposal'
@@ -166,24 +202,11 @@ const ThesisProposalSection = () => {
                   variant='outline'
                   color='green'
                   loading={accepting}
-                  disabled={thesis.proposal === null}
+                  disabled={!proposal}
                   onClick={onAccept}
                 >
                   Accept Proposal
                 </ConfirmationButton>
-              )}
-              {thesis.state === ThesisState.PROPOSAL && (
-                <ThesisFeedbackRequestButton type='PROPOSAL' />
-              )}
-              {access.student && thesis.state === ThesisState.PROPOSAL && (
-                <Button ml='auto' onClick={() => setUploadModal(true)}>
-                  Upload Proposal
-                </Button>
-              )}
-              {access.student && thesis.state === ThesisState.WRITING && (
-                <Button ml='auto' onClick={() => setUploadModal(true)}>
-                  Upload New Proposal (Needs Re-Approval)
-                </Button>
               )}
             </Group>
           </Stack>

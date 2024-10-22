@@ -17,7 +17,7 @@ interface IThesisFeedbackRequestButtonProps {
 const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) => {
   const { type } = props
 
-  const { thesis, access } = useLoadedThesisContext()
+  const { thesis } = useLoadedThesisContext()
 
   const [opened, setOpened] = useState(false)
   const [newChanges, setNewChanges] = useState<
@@ -69,10 +69,6 @@ const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) =
       throw new ApiError(response)
     }
   }, 'Changes requested successfully')
-
-  if (!access.advisor || !thesis.proposal) {
-    return null
-  }
 
   return (
     <Button variant='outline' color='red' onClick={() => setOpened(true)}>

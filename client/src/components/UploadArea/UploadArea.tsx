@@ -12,13 +12,14 @@ import {
 import { ImageSquare, UploadSimple, X } from 'phosphor-react'
 import { Dropzone, IMAGE_MIME_TYPE, PDF_MIME_TYPE } from '@mantine/dropzone'
 import { showSimpleError } from '../../utils/notification'
-import { useMemo } from 'react'
+import { UploadFileType } from '../../config/types'
+import FilePreview from '../FilePreview/FilePreview'
 
 interface IUploadAreaProps {
   value: File | undefined
   onChange: (file: File | undefined) => unknown
   maxSize: number
-  accept: 'pdf' | 'image' | 'any'
+  accept: UploadFileType
   label?: string
   required?: boolean
 }
@@ -27,10 +28,6 @@ const UploadArea = (props: IUploadAreaProps) => {
   const { label, required, value, onChange, maxSize, accept } = props
 
   const theme = useMantineTheme()
-
-  const iframeUrl = useMemo(() => {
-    return value ? `${URL.createObjectURL(value)}#toolbar=0&navpanes=0` : undefined
-  }, [value])
 
   const getMimeTypes = () => {
     if (accept === 'image') {
@@ -52,7 +49,7 @@ const UploadArea = (props: IUploadAreaProps) => {
         <Card shadow='sm' withBorder>
           <Center>
             <Stack>
-              <iframe style={{ border: 0 }} height={400} src={iframeUrl} />
+              <FilePreview file={value} type={accept} />
               <ActionIcon
                 mx='auto'
                 onClick={() => {

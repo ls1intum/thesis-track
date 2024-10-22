@@ -1,6 +1,5 @@
 import { IApplication } from '../../requests/responses/application'
 import { Stack, Group, Grid, Title, Badge, Accordion } from '@mantine/core'
-import AuthenticatedPdfPreview from '../AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import React, { ReactNode } from 'react'
 import { GLOBAL_CONFIG } from '../../config/global'
 import { AVAILABLE_COUNTRIES } from '../../config/countries'
@@ -15,6 +14,7 @@ import DocumentEditor from '../DocumentEditor/DocumentEditor'
 import { ApplicationStateColor } from '../../config/colors'
 import TopicAccordionItem from '../TopicAccordionItem/TopicAccordionItem'
 import { enrollmentDateToSemester } from '../../utils/converter'
+import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
 
 interface IApplicationDataProps {
   application: IApplication
@@ -145,7 +145,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
             {application.user.customData &&
               Object.entries(application.user.customData).map(([key, value]) => (
                 <Grid.Col key={key} span={{ md: 6 }}>
-                  <LabeledItem label={GLOBAL_CONFIG.custom_data[key] ?? key} value={value} />
+                  <LabeledItem label={GLOBAL_CONFIG.custom_data[key]?.label ?? key} value={value} />
                 </Grid.Col>
               ))}
           </Grid>
@@ -155,29 +155,29 @@ const ApplicationData = (props: IApplicationDataProps) => {
       <Grid.Col span={{ md: 4 }}>
         <Stack gap='md' key={application.applicationId}>
           {application.user.hasCv && (
-            <AuthenticatedPdfPreview
-              title='CV'
+            <AuthenticatedFilePreview
               url={`/v2/users/${application.user.userId}/cv`}
-              height={400}
               filename={`${formatApplicationFilename(application, 'Application CV')}.pdf`}
+              type='pdf'
+              aspectRatio={16 / 11}
               key={application.user.userId}
             />
           )}
           {application.user.hasExaminationReport && (
-            <AuthenticatedPdfPreview
-              title='Examination Report'
+            <AuthenticatedFilePreview
               url={`/v2/users/${application.user.userId}/examination-report`}
-              height={400}
               filename={`${formatApplicationFilename(application, 'Application Examination Report')}.pdf`}
+              type='pdf'
+              aspectRatio={16 / 11}
               key={application.user.userId}
             />
           )}
           {application.user.hasDegreeReport && (
-            <AuthenticatedPdfPreview
-              title='Degree Report'
+            <AuthenticatedFilePreview
               url={`/v2/users/${application.user.userId}/degree-report`}
-              height={400}
               filename={`${formatApplicationFilename(application, 'Application Degree Report')}.pdf`}
+              type='pdf'
+              aspectRatio={16 / 11}
               key={application.user.userId}
             />
           )}

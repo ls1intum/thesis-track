@@ -40,11 +40,14 @@ export interface IThesis {
   students: ILightUser[]
   advisors: ILightUser[]
   supervisors: ILightUser[]
-  files: {
-    thesis: string | null
-    presentation: string | null
-    proposal: string | null
-  }
+  files: Array<{
+    fileId: string
+    type: string
+    filename: string
+    uploadName: string
+    uploadedAt: string
+    uploadedBy: ILightUser
+  }>
   assessment: null | {
     summary: string
     positives: string
@@ -53,12 +56,14 @@ export interface IThesis {
     createdAt: string
     createdBy: ILightUser
   }
-  proposal: null | {
+  proposals: Array<{
+    proposalId: string
+    filename: string
     createdAt: string
     createdBy: ILightUser
     approvedAt: string | null
     approvedBy: ILightUser | null
-  }
+  }>
   feedback: Array<{
     feedbackId: string
     type: string
@@ -83,6 +88,7 @@ export interface IThesisComment {
   commentId: string
   message: string
   filename: string | null
+  uploadName: string | null
   createdAt: string
   createdBy: ILightUser
 }

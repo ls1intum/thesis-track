@@ -14,6 +14,7 @@ import java.util.UUID;
 @Table(name = "thesis_files")
 public class ThesisFile {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "file_id", nullable = false)
     private UUID id;
 
@@ -23,15 +24,15 @@ public class ThesisFile {
     private Thesis thesis;
 
     @NotNull
-    @Column(name = "type", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "type", nullable = false)
     private String type;
 
     @NotNull
-    @Column(name = "filename", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "filename", nullable = false)
     private String filename;
 
     @NotNull
-    @Column(name = "upload_name", nullable = false, length = Integer.MAX_VALUE)
+    @Column(name = "upload_name", nullable = false)
     private String uploadName;
 
     @NotNull
@@ -39,7 +40,8 @@ public class ThesisFile {
     private Instant uploadedAt;
 
     @NotNull
-    @Column(name = "uploaded_by", nullable = false)
-    private UUID uploadedBy;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "uploaded_by", nullable = false)
+    private User uploadedBy;
 
 }

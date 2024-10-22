@@ -9,6 +9,7 @@ import {
 } from '../../../../providers/ThesisProvider/hooks'
 import { Link } from 'react-router-dom'
 import { ApiError } from '../../../../requests/handler'
+import DownloadAllFilesButton from './components/DownloadAllFilesButton/DownloadAllFilesButton'
 
 const ThesisInfoSection = () => {
   const { thesis, access } = useLoadedThesisContext()
@@ -75,9 +76,12 @@ const ThesisInfoSection = () => {
               <Grid.Col span={{ md: 6 }}>
                 <Flex justify='flex-end'>
                   {access.student && !editMode && (
-                    <Button ml='auto' onClick={() => setEditMode(true)}>
-                      Edit
-                    </Button>
+                    <Group>
+                      <DownloadAllFilesButton />
+                      <Button ml='auto' onClick={() => setEditMode(true)}>
+                        Edit
+                      </Button>
+                    </Group>
                   )}
                   {editMode && (
                     <Group>

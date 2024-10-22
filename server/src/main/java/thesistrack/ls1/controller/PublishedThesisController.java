@@ -65,6 +65,6 @@ public class PublishedThesisController {
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=thesis_%s.pdf", thesisId))
-                .body(thesisService.getThesisFile(thesis));
+                .body(thesisService.getThesisFile(thesis.getLatestFile("THESIS").orElseThrow()));
     }
 }

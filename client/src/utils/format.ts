@@ -62,7 +62,12 @@ export function formatUsersFilename(users: ILightUser[]) {
   return users.map((user) => formatUserFilename(user)).join(' ')
 }
 
-export function formatThesisFilename(thesis: IThesis, name: string, version?: number) {
+export function formatThesisFilename(
+  thesis: IThesis,
+  name: string,
+  originalFilename: string,
+  version: number,
+) {
   let text = `${wordsToFilename(formatThesisType(thesis.type))}`
 
   if (name) {
@@ -71,9 +76,13 @@ export function formatThesisFilename(thesis: IThesis, name: string, version?: nu
 
   text += ` ${formatUsersFilename(thesis.students)}`
 
-  if (version) {
+  if (version > 0) {
     text += ` v${version}`
   }
+
+  const fileParts = originalFilename.split('.')
+
+  text += `.${fileParts[fileParts.length - 1]}`
 
   return text
 }

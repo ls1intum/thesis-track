@@ -40,7 +40,7 @@ const SelectTopicStep = (props: ISelectTopicStepProps) => {
       <Accordion variant='separated'>
         {topics?.content.map((topic) => (
           <TopicAccordionItem key={topic.topicId} topic={topic}>
-            <Center>
+            <Center mt='md'>
               <Button onClick={() => onComplete(topic)}>Apply for this Topic</Button>
             </Center>
           </TopicAccordionItem>

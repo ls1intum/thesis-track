@@ -123,12 +123,14 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           return 'The bachelor report should not exceed 2mb'
         }
       },
-      /*...Object.fromEntries(
-        Object.entries(GLOBAL_CONFIG.custom_data).map(([key, value]) => [
-          `customData.${key}`,
-          requireCompletion ? isNotEmpty(`Please state your ${value}`) : undefined,
-        ]),
-      ),*/
+      ...Object.fromEntries(
+        Object.entries(GLOBAL_CONFIG.custom_data)
+          .filter(([, value]) => value.required)
+          .map(([key, value]) => [
+            `customData.${key}`,
+            requireCompletion ? isNotEmpty(`Please state your ${value.label}`) : undefined,
+          ]),
+      ),
     },
   })
 
@@ -313,7 +315,12 @@ const UserInformationForm = (props: IUserInformationFormProps) => {
           />
         </Group>
         {Object.entries(GLOBAL_CONFIG.custom_data).map(([key, value]) => (
-          <TextInput key={key} label={value} {...form.getInputProps(`customData.${key}`)} />
+          <TextInput
+            key={key}
+            label={value.label}
+            required={value.required && requireCompletion}
+            {...form.getInputProps(`customData.${key}`)}
+          />
         ))}
         <DocumentEditor
           label='Interests (What are you interested in?)'

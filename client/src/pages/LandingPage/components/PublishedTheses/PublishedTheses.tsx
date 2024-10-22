@@ -6,12 +6,12 @@ import { IPublishedThesis } from '../../../../requests/responses/thesis'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
-import AuthenticatedPdfPreview from '../../../../components/AuthenticatedPdfPreview/AuthenticatedPdfPreview'
 import { DownloadSimple, Eye } from 'phosphor-react'
 import ThesisData from '../../../../components/ThesisData/ThesisData'
 import AvatarUserList from '../../../../components/AvatarUserList/AvatarUserList'
 import { formatThesisType } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
+import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
 
 const PublishedTheses = () => {
   const [page, setPage] = useState(0)
@@ -122,13 +122,12 @@ const PublishedTheses = () => {
         size='xl'
       >
         {openedThesis && (
-          <Stack gap='md'>
+          <Stack>
             <ThesisData thesis={openedThesis} additionalInformation={['abstract']} />
-            <AuthenticatedPdfPreview
+            <AuthenticatedFilePreview
               url={`/v2/published-theses/${openedThesis.thesisId}/thesis`}
-              includeLink
-              height={500}
               filename={`${openedThesis.title.toLowerCase().replaceAll(' ', '-')}.pdf`}
+              type='pdf'
             />
           </Stack>
         )}

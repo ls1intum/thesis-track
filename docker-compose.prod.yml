@@ -106,6 +106,7 @@ services:
       - GENDERS
       - LANGUAGES
       - CUSTOM_DATA
+      - THESIS_FILES
       - APPLICATION_TITLE
       - CHAIR_NAME
       - CHAIR_URL

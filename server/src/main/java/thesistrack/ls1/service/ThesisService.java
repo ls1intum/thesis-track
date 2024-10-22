@@ -5,6 +5,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import thesistrack.ls1.entity.key.ThesisStateChangeId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.*;
+import thesistrack.ls1.utility.PDFBuilder;
 import thesistrack.ls1.utility.RequestValidator;
 
 import java.time.Instant;
@@ -35,6 +37,7 @@ public class ThesisService {
     private final AccessManagementService accessManagementService;
     private final ThesisPresentationService thesisPresentationService;
     private final ThesisFeedbackRepository thesisFeedbackRepository;
+    private final ThesisFileRepository thesisFileRepository;
 
     @Autowired
     public ThesisService(
@@ -48,7 +51,7 @@ public class ThesisService {
             MailingService mailingService,
             AccessManagementService accessManagementService,
             ThesisPresentationService thesisPresentationService,
-            ThesisFeedbackRepository thesisFeedbackRepository) {
+            ThesisFeedbackRepository thesisFeedbackRepository, ThesisFileRepository thesisFileRepository) {
         this.thesisRoleRepository = thesisRoleRepository;
         this.thesisRepository = thesisRepository;
         this.thesisStateChangeRepository = thesisStateChangeRepository;
@@ -60,6 +63,7 @@ public class ThesisService {
         this.accessManagementService = accessManagementService;
         this.thesisPresentationService = thesisPresentationService;
         this.thesisFeedbackRepository = thesisFeedbackRepository;
+        this.thesisFileRepository = thesisFileRepository;
     }
 
     public Page<Thesis> getAll(
@@ -245,14 +249,8 @@ public class ThesisService {
 
     /* PROPOSAL */
 
-    public Resource getProposalFile(Thesis thesis) {
-        List<ThesisProposal> proposals = thesis.getProposals();
-
-        if (proposals.isEmpty()) {
-            throw new ResourceNotFoundException("Proposal file not found");
-        }
-
-        return uploadService.load(proposals.getFirst().getProposalFilename());
+    public Resource getProposalFile(ThesisProposal proposal) {
+        return uploadService.load(proposal.getProposalFilename());
     }
 
     @Transactional
@@ -268,7 +266,6 @@ public class ThesisService {
         proposals.addFirst(proposal);
 
         thesis.setProposals(proposals);
-        thesis.setState(ThesisState.PROPOSAL);
 
         thesisProposalRepository.save(proposal);
 
@@ -305,8 +302,8 @@ public class ThesisService {
 
     @Transactional
     public Thesis submitThesis(Thesis thesis) {
-        if (thesis.getFinalThesisFilename() == null || thesis.getFinalPresentationFilename() == null) {
-            throw new ResourceInvalidParametersException("Thesis or presentation file not uploaded yet");
+        if (thesis.getLatestFile("THESIS").isEmpty()) {
+            throw new ResourceInvalidParametersException("Thesis file not uploaded yet");
         }
 
         thesis.setState(ThesisState.SUBMITTED);
@@ -319,37 +316,24 @@ public class ThesisService {
     }
 
     @Transactional
-    public Thesis uploadPresentation(Thesis thesis, MultipartFile presentationFile) {
-        thesis.setFinalPresentationFilename(uploadService.store(presentationFile, 20 * 1024 * 1024, UploadFileType.PDF));
+    public Thesis uploadThesisFile(User uploader, Thesis thesis, String type, MultipartFile file) {
+        ThesisFile thesisFile = new ThesisFile();
+
+        thesisFile.setUploadName(file.getOriginalFilename());
+        thesisFile.setFilename(uploadService.store(file, 20 * 1024 * 1024, UploadFileType.ANY));
+        thesisFile.setUploadedBy(uploader);
+        thesisFile.setUploadedAt(Instant.now());
+        thesisFile.setThesis(thesis);
+        thesisFile.setType(type);
+
+        List<ThesisFile> files = thesis.getFiles();
+        files.addFirst(thesisFileRepository.save(thesisFile));
 
         return thesisRepository.save(thesis);
     }
 
-    @Transactional
-    public Thesis uploadThesis(Thesis thesis, MultipartFile thesisFile) {
-        thesis.setFinalThesisFilename(uploadService.store(thesisFile, 20 * 1024 * 1024, UploadFileType.PDF));
-
-        return thesisRepository.save(thesis);
-    }
-
-    public Resource getPresentationFile(Thesis thesis) {
-        String filename = thesis.getFinalPresentationFilename();
-
-        if (filename == null) {
-            throw new ResourceNotFoundException("Presentation file not found.");
-        }
-
-        return uploadService.load(filename);
-    }
-
-    public Resource getThesisFile(Thesis thesis) {
-        String filename = thesis.getFinalThesisFilename();
-
-        if (filename == null) {
-            throw new ResourceNotFoundException("Thesis file not found.");
-        }
-
-        return uploadService.load(filename);
+    public Resource getThesisFile(ThesisFile file) {
+        return uploadService.load(file.getFilename());
     }
 
     /* ASSESSMENT */
@@ -385,6 +369,19 @@ public class ThesisService {
         mailingService.sendAssessmentAddedEmail(assessment);
 
         return thesisRepository.save(thesis);
+    }
+
+    public Resource getAssessmentFile(Thesis thesis) {
+        ThesisAssessment assessment = thesis.getAssessments().getFirst();
+
+        PDFBuilder builder = new PDFBuilder("Assessment of \"" + thesis.getTitle() + "\"");
+
+        builder.addSection("Summary", assessment.getSummary());
+        builder.addSection("Positives", assessment.getPositives());
+        builder.addSection("Negatives", assessment.getNegatives());
+        builder.addSection("Grade Suggestion", assessment.getGradeSuggestion());
+
+        return builder.build();
     }
 
     /* GRADING */

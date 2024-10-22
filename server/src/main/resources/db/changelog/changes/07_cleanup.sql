@@ -98,7 +98,50 @@ CREATE TABLE thesis_files
     uploaded_at TIMESTAMP NOT NULL,
     uploaded_by UUID      NOT NULL,
     PRIMARY KEY (file_id),
-    FOREIGN KEY (thesis_id) REFERENCES theses (thesis_id)
+    FOREIGN KEY (thesis_id) REFERENCES theses (thesis_id),
+    FOREIGN KEY (uploaded_by) REFERENCES users (user_id)
 );
 
 ALTER TABLE thesis_comments ADD COLUMN upload_name TEXT;
+
+--changeset emilius:07-cleanup-15
+INSERT INTO thesis_files (file_id, thesis_id, type, filename, upload_name, uploaded_at, uploaded_by)
+SELECT
+    gen_random_uuid(),
+    t.thesis_id,
+    'THESIS',
+    t.final_thesis_filename,
+    t.final_thesis_filename,
+    CURRENT_TIMESTAMP,
+    (SELECT tr.user_id
+     FROM thesis_roles tr
+     WHERE tr.thesis_id = t.thesis_id
+       AND tr.role = 'STUDENT'
+     ORDER BY tr.position
+     LIMIT 1)
+FROM theses t
+WHERE t.final_thesis_filename IS NOT NULL;
+
+INSERT INTO thesis_files (file_id, thesis_id, type, filename, upload_name, uploaded_at, uploaded_by)
+SELECT
+    gen_random_uuid(),
+    t.thesis_id,
+    'PRESENTATION',
+    t.final_presentation_filename,
+    t.final_presentation_filename,
+    CURRENT_TIMESTAMP,
+    (SELECT tr.user_id
+     FROM thesis_roles tr
+     WHERE tr.thesis_id = t.thesis_id
+       AND tr.role = 'STUDENT'
+     ORDER BY tr.position
+     LIMIT 1)
+FROM theses t
+WHERE t.final_presentation_filename IS NOT NULL;
+
+ALTER TABLE theses
+    DROP COLUMN final_thesis_filename,
+    DROP COLUMN final_presentation_filename;
+
+--changeset emilius:07-cleanup-16
+UPDATE thesis_comments SET upload_name = filename

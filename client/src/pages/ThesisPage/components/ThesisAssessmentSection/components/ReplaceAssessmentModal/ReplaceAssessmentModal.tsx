@@ -1,5 +1,5 @@
 import { Button, Modal, Stack, TextInput } from '@mantine/core'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DocumentEditor from '../../../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../../../requests/request'
 import { IThesis } from '../../../../../../requests/responses/thesis'
@@ -9,12 +9,12 @@ import {
 } from '../../../../../../providers/ThesisProvider/hooks'
 import { ApiError } from '../../../../../../requests/handler'
 
-interface ISubmitAssessmentModalProps {
+interface IReplaceAssessmentModalProps {
   opened: boolean
   onClose: () => unknown
 }
 
-const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
+const ReplaceAssessmentModal = (props: IReplaceAssessmentModalProps) => {
   const { opened, onClose } = props
 
   const { thesis } = useLoadedThesisContext()
@@ -46,6 +46,13 @@ const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
       throw new ApiError(response)
     }
   }, 'Assessment submitted successfully')
+
+  useEffect(() => {
+    setSummary(thesis.assessment?.summary || '')
+    setPositives(thesis.assessment?.positives || '')
+    setNegatives(thesis.assessment?.negatives || '')
+    setGradeSuggestion(thesis.assessment?.gradeSuggestion || '')
+  }, [thesis.assessment])
 
   return (
     <Modal opened={opened} onClose={onClose} size='xl' title='Submit Assessment'>
@@ -85,4 +92,4 @@ const SubmitAssessmentModal = (props: ISubmitAssessmentModalProps) => {
   )
 }
 
-export default SubmitAssessmentModal
+export default ReplaceAssessmentModal

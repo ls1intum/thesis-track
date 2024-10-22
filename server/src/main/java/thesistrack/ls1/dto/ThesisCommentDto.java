@@ -9,6 +9,7 @@ public record ThesisCommentDto (
         UUID commentId,
         String message,
         String filename,
+        String uploadName,
         Instant createdAt,
         LightUserDto createdBy
 ) {
@@ -21,6 +22,7 @@ public record ThesisCommentDto (
                 comment.getId(),
                 comment.getMessage(),
                 comment.getFilename(),
+                comment.getUploadName(),
                 comment.getCreatedAt(),
                 LightUserDto.fromUserEntity(comment.getCreatedBy())
         );
