@@ -34,7 +34,7 @@ const DownloadAllFilesButton = () => {
     if (thesisFile) {
       data.push({
         url: `/v2/theses/${thesis.thesisId}/files/${thesisFile.fileId}`,
-        filename: formatThesisFilename(thesis, 'Final', thesisFile.filename, 0),
+        filename: formatThesisFilename(thesis, 'Thesis', thesisFile.filename, 0),
       })
     }
 

@@ -95,6 +95,7 @@ export interface IThesisComment {
 
 export interface IPublishedThesis {
   thesisId: string
+  state: ThesisState
   title: string
   type: string
   startDate: string | null
@@ -130,44 +131,3 @@ export function isPublishedPresentation(presentation: any): presentation is IPub
   return presentation.presentationId && presentation.thesis
 }
 
-export function hasStudentAccess(
-  thesis: IPublishedThesis | undefined,
-  user: ILightUser | undefined,
-) {
-  if (!thesis) {
-    return false
-  }
-
-  const users = [...thesis.students, ...thesis.advisors, ...thesis.supervisors]
-
-  return !!(
-    users.some((row) => row.userId === user?.userId) ||
-    user?.groups.some((name) => name === 'admin')
-  )
-}
-
-export function hasAdvisorAccess(
-  thesis: IPublishedThesis | undefined,
-  user: ILightUser | undefined,
-) {
-  if (!thesis) {
-    return false
-  }
-
-  const users = [...thesis.advisors, ...thesis.supervisors]
-
-  return !!(
-    users.some((row) => row.userId === user?.userId) ||
-    user?.groups.some((name) => name === 'admin')
-  )
-}
-
-export function hasSupervisorAccess(
-  thesis: IPublishedThesis | undefined,
-  user: ILightUser | undefined,
-) {
-  return !!(
-    thesis?.supervisors.some((row) => row.userId === user?.userId) ||
-    user?.groups.some((name) => name === 'admin')
-  )
-}

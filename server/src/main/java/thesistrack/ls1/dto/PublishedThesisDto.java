@@ -1,5 +1,6 @@
 package thesistrack.ls1.dto;
 
+import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.entity.Thesis;
 
 import java.time.Instant;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 public record PublishedThesisDto(
         UUID thesisId,
+        ThesisState state,
         String title,
         String type,
         Instant startDate,
@@ -24,6 +26,7 @@ public record PublishedThesisDto(
 
         return new PublishedThesisDto(
                 thesis.getId(),
+                thesis.getState(),
                 thesis.getTitle(),
                 thesis.getType(),
                 thesis.getStartDate(),

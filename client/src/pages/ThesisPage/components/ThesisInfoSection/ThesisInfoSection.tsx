@@ -10,6 +10,7 @@ import {
 import { Link } from 'react-router-dom'
 import { ApiError } from '../../../../requests/handler'
 import DownloadAllFilesButton from './components/DownloadAllFilesButton/DownloadAllFilesButton'
+import { isThesisClosed } from '../../../../utils/thesis'
 
 const ThesisInfoSection = () => {
   const { thesis, access } = useLoadedThesisContext()
@@ -75,14 +76,14 @@ const ThesisInfoSection = () => {
               </Grid.Col>
               <Grid.Col span={{ md: 6 }}>
                 <Flex justify='flex-end'>
-                  {access.student && !editMode && (
-                    <Group>
-                      <DownloadAllFilesButton />
+                  <Group>
+                    <DownloadAllFilesButton />
+                    {access.student && !editMode && !isThesisClosed(thesis) && (
                       <Button ml='auto' onClick={() => setEditMode(true)}>
                         Edit
                       </Button>
-                    </Group>
-                  )}
+                    )}
+                  </Group>
                   {editMode && (
                     <Group>
                       <Button

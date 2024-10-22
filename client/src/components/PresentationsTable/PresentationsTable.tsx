@@ -1,8 +1,6 @@
 import React, { useState } from 'react'
 import { DataTable, DataTableColumn } from 'mantine-datatable'
 import {
-  hasAdvisorAccess,
-  hasStudentAccess,
   IPublishedPresentation,
   IPublishedThesis,
   isPublishedPresentation,
@@ -20,6 +18,7 @@ import { useThesisUpdateAction } from '../../providers/ThesisProvider/hooks'
 import { doRequest } from '../../requests/request'
 import { ApiError } from '../../requests/handler'
 import { useUser } from '../../hooks/authentication'
+import { hasAdvisorAccess, hasStudentAccess, isThesisClosed } from '../../utils/thesis'
 
 type PresentationColumn =
   | 'state'
@@ -159,18 +158,18 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
       textAlign: 'center',
       width: 180,
       ellipsis: true,
-      render: (presentation) => (
-        <Center onClick={(e) => e.stopPropagation()}>
-          {hasStudentAccess(
-            theses.find((thesis) => thesis.thesisId === presentation.thesisId),
-            user,
-          ) && (
-            <Group gap='xs'>
-              {presentation.state === 'DRAFTED' &&
-                hasAdvisorAccess(
-                  theses.find((thesis) => thesis.thesisId === presentation.thesisId),
-                  user,
-                ) && (
+      render: (presentation) => {
+        const thesis = theses.find((row) => row.thesisId === presentation.thesisId)
+
+        if (!thesis || isThesisClosed(thesis)) {
+          return null
+        }
+
+        return (
+          <Center onClick={(e) => e.stopPropagation()}>
+            {hasStudentAccess(thesis, user) && (
+              <Group gap='xs'>
+                {presentation.state === 'DRAFTED' && hasAdvisorAccess(thesis, user) && (
                   <Button
                     loading={loading}
                     size='xs'
@@ -179,36 +178,29 @@ const PresentationsTable = <T extends IThesisPresentation | IPublishedPresentati
                     <Check />
                   </Button>
                 )}
-              {(presentation.state === 'DRAFTED' ||
-                hasAdvisorAccess(
-                  theses.find((thesis) => thesis.thesisId === presentation.thesisId),
-                  user,
-                )) && (
-                <Button
-                  loading={loading}
-                  size='xs'
-                  onClick={() => setEditPresentationModal(presentation)}
-                >
-                  <Pencil />
-                </Button>
-              )}
-              {(presentation.state === 'DRAFTED' ||
-                hasAdvisorAccess(
-                  theses.find((thesis) => thesis.thesisId === presentation.thesisId),
-                  user,
-                )) && (
-                <Button
-                  loading={loading}
-                  size='xs'
-                  onClick={() => deletePresentation(presentation)}
-                >
-                  <Trash />
-                </Button>
-              )}
-            </Group>
-          )}
-        </Center>
-      ),
+                {(presentation.state === 'DRAFTED' || hasAdvisorAccess(thesis, user)) && (
+                  <Button
+                    loading={loading}
+                    size='xs'
+                    onClick={() => setEditPresentationModal(presentation)}
+                  >
+                    <Pencil />
+                  </Button>
+                )}
+                {(presentation.state === 'DRAFTED' || hasAdvisorAccess(thesis, user)) && (
+                  <Button
+                    loading={loading}
+                    size='xs'
+                    onClick={() => deletePresentation(presentation)}
+                  >
+                    <Trash />
+                  </Button>
+                )}
+              </Group>
+            )}
+          </Center>
+        )
+      },
     },
     ...(extraColumns ?? {}),
   }
