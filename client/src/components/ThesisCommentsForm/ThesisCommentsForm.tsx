@@ -1,36 +1,31 @@
 import { Button, Stack, Textarea } from '@mantine/core'
 import { useState } from 'react'
-import UploadFileModal from '../UploadFileModal/UploadFileModal'
 import { useThesisCommentsContext } from '../../providers/ThesisCommentsProvider/hooks'
 import { Upload } from 'phosphor-react'
+import UploadFileButton from '../UploadFileButton/UploadFileButton'
+import { isThesisClosed } from '../../utils/thesis'
 
 const ThesisCommentsForm = () => {
-  const { postComment, posting } = useThesisCommentsContext()
+  const { postComment, posting, thesis } = useThesisCommentsContext()
 
   const [message, setMessage] = useState('')
   const [file, setFile] = useState<File>()
 
-  const [uploadModal, setUploadModal] = useState(false)
+  if (isThesisClosed(thesis)) {
+    return null
+  }
 
   return (
     <Stack>
-      <UploadFileModal
-        title='Attach File'
-        opened={uploadModal}
-        onClose={() => setUploadModal(false)}
-        onUpload={setFile}
-        maxSize={3 * 1024 * 1024}
-        accept='any'
-      />
       <Textarea
         label='Comment'
         placeholder='Add a comment'
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         rightSection={
-          <Button size='xs' onClick={() => setUploadModal(true)}>
+          <UploadFileButton onUpload={setFile} maxSize={20 * 1024 * 1024} accept='any' size='xs'>
             <Upload />
-          </Button>
+          </UploadFileButton>
         }
         rightSectionWidth={70}
         minRows={5}

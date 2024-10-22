@@ -1,10 +1,10 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Group, Stack, Text } from '@mantine/core'
 import SubmitFinalGradeModal from './components/SubmitFinalGradeModal/SubmitFinalGradeModal'
 import { doRequest } from '../../../../requests/request'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
-import { checkMinimumThesisState } from '../../../../utils/thesis'
+import { checkMinimumThesisState, isThesisClosed } from '../../../../utils/thesis'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
@@ -48,16 +48,18 @@ const ThesisFinalGradeSection = () => {
             ) : (
               <Text ta='center'>No grade added yet</Text>
             )}
-            {access.supervisor && thesis.state === ThesisState.ASSESSED && (
-              <Button ml='auto' onClick={() => setFinalGradeModal(true)}>
-                Add Final Grade
-              </Button>
-            )}
-            {access.supervisor && thesis.state === ThesisState.GRADED && (
-              <Button ml='auto' onClick={onThesisComplete} loading={submitting}>
-                Mark thesis as finished
-              </Button>
-            )}
+            <Group ml='auto'>
+              {access.supervisor && !isThesisClosed(thesis) && (
+                <Button ml='auto' onClick={() => setFinalGradeModal(true)}>
+                  {thesis.grade ? 'Edit Final Grade' : 'Add Final Grade'}
+                </Button>
+              )}
+              {access.supervisor && thesis.state === ThesisState.GRADED && (
+                <Button ml='auto' onClick={onThesisComplete} loading={submitting}>
+                  Mark thesis as finished
+                </Button>
+              )}
+            </Group>
           </Stack>
           <SubmitFinalGradeModal
             opened={finalGradeModal}

@@ -1,22 +1,26 @@
 import { isNotEmpty, useForm } from '@mantine/form'
 import { DateTimePicker, DateValue } from '@mantine/dates'
 import { useEffect } from 'react'
-import {
-  useLoadedThesisContext,
-  useThesisUpdateAction,
-} from '../../../../../../providers/ThesisProvider/hooks'
+import { useThesisUpdateAction } from '../../../../providers/ThesisProvider/hooks'
 import { Accordion, Alert, Button, Modal, Select, Stack, TextInput } from '@mantine/core'
-import { doRequest } from '../../../../../../requests/request'
-import { IThesis, IThesisPresentation } from '../../../../../../requests/responses/thesis'
-import { ApiError } from '../../../../../../requests/handler'
-import { formatPresentationType } from '../../../../../../utils/format'
-import { GLOBAL_CONFIG } from '../../../../../../config/global'
-import PublicPresentationsTable from '../../../../../../components/PublicPresentationsTable/PublicPresentationsTable'
+import { doRequest } from '../../../../requests/request'
+import {
+  IPublishedPresentation,
+  IPublishedThesis,
+  IThesis,
+  IThesisPresentation,
+} from '../../../../requests/responses/thesis'
+import { ApiError } from '../../../../requests/handler'
+import { formatPresentationType } from '../../../../utils/format'
+import { GLOBAL_CONFIG } from '../../../../config/global'
+import PublicPresentationsTable from '../../../PublicPresentationsTable/PublicPresentationsTable'
 
 interface IReplacePresentationModalProps {
   opened: boolean
   onClose: () => unknown
-  presentation?: IThesisPresentation
+  thesis: IPublishedThesis | IThesis | undefined
+  presentation?: IThesisPresentation | IPublishedPresentation
+  onChange?: () => unknown
 }
 
 interface IFormValues {
@@ -29,9 +33,7 @@ interface IFormValues {
 }
 
 const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
-  const { presentation, opened, onClose } = props
-
-  const { thesis } = useLoadedThesisContext()
+  const { thesis, presentation, opened, onClose, onChange } = props
 
   const form = useForm<IFormValues>({
     mode: 'controlled',
@@ -99,8 +101,8 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
     async () => {
       const response = await doRequest<IThesis>(
         presentation
-          ? `/v2/theses/${thesis.thesisId}/presentations/${presentation.presentationId}`
-          : `/v2/theses/${thesis.thesisId}/presentations`,
+          ? `/v2/theses/${presentation.thesisId}/presentations/${presentation.presentationId}`
+          : `/v2/theses/${thesis!.thesisId}/presentations`,
         {
           method: presentation ? 'PUT' : 'POST',
           requiresAuth: true,
@@ -117,6 +119,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
 
       if (response.ok) {
         onClose()
+        onChange?.()
 
         return response.data
       } else {
@@ -135,7 +138,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
     >
       <form onSubmit={form.onSubmit(() => onReplacePresentation())}>
         <Stack gap='md'>
-          {thesis.abstractText ? (
+          {thesis?.abstractText ? (
             <Alert variant='light' color='blue' title='Notice'>
               Please make sure that the thesis title and abstract are up to date before scheduling a
               presentation.
@@ -188,7 +191,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
             type='submit'
             fullWidth
             onClick={onReplacePresentation}
-            disabled={!thesis.abstractText || !form.isValid()}
+            disabled={!thesis?.abstractText || !form.isValid()}
             loading={replacing}
           >
             {presentation ? 'Update Presentation' : 'Create Presentation Draft'}

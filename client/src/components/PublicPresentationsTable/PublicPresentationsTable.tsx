@@ -20,6 +20,7 @@ const PublicPresentationsTable = (props: IPublicPresentationsTableProps) => {
 
   const [presentations, setPresentations] = useState<PaginationResponse<IPublishedPresentation>>()
   const [page, setPage] = useState(0)
+  const [version, setVersion] = useState(0)
 
   useEffect(() => {
     setPresentations(undefined)
@@ -43,7 +44,7 @@ const PublicPresentationsTable = (props: IPublicPresentationsTableProps) => {
         }
       },
     )
-  }, [page, limit, includeDrafts])
+  }, [page, limit, includeDrafts, version])
 
   return (
     <PresentationsTable
@@ -58,9 +59,11 @@ const PublicPresentationsTable = (props: IPublicPresentationsTableProps) => {
               'streamUrl',
               'language',
               'scheduledAt',
+              'actions',
             ]
       }
       presentations={presentations?.content}
+      theses={presentations?.content.map((row) => row.thesis) || []}
       onRowClick={(presentation) => navigate(`/presentations/${presentation.presentationId}`)}
       pagination={{
         totalRecords: presentations?.totalElements ?? 0,
@@ -68,6 +71,7 @@ const PublicPresentationsTable = (props: IPublicPresentationsTableProps) => {
         page: page + 1,
         onPageChange: (newPage) => setPage(newPage - 1),
       }}
+      onChange={() => setVersion((prev) => prev + 1)}
     />
   )
 }

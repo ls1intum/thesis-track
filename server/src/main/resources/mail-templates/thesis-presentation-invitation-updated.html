@@ -8,7 +8,7 @@
     online at [[${presentation.streamUrl}]]
   </div>
   <div th:if="${presentation.location != null and !#strings.isEmpty(presentation.location)}">
-    <span th:if="${presentation.streamUrl != null and !#strings.isEmpty(presentation.streamUrl)}">and&nbsp;</span>offline in <strong>[[${presentation.location}]]</strong>
+    <span th:if="${presentation.streamUrl != null and !#strings.isEmpty(presentation.streamUrl)}">and&nbsp;</span>onsite in <strong>[[${presentation.location}]]</strong>
   </div>
   <br/>
   <div>Title:</div>
@@ -22,9 +22,9 @@
   </div>
 </div>
 
-<p th:inline="text">
+<p>
   <strong>Abstract</strong><br />
-  [[${thesis.abstractText}]]
+  <span th:utext="${thesis.abstractText}"></span>
 </p>
 
 <p th:inline="text">

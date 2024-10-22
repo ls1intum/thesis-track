@@ -54,8 +54,29 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     GERMAN: 'German',
   },
 
-  custom_data: getEnvironmentVariable<Record<string, string>>('CUSTOM_DATA', true) || {
-    GITHUB: 'Github Username',
+  custom_data: getEnvironmentVariable<IGlobalConfig['custom_data']>('CUSTOM_DATA', true) || {
+    GITHUB: {
+      label: 'Github Username',
+      required: false,
+    },
+  },
+
+  thesis_files: getEnvironmentVariable<IGlobalConfig['thesis_files']>('THESIS_FILES', true) || {
+    PRESENTATION: {
+      label: 'Presentation',
+      accept: 'pdf',
+      required: true,
+    },
+    PRESENTATION_SOURCE: {
+      label: 'Presentation Source',
+      accept: 'any',
+      required: false,
+    },
+    FEEDBACK_LOG: {
+      label: 'Feedback Log',
+      accept: 'pdf',
+      required: false,
+    },
   },
 
   privacy_text: getEnvironmentVariable('PRIVACY') || '',

@@ -60,12 +60,6 @@ public class Thesis {
     @JoinColumn(name = "application_id")
     private Application application;
 
-    @Column(name = "final_thesis_filename")
-    private String finalThesisFilename;
-
-    @Column(name = "final_presentation_filename")
-    private String finalPresentationFilename;
-
     @Column(name = "final_grade")
     private String finalGrade;
 
@@ -102,6 +96,10 @@ public class Thesis {
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     @OrderBy("requestedAt ASC")
     private List<ThesisFeedback> feedback = new ArrayList<>();
+
+    @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
+    @OrderBy("uploadedAt DESC")
+    private List<ThesisFile> files = new ArrayList<>();
 
     @OneToMany(mappedBy = "thesis", fetch = FetchType.EAGER)
     private Set<ThesisStateChange> states = new HashSet<>();
@@ -245,6 +243,36 @@ public class Thesis {
     public Optional<ThesisFeedback> getFeedbackItem(UUID feedbackId) {
         for (ThesisFeedback item : getFeedback()) {
             if (item.getId().equals(feedbackId)) {
+                return Optional.of(item);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<ThesisFile> getFileById(UUID fileId) {
+        for (ThesisFile item : getFiles()) {
+            if (item.getId().equals(fileId)) {
+                return Optional.of(item);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<ThesisFile> getLatestFile(String type) {
+        for (ThesisFile item : getFiles()) {
+            if (item.getType().equals(type)) {
+                return Optional.of(item);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<ThesisProposal> getProposalById(UUID proposalId) {
+        for (ThesisProposal item : getProposals()) {
+            if (item.getId().equals(proposalId)) {
                 return Optional.of(item);
             }
         }

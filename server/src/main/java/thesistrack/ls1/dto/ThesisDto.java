@@ -21,9 +21,9 @@ public record ThesisDto (
         Instant createdAt,
 
         ThesisAssessmentDto assessment,
-        ThesisProposalDto proposal,
+        List<ThesisProposalDto> proposals,
         List<ThesisFeedbackDto> feedback,
-        ThesisFilesDto files,
+        List<ThesisFilesDto> files,
         ThesisGradeDto grade,
 
         List<ThesisPresentationDto> presentations,
@@ -59,6 +59,8 @@ public record ThesisDto (
     }
 
     public record ThesisProposalDto(
+            UUID proposalId,
+            String filename,
             Instant createdAt,
             LightUserDto createdBy,
             Instant approvedAt,
@@ -70,6 +72,8 @@ public record ThesisDto (
             }
 
             return new ThesisProposalDto(
+                    proposal.getId(),
+                    proposal.getProposalFilename(),
                     proposal.getCreatedAt(),
                     LightUserDto.fromUserEntity(proposal.getCreatedBy()),
                     proposal.getApprovedAt(),
@@ -79,6 +83,7 @@ public record ThesisDto (
     }
 
     public record ThesisPresentationDto(
+            UUID thesisId,
             UUID presentationId,
             ThesisPresentationState state,
             ThesisPresentationType type,
@@ -96,6 +101,7 @@ public record ThesisDto (
             }
 
             return new ThesisPresentationDto(
+                    presentation.getThesis().getId(),
                     presentation.getId(),
                     presentation.getState(),
                     presentation.getType(),
@@ -135,15 +141,44 @@ public record ThesisDto (
     }
 
     public record ThesisFilesDto(
-            String thesis,
-            String presentation,
-            String proposal
-    ) { }
+            UUID fileId,
+            String type,
+            String filename,
+            String uploadName,
+            Instant uploadedAt,
+            LightUserDto uploadedBy
+    ) {
+        public static ThesisFilesDto fromThesisFileEntity(ThesisFile file) {
+            if (file == null) {
+                return null;
+            }
+
+            return new ThesisFilesDto(
+                    file.getId(),
+                    file.getType(),
+                    file.getFilename(),
+                    file.getUploadName(),
+                    file.getUploadedAt(),
+                    LightUserDto.fromUserEntity(file.getUploadedBy())
+            );
+        }
+    }
 
     public record ThesisGradeDto(
             String finalGrade,
             String feedback
-    ) { }
+    ) {
+        public static ThesisGradeDto fromThesisEntity(Thesis thesis) {
+            if (thesis == null || thesis.getFinalGrade() == null) {
+                return null;
+            }
+
+            return new ThesisGradeDto(
+                    thesis.getFinalGrade(),
+                    thesis.getFinalFeedback()
+            );
+        }
+    }
 
     public record ThesisStateChangeDto(
             ThesisState state,
@@ -204,17 +239,10 @@ public record ThesisDto (
                 thesis.getEndDate(),
                 thesis.getCreatedAt(),
                 protectedAccess && !assessments.isEmpty() ? ThesisAssessmentDto.fromAssessmentEntity(assessments.getFirst()) : null,
-                ThesisProposalDto.fromProposalEntity(!proposals.isEmpty() ? proposals.getFirst() : null),
+                proposals.stream().map(ThesisProposalDto::fromProposalEntity).toList(),
                 thesis.getFeedback().stream().map(ThesisFeedbackDto::fromThesisFeedbackEntity).toList(),
-                new ThesisFilesDto(
-                        thesis.getFinalThesisFilename(),
-                        thesis.getFinalPresentationFilename(),
-                        !proposals.isEmpty() ? proposals.getFirst().getProposalFilename() : null
-                ),
-                thesis.getFinalGrade() != null ? new ThesisGradeDto(
-                        thesis.getFinalGrade(),
-                        thesis.getFinalFeedback()
-                ) : null,
+                thesis.getFiles().stream().map(ThesisFilesDto::fromThesisFileEntity).toList(),
+                ThesisGradeDto.fromThesisEntity(thesis),
                 presentations.stream().map(ThesisPresentationDto::fromPresentationEntity).toList(),
                 students,
                 advisors,

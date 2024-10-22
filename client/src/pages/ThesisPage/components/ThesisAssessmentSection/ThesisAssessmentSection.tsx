@@ -1,18 +1,16 @@
 import { ThesisState } from '../../../../requests/responses/thesis'
-import { useRef, useState } from 'react'
-import { Accordion, Button, Center, Stack, Text, Badge, Group } from '@mantine/core'
-import SubmitAssessmentModal from './components/SubmitAssessmentModal/SubmitAssessmentModal'
+import { useState } from 'react'
+import { Accordion, Button, Stack, Text, Badge, Group } from '@mantine/core'
+import ReplaceAssessmentModal from './components/ReplaceAssessmentModal/ReplaceAssessmentModal'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
-import { checkMinimumThesisState } from '../../../../utils/thesis'
+import { checkMinimumThesisState, isThesisClosed } from '../../../../utils/thesis'
 import { useLoadedThesisContext } from '../../../../providers/ThesisProvider/hooks'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
-import generatePDF, { Margin } from 'react-to-pdf'
 import { formatThesisFilename } from '../../../../utils/format'
+import AuthenticatedFileDownloadButton from '../../../../components/AuthenticatedFileDownloadButton/AuthenticatedFileDownloadButton'
 
 const ThesisAssessmentSection = () => {
   const { thesis, access } = useLoadedThesisContext()
-
-  const targetRef = useRef<HTMLDivElement>(null)
 
   const [assessmentModal, setAssessmentModal] = useState(false)
 
@@ -30,9 +28,9 @@ const ThesisAssessmentSection = () => {
           </Group>
         </Accordion.Control>
         <Accordion.Panel>
-          <Stack gap='md'>
+          <Stack>
             {thesis.assessment ? (
-              <Stack ref={targetRef}>
+              <Stack>
                 <DocumentEditor label='Summary' value={thesis.assessment.summary} />
                 <DocumentEditor label='Positives' value={thesis.assessment.positives} />
                 <DocumentEditor label='Negatives' value={thesis.assessment.negatives} />
@@ -41,30 +39,24 @@ const ThesisAssessmentSection = () => {
             ) : (
               <Text ta='center'>No assessment added yet</Text>
             )}
-            {access.advisor && thesis.state === ThesisState.SUBMITTED && (
-              <Button ml='auto' onClick={() => setAssessmentModal(true)}>
-                Add Assessment
-              </Button>
-            )}
-            {thesis.assessment && (
-              <Center>
-                <Button
+            <Group>
+              {thesis.assessment && (
+                <AuthenticatedFileDownloadButton
+                  url={`/v2/theses/${thesis.thesisId}/assessment`}
+                  filename={formatThesisFilename(thesis, 'Assessment', 'assessment.pdf', 0)}
                   variant='outline'
-                  onClick={() =>
-                    generatePDF(targetRef, {
-                      filename: formatThesisFilename(thesis, 'Assessment'),
-                      page: {
-                        margin: Margin.SMALL,
-                      },
-                    })
-                  }
                 >
                   Download as PDF
+                </AuthenticatedFileDownloadButton>
+              )}
+              {access.advisor && !isThesisClosed(thesis) && (
+                <Button ml='auto' onClick={() => setAssessmentModal(true)}>
+                  {thesis.assessment ? 'Edit Assessment' : 'Add Assessment'}
                 </Button>
-              </Center>
-            )}
+              )}
+            </Group>
           </Stack>
-          <SubmitAssessmentModal
+          <ReplaceAssessmentModal
             opened={assessmentModal}
             onClose={() => setAssessmentModal(false)}
           />

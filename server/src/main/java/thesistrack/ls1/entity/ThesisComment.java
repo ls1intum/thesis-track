@@ -37,6 +37,9 @@ public class ThesisComment {
     @Column(name = "filename")
     private String filename;
 
+    @Column(name = "upload_name")
+    private String uploadName;
+
     @CreationTimestamp
     @NotNull
     @Column(name = "created_at", nullable = false)

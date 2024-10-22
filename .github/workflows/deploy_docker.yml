@@ -115,6 +115,7 @@ jobs:
             echo "GENDERS=${{ vars.GENDERS }}" >> .env.prod
             echo "LANGUAGES=${{ vars.LANGUAGES }}" >> .env.prod
             echo "CUSTOM_DATA=${{ vars.CUSTOM_DATA }}" >> .env.prod
+            echo "THESIS_FILES=${{ vars.THESIS_FILES }}" >> .env.prod
             
             echo "SCIENTIFIC_WRITING_GUIDE=${{ vars.SCIENTIFIC_WRITING_GUIDE }}" >> .env.prod
 

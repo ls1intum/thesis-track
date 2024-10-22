@@ -11,7 +11,6 @@ import { useManagementAccess } from '../../hooks/authentication'
 import { Link } from 'react-router-dom'
 import ApplicationModal from '../../components/ApplicationModal/ApplicationModal'
 import MyTasksSection from './components/MyTasksSection/MyTasksSection'
-import PublicPresentationsSection from './components/PublicPresentationsSection/PublicPresentationsSection'
 import { Pencil } from 'phosphor-react'
 import { ThesisState } from '../../requests/responses/thesis'
 
@@ -39,11 +38,11 @@ const DashboardPage = () => {
               ]
             : undefined
         }
+        limit={200}
       >
         <Stack gap='xs'>
           <Title order={2}>My Theses</Title>
-          {managementAccess && <ThesesGanttChart />}
-          <ThesesTable />
+          {managementAccess ? <ThesesGanttChart /> : <ThesesTable />}
         </Stack>
       </ThesesProvider>
       <ApplicationsProvider
@@ -111,7 +110,6 @@ const DashboardPage = () => {
           />
         </Stack>
       </ApplicationsProvider>
-      <PublicPresentationsSection />
     </Stack>
   )
 }

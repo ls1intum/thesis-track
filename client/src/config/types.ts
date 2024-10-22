@@ -12,8 +12,24 @@ export interface IGlobalConfig {
   study_programs: Record<string, string>
   study_degrees: Record<string, string>
   thesis_types: Record<string, string>
-  custom_data: Record<string, string>
   languages: Record<string, string>
+
+  custom_data: Record<
+    string,
+    {
+      label: string
+      required: boolean
+    }
+  >
+
+  thesis_files: Record<
+    string,
+    {
+      label: string
+      accept: UploadFileType
+      required: boolean
+    }
+  >
 
   privacy_text: string
   imprint_text: string
@@ -27,3 +43,5 @@ export interface IGlobalConfig {
     host: string
   }
 }
+
+export type UploadFileType = 'pdf' | 'image' | 'any'

@@ -17,10 +17,7 @@ import thesistrack.ls1.controller.payload.*;
 import thesistrack.ls1.dto.PaginationDto;
 import thesistrack.ls1.dto.ThesisCommentDto;
 import thesistrack.ls1.dto.ThesisDto;
-import thesistrack.ls1.entity.Thesis;
-import thesistrack.ls1.entity.ThesisComment;
-import thesistrack.ls1.entity.ThesisPresentation;
-import thesistrack.ls1.entity.User;
+import thesistrack.ls1.entity.*;
 import thesistrack.ls1.service.AuthenticationService;
 import thesistrack.ls1.service.ThesisCommentService;
 import thesistrack.ls1.service.ThesisPresentationService;
@@ -248,9 +245,10 @@ public class ThesisController {
 
     /* PROPOSAL ENDPOINTS */
 
-    @GetMapping("/{thesisId}/proposal")
+    @GetMapping("/{thesisId}/proposal/{proposalId}")
     public ResponseEntity<Resource> getProposalFile(
             @PathVariable UUID thesisId,
+            @PathVariable UUID proposalId,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
@@ -260,10 +258,12 @@ public class ThesisController {
             throw new AccessDeniedException("You do not have the required permissions to view this thesis");
         }
 
+        ThesisProposal proposal = thesis.getProposalById(proposalId).orElseThrow();
+
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=proposal_%s.pdf", thesisId))
-                .body(thesisService.getProposalFile(thesis));
+                .body(thesisService.getProposalFile(proposal));
     }
 
     @PostMapping("/{thesisId}/proposal")
@@ -277,6 +277,10 @@ public class ThesisController {
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
             throw new AccessDeniedException("You need to be a student of this thesis to add a proposal");
+        }
+
+        if (thesis.getState() != ThesisState.PROPOSAL && !thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("Only advisors can upload a new proposal if thesis state is not PROPOSAL");
         }
 
         thesis = thesisService.uploadProposal(authenticatedUser, thesis, RequestValidator.validateNotNull(proposalFile));
@@ -320,45 +324,33 @@ public class ThesisController {
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
-    @GetMapping("/{thesisId}/presentation")
-    public ResponseEntity<Resource> getPresentationFile(
+    @PostMapping("/{thesisId}/files")
+    public ResponseEntity<ThesisDto> uploadThesisFile(
             @PathVariable UUID thesisId,
-            JwtAuthenticationToken jwt
-    ) {
-        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
-        Thesis thesis = thesisService.findById(thesisId);
-
-        if (!thesis.hasReadAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You do not have the required permissions to view this thesis");
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=presentation_%s.pdf", thesisId))
-                .body(thesisService.getPresentationFile(thesis));
-    }
-
-    @PutMapping("/{thesisId}/presentation")
-    public ResponseEntity<ThesisDto> uploadPresentation(
-            @PathVariable UUID thesisId,
-            @RequestPart("presentation") MultipartFile presentationFile,
+            @RequestPart("type") String type,
+            @RequestPart("file") MultipartFile file,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to upload a presentation");
+            throw new AccessDeniedException("You need to be a student of this thesis to upload thesis files");
         }
 
-        thesis = thesisService.uploadPresentation(thesis, RequestValidator.validateNotNull(presentationFile));
+        if (thesis.getState() != ThesisState.WRITING && !thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("Only advisors can upload a new file if thesis state is not WRITING");
+        }
+
+        thesis = thesisService.uploadThesisFile(authenticatedUser, thesis, type, RequestValidator.validateNotNull(file));
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
-    @GetMapping("/{thesisId}/thesis")
+    @GetMapping("/{thesisId}/files/{fileId}")
     public ResponseEntity<Resource> getThesisFile(
             @PathVariable UUID thesisId,
+            @PathVariable UUID fileId,
             JwtAuthenticationToken jwt
     ) {
         User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
@@ -368,28 +360,12 @@ public class ThesisController {
             throw new AccessDeniedException("You do not have the required permissions to view this thesis");
         }
 
+        ThesisFile file = thesis.getFileById(fileId).orElseThrow();
+
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=thesis_%s.pdf", thesisId))
-                .body(thesisService.getThesisFile(thesis));
-    }
-
-    @PutMapping("/{thesisId}/thesis")
-    public ResponseEntity<ThesisDto> uploadThesis(
-            @PathVariable UUID thesisId,
-            @RequestPart("thesis") MultipartFile thesisFile,
-            JwtAuthenticationToken jwt
-    ) {
-        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
-        Thesis thesis = thesisService.findById(thesisId);
-
-        if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a student of this thesis to upload a thesis");
-        }
-
-        thesis = thesisService.uploadThesis(thesis, RequestValidator.validateNotNull(thesisFile));
-
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=" + file.getFilename(), thesisId))
+                .body(thesisService.getThesisFile(file));
     }
 
     @PostMapping("/{thesisId}/presentations")
@@ -402,7 +378,7 @@ public class ThesisController {
         Thesis thesis = thesisService.findById(thesisId);
 
         if (!thesis.hasStudentAccess(authenticatedUser)) {
-            throw new AccessDeniedException("You need to be a advisor of this thesis to create a presentation");
+            throw new AccessDeniedException("You need to be a student of this thesis to create a presentation");
         }
 
         thesis = thesisPresentationService.createPresentation(
@@ -565,8 +541,8 @@ public class ThesisController {
         }
 
         return ResponseEntity.ok()
-                .contentType(MediaType.APPLICATION_PDF)
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=comment_%s.pdf", commentId))
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=" + comment.getFilename(), commentId))
                 .body(thesisCommentService.getCommentFile(comment));
     }
 
@@ -589,6 +565,24 @@ public class ThesisController {
     }
 
     /* ASSESSMENT ENDPOINTS */
+
+    @GetMapping("/{thesisId}/assessment")
+    public ResponseEntity<Resource> getAssessmentFile(
+            @PathVariable UUID thesisId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a advisor of this thesis to add an assessment");
+        }
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=assessment.pdf")
+                .body(thesisService.getAssessmentFile(thesis));
+    }
 
     @PostMapping("/{thesisId}/assessment")
     public ResponseEntity<ThesisDto> createAssessment(

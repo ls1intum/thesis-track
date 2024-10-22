@@ -1,7 +1,7 @@
 import HeroSection from './components/HeroSection/HeroSection'
 import TopicsProvider from '../../providers/TopicsProvider/TopicsProvider'
 import TopicsTable from '../../components/TopicsTable/TopicsTable'
-import { Button, Group, Space, Title } from '@mantine/core'
+import { Button, Group, Stack, Title } from '@mantine/core'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PublishedTheses from './components/PublishedTheses/PublishedTheses'
@@ -15,43 +15,44 @@ const LandingPage = () => {
     <div>
       <HeroSection />
       <PublicArea>
-        <TopicsProvider limit={10}>
-          <Title order={2} mb='sm'>
-            Open Topics
-          </Title>
-          <TopicsTable
-            columns={['title', 'types', 'advisor', 'actions']}
-            noBorder
-            extraColumns={{
-              actions: {
-                accessor: 'actions',
-                title: 'Actions',
-                textAlign: 'center',
-                noWrap: true,
-                width: 120,
-                render: (topic) => (
-                  <Group
-                    preventGrowOverflow={false}
-                    justify='center'
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {!topic.closedAt && (
-                      <Button
-                        component={Link}
-                        to={`/submit-application/${topic.topicId}`}
-                        size='xs'
+        <Stack>
+          <TopicsProvider limit={10}>
+            <Stack gap='xs'>
+              <Title order={2}>Open Topics</Title>
+              <TopicsTable
+                columns={['title', 'types', 'advisor', 'actions']}
+                noBorder
+                extraColumns={{
+                  actions: {
+                    accessor: 'actions',
+                    title: 'Actions',
+                    textAlign: 'center',
+                    noWrap: true,
+                    width: 120,
+                    render: (topic) => (
+                      <Group
+                        preventGrowOverflow={false}
+                        justify='center'
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        Apply
-                      </Button>
-                    )}
-                  </Group>
-                ),
-              },
-            }}
-          />
-        </TopicsProvider>
-        <Space my='md' />
-        <PublishedTheses />
+                        {!topic.closedAt && (
+                          <Button
+                            component={Link}
+                            to={`/submit-application/${topic.topicId}`}
+                            size='xs'
+                          >
+                            Apply
+                          </Button>
+                        )}
+                      </Group>
+                    ),
+                  },
+                }}
+              />
+            </Stack>
+          </TopicsProvider>
+          <PublishedTheses />
+        </Stack>
       </PublicArea>
     </div>
   )

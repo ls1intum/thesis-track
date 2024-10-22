@@ -1,29 +1,32 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
 import { useState } from 'react'
-import { Accordion, Button, Center, Grid, Stack, Text } from '@mantine/core'
+import { Accordion, Button, Center, Grid, Group, Stack, Text, Table } from '@mantine/core'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
 import { doRequest } from '../../../../requests/request'
-import { checkMinimumThesisState } from '../../../../utils/thesis'
+import { checkMinimumThesisState, isThesisClosed } from '../../../../utils/thesis'
 import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../providers/ThesisProvider/hooks'
-import AuthenticatedPdfPreview from '../../../../components/AuthenticatedPdfPreview/AuthenticatedPdfPreview'
-import UploadFileModal from '../../../../components/UploadFileModal/UploadFileModal'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import ThesisCommentsForm from '../../../../components/ThesisCommentsForm/ThesisCommentsForm'
 import ThesisCommentsProvider from '../../../../providers/ThesisCommentsProvider/ThesisCommentsProvider'
 import ThesisCommentsList from '../../../../components/ThesisCommentsList/ThesisCommentsList'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
-import ThesisPresentationsTable from './components/ThesisPresentationsTable/ThesisPresentationsTable'
-import { formatThesisFilename } from '../../../../utils/format'
-import ReplacePresentationModal from './components/ReplacePresentationModal/ReplacePresentationModal'
+import { formatDate, formatThesisFilename } from '../../../../utils/format'
+import ReplacePresentationModal from '../../../../components/PresentationsTable/components/ReplacePresentationModal/ReplacePresentationModal'
+import PresentationsTable from '../../../../components/PresentationsTable/PresentationsTable'
+import { GLOBAL_CONFIG } from '../../../../config/global'
+import UploadFileButton from '../../../../components/UploadFileButton/UploadFileButton'
+import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
+import AuthenticatedFileDownloadButton from '../../../../components/AuthenticatedFileDownloadButton/AuthenticatedFileDownloadButton'
+import AuthenticatedFilePreviewButton from '../../../../components/AuthenticatedFilePreviewButton/AuthenticatedFilePreviewButton'
+import { DownloadSimple, Eye, UploadSimple } from 'phosphor-react'
+import FileHistoryTable from '../FileHistoryTable/FileHistoryTable'
 
 const ThesisWritingSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
 
-  const [uploadThesisModal, setUploadThesisModal] = useState(false)
-  const [uploadPresentationModal, setUploadPresentationModal] = useState(false)
   const [createPresentationModal, setCreatePresentationModal] = useState(false)
 
   const [submitting, onFinalSubmission] = useThesisUpdateAction(async () => {
@@ -42,39 +45,20 @@ const ThesisWritingSection = () => {
     }
   }, 'Thesis submitted successfully')
 
-  const onThesisUpload = async (file: File) => {
+  const onFileUpload = async (type: string, file: File) => {
     const formData = new FormData()
 
-    formData.append('thesis', file)
+    formData.append('type', type)
+    formData.append('file', file)
 
-    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/thesis`, {
-      method: 'PUT',
+    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/files`, {
+      method: 'POST',
       requiresAuth: true,
       formData: formData,
     })
 
     if (response.ok) {
-      showSimpleSuccess('Thesis uploaded successfully')
-
-      updateThesis(response.data)
-    } else {
-      showSimpleError(getApiResponseErrorMessage(response))
-    }
-  }
-
-  const onPresentationUpload = async (file: File) => {
-    const formData = new FormData()
-
-    formData.append('presentation', file)
-
-    const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/presentation`, {
-      method: 'PUT',
-      requiresAuth: true,
-      formData: formData,
-    })
-
-    if (response.ok) {
-      showSimpleSuccess('Presentation uploaded successfully')
+      showSimpleSuccess('File uploaded successfully')
 
       updateThesis(response.data)
     } else {
@@ -85,6 +69,28 @@ const ThesisWritingSection = () => {
   if (!checkMinimumThesisState(thesis, ThesisState.WRITING)) {
     return <></>
   }
+
+  const adjustedThesisFiles: typeof GLOBAL_CONFIG.thesis_files = {
+    ...GLOBAL_CONFIG.thesis_files,
+    THESIS: {
+      label: 'Thesis',
+      accept: 'pdf',
+      required: true,
+    },
+  }
+
+  const thesisFile = thesis.files.find((file) => file.type === 'THESIS')
+  const customFiles = Object.fromEntries(
+    Object.keys(GLOBAL_CONFIG.thesis_files).map((type) => [
+      type,
+      thesis.files.find((file) => file.type === type),
+    ]),
+  )
+  const requiredFilesUploaded =
+    !!thesisFile &&
+    !Object.entries(GLOBAL_CONFIG.thesis_files)
+      .filter(([, value]) => value.required)
+      .some(([key]) => !customFiles[key])
 
   return (
     <Accordion variant='separated' defaultValue='open'>
@@ -97,65 +103,144 @@ const ThesisWritingSection = () => {
               <Accordion.Panel>
                 <Stack>
                   <Grid>
-                    <Grid.Col span={{ lg: 6 }}>
-                      <UploadFileModal
-                        title='Upload Thesis'
-                        opened={uploadThesisModal}
-                        onClose={() => setUploadThesisModal(false)}
-                        onUpload={onThesisUpload}
-                        maxSize={20 * 1024 * 1024}
-                        accept='pdf'
-                      />
-                      {thesis.files.thesis ? (
-                        <AuthenticatedPdfPreview
-                          key={thesis.files.thesis}
-                          title='Thesis'
-                          url={`/v2/theses/${thesis.thesisId}/thesis`}
-                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'File' : 'Final')}.pdf`}
-                          height={400}
-                        />
-                      ) : (
-                        <Text ta='center' mb='md'>
-                          No thesis uploaded yet
-                        </Text>
-                      )}
-                      {access.student && thesis.state === ThesisState.WRITING && (
-                        <Center mt='md'>
-                          <Button onClick={() => setUploadThesisModal(true)}>Upload Thesis</Button>
-                        </Center>
-                      )}
+                    <Grid.Col span={{ xl: 6 }}>
+                      <Stack>
+                        {thesisFile ? (
+                          <AuthenticatedFilePreview
+                            key={thesisFile.filename}
+                            url={`/v2/theses/${thesis.thesisId}/files/${thesisFile.fileId}`}
+                            filename={formatThesisFilename(thesis, 'File', thesisFile.filename, 0)}
+                            type='pdf'
+                            aspectRatio={16 / 10}
+                            actionButton={
+                              ((access.student && thesis.state === ThesisState.WRITING) ||
+                                access.advisor) &&
+                              !isThesisClosed(thesis) ? (
+                                <UploadFileButton
+                                  maxSize={20 * 1024 * 1024}
+                                  accept='pdf'
+                                  onUpload={(file) => onFileUpload('THESIS', file)}
+                                >
+                                  Upload Thesis
+                                </UploadFileButton>
+                              ) : undefined
+                            }
+                          />
+                        ) : (
+                          <Stack>
+                            <Text ta='center'>No thesis uploaded yet</Text>
+                            <Center>
+                              <UploadFileButton
+                                maxSize={20 * 1024 * 1024}
+                                accept='pdf'
+                                onUpload={(file) => onFileUpload('THESIS', file)}
+                              >
+                                Upload Thesis
+                              </UploadFileButton>
+                            </Center>
+                          </Stack>
+                        )}
+                      </Stack>
                     </Grid.Col>
-                    <Grid.Col span={{ lg: 6 }}>
-                      <UploadFileModal
-                        title='Upload Presentation'
-                        opened={uploadPresentationModal}
-                        onClose={() => setUploadPresentationModal(false)}
-                        onUpload={onPresentationUpload}
-                        maxSize={20 * 1024 * 1024}
-                        accept='pdf'
-                      />
-                      {thesis.files.presentation ? (
-                        <AuthenticatedPdfPreview
-                          key={thesis.files.presentation}
-                          title='Presentation'
-                          url={`/v2/theses/${thesis.thesisId}/presentation`}
-                          filename={`${formatThesisFilename(thesis, thesis.state === ThesisState.WRITING ? 'Presentation' : 'Final Presentation')}.pdf`}
-                          height={400}
-                        />
-                      ) : (
-                        <Text ta='center' mb='md'>
-                          No presentation uploaded yet
-                        </Text>
-                      )}
-                      {access.student && thesis.state === ThesisState.WRITING && (
-                        <Center mt='md'>
-                          <Button onClick={() => setUploadPresentationModal(true)}>
-                            Upload Presentation
-                          </Button>
-                        </Center>
-                      )}
+                    <Grid.Col span={{ xl: 6 }}>
+                      <Table>
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th>File</Table.Th>
+                            <Table.Th>Uploaded At</Table.Th>
+                            <Table.Th ta='center'>Actions</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>
+                          {Object.entries(GLOBAL_CONFIG.thesis_files).map(([key, value]) => (
+                            <Table.Tr key={key}>
+                              <Table.Td>
+                                <Text>
+                                  {value.label}
+                                  {value.required && (
+                                    <Text component='span' c='red'>
+                                      &nbsp;*
+                                    </Text>
+                                  )}
+                                </Text>
+                              </Table.Td>
+                              <Table.Td>
+                                <Text>{formatDate(customFiles[key]?.uploadedAt)}</Text>
+                              </Table.Td>
+                              <Table.Td>
+                                <Center>
+                                  <Group gap='xs'>
+                                    {customFiles[key] && value.accept !== 'any' && (
+                                      <AuthenticatedFilePreviewButton
+                                        url={`/v2/theses/${thesis.thesisId}/files/${customFiles[key].fileId}`}
+                                        filename={formatThesisFilename(
+                                          thesis,
+                                          value.label,
+                                          customFiles[key].filename,
+                                          0,
+                                        )}
+                                        type={value.accept}
+                                        size='xs'
+                                      >
+                                        <Eye />
+                                      </AuthenticatedFilePreviewButton>
+                                    )}
+                                    {customFiles[key] && (
+                                      <AuthenticatedFileDownloadButton
+                                        url={`/v2/theses/${thesis.thesisId}/files/${customFiles[key].fileId}`}
+                                        filename={formatThesisFilename(
+                                          thesis,
+                                          value.label,
+                                          customFiles[key].filename,
+                                          0,
+                                        )}
+                                        size='xs'
+                                      >
+                                        <DownloadSimple />
+                                      </AuthenticatedFileDownloadButton>
+                                    )}
+                                    {((access.student && thesis.state === ThesisState.WRITING) ||
+                                      access.advisor ||
+                                      (access.student && !value.required)) &&
+                                      !isThesisClosed(thesis) && (
+                                        <UploadFileButton
+                                          onUpload={(file) => onFileUpload(key, file)}
+                                          maxSize={20 * 1024 * 1024}
+                                          accept={value.accept}
+                                          size='xs'
+                                        >
+                                          <UploadSimple />
+                                        </UploadFileButton>
+                                      )}
+                                  </Group>
+                                </Center>
+                              </Table.Td>
+                            </Table.Tr>
+                          ))}
+                        </Table.Tbody>
+                      </Table>
                     </Grid.Col>
                   </Grid>
+                  <FileHistoryTable
+                    data={thesis.files
+                      .filter((file) => adjustedThesisFiles[file.type])
+                      .map((file, index) => ({
+                        name:
+                          adjustedThesisFiles[file.type].label +
+                          ' v' +
+                          thesis.files.filter((a, b) => b >= index && a.type === file.type).length,
+                        url: `/v2/theses/${thesis.thesisId}/files/${file.fileId}`,
+                        filename: formatThesisFilename(
+                          thesis,
+                          adjustedThesisFiles[file.type].label,
+                          file.filename,
+                          thesis.files.filter((a, b) => b >= index && a.type === file.type).length,
+                        ),
+                        type: adjustedThesisFiles[file.type].accept,
+                        uploadedBy: file.uploadedBy,
+                        uploadedAt: file.uploadedAt,
+                      }))}
+                  />
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>
@@ -175,10 +260,23 @@ const ThesisWritingSection = () => {
               <Accordion.Panel>
                 <Stack>
                   <ReplacePresentationModal
+                    thesis={thesis}
                     opened={createPresentationModal}
                     onClose={() => setCreatePresentationModal(false)}
                   />
-                  <ThesisPresentationsTable />
+                  <PresentationsTable
+                    presentations={thesis.presentations}
+                    theses={[thesis]}
+                    columns={[
+                      'state',
+                      'type',
+                      'location',
+                      'streamUrl',
+                      'language',
+                      'scheduledAt',
+                      'actions',
+                    ]}
+                  />
                   {access.student && (
                     <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
                       Create Presentation Draft
@@ -189,20 +287,17 @@ const ThesisWritingSection = () => {
             </Accordion.Item>
           </Accordion>
           <Stack mt='md'>
-            {access.student &&
-              thesis.state === ThesisState.WRITING &&
-              thesis.files.thesis &&
-              thesis.files.presentation && (
-                <ConfirmationButton
-                  confirmationTitle='Final Submission'
-                  confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
-                  ml='auto'
-                  onClick={onFinalSubmission}
-                  loading={submitting}
-                >
-                  Mark Submission as final
-                </ConfirmationButton>
-              )}
+            {access.student && thesis.state === ThesisState.WRITING && requiredFilesUploaded && (
+              <ConfirmationButton
+                confirmationTitle='Final Submission'
+                confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
+                ml='auto'
+                onClick={onFinalSubmission}
+                loading={submitting}
+              >
+                Mark Submission as final
+              </ConfirmationButton>
+            )}
           </Stack>
         </Accordion.Panel>
       </Accordion.Item>

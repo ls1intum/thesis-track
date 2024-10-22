@@ -11,6 +11,7 @@ export enum ThesisState {
 }
 
 export interface IThesisPresentation {
+  thesisId: string
   presentationId: string
   state: string
   type: string
@@ -39,11 +40,14 @@ export interface IThesis {
   students: ILightUser[]
   advisors: ILightUser[]
   supervisors: ILightUser[]
-  files: {
-    thesis: string | null
-    presentation: string | null
-    proposal: string | null
-  }
+  files: Array<{
+    fileId: string
+    type: string
+    filename: string
+    uploadName: string
+    uploadedAt: string
+    uploadedBy: ILightUser
+  }>
   assessment: null | {
     summary: string
     positives: string
@@ -52,12 +56,14 @@ export interface IThesis {
     createdAt: string
     createdBy: ILightUser
   }
-  proposal: null | {
+  proposals: Array<{
+    proposalId: string
+    filename: string
     createdAt: string
     createdBy: ILightUser
     approvedAt: string | null
     approvedBy: ILightUser | null
-  }
+  }>
   feedback: Array<{
     feedbackId: string
     type: string
@@ -82,6 +88,7 @@ export interface IThesisComment {
   commentId: string
   message: string
   filename: string | null
+  uploadName: string | null
   createdAt: string
   createdBy: ILightUser
 }
@@ -99,9 +106,11 @@ export interface IPublishedThesis {
 }
 
 export interface IPublishedPresentation {
+  thesisId: string
   presentationId: string
   state: string
   type: string
+  visibility: string
   location: string | null
   streamUrl: string | null
   language: string
@@ -119,4 +128,46 @@ export function isThesisPresentation(presentation: any): presentation is IThesis
 
 export function isPublishedPresentation(presentation: any): presentation is IPublishedPresentation {
   return presentation.presentationId && presentation.thesis
+}
+
+export function hasStudentAccess(
+  thesis: IPublishedThesis | undefined,
+  user: ILightUser | undefined,
+) {
+  if (!thesis) {
+    return false
+  }
+
+  const users = [...thesis.students, ...thesis.advisors, ...thesis.supervisors]
+
+  return !!(
+    users.some((row) => row.userId === user?.userId) ||
+    user?.groups.some((name) => name === 'admin')
+  )
+}
+
+export function hasAdvisorAccess(
+  thesis: IPublishedThesis | undefined,
+  user: ILightUser | undefined,
+) {
+  if (!thesis) {
+    return false
+  }
+
+  const users = [...thesis.advisors, ...thesis.supervisors]
+
+  return !!(
+    users.some((row) => row.userId === user?.userId) ||
+    user?.groups.some((name) => name === 'admin')
+  )
+}
+
+export function hasSupervisorAccess(
+  thesis: IPublishedThesis | undefined,
+  user: ILightUser | undefined,
+) {
+  return !!(
+    thesis?.supervisors.some((row) => row.userId === user?.userId) ||
+    user?.groups.some((name) => name === 'admin')
+  )
 }

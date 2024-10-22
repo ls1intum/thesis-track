@@ -254,6 +254,7 @@ public class ThesisPresentationService {
     public Thesis deletePresentation(User deletingUser, ThesisPresentation presentation) {
         Thesis thesis = presentation.getThesis();
 
+        thesisPresentationInviteRepository.deleteByPresentationId(presentation.getId());
         thesisPresentationRepository.deleteById(presentation.getId());
 
         List<ThesisPresentation> presentations = new ArrayList<>(thesis.getPresentations().stream()

@@ -18,7 +18,7 @@ const ThesisCommentsList = () => {
   const commentBackgroundColor = useHighlightedBackgroundColor(false)
 
   const downloadCommentFile = async (comment: IThesisComment) => {
-    if (!comment.filename) {
+    if (!comment.uploadName) {
       return
     }
 
@@ -32,7 +32,7 @@ const ThesisCommentsList = () => {
     )
 
     if (response.ok) {
-      downloadFile(new File([response.data], comment.filename))
+      downloadFile(new File([response.data], comment.uploadName))
     } else {
       showSimpleError(getApiResponseErrorMessage(response))
     }

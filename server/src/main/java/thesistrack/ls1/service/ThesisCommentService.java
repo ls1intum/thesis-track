@@ -49,7 +49,8 @@ public class ThesisCommentService {
         comment.setCreatedBy(postingUser);
 
         if (file != null) {
-            comment.setFilename(uploadService.store(file, 10 * 1024 * 1024, UploadFileType.ANY));
+            comment.setUploadName(file.getOriginalFilename());
+            comment.setFilename(uploadService.store(file, 20 * 1024 * 1024, UploadFileType.ANY));
         }
 
         comment = thesisCommentRepository.save(comment);

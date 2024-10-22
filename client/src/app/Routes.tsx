@@ -8,6 +8,10 @@ const PrivacyPage = lazy(() => import('../pages/PrivacyPage/PrivacyPage'))
 const ImprintPage = lazy(() => import('../pages/ImprintPage/ImprintPage'))
 const AboutPage = lazy(() => import('../pages/AboutPage/AboutPage'))
 const ThesisOverviewPage = lazy(() => import('../pages/ThesisOverviewPage/ThesisOverviewPage'))
+const PresentationOverviewPage = lazy(
+  () => import('../pages/PresentationOverviewPage/PresentationOverviewPage'),
+)
+const BrowseThesesPage = lazy(() => import('../pages/BrowseThesesPage/BrowseThesesPage'))
 const DashboardPage = lazy(() => import('../pages/DashboardPage/DashboardPage'))
 const LogoutPage = lazy(() => import('../pages/LogoutPage/LogoutPage'))
 const SettingsPage = lazy(() => import('../pages/SettingsPage/SettingsPage'))
@@ -66,6 +70,14 @@ const AppRoutes = () => {
             }
           />
           <Route
+            path='/presentations'
+            element={
+              <AuthenticatedArea requireAuthentication={false}>
+                <PresentationOverviewPage />
+              </AuthenticatedArea>
+            }
+          />
+          <Route
             path='/presentations/:presentationId'
             element={
               <AuthenticatedArea size='md' requireAuthentication={false}>
@@ -104,7 +116,7 @@ const AppRoutes = () => {
             path='/theses'
             element={
               <AuthenticatedArea>
-                <ThesisOverviewPage />
+                <BrowseThesesPage />
               </AuthenticatedArea>
             }
           />
@@ -113,6 +125,14 @@ const AppRoutes = () => {
             element={
               <AuthenticatedArea>
                 <ThesisPage />
+              </AuthenticatedArea>
+            }
+          />
+          <Route
+            path='/overview'
+            element={
+              <AuthenticatedArea>
+                <ThesisOverviewPage />
               </AuthenticatedArea>
             }
           />

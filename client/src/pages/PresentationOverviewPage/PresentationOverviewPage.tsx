@@ -3,26 +3,25 @@ import {
   CopyButton,
   Group,
   Stack,
-  Text,
   TextInput,
   Title,
   Tooltip,
+  Text,
 } from '@mantine/core'
-import React from 'react'
-import { GLOBAL_CONFIG } from '../../../../config/global'
+import { usePageTitle } from '../../hooks/theme'
+import { GLOBAL_CONFIG } from '../../config/global'
 import { Check, Copy } from 'phosphor-react'
-import { useManagementAccess } from '../../../../hooks/authentication'
-import PublicPresentationsTable from '../../../../components/PublicPresentationsTable/PublicPresentationsTable'
+import PublicPresentationsTable from '../../components/PublicPresentationsTable/PublicPresentationsTable'
 
-const PublicPresentationsSection = () => {
-  const managementAccess = useManagementAccess()
+const PresentationOverviewPage = () => {
+  usePageTitle('Presentations')
 
   const calendarUrl =
     GLOBAL_CONFIG.calendar_url || `${GLOBAL_CONFIG.server_host}/api/v2/calendar/presentations`
 
   return (
-    <Stack gap='xs'>
-      <Title order={2}>Public Presentations</Title>
+    <Stack>
+      <Title>Presentations</Title>
       <Group>
         <Text c='dimmed'>Subscribe to Calendar</Text>
         <div style={{ flexGrow: 1 }}>
@@ -44,9 +43,9 @@ const PublicPresentationsSection = () => {
           </CopyButton>
         </div>
       </Group>
-      <PublicPresentationsTable includeDrafts={managementAccess} />
+      <PublicPresentationsTable includeDrafts={true} />
     </Stack>
   )
 }
 
-export default PublicPresentationsSection
+export default PresentationOverviewPage

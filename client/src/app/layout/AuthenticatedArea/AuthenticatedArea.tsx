@@ -23,6 +23,8 @@ import {
   SignOut,
   FolderSimplePlus,
   PaperPlaneTilt,
+  Table,
+  Presentation,
 } from 'phosphor-react'
 import { useIsSmallerBreakpoint } from '../../../hooks/theme'
 import { useAuthenticationContext, useUser } from '../../../hooks/authentication'
@@ -51,6 +53,12 @@ const links: Array<{
 }> = [
   { link: '/dashboard', label: 'Dashboard', icon: NewspaperClipping, groups: undefined },
   {
+    link: '/presentations',
+    label: 'Presentations',
+    icon: Presentation,
+    groups: undefined,
+  },
+  {
     link: '/submit-application',
     label: 'Submit Application',
     icon: PaperPlaneTilt,
@@ -70,9 +78,15 @@ const links: Array<{
   },
   {
     link: '/theses',
-    label: 'Theses',
+    label: 'Browse Theses',
+    icon: Table,
+    groups: undefined,
+  },
+  {
+    link: '/overview',
+    label: 'Theses Overview',
     icon: Kanban,
-    groups: ['admin', 'student', 'advisor', 'supervisor'],
+    groups: ['admin', 'advisor', 'supervisor'],
   },
 ]
 
