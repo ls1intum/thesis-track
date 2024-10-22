@@ -24,7 +24,7 @@ import { getApiResponseErrorMessage } from '../../requests/handler'
 import ApplicationRejectButton from '../ApplicationRejectButton/ApplicationRejectButton'
 import { useLoggedInUser } from '../../hooks/authentication'
 import AvatarUser from '../AvatarUser/AvatarUser'
-import { formatDate } from '../../utils/format'
+import { formatDate, formatThesisType } from '../../utils/format'
 
 interface IApplicationReviewFormProps {
   application: IApplication
@@ -252,9 +252,9 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           <Select
             label='Thesis Type'
             required={true}
-            data={Object.entries(GLOBAL_CONFIG.thesis_types).map(([key, value]) => ({
+            data={Object.keys(GLOBAL_CONFIG.thesis_types).map((key) => ({
               value: key,
-              label: value,
+              label: formatThesisType(key),
             }))}
             {...form.getInputProps('type')}
           />

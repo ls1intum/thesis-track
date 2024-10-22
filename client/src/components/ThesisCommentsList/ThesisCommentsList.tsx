@@ -9,6 +9,7 @@ import { downloadFile } from '../../utils/blob'
 import { doRequest } from '../../requests/request'
 import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
+import AuthenticatedFileDownloadButton from '../AuthenticatedFileDownloadButton/AuthenticatedFileDownloadButton'
 
 const ThesisCommentsList = () => {
   const { thesis, comments, deleteComment, limit, page, setPage } = useThesisCommentsContext()
@@ -16,27 +17,6 @@ const ThesisCommentsList = () => {
   const user = useLoggedInUser()
 
   const commentBackgroundColor = useHighlightedBackgroundColor(false)
-
-  const downloadCommentFile = async (comment: IThesisComment) => {
-    if (!comment.uploadName) {
-      return
-    }
-
-    const response = await doRequest<Blob>(
-      `/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`,
-      {
-        method: 'GET',
-        requiresAuth: true,
-        responseType: 'blob',
-      },
-    )
-
-    if (response.ok) {
-      downloadFile(new File([response.data], comment.uploadName))
-    } else {
-      showSimpleError(getApiResponseErrorMessage(response))
-    }
-  }
 
   return (
     <Stack>
@@ -49,10 +29,14 @@ const ThesisCommentsList = () => {
             <Paper p='md' radius='sm' style={{ backgroundColor: commentBackgroundColor }}>
               <Group style={{ width: '100%' }}>
                 <Text>{comment.message}</Text>
-                {comment.filename && (
-                  <Button onClick={() => downloadCommentFile(comment)} ml='auto'>
+                {comment.uploadName && (
+                  <AuthenticatedFileDownloadButton
+                    url={`/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`}
+                    filename={comment.uploadName}
+                    ml='auto'
+                  >
                     <Download />
-                  </Button>
+                  </AuthenticatedFileDownloadButton>
                 )}
               </Group>
             </Paper>

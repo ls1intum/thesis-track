@@ -179,7 +179,7 @@ public class MailingService {
                 .addNotificationName("thesis-comments")
                 .addNotificationName("thesis-" + comment.getThesis().getId())
                 .fillThesisCommentPlaceholders(comment)
-                .addStoredAttachment(comment.getFilename(), getUserFilename(comment.getCreatedBy(), "Comment", comment.getFilename()))
+                .addStoredAttachment(comment.getFilename(), getUserFilename(comment.getCreatedBy(), "Comment", comment.getUploadName()))
                 .send(javaMailSender, uploadService);
     }
 

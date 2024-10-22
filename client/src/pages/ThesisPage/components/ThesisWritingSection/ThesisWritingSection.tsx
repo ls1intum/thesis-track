@@ -74,6 +74,7 @@ const ThesisWritingSection = () => {
     ...GLOBAL_CONFIG.thesis_files,
     THESIS: {
       label: 'Thesis',
+      description: 'Thesis (PDF)',
       accept: 'pdf',
       required: true,
     },
@@ -109,7 +110,12 @@ const ThesisWritingSection = () => {
                           <AuthenticatedFilePreview
                             key={thesisFile.filename}
                             url={`/v2/theses/${thesis.thesisId}/files/${thesisFile.fileId}`}
-                            filename={formatThesisFilename(thesis, 'File', thesisFile.filename, 0)}
+                            filename={formatThesisFilename(
+                              thesis,
+                              'Thesis',
+                              thesisFile.filename,
+                              0,
+                            )}
                             type='pdf'
                             aspectRatio={16 / 10}
                             actionButton={
@@ -156,7 +162,7 @@ const ThesisWritingSection = () => {
                             <Table.Tr key={key}>
                               <Table.Td>
                                 <Text>
-                                  {value.label}
+                                  {value.description}
                                   {value.required && (
                                     <Text component='span' c='red'>
                                       &nbsp;*
@@ -277,7 +283,7 @@ const ThesisWritingSection = () => {
                       'actions',
                     ]}
                   />
-                  {access.student && (
+                  {access.student && !isThesisClosed(thesis) && (
                     <Button ml='auto' onClick={() => setCreatePresentationModal(true)}>
                       Create Presentation Draft
                     </Button>

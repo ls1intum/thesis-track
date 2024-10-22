@@ -42,11 +42,23 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
     OTHER: 'Other',
   },
 
-  thesis_types: getEnvironmentVariable<Record<string, string>>('THESIS_TYPES', true) || {
-    BACHELOR: 'Bachelor Thesis',
-    MASTER: 'Master Thesis',
-    INTERDISCIPLINARY_PROJECT: 'Interdisciplinary Project',
-    GUIDED_RESEARCH: 'Guided Research',
+  thesis_types: getEnvironmentVariable<IGlobalConfig['thesis_types']>('THESIS_TYPES', true) || {
+    BACHELOR: {
+      long: 'Bachelor Thesis',
+      short: 'BA',
+    },
+    MASTER: {
+      long: 'Master Thesis',
+      short: 'MA',
+    },
+    INTERDISCIPLINARY_PROJECT: {
+      long: 'Interdisciplinary Project',
+      short: 'IDP',
+    },
+    GUIDED_RESEARCH: {
+      long: 'Guided Research',
+      short: 'GR',
+    },
   },
 
   languages: getEnvironmentVariable<Record<string, string>>('LANGUAGES', true) || {
@@ -64,16 +76,19 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
   thesis_files: getEnvironmentVariable<IGlobalConfig['thesis_files']>('THESIS_FILES', true) || {
     PRESENTATION: {
       label: 'Presentation',
+      description: 'Presentation (PDF)',
       accept: 'pdf',
       required: true,
     },
     PRESENTATION_SOURCE: {
       label: 'Presentation Source',
+      description: 'Presentation Source (KEY, PPTX)',
       accept: 'any',
       required: false,
     },
     FEEDBACK_LOG: {
       label: 'Feedback Log',
+      description: 'Feedback Log (PDF)',
       accept: 'pdf',
       required: false,
     },

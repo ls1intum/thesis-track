@@ -157,7 +157,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
           {application.user.hasCv && (
             <AuthenticatedFilePreview
               url={`/v2/users/${application.user.userId}/cv`}
-              filename={`${formatApplicationFilename(application, 'Application CV')}.pdf`}
+              filename={formatApplicationFilename(application, 'CV', 'file.pdf')}
               type='pdf'
               aspectRatio={16 / 11}
               key={application.user.userId}
@@ -166,7 +166,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
           {application.user.hasExaminationReport && (
             <AuthenticatedFilePreview
               url={`/v2/users/${application.user.userId}/examination-report`}
-              filename={`${formatApplicationFilename(application, 'Application Examination Report')}.pdf`}
+              filename={formatApplicationFilename(application, 'Examination Report', 'file.pdf')}
               type='pdf'
               aspectRatio={16 / 11}
               key={application.user.userId}
@@ -175,7 +175,7 @@ const ApplicationData = (props: IApplicationDataProps) => {
           {application.user.hasDegreeReport && (
             <AuthenticatedFilePreview
               url={`/v2/users/${application.user.userId}/degree-report`}
-              filename={`${formatApplicationFilename(application, 'Application Degree Report')}.pdf`}
+              filename={formatApplicationFilename(application, 'Degree Report', 'file.pdf')}
               type='pdf'
               aspectRatio={16 / 11}
               key={application.user.userId}

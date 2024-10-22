@@ -11,8 +11,15 @@ export interface IGlobalConfig {
   genders: Record<string, string>
   study_programs: Record<string, string>
   study_degrees: Record<string, string>
-  thesis_types: Record<string, string>
   languages: Record<string, string>
+
+  thesis_types: Record<
+    string,
+    {
+      long: string
+      short: string
+    }
+  >
 
   custom_data: Record<
     string,
@@ -26,6 +33,7 @@ export interface IGlobalConfig {
     string,
     {
       label: string
+      description: string
       accept: UploadFileType
       required: boolean
     }

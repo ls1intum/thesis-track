@@ -68,7 +68,7 @@ export function formatThesisFilename(
   originalFilename: string,
   version: number,
 ) {
-  let text = `${wordsToFilename(formatThesisType(thesis.type))}`
+  let text = `${wordsToFilename(formatThesisType(thesis.type, true))}`
 
   if (name) {
     text += ` ${name}`
@@ -87,10 +87,22 @@ export function formatThesisFilename(
   return text
 }
 
-export function formatApplicationFilename(application: IApplication, name: string) {
-  let text = `${name}`
+export function formatApplicationFilename(
+  application: IApplication,
+  name: string,
+  originalFilename: string,
+) {
+  let text = `Application`
+
+  if (name) {
+    text += ` ${name}`
+  }
 
   text += ` ${formatUserFilename(application.user)}`
+
+  const fileParts = originalFilename.split('.')
+
+  text += `.${fileParts[fileParts.length - 1]}`
 
   return text
 }
@@ -131,12 +143,16 @@ export function formatPresentationType(type: string) {
   return type
 }
 
-export function formatThesisType(type: string | null | undefined) {
+export function formatThesisType(type: string | null | undefined, short = false) {
   if (!type) {
     return ''
   }
 
-  return GLOBAL_CONFIG.thesis_types[type] ?? type
+  if (short) {
+    return GLOBAL_CONFIG.thesis_types[type]?.short ?? type
+  }
+
+  return GLOBAL_CONFIG.thesis_types[type]?.long ?? type
 }
 
 export function pluralize(word: string, count: number) {
