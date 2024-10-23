@@ -136,7 +136,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
       onClose={onClose}
       title={presentation ? 'Update Presentation' : 'Create Presentation'}
     >
-      <form onSubmit={form.onSubmit(() => onReplacePresentation())}>
+      <form>
         <Stack gap='md'>
           {thesis?.abstractText ? (
             <Alert variant='light' color='blue' title='Notice'>
@@ -188,7 +188,6 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
           />
           <DateTimePicker label='Scheduled At' required {...form.getInputProps('date')} />
           <Button
-            type='submit'
             fullWidth
             onClick={onReplacePresentation}
             disabled={!thesis?.abstractText || !form.isValid()}

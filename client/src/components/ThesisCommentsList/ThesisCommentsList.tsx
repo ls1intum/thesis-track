@@ -1,14 +1,9 @@
 import { useThesisCommentsContext } from '../../providers/ThesisCommentsProvider/hooks'
-import { Button, Center, Group, Pagination, Paper, Skeleton, Stack, Text } from '@mantine/core'
-import { IThesisComment } from '../../requests/responses/thesis'
+import { Center, Group, Pagination, Paper, Skeleton, Stack, Text } from '@mantine/core'
 import { useLoggedInUser } from '../../hooks/authentication'
 import { formatDate, formatUser } from '../../utils/format'
 import { Download } from 'phosphor-react'
 import { useHighlightedBackgroundColor } from '../../hooks/theme'
-import { downloadFile } from '../../utils/blob'
-import { doRequest } from '../../requests/request'
-import { showSimpleError } from '../../utils/notification'
-import { getApiResponseErrorMessage } from '../../requests/handler'
 import AuthenticatedFileDownloadButton from '../AuthenticatedFileDownloadButton/AuthenticatedFileDownloadButton'
 
 const ThesisCommentsList = () => {

@@ -77,7 +77,7 @@ const ThesisInfoSection = () => {
               <Grid.Col span={{ md: 6 }}>
                 <Flex justify='flex-end'>
                   <Group>
-                    <DownloadAllFilesButton />
+                    {!editMode && <DownloadAllFilesButton />}
                     {access.student && !editMode && !isThesisClosed(thesis) && (
                       <Button ml='auto' onClick={() => setEditMode(true)}>
                         Edit
