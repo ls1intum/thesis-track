@@ -421,7 +421,7 @@ public class ThesisController {
                 RequestValidator.validateStringMaxLength(payload.location(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.streamUrl(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.language(), StringLimits.SHORTTEXT.getLimit()),
-                presentation.getState() == ThesisPresentationState.SCHEDULED ? presentation.getScheduledAt() : RequestValidator.validateNotNull(payload.date())
+                RequestValidator.validateNotNull(payload.date())
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
