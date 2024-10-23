@@ -1,4 +1,4 @@
-import { IPublishedThesis, isThesis, IThesis, ThesisState } from '../requests/responses/thesis'
+import { IPublishedThesis, IThesis, ThesisState } from '../requests/responses/thesis'
 import { ILightUser } from '../requests/responses/user'
 
 export function isThesisClosed(thesis: IThesis | IPublishedThesis) {

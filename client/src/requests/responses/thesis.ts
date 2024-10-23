@@ -130,4 +130,3 @@ export function isThesisPresentation(presentation: any): presentation is IThesis
 export function isPublishedPresentation(presentation: any): presentation is IPublishedPresentation {
   return presentation.presentationId && presentation.thesis
 }
-
