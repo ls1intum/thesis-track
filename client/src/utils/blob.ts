@@ -8,4 +8,5 @@ export function downloadFile(file: File) {
   document.body.appendChild(a)
   a.click()
   window.URL.revokeObjectURL(url)
+  a.remove()
 }
