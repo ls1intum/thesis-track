@@ -48,6 +48,7 @@ const ManageTopicsPage = () => {
                   preventGrowOverflow={false}
                   justify='center'
                   onClick={(e) => e.stopPropagation()}
+                  gap='xs'
                 >
                   {!topic.closedAt && (
                     <Button size='xs' onClick={() => setEditingTopic(topic)}>

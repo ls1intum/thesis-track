@@ -65,11 +65,13 @@ const DownloadAllFilesButton = () => {
     try {
       const zip = new JSZip()
 
+      const fileRequests = files.map((item) => ({ ...item, zip }))
+
       const commentsZip = zip.folder('comments')
       const commentTypes = access.advisor ? ['THESIS', 'ADVISOR'] : ['THESIS']
 
       for (const commentType of commentTypes) {
-        const commentResponse = await doRequest<PaginationResponse<IThesisComment>>(
+        const response = await doRequest<PaginationResponse<IThesisComment>>(
           `/v2/theses/${thesis.thesisId}/comments`,
           {
             method: 'GET',
@@ -82,39 +84,24 @@ const DownloadAllFilesButton = () => {
           },
         )
 
-        if (commentResponse.ok) {
-          for (const comment of commentResponse.data.content) {
-            if (!comment.uploadName) {
+        if (response.ok) {
+          for (const comment of response.data.content) {
+            if (!comment.uploadName || !commentsZip) {
               continue
             }
 
-            const response = await doRequest<Blob>(
-              `/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`,
-              {
-                method: 'GET',
-                requiresAuth: true,
-                responseType: 'blob',
-              },
-            )
-
-            if (response.ok) {
-              if (commentsZip) {
-                const file = new File([response.data], comment.uploadName, {
-                  type: 'application/octet-stream',
-                })
-
-                commentsZip.file(comment.uploadName, file)
-              }
-            } else {
-              return showSimpleError(getApiResponseErrorMessage(response))
-            }
+            fileRequests.push({
+              url: `/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`,
+              filename: comment.uploadName,
+              zip: commentsZip,
+            })
           }
         } else {
-          return showSimpleError(getApiResponseErrorMessage(commentResponse))
+          return showSimpleError(getApiResponseErrorMessage(response))
         }
       }
 
-      for (const item of files) {
+      for (const item of fileRequests) {
         const response = await doRequest<Blob>(item.url, {
           method: 'GET',
           requiresAuth: true,
@@ -126,7 +113,7 @@ const DownloadAllFilesButton = () => {
             type: 'application/octet-stream',
           })
 
-          zip.file(item.filename, file)
+          item.zip.file(item.filename, file)
         } else {
           return showSimpleError(getApiResponseErrorMessage(response))
         }
