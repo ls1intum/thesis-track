@@ -41,6 +41,7 @@ const ReviewApplicationPage = () => {
       fetchAll={true}
       limit={10}
       defaultStates={[ApplicationState.NOT_ASSESSED]}
+      showOnlyAssignedTopics={true}
     >
       {isSmallScreen && (
         <ApplicationModal

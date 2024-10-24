@@ -16,7 +16,7 @@ const ManageTopicsPage = () => {
   const [createTopicModal, setCreateTopicModal] = useState(false)
 
   return (
-    <TopicsProvider>
+    <TopicsProvider limit={20}>
       <Stack gap='md'>
         <Group>
           <Title>Manage Topics</Title>

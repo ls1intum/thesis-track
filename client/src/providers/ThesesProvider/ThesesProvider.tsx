@@ -9,13 +9,13 @@ import { getApiResponseErrorMessage } from '../../requests/handler'
 
 interface IThesesProviderProps {
   fetchAll?: boolean
-  limit?: number
+  limit: number
   defaultStates?: ThesisState[]
   hideIfEmpty?: boolean
 }
 
 const ThesesProvider = (props: PropsWithChildren<IThesesProviderProps>) => {
-  const { children, fetchAll = false, limit = 20, hideIfEmpty = false, defaultStates } = props
+  const { children, fetchAll = false, limit, hideIfEmpty = false, defaultStates } = props
 
   const [theses, setTheses] = useState<PaginationResponse<IThesis>>()
   const [page, setPage] = useState(0)

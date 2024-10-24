@@ -101,7 +101,7 @@ const NotificationSettings = () => {
           ml='auto'
         />
       </Group>
-      <ThesesProvider>
+      <ThesesProvider limit={10}>
         <ThesesTable
           columns={['title', 'type', 'students', 'advisors', 'supervisors', 'actions']}
           extraColumns={{

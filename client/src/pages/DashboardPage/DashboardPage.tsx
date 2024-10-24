@@ -47,6 +47,7 @@ const DashboardPage = () => {
       </ThesesProvider>
       <ApplicationsProvider
         hideIfEmpty={true}
+        limit={10}
         defaultTopics={[]}
         defaultStates={[]}
         emptyComponent={

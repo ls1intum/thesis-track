@@ -89,7 +89,7 @@ const ThesisData = (props: IThesisDataProps) => {
         <DocumentEditor label='Additional Information' value={thesis.infoText} />
       )}
       {additionalInformation.includes('advisor-comments') && access.advisor && isThesis(thesis) && (
-        <ThesisCommentsProvider thesis={thesis} commentType='ADVISOR'>
+        <ThesisCommentsProvider limit={10} thesis={thesis} commentType='ADVISOR'>
           <Divider />
           <Title order={4}>Advisor Comments (Not visible to student)</Title>
           <ThesisCommentsList />
