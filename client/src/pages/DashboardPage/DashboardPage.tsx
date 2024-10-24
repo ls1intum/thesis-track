@@ -47,6 +47,8 @@ const DashboardPage = () => {
       </ThesesProvider>
       <ApplicationsProvider
         hideIfEmpty={true}
+        defaultTopics={[]}
+        defaultStates={[]}
         emptyComponent={
           !managementAccess ? (
             <Stack>
