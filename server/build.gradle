@@ -36,6 +36,16 @@ dependencies {
 	implementation "com.itextpdf:itext-core:8.0.5"
 	implementation "com.itextpdf:html2pdf:5.0.5"
 
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
+
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 	compileOnly "org.projectlombok:lombok"
 	annotationProcessor "org.projectlombok:lombok"
+}
+
+test {
+	useJUnitPlatform()
 }
