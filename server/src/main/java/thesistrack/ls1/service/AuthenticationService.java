@@ -54,7 +54,7 @@ public class AuthenticationService {
                 .filter(authority -> authority.getAuthority().startsWith("ROLE_"))
                 .map(authority -> authority.getAuthority().replace("ROLE_", "")).toList();
 
-        User user = this.userRepository.findByUniversityId(universityId).orElseGet(() -> {
+        User user = userRepository.findByUniversityId(universityId).orElseGet(() -> {
             User newUser = new User();
             Instant currentTime = Instant.now();
 
@@ -78,7 +78,10 @@ public class AuthenticationService {
             user.setLastName(lastName);
         }
 
-        user = this.userRepository.save(user);
+        user = userRepository.save(user);
+
+        userGroupRepository.deleteByUserId(user.getId());
+
         Set<UserGroup> userGroups = new HashSet<>();
 
         for (String group : groups) {
@@ -91,7 +94,7 @@ public class AuthenticationService {
             entity.setUser(user);
             entity.setId(entityId);
 
-            userGroups.add(this.userGroupRepository.save(entity));
+            userGroups.add(userGroupRepository.save(entity));
         }
 
         user.setGroups(userGroups);
