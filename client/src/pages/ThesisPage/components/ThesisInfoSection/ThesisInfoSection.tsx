@@ -55,12 +55,14 @@ const ThesisInfoSection = () => {
               value={abstractText}
               editMode={editMode}
               onChange={(e) => setAbstractText(e.target.value)}
+              maxLength={2000}
             />
             <DocumentEditor
               label='Additional Information (Important links, repositories etc.)'
               value={infoText}
               editMode={editMode}
               onChange={(e) => setInfoText(e.target.value)}
+              maxLength={2000}
             />
             <Grid>
               <Grid.Col span={{ md: 6 }}>

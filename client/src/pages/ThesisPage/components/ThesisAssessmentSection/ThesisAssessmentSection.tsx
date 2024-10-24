@@ -32,8 +32,8 @@ const ThesisAssessmentSection = () => {
             {thesis.assessment ? (
               <Stack>
                 <DocumentEditor label='Summary' value={thesis.assessment.summary} />
-                <DocumentEditor label='Positives' value={thesis.assessment.positives} />
-                <DocumentEditor label='Negatives' value={thesis.assessment.negatives} />
+                <DocumentEditor label='Strengths' value={thesis.assessment.positives} />
+                <DocumentEditor label='Weaknesses' value={thesis.assessment.negatives} />
                 <LabeledItem label='Grade Suggestion' value={thesis.assessment.gradeSuggestion} />
               </Stack>
             ) : (

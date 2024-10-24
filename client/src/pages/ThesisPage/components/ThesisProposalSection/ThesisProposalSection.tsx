@@ -174,7 +174,7 @@ const ThesisProposalSection = () => {
               type='PROPOSAL'
               allowEdit={thesis.state === ThesisState.PROPOSAL}
             />
-            {thesis.proposals.length > 1 && (
+            {access.student && (
               <FileHistoryTable
                 data={thesis.proposals.map((row, index) => ({
                   filename: formatThesisFilename(
@@ -188,6 +188,24 @@ const ThesisProposalSection = () => {
                   uploadedBy: row.createdBy,
                   uploadedAt: row.createdAt,
                   name: `Proposal v${thesis.proposals.length - index}`,
+                  onDelete:
+                    access.advisor && !isThesisClosed(thesis)
+                      ? async () => {
+                          const response = await doRequest<IThesis>(
+                            `/v2/theses/${thesis.thesisId}/proposal/${row.proposalId}`,
+                            {
+                              method: 'DELETE',
+                              requiresAuth: true,
+                            },
+                          )
+
+                          if (response.ok) {
+                            updateThesis(response.data)
+                          } else {
+                            showSimpleError(getApiResponseErrorMessage(response))
+                          }
+                        }
+                      : undefined,
                 }))}
               />
             )}

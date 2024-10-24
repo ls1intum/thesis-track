@@ -16,9 +16,10 @@ import { useLoggedInUser } from '../../hooks/authentication'
 
 interface IApplicationsProviderProps {
   fetchAll?: boolean
-  limit?: number
+  limit: number
   defaultStates?: ApplicationState[]
   defaultTopics?: string[]
+  showOnlyAssignedTopics?: boolean
   hideIfEmpty?: boolean
   emptyComponent?: ReactNode
 }
@@ -26,10 +27,11 @@ interface IApplicationsProviderProps {
 const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProps>) => {
   const {
     children,
-    fetchAll = false,
-    limit = 50,
+    limit,
     defaultStates,
     defaultTopics,
+    showOnlyAssignedTopics,
+    fetchAll = false,
     hideIfEmpty = false,
     emptyComponent,
   } = props
@@ -54,7 +56,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
   const adjustedFilters = useMemo(() => {
     const copiedFilters = { ...filters }
 
-    if (!user.groups.includes('admin') && !copiedFilters.topics?.length && topics) {
+    if (showOnlyAssignedTopics && typeof copiedFilters.topics === 'undefined' && topics) {
       copiedFilters.topics = [
         'NO_TOPIC',
         ...topics
@@ -68,7 +70,7 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
     }
 
     return copiedFilters
-  }, [filters, topics, user.userId])
+  }, [filters, topics, user.userId, showOnlyAssignedTopics])
 
   const [debouncedSearch] = useDebouncedValue(adjustedFilters.search || '', 500)
 

@@ -220,6 +220,24 @@ public class ThesisController {
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
+    @DeleteMapping("/{thesisId}/feedback/{feedbackId}")
+    public ResponseEntity<ThesisDto> deleteFeedback(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID feedbackId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be a advisor of this thesis to delete a feedback item");
+        }
+
+        thesis = thesisService.deleteFeedback(thesis, feedbackId);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
     @PostMapping("/{thesisId}/feedback")
     public ResponseEntity<ThesisDto> requestChanges(
             @PathVariable UUID thesisId,
@@ -264,6 +282,24 @@ public class ThesisController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=proposal_%s.pdf", thesisId))
                 .body(thesisService.getProposalFile(proposal));
+    }
+
+    @DeleteMapping("/{thesisId}/proposal/{proposalId}")
+    public ResponseEntity<ThesisDto> deleteProposal(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID proposalId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to delete this proposal");
+        }
+
+        thesis = thesisService.deleteProposal(thesis, proposalId);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/proposal")
@@ -366,6 +402,24 @@ public class ThesisController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=" + file.getFilename(), thesisId))
                 .body(thesisService.getThesisFile(file));
+    }
+
+    @DeleteMapping("/{thesisId}/files/{fileId}")
+    public ResponseEntity<ThesisDto> deleteThesisFile(
+            @PathVariable UUID thesisId,
+            @PathVariable UUID fileId,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You do not have the required permissions to delete this file");
+        }
+
+        thesis = thesisService.deleteThesisFile(thesis, fileId);
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/presentations")

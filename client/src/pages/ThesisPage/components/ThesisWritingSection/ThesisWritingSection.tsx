@@ -176,7 +176,7 @@ const ThesisWritingSection = () => {
                               <Table.Td>
                                 <Center>
                                   <Group gap='xs'>
-                                    {customFiles[key] && value.accept !== 'any' && (
+                                    {customFiles[key] && (
                                       <AuthenticatedFilePreviewButton
                                         url={`/v2/theses/${thesis.thesisId}/files/${customFiles[key].fileId}`}
                                         filename={formatThesisFilename(
@@ -227,26 +227,48 @@ const ThesisWritingSection = () => {
                       </Table>
                     </Grid.Col>
                   </Grid>
-                  <FileHistoryTable
-                    data={thesis.files
-                      .filter((file) => adjustedThesisFiles[file.type])
-                      .map((file, index) => ({
-                        name:
-                          adjustedThesisFiles[file.type].label +
-                          ' v' +
-                          thesis.files.filter((a, b) => b >= index && a.type === file.type).length,
-                        url: `/v2/theses/${thesis.thesisId}/files/${file.fileId}`,
-                        filename: formatThesisFilename(
-                          thesis,
-                          adjustedThesisFiles[file.type].label,
-                          file.filename,
-                          thesis.files.filter((a, b) => b >= index && a.type === file.type).length,
-                        ),
-                        type: adjustedThesisFiles[file.type].accept,
-                        uploadedBy: file.uploadedBy,
-                        uploadedAt: file.uploadedAt,
-                      }))}
-                  />
+                  {access.student && (
+                    <FileHistoryTable
+                      data={thesis.files
+                        .filter((file) => adjustedThesisFiles[file.type])
+                        .map((file, index) => ({
+                          name:
+                            adjustedThesisFiles[file.type].label +
+                            ' v' +
+                            thesis.files.filter((a, b) => b >= index && a.type === file.type)
+                              .length,
+                          url: `/v2/theses/${thesis.thesisId}/files/${file.fileId}`,
+                          filename: formatThesisFilename(
+                            thesis,
+                            adjustedThesisFiles[file.type].label,
+                            file.filename,
+                            thesis.files.filter((a, b) => b >= index && a.type === file.type)
+                              .length,
+                          ),
+                          type: adjustedThesisFiles[file.type].accept,
+                          uploadedBy: file.uploadedBy,
+                          uploadedAt: file.uploadedAt,
+                          onDelete:
+                            access.advisor && !isThesisClosed(thesis)
+                              ? async () => {
+                                  const response = await doRequest<IThesis>(
+                                    `/v2/theses/${thesis.thesisId}/files/${file.fileId}`,
+                                    {
+                                      method: 'DELETE',
+                                      requiresAuth: true,
+                                    },
+                                  )
+
+                                  if (response.ok) {
+                                    updateThesis(response.data)
+                                  } else {
+                                    showSimpleError(getApiResponseErrorMessage(response))
+                                  }
+                                }
+                              : undefined,
+                        }))}
+                    />
+                  )}
                 </Stack>
               </Accordion.Panel>
             </Accordion.Item>
@@ -254,7 +276,7 @@ const ThesisWritingSection = () => {
               <Accordion.Control>Comments</Accordion.Control>
               <Accordion.Panel>
                 <Stack>
-                  <ThesisCommentsProvider thesis={thesis} commentType='THESIS'>
+                  <ThesisCommentsProvider limit={10} thesis={thesis} commentType='THESIS'>
                     <ThesisCommentsList />
                     {access.student && <ThesisCommentsForm />}
                   </ThesisCommentsProvider>

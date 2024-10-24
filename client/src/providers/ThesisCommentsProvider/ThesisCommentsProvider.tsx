@@ -9,11 +9,11 @@ import { getApiResponseErrorMessage } from '../../requests/handler'
 interface IThesisCommentsProviderProps {
   thesis: IThesis
   commentType: 'THESIS' | 'ADVISOR'
-  limit?: number
+  limit: number
 }
 
 const ThesisCommentsProvider = (props: PropsWithChildren<IThesisCommentsProviderProps>) => {
-  const { children, thesis, commentType, limit = 10 } = props
+  const { children, thesis, commentType, limit } = props
 
   const [submitting, setSubmitting] = useState(false)
   const [page, setPage] = useState(0)

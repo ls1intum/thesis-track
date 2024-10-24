@@ -7,6 +7,7 @@ import { doRequest } from '../../requests/request'
 import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
 import { UploadFileType } from '../../config/types'
+import { getAdjustedFileType } from '../../utils/file'
 
 interface IAuthenticatedFilePreviewProps extends BoxProps {
   url: string
@@ -37,11 +38,16 @@ const AuthenticatedFilePreview = (props: IAuthenticatedFilePreviewProps) => {
           if (response.ok) {
             const mimeType: Record<UploadFileType, string> = {
               pdf: 'application/pdf',
+              // image does not need to be a png but it will work in browser anyway.
               image: 'image/png',
               any: 'application/octet-stream',
             }
 
-            setFile(new File([response.data], filename, { type: mimeType[type] }))
+            setFile(
+              new File([response.data], filename, {
+                type: mimeType[getAdjustedFileType(filename, type)],
+              }),
+            )
           } else {
             showSimpleError(getApiResponseErrorMessage(response))
           }

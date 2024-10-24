@@ -22,7 +22,7 @@ const ThesisAdvisorCommentsSection = () => {
         </Accordion.Control>
         <Accordion.Panel>
           <Stack>
-            <ThesisCommentsProvider thesis={thesis} commentType='ADVISOR'>
+            <ThesisCommentsProvider limit={10} thesis={thesis} commentType='ADVISOR'>
               <ThesisCommentsList />
               <ThesisCommentsForm />
             </ThesisCommentsProvider>

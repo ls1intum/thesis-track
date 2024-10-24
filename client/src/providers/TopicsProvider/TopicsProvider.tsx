@@ -7,12 +7,12 @@ import { PaginationResponse } from '../../requests/responses/pagination'
 
 interface ITopicsProviderProps {
   includeClosedTopics?: boolean
-  limit?: number
+  limit: number
   hideIfEmpty?: boolean
 }
 
 const TopicsProvider = (props: PropsWithChildren<ITopicsProviderProps>) => {
-  const { children, includeClosedTopics = false, limit = 50, hideIfEmpty = false } = props
+  const { children, includeClosedTopics = false, limit, hideIfEmpty = false } = props
 
   const [topics, setTopics] = useState<PaginationResponse<ITopic>>()
   const [page, setPage] = useState(0)

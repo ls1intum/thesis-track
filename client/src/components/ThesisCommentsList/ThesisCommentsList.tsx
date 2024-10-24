@@ -2,9 +2,10 @@ import { useThesisCommentsContext } from '../../providers/ThesisCommentsProvider
 import { Center, Group, Pagination, Paper, Skeleton, Stack, Text } from '@mantine/core'
 import { useLoggedInUser } from '../../hooks/authentication'
 import { formatDate, formatUser } from '../../utils/format'
-import { Download } from 'phosphor-react'
+import { Download, Eye } from 'phosphor-react'
 import { useHighlightedBackgroundColor } from '../../hooks/theme'
 import AuthenticatedFileDownloadButton from '../AuthenticatedFileDownloadButton/AuthenticatedFileDownloadButton'
+import AuthenticatedFilePreviewButton from '../AuthenticatedFilePreviewButton/AuthenticatedFilePreviewButton'
 
 const ThesisCommentsList = () => {
   const { thesis, comments, deleteComment, limit, page, setPage } = useThesisCommentsContext()
@@ -25,13 +26,23 @@ const ThesisCommentsList = () => {
               <Group style={{ width: '100%' }}>
                 <Text>{comment.message}</Text>
                 {comment.uploadName && (
-                  <AuthenticatedFileDownloadButton
-                    url={`/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`}
-                    filename={comment.uploadName}
-                    ml='auto'
-                  >
-                    <Download />
-                  </AuthenticatedFileDownloadButton>
+                  <Group gap='xs' ml='auto'>
+                    <AuthenticatedFilePreviewButton
+                      url={`/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`}
+                      filename={comment.uploadName}
+                      type='any'
+                      size='xs'
+                    >
+                      <Eye />
+                    </AuthenticatedFilePreviewButton>
+                    <AuthenticatedFileDownloadButton
+                      url={`/v2/theses/${thesis.thesisId}/comments/${comment.commentId}/file`}
+                      filename={comment.uploadName}
+                      size='xs'
+                    >
+                      <Download />
+                    </AuthenticatedFileDownloadButton>
+                  </Group>
                 )}
               </Group>
             </Paper>
