@@ -1,6 +1,7 @@
 # Production Setup
 
-Example production [docker-compose.prod.yml](/docker-compose.prod.yml) file
+Example production [docker-compose.prod.yml](/docker-compose.prod.yml) file. 
+You can follow the steps in [deploy_docker.yml](/.github/actions/deploy_docker.yml) to see how it is used.
 
 ## Requirements
 
@@ -97,11 +98,11 @@ volumes:
 
 ## Backup Strategy
 There are 2 places that require backups:
-- The PostgreSQL database. The backup strategy depends on the database setup, but the whole public schema of the connected database should be included in the backup. Example command: `pg_dump -U thesistrack --schema="public" thesistrack > backup_thesistrack_1.sql`
+- The PostgreSQL database. The backup strategy depends on the database setup, but the whole public schema of the connected database should be included in the backup. Example command: `pg_dump -U thesistrack --schema="public" thesistrack > backup_thesistrack.sql`
 - The files stored at `/uploads`. In the docker example, these files are mounted to `./thesis_uploads` and backup system should collect the files from the mounted folder
 
 ## Further Configuration
 
-All further configuration options can be found [here](CONFIGURATION.md) 
+All further environment variables can be found [here](CONFIGURATION.md) 
 
 If you want to modify the emails, you can read about that [here](MAILS.md) 

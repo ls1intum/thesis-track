@@ -46,6 +46,38 @@ jobs:
         with:
           files: server/**
 
+      # Set up Java for server tests
+      - name: Set up JDK 21
+        if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      # Grant execute permission for gradlew
+      - name: Grant execute permission for gradlew
+        if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
+        run: chmod +x ./server/gradlew
+
+      # Run tests for server
+      - name: Run server tests
+        if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
+        working-directory: ./server
+        run: |
+          ./gradlew test
+
+      # Store test results
+      - name: Upload test results
+        if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            ./server/build/reports/tests/
+            ./server/build/test-results/
+          retention-days: 7
+
       - name: Log in to the Container registry
         if: ${{ (steps.changed-files-client-folder.outputs.any_changed == 'true') || (steps.changed-files-server-folder.outputs.any_changed == 'true') }}
         uses: docker/login-action@v3
