@@ -223,6 +223,20 @@ public class ThesisService {
     }
 
     @Transactional
+    public Thesis deleteFeedback(Thesis thesis, UUID feedbackId) {
+        thesis.getFeedbackItem(feedbackId)
+                .orElseThrow(() -> new ResourceNotFoundException("Feedback id not found"));
+
+        thesisFeedbackRepository.deleteById(feedbackId);
+
+        thesis.setFeedback(new ArrayList<>(
+                thesis.getFeedback().stream().filter(feedback -> !feedback.getId().equals(feedbackId)).toList()
+        ));
+
+        return thesis;
+    }
+
+    @Transactional
     public Thesis requestChanges(User authenticatedUser, Thesis thesis, ThesisFeedbackType type, List<RequestChangesPayload.RequestedChange> requestedChanges) {
         for (var requestedChange : requestedChanges) {
             ThesisFeedback feedback = new ThesisFeedback();
@@ -272,6 +286,20 @@ public class ThesisService {
         mailingService.sendProposalUploadedEmail(proposal);
 
         return thesisRepository.save(thesis);
+    }
+
+    @Transactional
+    public Thesis deleteProposal(Thesis thesis, UUID proposalId) {
+        thesis.getProposalById(proposalId)
+                .orElseThrow(() -> new ResourceNotFoundException("Proposal id not found"));
+
+        thesisProposalRepository.deleteById(proposalId);
+
+        thesis.setProposals(new ArrayList<>(
+                thesis.getProposals().stream().filter(proposal -> !proposal.getId().equals(proposalId)).toList()
+        ));
+
+        return thesis;
     }
 
     @Transactional
@@ -332,6 +360,20 @@ public class ThesisService {
         return thesisRepository.save(thesis);
     }
 
+    @Transactional
+    public Thesis deleteThesisFile(Thesis thesis, UUID fileId) {
+        thesis.getFileById(fileId)
+                .orElseThrow(() -> new ResourceNotFoundException("File id not found"));
+
+        thesisFileRepository.deleteById(fileId);
+
+        thesis.setFiles(new ArrayList<>(
+                thesis.getFiles().stream().filter(file -> !file.getId().equals(fileId)).toList()
+        ));
+
+        return thesis;
+    }
+
     public Resource getThesisFile(ThesisFile file) {
         return uploadService.load(file.getFilename());
     }
@@ -377,8 +419,8 @@ public class ThesisService {
         PDFBuilder builder = new PDFBuilder("Assessment of \"" + thesis.getTitle() + "\"");
 
         builder.addSection("Summary", assessment.getSummary());
-        builder.addSection("Positives", assessment.getPositives());
-        builder.addSection("Negatives", assessment.getNegatives());
+        builder.addSection("Strengths", assessment.getPositives());
+        builder.addSection("Weaknesses", assessment.getNegatives());
         builder.addSection("Grade Suggestion", assessment.getGradeSuggestion());
 
         return builder.build();

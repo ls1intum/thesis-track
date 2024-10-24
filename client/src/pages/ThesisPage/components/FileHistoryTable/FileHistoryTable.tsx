@@ -1,11 +1,12 @@
 import { ILightUser } from '../../../../requests/responses/user'
 import { UploadFileType } from '../../../../config/types'
-import { Center, Group, Input, Table, Text } from '@mantine/core'
+import { Button, Center, Group, Input, Table, Text } from '@mantine/core'
 import { formatDate } from '../../../../utils/format'
 import AuthenticatedFilePreviewButton from '../../../../components/AuthenticatedFilePreviewButton/AuthenticatedFilePreviewButton'
-import { DownloadSimple, Eye } from 'phosphor-react'
+import { DownloadSimple, Eye, X } from 'phosphor-react'
 import AuthenticatedFileDownloadButton from '../../../../components/AuthenticatedFileDownloadButton/AuthenticatedFileDownloadButton'
 import AvatarUser from '../../../../components/AvatarUser/AvatarUser'
+import { useState } from 'react'
 
 interface IFileHistoryTableProps {
   data: Array<{
@@ -15,14 +16,27 @@ interface IFileHistoryTableProps {
     filename: string
     uploadedAt: string
     uploadedBy: ILightUser
+    onDelete?: () => PromiseLike<unknown>
   }>
 }
 
 const FileHistoryTable = (props: IFileHistoryTableProps) => {
   const { data } = props
 
+  const [loading, setLoading] = useState(false)
+
   if (data.length === 0) {
     return null
+  }
+
+  const onDelete = async (row: IFileHistoryTableProps['data'][number]) => {
+    setLoading(true)
+
+    try {
+      await row.onDelete?.()
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -52,16 +66,14 @@ const FileHistoryTable = (props: IFileHistoryTableProps) => {
                 <Table.Td width={220}>
                   <Center>
                     <Group gap='xs'>
-                      {row.type !== 'any' && (
-                        <AuthenticatedFilePreviewButton
-                          url={row.url}
-                          filename={row.filename}
-                          type={row.type}
-                          size='xs'
-                        >
-                          <Eye />
-                        </AuthenticatedFilePreviewButton>
-                      )}
+                      <AuthenticatedFilePreviewButton
+                        url={row.url}
+                        filename={row.filename}
+                        type={row.type}
+                        size='xs'
+                      >
+                        <Eye />
+                      </AuthenticatedFilePreviewButton>
                       <AuthenticatedFileDownloadButton
                         url={row.url}
                         filename={row.filename}
@@ -69,6 +81,11 @@ const FileHistoryTable = (props: IFileHistoryTableProps) => {
                       >
                         <DownloadSimple />
                       </AuthenticatedFileDownloadButton>
+                      {row.onDelete && (
+                        <Button loading={loading} size='xs' onClick={() => onDelete(row)}>
+                          <X />
+                        </Button>
+                      )}
                     </Group>
                   </Center>
                 </Table.Td>

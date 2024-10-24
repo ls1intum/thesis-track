@@ -63,20 +63,23 @@ const ReplaceAssessmentModal = (props: IReplaceAssessmentModalProps) => {
           value={summary}
           editMode={true}
           onChange={(e) => setSummary(e.target.value)}
+          maxLength={2000}
         />
         <DocumentEditor
           required
-          label='Positives'
+          label='Strengths'
           value={positives}
           editMode={true}
           onChange={(e) => setPositives(e.target.value)}
+          maxLength={2000}
         />
         <DocumentEditor
           required
-          label='Negatives'
+          label='Weaknesses'
           value={negatives}
           editMode={true}
           onChange={(e) => setNegatives(e.target.value)}
+          maxLength={2000}
         />
         <TextInput
           label='Grade Suggestion'

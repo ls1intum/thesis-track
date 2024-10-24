@@ -3,6 +3,7 @@ import { Button, Modal } from '@mantine/core'
 import { PropsWithChildren, useState } from 'react'
 import AuthenticatedFilePreview from '../AuthenticatedFilePreview/AuthenticatedFilePreview'
 import { UploadFileType } from '../../config/types'
+import { getAdjustedFileType } from '../../utils/file'
 
 interface IAuthenticatedFilePreviewButtonProps extends ButtonProps {
   url: string
@@ -26,6 +27,12 @@ const AuthenticatedFilePreviewButton = (
   } = props
 
   const [modal, setModal] = useState(false)
+
+  const adjustedFileType = getAdjustedFileType(filename, type)
+
+  if (adjustedFileType === 'any') {
+    return null
+  }
 
   return (
     <Button onClick={() => setModal(true)} {...buttonProps}>

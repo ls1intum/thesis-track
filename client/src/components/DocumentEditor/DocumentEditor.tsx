@@ -100,7 +100,7 @@ const DocumentEditor = (props: IDocumentEditorProps) => {
               {wrapperProps.error}
             </Text>
           )}
-          {maxLength && (
+          {maxLength && editMode && (
             <Text ta='right' c='dimmed' fz='xs' ml='auto'>
               {editor?.getText().length || 0} / {maxLength}
             </Text>

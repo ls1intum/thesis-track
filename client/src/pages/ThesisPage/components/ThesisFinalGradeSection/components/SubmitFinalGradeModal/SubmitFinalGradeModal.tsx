@@ -30,7 +30,7 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
     setVisibility(thesis.visibility)
   }, [thesis])
 
-  const isEmpty = !finalGrade || !feedback
+  const isEmpty = !finalGrade
 
   const [submitting, onGradeSubmit] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/grade`, {
@@ -68,7 +68,6 @@ const SubmitFinalGradeModal = (props: ISubmitFinalGradeModalProps) => {
           onChange={(e) => setFinalGrade(e.target.value)}
         />
         <DocumentEditor
-          required
           label='Feedback (Visible to student)'
           value={feedback}
           onChange={(e) => setFeedback(e.target.value)}

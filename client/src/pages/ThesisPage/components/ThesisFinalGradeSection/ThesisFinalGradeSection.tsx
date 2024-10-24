@@ -42,7 +42,9 @@ const ThesisFinalGradeSection = () => {
           <Stack>
             {thesis.grade ? (
               <Stack>
-                <DocumentEditor label='Feedback' value={thesis.grade.feedback} />
+                {thesis.grade.feedback && (
+                  <DocumentEditor label='Feedback' value={thesis.grade.feedback} />
+                )}
                 <LabeledItem label='Grade' value={thesis.grade.finalGrade} />
               </Stack>
             ) : (
