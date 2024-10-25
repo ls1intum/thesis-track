@@ -7,6 +7,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import thesistrack.ls1.dto.LightUserDto;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Stream;
@@ -14,7 +16,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class DataFormatterTest {
-
     private enum TestEnum {
         FIRST_VALUE,
         SECOND_VALUE,
@@ -29,7 +30,7 @@ class DataFormatterTest {
                 "m12345",
                 firstName,
                 lastName,
-                firstName + "@example.com",
+                firstName.toLowerCase() + "@example.com",
                 "Bachelor",
                 "Computer Science",
                 new HashMap<>(),
@@ -41,17 +42,18 @@ class DataFormatterTest {
     @Test
     void formatDate_WithValidInstant_ReturnsFormattedDate() {
         Instant instant = Instant.parse("2024-01-15T10:00:00Z");
+        String expected = DateTimeFormatter.ofPattern("dd.MM.yyyy")
+                .withZone(ZoneId.systemDefault())
+                .format(instant);
 
         String result = DataFormatter.formatDate(instant);
 
-        assertTrue(result.matches("\\d{2}\\.\\d{2}\\.\\d{4}"));
+        assertEquals(expected, result);
     }
 
     @Test
-    void formatDate_WithNonInstantValue_ReturnsEmptyString() {
-        String invalidInput = "not an instant";
-
-        String result = DataFormatter.formatDate(invalidInput);
+    void formatDate_WithNullValue_ReturnsEmptyString() {
+        String result = DataFormatter.formatDate(null);
 
         assertEquals("", result);
     }
@@ -59,17 +61,18 @@ class DataFormatterTest {
     @Test
     void formatDateTime_WithValidInstant_ReturnsFormattedDateTime() {
         Instant instant = Instant.parse("2024-01-15T10:00:00Z");
+        String expected = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss z")
+                .withZone(ZoneId.systemDefault())
+                .format(instant);
 
         String result = DataFormatter.formatDateTime(instant);
 
-        assertTrue(result.matches("\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}:\\d{2} \\w+"));
+        assertEquals(expected, result);
     }
 
     @Test
-    void formatDateTime_WithNonInstantValue_ReturnsEmptyString() {
-        String invalidInput = "not an instant";
-
-        String result = DataFormatter.formatDateTime(invalidInput);
+    void formatDateTime_WithNullValue_ReturnsEmptyString() {
+        String result = DataFormatter.formatDateTime(null);
 
         assertEquals("", result);
     }
@@ -84,10 +87,8 @@ class DataFormatterTest {
     }
 
     @Test
-    void formatEnum_WithNonEnumValue_ReturnsEmptyString() {
-        String nonEnumValue = "not an enum";
-
-        String result = DataFormatter.formatEnum(nonEnumValue);
+    void formatEnum_WithNullValue_ReturnsEmptyString() {
+        String result = DataFormatter.formatEnum(null);
 
         assertEquals("", result);
     }
@@ -125,15 +126,6 @@ class DataFormatterTest {
     }
 
     @Test
-    void formatUsers_WithNonUserList_ReturnsEmptyString() {
-        List<String> invalidList = Arrays.asList("Not", "A", "User");
-
-        String result = DataFormatter.formatUsers(invalidList);
-
-        assertEquals("", result);
-    }
-
-    @Test
     void formatUsers_WithNullInput_ReturnsEmptyString() {
         String result = DataFormatter.formatUsers(null);
 
@@ -161,10 +153,8 @@ class DataFormatterTest {
     }
 
     @Test
-    void formatConstantName_WithNonStringValue_ReturnsEmptyString() {
-        Integer nonStringValue = 123;
-
-        String result = DataFormatter.formatConstantName(nonStringValue);
+    void formatConstantName_WithNullValue_ReturnsEmptyString() {
+        String result = DataFormatter.formatConstantName(null);
 
         assertEquals("", result);
     }
@@ -187,29 +177,19 @@ class DataFormatterTest {
     }
 
     @Test
-    void formatOptionalString_WithNonStringValue_ReturnsNotAvailable() {
-        Integer nonStringValue = 123;
-
-        String result = DataFormatter.formatOptionalString(nonStringValue);
-
-        assertEquals("Not available", result);
-    }
-
-    @Test
     void formatSemester_WithValidInstant_ReturnsExpectedSemester() {
-        Instant sixMonthsAgo = Instant.now().minus(182, ChronoUnit.DAYS);
+        Instant now = Instant.now();
+        Instant sixMonthsAgo = now.minus(182, ChronoUnit.DAYS);
 
         String result = DataFormatter.formatSemester(sixMonthsAgo);
 
         int semester = Integer.parseInt(result);
-        assertTrue(semester >= 0 && semester <= 2, "Semester should be approximately 1");
+        assertTrue(semester >= 1 && semester <= 2, "Semester should be 1 or 2");
     }
 
     @Test
-    void formatSemester_WithNonInstantValue_ReturnsEmptyString() {
-        String invalidInput = "not an instant";
-
-        String result = DataFormatter.formatSemester(invalidInput);
+    void formatSemester_WithNullValue_ReturnsEmptyString() {
+        String result = DataFormatter.formatSemester(null);
 
         assertEquals("", result);
     }
