@@ -9,7 +9,7 @@ import AvatarUser from '../../../../components/AvatarUser/AvatarUser'
 import { formatDate } from '../../../../utils/format'
 import { doRequest } from '../../../../requests/request'
 import { ApiError } from '../../../../requests/handler'
-import { X } from 'phosphor-react'
+import { Trash } from 'phosphor-react'
 
 interface IThesisFeedbackOverviewProps {
   type: string
@@ -99,7 +99,7 @@ const ThesisFeedbackOverview = (props: IThesisFeedbackOverviewProps) => {
                     {access.advisor && (
                       <Center>
                         <Button size='xs' loading={deleting} onClick={() => deleteFeedback(item)}>
-                          <X />
+                          <Trash />
                         </Button>
                       </Center>
                     )}
