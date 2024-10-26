@@ -1,7 +1,7 @@
 # Production Setup
 
 Example production [docker-compose.prod.yml](/docker-compose.prod.yml) file. 
-You can follow the steps in [deploy_docker.yml](../.github/actions/deploy_docker.yml) to see how it is used.
+You can follow the steps in [deploy_docker.yml](../.github/workflows/deploy_docker.yml) to see how it is used.
 
 ## Requirements
 
