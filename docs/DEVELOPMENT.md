@@ -1,5 +1,9 @@
 # Development Setup
 
+## Application Architecture
+
+![Architecture](files/subsystem-decomposition.svg)
+
 ## Keycloak
 
 For local development start a keycloak container by following the steps below:
@@ -19,12 +23,6 @@ For local development start a database container by executing the following comm
 ```
 docker compose up db -d
 ```
-
-### Liquibase
-
-Project employs liquibase technology for database migrations. Upon a database schema change, follow the steps:
-1. Create a new changeset by adding a new script in the [changelog folder](/server/src/main/resources/db/changelog/changes)
-2. Include the new changeset script into the [master changelog file](/server/src/main/resources/db/changelog/db.changelog-master.xml)
 
 ## Postfix
 

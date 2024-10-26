@@ -103,7 +103,7 @@ class ThesisServiceTest {
         ThesisFile file = new ThesisFile();
         file.setType("THESIS");
         testThesis.setFiles(List.of(file));
-        when(thesisRepository.save(any(Thesis.class))).thenReturn(testThesis);
+        when(thesisRepository.save(any(Thesis.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = thesisService.submitThesis(testThesis);
 
@@ -121,7 +121,7 @@ class ThesisServiceTest {
                 "test content".getBytes()
         );
         when(uploadService.store(any(), any(), any())).thenReturn("stored-file");
-        when(thesisRepository.save(any(Thesis.class))).thenReturn(testThesis);
+        when(thesisRepository.save(any(Thesis.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = thesisService.uploadProposal(testUser, testThesis, file);
 
@@ -144,7 +144,7 @@ class ThesisServiceTest {
     void acceptProposal_WithValidProposal_AcceptsProposal() {
         ThesisProposal proposal = new ThesisProposal();
         testThesis.setProposals(List.of(proposal));
-        when(thesisRepository.save(any(Thesis.class))).thenReturn(testThesis);
+        when(thesisRepository.save(any(Thesis.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = thesisService.acceptProposal(testUser, testThesis);
 
@@ -155,7 +155,7 @@ class ThesisServiceTest {
 
     @Test
     void submitAssessment_WithValidData_CreatesAssessment() {
-        when(thesisRepository.save(any(Thesis.class))).thenReturn(testThesis);
+        when(thesisRepository.save(any(Thesis.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = thesisService.submitAssessment(
                 testUser,
@@ -173,7 +173,7 @@ class ThesisServiceTest {
 
     @Test
     void gradeThesis_WithValidData_GradesThesis() {
-        when(thesisRepository.save(any(Thesis.class))).thenReturn(testThesis);
+        when(thesisRepository.save(any(Thesis.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = thesisService.gradeThesis(
                 testThesis,
@@ -195,7 +195,7 @@ class ThesisServiceTest {
         User student = EntityMockFactory.createUserWithGroup("Student", "student");
         EntityMockFactory.setupThesisRole(testThesis, student, ThesisRoleName.STUDENT);
 
-        when(thesisRepository.save(any(Thesis.class))).thenReturn(testThesis);
+        when(thesisRepository.save(any(Thesis.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(thesisRepository.searchTheses(
                 any(), any(), any(), any(), any(), any()
         )).thenReturn(new PageImpl<>(Collections.emptyList()));

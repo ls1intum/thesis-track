@@ -95,7 +95,7 @@ class ApplicationServiceTest {
     @Test
     void createApplication_WithValidData_CreatesApplication() {
         when(topicService.findById(testTopic.getId())).thenReturn(testTopic);
-        when(applicationRepository.save(any(Application.class))).thenReturn(testApplication);
+        when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Application result = applicationService.createApplication(
                 testUser,
@@ -132,7 +132,7 @@ class ApplicationServiceTest {
     void accept_WithValidData_AcceptsApplicationAndCreatesThesis() {
         User reviewer = new User();
         reviewer.setId(UUID.randomUUID());
-        when(applicationRepository.save(any(Application.class))).thenReturn(testApplication);
+        when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(thesisService.createThesis(any(), any(), any(), any(), any(), any(), any(), anyBoolean()))
                 .thenReturn(EntityMockFactory.createThesis("Test Thesis"));
 
@@ -156,7 +156,7 @@ class ApplicationServiceTest {
     @Test
     void reject_WithValidData_RejectsApplication() {
         User reviewer = EntityMockFactory.createUser("Reviewer");
-        when(applicationRepository.save(any(Application.class))).thenReturn(testApplication);
+        when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<Application> results = applicationService.reject(
                 reviewer,
@@ -176,8 +176,8 @@ class ApplicationServiceTest {
         reviewer.setId(UUID.randomUUID());
         ApplicationReviewer applicationReviewer = new ApplicationReviewer();
         applicationReviewer.setId(new ApplicationReviewerId());
-        when(applicationReviewerRepository.save(any(ApplicationReviewer.class))).thenReturn(applicationReviewer);
-        when(applicationRepository.save(any(Application.class))).thenReturn(testApplication);
+        when(applicationReviewerRepository.save(any(ApplicationReviewer.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Application result = applicationService.reviewApplication(
                 testApplication,
@@ -195,7 +195,7 @@ class ApplicationServiceTest {
         closer.setId(UUID.randomUUID());
         List<Application> apllicationList = Arrays.asList(testApplication);
         when(applicationRepository.findAllByTopic(testTopic)).thenReturn(apllicationList);
-        when(applicationRepository.save(any(Application.class))).thenReturn(testApplication);
+        when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(topicRepository.save(any(Topic.class))).thenReturn(testTopic);
 
         Topic result = applicationService.closeTopic(
@@ -243,7 +243,7 @@ class ApplicationServiceTest {
 
     @Test
     void updateApplication_WithValidData_UpdatesApplication() {
-        when(applicationRepository.save(any(Application.class))).thenReturn(testApplication);
+        when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(topicService.findById(any())).thenReturn(testTopic);
 
         Application result = applicationService.updateApplication(

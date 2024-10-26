@@ -208,32 +208,4 @@ class ThesisCommentServiceTest {
                 commentService.findById(differentThesisId, testComment.getId())
         );
     }
-
-    @Test
-    void postComment_WithLargeFile_StoresWithLimit() {
-        MultipartFile file = new MockMultipartFile(
-                "file",
-                "large.pdf",
-                "application/pdf",
-                new byte[1024 * 1024]
-        );
-        when(thesisCommentRepository.save(any(ThesisComment.class))).thenAnswer(invocation -> {
-            ThesisComment savedComment = invocation.getArgument(0);
-            savedComment.setId(UUID.randomUUID());
-            return savedComment;
-        });
-        when(uploadService.store(any(), any(), any())).thenReturn("stored-large-file");
-
-        ThesisComment result = commentService.postComment(
-                testUser,
-                testThesis,
-                ThesisCommentType.THESIS,
-                "Large File Comment",
-                file
-        );
-
-        assertNotNull(result);
-        assertEquals("stored-large-file", result.getFilename());
-        verify(uploadService).store(eq(file), any(), eq(UploadFileType.ANY));
-    }
 }

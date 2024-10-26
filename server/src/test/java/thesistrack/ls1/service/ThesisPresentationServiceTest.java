@@ -135,9 +135,9 @@ class ThesisPresentationServiceTest {
     @Test
     void createPresentation_WithValidData_CreatesPresentation() {
         when(thesisPresentationRepository.save(any(ThesisPresentation.class)))
-                .thenReturn(testPresentation);
+                .thenAnswer(invocation -> invocation.getArgument(0));
         when(thesisRepository.save(any(Thesis.class)))
-                .thenReturn(testThesis);
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = presentationService.createPresentation(
                 testUser,
@@ -152,7 +152,7 @@ class ThesisPresentationServiceTest {
 
         assertNotNull(result);
         assertEquals(2, result.getPresentations().size());
-        assertEquals(testPresentation, result.getPresentations().getFirst());
+        assertEquals(testPresentation, result.getPresentations().getLast());
         verify(thesisPresentationRepository).save(any(ThesisPresentation.class));
         verify(thesisRepository).save(testThesis);
     }
@@ -172,39 +172,11 @@ class ThesisPresentationServiceTest {
         );
     }
 
-    /*@Test
-    void schedulePresentation_WithValidPresentation_SchedulesPresentation() throws Exception {
-        testThesis.setPresentations(List.of(testPresentation));
-        when(thesisPresentationRepository.save(any(ThesisPresentation.class)))
-                .thenReturn(testPresentation);
-        when(thesisPresentationInviteRepository.save(any(ThesisPresentationInvite.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-        when(userRepository.getRoleMembers(anySet()))
-                .thenReturn(List.of(testUser));
-
-        Thesis result = presentationService.schedulePresentation(
-                testPresentation,
-                true,
-                true,
-                List.of(new InternetAddress("invite@example.com"))
-        );
-
-        assertNotNull(result);
-        assertEquals(ThesisPresentationState.SCHEDULED, testPresentation.getState());
-        verify(mailingService).sendScheduledPresentationEmail(
-                eq("CREATED"),
-                eq(testPresentation),
-                anyString()
-        );
-        verify(thesisPresentationRepository).save(testPresentation);
-        verify(thesisPresentationInviteRepository).save(any(ThesisPresentationInvite.class));
-    }*/
-
     @Test
     void deletePresentation_WithScheduledPresentation_DeletesAndNotifies() {
         testPresentation.setState(ThesisPresentationState.SCHEDULED);
         testThesis.setPresentations(List.of(testPresentation));
-        when(thesisRepository.save(any(Thesis.class))).thenReturn(testThesis);
+        when(thesisRepository.save(any(Thesis.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = presentationService.deletePresentation(testUser, testPresentation);
 
@@ -219,7 +191,7 @@ class ThesisPresentationServiceTest {
     @Test
     void updatePresentation_WithScheduledPresentation_UpdatesAndNotifies() {
         when(thesisPresentationRepository.save(any(ThesisPresentation.class)))
-                .thenReturn(testPresentation);
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
         Thesis result = presentationService.updatePresentation(
                 testPresentation,

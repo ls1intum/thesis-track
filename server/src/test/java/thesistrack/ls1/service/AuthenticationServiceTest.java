@@ -66,7 +66,7 @@ class AuthenticationServiceTest {
         );
 
         when(uploadService.store(any(), any(), any(UploadFileType.class))).thenReturn("stored-file");
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         User result = authenticationService.updateUserInformation(
                 testUser,
@@ -117,14 +117,7 @@ class AuthenticationServiceTest {
         String email = "yes";
         testUser.setNotificationSettings(new ArrayList<>());
 
-        NotificationSetting newSetting = new NotificationSetting();
-        NotificationSettingId id = new NotificationSettingId();
-        id.setName(settingName);
-        id.setUserId(testUser.getId());
-        newSetting.setId(id);
-        newSetting.setEmail(email);
-
-        when(notificationSettingRepository.save(any(NotificationSetting.class))).thenReturn(newSetting);
+        when(notificationSettingRepository.save(any(NotificationSetting.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<NotificationSetting> result = authenticationService.updateNotificationSettings(
                 testUser,
@@ -142,18 +135,7 @@ class AuthenticationServiceTest {
         String settingName = "existing-notification";
         String email = "yes";
 
-        NotificationSetting existingSetting = new NotificationSetting();
-        NotificationSettingId id = new NotificationSettingId();
-        id.setName(settingName);
-        id.setUserId(testUser.getId());
-        existingSetting.setId(id);
-        existingSetting.setEmail("no");
-
-        List<NotificationSetting> settings = new ArrayList<>();
-        settings.add(existingSetting);
-        testUser.setNotificationSettings(settings);
-
-        when(notificationSettingRepository.save(any(NotificationSetting.class))).thenReturn(existingSetting);
+        when(notificationSettingRepository.save(any(NotificationSetting.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         List<NotificationSetting> result = authenticationService.updateNotificationSettings(
                 testUser,
@@ -163,7 +145,7 @@ class AuthenticationServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals(email, result.get(0).getEmail());
+        assertEquals(email, result.getFirst().getEmail());
         verify(notificationSettingRepository).save(any(NotificationSetting.class));
     }
 }
