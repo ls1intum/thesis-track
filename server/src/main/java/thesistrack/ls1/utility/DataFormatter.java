@@ -35,7 +35,7 @@ public class DataFormatter {
     }
 
     public static String formatEnum(Object value) {
-        if (!value.getClass().isEnum()) {
+        if (value == null || !value.getClass().isEnum()) {
             return "";
         }
 

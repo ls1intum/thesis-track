@@ -28,14 +28,11 @@ public class TopicService {
     private final TopicRoleRepository topicRoleRepository;
     private final UserRepository userRepository;
 
-    private final SessionFactory sessionFactory;
-
     @Autowired
-    public TopicService(TopicRepository topicRepository, TopicRoleRepository topicRoleRepository, UserRepository userRepository, SessionFactory sessionFactory) {
+    public TopicService(TopicRepository topicRepository, TopicRoleRepository topicRoleRepository, UserRepository userRepository) {
         this.topicRepository = topicRepository;
         this.topicRoleRepository = topicRoleRepository;
         this.userRepository = userRepository;
-        this.sessionFactory = sessionFactory;
     }
 
     public Page<Topic> getAll(
@@ -49,7 +46,7 @@ public class TopicService {
     ) {
         Sort.Order order = new Sort.Order(
                 sortOrder.equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
-                HibernateHelper.getColumnName(sessionFactory, Topic.class, sortBy)
+                HibernateHelper.getColumnName(Topic.class, sortBy)
         );
 
         String searchQueryFilter = searchQuery == null || searchQuery.isEmpty() ? null : searchQuery.toLowerCase();
