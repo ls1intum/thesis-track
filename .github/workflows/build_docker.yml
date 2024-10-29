@@ -65,7 +65,7 @@ jobs:
         if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
         working-directory: ./server
         run: |
-          ./gradlew test
+          ./gradlew test --info
 
       - name: Log in to the Container registry
         if: ${{ (steps.changed-files-client-folder.outputs.any_changed == 'true') || (steps.changed-files-server-folder.outputs.any_changed == 'true') }}

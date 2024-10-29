@@ -43,7 +43,7 @@ public class UserControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    void getUsers_AsAdmin_Success() throws Exception {
+    void getUsers_Success() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/v2/users")
                         .header("Authorization", createRandomAdminAuthentication())
                         .param("groups", "admin"))

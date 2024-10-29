@@ -54,4 +54,8 @@ test {
 
 	maxParallelForks = 1
 	forkEvery = 0
+
+	testLogging {
+		events "PASSED", "FAILED", "SKIPPED"
+	}
 }

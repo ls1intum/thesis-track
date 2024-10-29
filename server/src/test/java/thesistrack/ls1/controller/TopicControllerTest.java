@@ -74,7 +74,7 @@ class TopicControllerTest extends BaseIntegrationTest {
     }
 
     @Test
-    void createTopic_AsAdmin_Success() throws Exception {
+    void createTopic_Success() throws Exception {
         UUID advisorId = createTestUser("supervisor", List.of("supervisor", "advisor"));
 
         ReplaceTopicPayload payload = new ReplaceTopicPayload(
