@@ -49,11 +49,10 @@ public class WebSecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/v2/calendar/**").permitAll()
                                 .requestMatchers(HttpMethod.GET, "/v2/avatars/**").permitAll()
                                 .anyRequest().authenticated()
-                );
-
-        http.oauth2ResourceServer(server -> {
-            server.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter));
-        });
+                )
+                .oauth2ResourceServer(server -> {
+                    server.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter));
+                });
 
         return http.build();
     }

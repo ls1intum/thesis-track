@@ -35,11 +35,14 @@ dependencies {
 	implementation "org.mnode.ical4j:ical4j:4.0.4"
 	implementation "com.itextpdf:itext-core:8.0.5"
 	implementation "com.itextpdf:html2pdf:5.0.5"
+	implementation "com.auth0:java-jwt:4.4.0"
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.junit.jupiter:junit-jupiter-api'
 	testImplementation 'org.mockito:mockito-core'
 	testImplementation 'org.mockito:mockito-junit-jupiter'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:postgresql'
 
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 	compileOnly "org.projectlombok:lombok"
