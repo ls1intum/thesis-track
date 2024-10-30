@@ -5,9 +5,9 @@ logging:
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/thesis-track
-    username: thesis-track-postgres
-    password: thesis-track-postgres
+    url: jdbc:postgresql://unreachable:5432/thesis-track
+    username: ""
+    password: ""
     driver-class-name: org.postgresql.Driver
   liquibase:
     enabled: true
@@ -44,7 +44,7 @@ server:
 
 thesis-track:
   keycloak:
-    host: http://localhost:8081
+    host: http://unreachable:8081
     realm-name: thesis-track
     client-id: thesis-track-app
     service-client:
