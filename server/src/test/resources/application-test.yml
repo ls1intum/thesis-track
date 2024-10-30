@@ -1,0 +1,69 @@
+logging:
+level:
+  liquibase: INFO
+  net.fortuna.ical4j.util.Configurator: INFO
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/thesis-track
+    username: thesis-track-postgres
+    password: thesis-track-postgres
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    enabled: true
+    change-log: db/changelog/db.changelog-master.xml
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  thymeleaf:
+    prefix: classpath:/mail-templates/
+    suffix: .html
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+  mail:
+    host: localhost
+    port: 25
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          starttls:
+            enable: true
+
+server:
+  servlet:
+    context-path: /api
+
+thesis-track:
+  keycloak:
+    host: http://localhost:8081
+    realm-name: thesis-track
+    client-id: thesis-track-app
+    service-client:
+      id: thesis-track-service-client
+      secret: ""
+      student-group-name: thesis-students
+  calendar:
+    enabled: false
+    url: ""
+    username: ""
+    password: ""
+  client:
+    host: http://localhost:3000
+  mail:
+    enabled: false
+    sender: test@ios.ase.cit.tum.de
+    signature: ""
+    workspace-url: https://slack.com
+    bcc-recipients: ""
+  storage:
+    upload-location: uploads
+  scientific-writing-guide: ""
