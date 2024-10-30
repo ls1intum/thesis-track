@@ -10,23 +10,23 @@ ThesisTrack was developed as part of this [bachelor's thesis](docs/files/ba-thes
 ## User Documentation
 
 #### Student
-- [Submit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53217)
-- [Edit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53218)
-- [Upload Proposal](https://live.rbg.tum.de/w/artemisintro/53219)
-- [Upload Thesis Files](https://live.rbg.tum.de/w/artemisintro/53220)
-- [Create Presentation Draft](https://live.rbg.tum.de/w/artemisintro/53215)
-- [Manage User Settings](https://live.rbg.tum.de/w/artemisintro/53216)
+- [Submit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53606)
+- [Edit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53607)
+- [Upload Proposal](https://live.rbg.tum.de/w/artemisintro/53608)
+- [Upload Thesis Files](https://live.rbg.tum.de/w/artemisintro/53609)
+- [Create Presentation Draft](https://live.rbg.tum.de/w/artemisintro/53604)
+- [Manage User Settings](https://live.rbg.tum.de/w/artemisintro/53605)
 
 #### Advisor
-- [Create Thesis Topic](https://live.rbg.tum.de/w/artemisintro/53209)
-- [Review Applications](https://live.rbg.tum.de/w/artemisintro/53212)
-- [Review Proposal](https://live.rbg.tum.de/w/artemisintro/53213)
-- [Add Comments](https://live.rbg.tum.de/w/artemisintro/53211)
-- [Schedule Presentation](https://live.rbg.tum.de/w/artemisintro/53214)
-- [Submit Thesis Assessment](https://live.rbg.tum.de/w/artemisintro/53208)
+- [Create Thesis Topic](https://live.rbg.tum.de/w/artemisintro/53599)
+- [Review Applications](https://live.rbg.tum.de/w/artemisintro/53601)
+- [Review Proposal](https://live.rbg.tum.de/w/artemisintro/53602)
+- [Add Comments](https://live.rbg.tum.de/w/artemisintro/53600)
+- [Schedule Presentation](https://live.rbg.tum.de/w/artemisintro/53603)
+- [Submit Thesis Assessment](https://live.rbg.tum.de/w/artemisintro/53598)
 
 #### Supervisor
-- [Add Final Grade + Complete Thesis](https://live.rbg.tum.de/w/artemisintro/53221)
+- [Add Final Grade + Complete Thesis](https://live.rbg.tum.de/w/artemisintro/53610)
 
 ## Developer Documentation
 
