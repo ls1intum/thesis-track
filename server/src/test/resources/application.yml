@@ -1,7 +1,7 @@
 logging:
-level:
-  liquibase: INFO
-  net.fortuna.ical4j.util.Configurator: INFO
+  level:
+    liquibase: INFO
+    net.fortuna.ical4j.util.Configurator: INFO
 
 spring:
   datasource:

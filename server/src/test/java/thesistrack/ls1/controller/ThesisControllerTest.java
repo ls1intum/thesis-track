@@ -3,6 +3,7 @@ package thesistrack.ls1.controller;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -20,6 +21,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Testcontainers
+@ActiveProfiles("test")
 class ThesisControllerTest extends BaseIntegrationTest {
     @Container
     static PostgreSQLContainer<?> dbContainer = new PostgreSQLContainer<>(

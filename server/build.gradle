@@ -58,4 +58,6 @@ test {
 	testLogging {
 		events "PASSED", "FAILED", "SKIPPED"
 	}
+
+	systemProperty 'spring.profiles.active', 'test'
 }
