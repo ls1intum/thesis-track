@@ -10,24 +10,23 @@ ThesisTrack was developed as part of this [bachelor's thesis](docs/files/ba-thes
 ## User Documentation
 
 #### Student
-- Submit Thesis Application
-- Edit Thesis Application
-- Upload Proposal
-- Upload Thesis Files
-- Create Presentation Draft
-- Manage User Settings
+- [Submit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53217)
+- [Edit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53218)
+- [Upload Proposal](https://live.rbg.tum.de/w/artemisintro/53219)
+- [Upload Thesis Files](https://live.rbg.tum.de/w/artemisintro/53220)
+- [Create Presentation Draft](https://live.rbg.tum.de/w/artemisintro/53215)
+- [Manage User Settings](https://live.rbg.tum.de/w/artemisintro/53216)
 
 #### Advisor
-- Create Thesis Topic
-- Review Applications
-- Review Proposal
-- Add Comments
-- Schedule Presentation
-- Submit Thesis Assessment
+- [Create Thesis Topic](https://live.rbg.tum.de/w/artemisintro/53209)
+- [Review Applications](https://live.rbg.tum.de/w/artemisintro/53212)
+- [Review Proposal](https://live.rbg.tum.de/w/artemisintro/53213)
+- [Add Comments](https://live.rbg.tum.de/w/artemisintro/53211)
+- [Schedule Presentation](https://live.rbg.tum.de/w/artemisintro/53214)
+- [Submit Thesis Assessment](https://live.rbg.tum.de/w/artemisintro/53208)
 
 #### Supervisor
-- Add Final Grade + Complete Thesis
-- Thesis Overview
+- [Add Final Grade + Complete Thesis](https://live.rbg.tum.de/w/artemisintro/53221)
 
 ## Developer Documentation
 

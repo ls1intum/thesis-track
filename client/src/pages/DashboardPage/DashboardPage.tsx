@@ -26,7 +26,7 @@ const DashboardPage = () => {
       <Title order={1}>Dashboard</Title>
       <MyTasksSection />
       <ThesesProvider
-        hideIfEmpty={!managementAccess}
+        hideIfEmpty
         defaultStates={
           managementAccess
             ? [

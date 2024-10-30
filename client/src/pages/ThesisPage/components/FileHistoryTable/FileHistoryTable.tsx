@@ -3,7 +3,7 @@ import { UploadFileType } from '../../../../config/types'
 import { Button, Center, Group, Input, Table, Text } from '@mantine/core'
 import { formatDate } from '../../../../utils/format'
 import AuthenticatedFilePreviewButton from '../../../../components/AuthenticatedFilePreviewButton/AuthenticatedFilePreviewButton'
-import { DownloadSimple, Eye, X } from 'phosphor-react'
+import { DownloadSimple, Eye, Trash } from 'phosphor-react'
 import AuthenticatedFileDownloadButton from '../../../../components/AuthenticatedFileDownloadButton/AuthenticatedFileDownloadButton'
 import AvatarUser from '../../../../components/AvatarUser/AvatarUser'
 import { useState } from 'react'
@@ -83,7 +83,7 @@ const FileHistoryTable = (props: IFileHistoryTableProps) => {
                       </AuthenticatedFileDownloadButton>
                       {row.onDelete && (
                         <Button loading={loading} size='xs' onClick={() => onDelete(row)}>
-                          <X />
+                          <Trash />
                         </Button>
                       )}
                     </Group>

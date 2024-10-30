@@ -31,6 +31,8 @@ services:
   db:
     image: 'postgres:15.2-alpine'
     container_name: thesis-track-db
+    volumes:
+      - ./db_backups:/db_backups
     environment:
       - POSTGRES_USER=thesis-track-postgres
       - POSTGRES_PASSWORD=thesis-track-postgres

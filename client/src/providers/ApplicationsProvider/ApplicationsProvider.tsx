@@ -56,10 +56,10 @@ const ApplicationsProvider = (props: PropsWithChildren<IApplicationsProviderProp
   const adjustedFilters = useMemo(() => {
     const copiedFilters = { ...filters }
 
-    if (showOnlyAssignedTopics && typeof copiedFilters.topics === 'undefined' && topics) {
+    if (showOnlyAssignedTopics && typeof copiedFilters.topics === 'undefined') {
       copiedFilters.topics = [
         'NO_TOPIC',
-        ...topics
+        ...(topics ?? [])
           .filter(
             (topic) =>
               topic.supervisors.some((supervisor) => supervisor.userId === user.userId) ||

@@ -51,7 +51,7 @@ const ThesesFilters = () => {
           onChange={(x) =>
             setFilters((prev) => ({
               ...prev,
-              types: x.length > 0 ? x : undefined,
+              types: x,
             }))
           }
         />
@@ -69,7 +69,7 @@ const ThesesFilters = () => {
           onChange={(x) =>
             setFilters((prev) => ({
               ...prev,
-              states: x.length > 0 ? (x as ThesisState[]) : undefined,
+              states: x as ThesisState[],
             }))
           }
         />

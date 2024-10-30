@@ -48,7 +48,7 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
           onChange={(value) => {
             setFilters((prev) => ({
               ...prev,
-              topics: value.length > 0 ? value : undefined,
+              topics: value,
             }))
           }}
           searchable
@@ -67,7 +67,7 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
           onChange={(value) => {
             setFilters((prev) => ({
               ...prev,
-              types: value.length > 0 ? value : undefined,
+              types: value,
             }))
           }}
           searchable
@@ -86,7 +86,7 @@ const ApplicationsFilters = (props: IApplicationsFiltersProps) => {
           onChange={(value) => {
             setFilters((prev) => ({
               ...prev,
-              states: value.length > 0 ? (value as ApplicationState[]) : undefined,
+              states: value as ApplicationState[],
             }))
           }}
           searchable
