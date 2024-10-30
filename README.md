@@ -10,23 +10,23 @@ ThesisTrack was developed as part of this [bachelor's thesis](docs/files/ba-thes
 ## User Documentation
 
 #### Student
-- [Submit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53217)
-- [Edit Thesis Application](https://live.rbg.tum.de/w/artemisintro/53218)
-- [Upload Proposal](https://live.rbg.tum.de/w/artemisintro/53219)
-- [Upload Thesis Files](https://live.rbg.tum.de/w/artemisintro/53220)
-- [Create Presentation Draft](https://live.rbg.tum.de/w/artemisintro/53215)
-- [Manage User Settings](https://live.rbg.tum.de/w/artemisintro/53216)
+- [Submit Thesis Application](docs/videos/student-submit-application.mp4)
+- [Edit Thesis Application](docs/videos/student-update-application.mp4)
+- [Upload Proposal](docs/videos/student-upload-proposal.mp4)
+- [Upload Thesis Files](docs/videos/student-upload-thesis.mp4)
+- [Create Presentation Draft](docs/videos/student-create-presentation.mp4)
+- [Manage User Settings](docs/videos/student-manage-settings.mp4)
 
 #### Advisor
-- [Create Thesis Topic](https://live.rbg.tum.de/w/artemisintro/53209)
-- [Review Applications](https://live.rbg.tum.de/w/artemisintro/53212)
-- [Review Proposal](https://live.rbg.tum.de/w/artemisintro/53213)
-- [Add Comments](https://live.rbg.tum.de/w/artemisintro/53211)
-- [Schedule Presentation](https://live.rbg.tum.de/w/artemisintro/53214)
-- [Submit Thesis Assessment](https://live.rbg.tum.de/w/artemisintro/53208)
+- [Create Thesis Topic](docs/videos/advisor-create-topic.mp4)
+- [Review Applications](docs/videos/advisor-review-applications.mp4)
+- [Review Proposal](docs/videos/advisor-review-proposal.mp4)
+- [Add Comments](docs/videos/advisor-post-comment.mp4)
+- [Schedule Presentation](docs/videos/advisor-schedule-presentation.mp4)
+- [Submit Thesis Assessment](docs/videos/advisor-add-assessment.mp4)
 
 #### Supervisor
-- [Add Final Grade + Complete Thesis](https://live.rbg.tum.de/w/artemisintro/53221)
+- [Add Final Grade + Complete Thesis](docs/videos/supervisor-final-grade.mp4)
 
 ## Developer Documentation
 
