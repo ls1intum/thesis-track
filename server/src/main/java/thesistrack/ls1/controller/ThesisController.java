@@ -193,8 +193,8 @@ public class ThesisController {
 
         thesis = thesisService.updateThesisInfo(
                 thesis,
-                RequestValidator.validateStringMaxLength(payload.abstractText(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.infoText(), StringLimits.LONGTEXT.getLimit())
+                RequestValidator.validateStringMaxLength(payload.abstractText(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.infoText(), StringLimits.UNLIMITED_TEXT.getLimit())
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
@@ -654,9 +654,9 @@ public class ThesisController {
         thesis = thesisService.submitAssessment(
                 authenticatedUser,
                 thesis,
-                RequestValidator.validateStringMaxLength(payload.summary(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.positives(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.negatives(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.summary(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.positives(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.negatives(), StringLimits.UNLIMITED_TEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.gradeSuggestion(), StringLimits.THESIS_GRADE.getLimit())
         );
 
@@ -681,7 +681,7 @@ public class ThesisController {
         thesis = thesisService.gradeThesis(
                 thesis,
                 RequestValidator.validateStringMaxLength(payload.finalGrade(), StringLimits.THESIS_GRADE.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.finalFeedback(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.finalFeedback(), StringLimits.UNLIMITED_TEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.visibility())
         );
 

@@ -3,12 +3,16 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../providers/ThesisProvider/hooks'
-import { ActionIcon, Button, Checkbox, Group, Modal, Stack, TextInput } from '@mantine/core'
+import {
+  Button,
+  Checkbox,
+  Modal,
+  Stack,
+  Textarea,
+} from '@mantine/core'
 import { doRequest } from '../../../../requests/request'
 import { IThesis } from '../../../../requests/responses/thesis'
 import { ApiError } from '../../../../requests/handler'
-import { randomId } from '@mantine/hooks'
-import { X } from 'phosphor-react'
 
 interface IThesisFeedbackRequestButtonProps {
   type: string
@@ -20,12 +24,7 @@ const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) =
   const { thesis } = useLoadedThesisContext()
 
   const [opened, setOpened] = useState(false)
-  const [newChanges, setNewChanges] = useState<
-    Array<{
-      id: string
-      feedback: string
-    }>
-  >([])
+  const [changes, setChanges] = useState('')
   const [editChanges, setEditChanges] = useState<
     Array<{
       feedbackId: string
@@ -34,9 +33,11 @@ const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) =
   >([])
 
   useEffect(() => {
-    setNewChanges([{ feedback: '', id: randomId() }])
+    setChanges('')
     setEditChanges([])
   }, [opened])
+
+  const newChanges = changes.split('\n').filter((x) => x.trim())
 
   const [loading, onSave] = useThesisUpdateAction(async () => {
     for (const editChange of editChanges) {
@@ -55,7 +56,7 @@ const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) =
       data: {
         type,
         requestedChanges: newChanges.map((newChange) => ({
-          feedback: newChange.feedback,
+          feedback: newChange,
           completed: false,
         })),
       },
@@ -77,6 +78,7 @@ const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) =
         opened={opened}
         onClose={() => setOpened(false)}
         onClick={(e) => e.stopPropagation()}
+        size='xl'
       >
         <Stack>
           {thesis.feedback
@@ -103,41 +105,16 @@ const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) =
                 }}
               />
             ))}
-          {newChanges.map((change) => (
-            <Group key={change.id} style={{ width: '100%' }}>
-              <TextInput
-                style={{ flexGrow: 1 }}
-                value={change.feedback}
-                onChange={(e) => {
-                  change.feedback = e.target.value
-                  setNewChanges([...newChanges])
-                }}
-              />
-              <ActionIcon
-                onClick={() =>
-                  setNewChanges((prev) => prev.filter((item) => item.id !== change.id))
-                }
-              >
-                <X />
-              </ActionIcon>
-            </Group>
-          ))}
-          <Group>
-            <Button
-              variant='outline'
-              ml='auto'
-              onClick={() => setNewChanges((prev) => [...prev, { id: randomId(), feedback: '' }])}
-            >
-              + Add Item
-            </Button>
-          </Group>
+          <Textarea
+            label='New Change Requests (split multiple requests by lines)'
+            rows={10}
+            value={changes}
+            onChange={(e) => setChanges(e.target.value)}
+          />
           <Button
             fullWidth
             loading={loading}
-            disabled={
-              (editChanges.length === 0 && newChanges.length === 0) ||
-              newChanges.some((change) => !change.feedback)
-            }
+            disabled={editChanges.length === 0 && newChanges.length === 0}
             onClick={onSave}
           >
             Request Changes

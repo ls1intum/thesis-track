@@ -7,7 +7,8 @@ public enum StringLimits {
     THESIS_TITLE(500),
     THESIS_GRADE(10),
     SHORTTEXT(100),
-    LONGTEXT(3000);
+    LONGTEXT(2000),
+    UNLIMITED_TEXT(10000);
 
     private final int limit;
 

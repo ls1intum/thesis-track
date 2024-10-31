@@ -78,10 +78,10 @@ public class TopicController {
                 authenticatedUser,
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
                 RequestValidator.validateStringSetItemMaxLengthAllowNull(payload.thesisTypes(), StringLimits.SHORTTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.requirements(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.requirements(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.references(), StringLimits.UNLIMITED_TEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateNotNull(payload.advisorIds())
         );
@@ -104,10 +104,10 @@ public class TopicController {
                 topic,
                 RequestValidator.validateStringMaxLength(payload.title(), StringLimits.THESIS_TITLE.getLimit()),
                 RequestValidator.validateStringSetItemMaxLengthAllowNull(payload.thesisTypes(), StringLimits.SHORTTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.requirements(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.LONGTEXT.getLimit()),
-                RequestValidator.validateStringMaxLength(payload.references(), StringLimits.LONGTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.problemStatement(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.requirements(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.goals(), StringLimits.UNLIMITED_TEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.references(), StringLimits.UNLIMITED_TEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.supervisorIds()),
                 RequestValidator.validateNotNull(payload.advisorIds())
         );
