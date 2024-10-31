@@ -106,7 +106,7 @@ const ThesisFeedbackRequestButton = (props: IThesisFeedbackRequestButtonProps) =
               />
             ))}
           <Textarea
-            label='New Change Requests (split multiple requests by lines)'
+            label='New Change Requests (one request per line)'
             rows={10}
             value={changes}
             onChange={(e) => setChanges(e.target.value)}
