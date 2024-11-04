@@ -32,7 +32,7 @@ dependencies {
 
 	implementation "commons-io:commons-io:2.17.0"
 	implementation "com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1"
-	implementation "org.mnode.ical4j:ical4j:4.0.4"
+	implementation "org.mnode.ical4j:ical4j:4.0.5"
 	implementation "com.itextpdf:itext-core:8.0.5"
 	implementation "com.itextpdf:html2pdf:5.0.5"
 	implementation "com.auth0:java-jwt:4.4.0"
