@@ -9,7 +9,7 @@ import { usePageTitle } from '../../hooks/theme'
 import PublicArea from '../../app/layout/PublicArea/PublicArea'
 
 const LandingPage = () => {
-  usePageTitle('Find or Propose a Thesis Topic')
+  usePageTitle('Find a Thesis Topic')
 
   return (
     <div>
