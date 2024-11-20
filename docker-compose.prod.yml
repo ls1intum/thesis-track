@@ -2,16 +2,15 @@ version: "3.8"
 
 services:
   reverse-proxy:
-    image: traefik:v2.10
+    image: traefik:v3.2
     command:
       - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.exposedByDefault=false"
       - "--providers.docker.network=thesis-track-network"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.letsencrypt.acme.email=admin@tum.de"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
@@ -116,7 +115,7 @@ services:
       - thesis-track-network
 
   db:
-    image: "postgres:15.2-alpine"
+    image: "postgres:17.1-alpine"
     container_name: thesis-track-db
     environment:
       - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
