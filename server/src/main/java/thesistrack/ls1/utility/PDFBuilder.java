@@ -44,7 +44,7 @@ public class PDFBuilder {
 
         Paragraph mainHeadingParagraph = new Paragraph(heading)
                 .setFontSize(24)
-                .setBold()
+                .simulateBold()
                 .setMarginBottom(20);
 
         document.add(mainHeadingParagraph);
@@ -55,7 +55,7 @@ public class PDFBuilder {
         for (Section section : sections) {
             Paragraph sectionHeading = new Paragraph(section.heading)
                     .setFontSize(16)
-                    .setBold()
+                    .simulateBold()
                     .setMarginTop(10)
                     .setMarginBottom(5);
             document.add(sectionHeading);
