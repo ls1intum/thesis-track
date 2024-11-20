@@ -13,7 +13,7 @@ export function HeroSection() {
 
       <div className={classes.inner}>
         <Title className={classes.title}>
-          Find or Propose a{' '}
+          Find a{' '}
           <Text component='span' className={classes.highlight} inherit>
             Thesis Topic
           </Text>

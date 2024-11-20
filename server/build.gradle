@@ -1,15 +1,21 @@
+
 plugins {
 	id "java"
-	id "org.springframework.boot" version "3.3.5"
+	id "idea"
+//	id "com.gorylenko.gradle-git-properties" version "2.4.2"
+	id "com.github.andygoossens.modernizer" version "1.10.0"
+	id "org.springframework.boot" version "${spring_boot_version}"
 	id "io.spring.dependency-management" version "1.1.6"
+	id "com.github.ben-manes.versions" version "0.51.0"
 }
 
 group = "thesis-track.ls1"
 version = "3.0.0"
+description = "Thesis Track"
 
 java {
-	sourceCompatibility = "21"
-	targetCompatibility = "21"
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 repositories {
@@ -27,26 +33,46 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
 	implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
 
-	implementation "org.liquibase:liquibase-core"
+	// Avoid outdated version of netty to prevent security issues
+	implementation("io.netty:netty-common") {
+		version {
+			strictly netty_version
+		}
+	}
+
+	implementation "org.liquibase:liquibase-core:4.30.0"
 	implementation "org.postgresql:postgresql"
 
-	implementation "commons-io:commons-io:2.17.0"
+	implementation "commons-io:commons-io:2.18.0"
 	implementation "com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1"
-	implementation "org.mnode.ical4j:ical4j:4.0.4"
+	implementation "org.mnode.ical4j:ical4j:4.0.5"
 	implementation "com.itextpdf:itext-core:8.0.5"
 	implementation "com.itextpdf:html2pdf:5.0.5"
 	implementation "com.auth0:java-jwt:4.4.0"
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.junit.jupiter:junit-jupiter-api'
-	testImplementation 'org.mockito:mockito-core'
-	testImplementation 'org.mockito:mockito-junit-jupiter'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:postgresql'
+	// use newest version of commons-compress to avoid security issues through outdated dependencies
+	implementation "org.apache.commons:commons-compress:1.27.1"
 
-	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-	compileOnly "org.projectlombok:lombok"
-	annotationProcessor "org.projectlombok:lombok"
+	testImplementation("org.springframework.boot:spring-boot-starter-test:${spring_boot_version}") {
+		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
+		exclude group: "com.vaadin.external.google", module: "android-json"
+		exclude group: "org.xmlunit", module: "xmlunit-core"
+	}
+	testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.3"
+	testImplementation "org.mockito:mockito-core:5.14.2"
+	testImplementation "org.mockito:mockito-junit-jupiter:5.14.2"
+
+	testImplementation "org.testcontainers:testcontainers:${testcontainer_version}"
+	testImplementation "org.testcontainers:junit-jupiter:${testcontainer_version}"
+	testImplementation "org.testcontainers:jdbc:${testcontainer_version}"
+	testImplementation "org.testcontainers:database-commons:${testcontainer_version}"
+	testImplementation "org.testcontainers:postgresql:${testcontainer_version}"
+
+	// TODO: for some reason an update of org.junit.jupiter:junit-jupiter-engine to 5.11.x breaks the tests
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.5"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.3"
+	compileOnly "org.projectlombok:lombok:1.18.36"
+	annotationProcessor "org.projectlombok:lombok:1.18.36"
 }
 
 test {
@@ -58,6 +84,17 @@ test {
 	testLogging {
 		events "PASSED", "FAILED", "SKIPPED"
 	}
-
-	systemProperty 'spring.profiles.active', 'test'
+	testLogging.showStandardStreams = true
+	systemProperty "spring.profiles.active", "test"
 }
+
+tasks.withType(JavaCompile).configureEach {
+	options.compilerArgs << "-Xlint:deprecation"
+}
+
+// Available commands:
+//
+// Find dependency updates:    ./gradlew dependencyUpdates -Drevision=release
+// Test:                       ./gradlew test
+// Build:                      ./gradlew build -x test
+// Run:						   ./gradlew bootRun

@@ -122,16 +122,13 @@ public class CalendarService {
     }
 
     public Optional<VEvent> findVEvent(Calendar calendar, String eventId) {
-        for (Component component : calendar.getComponents(Component.VEVENT)) {
-            VEvent event = (VEvent) component;
-            Optional<Uid> uid = event.getUid();
-
-            if (uid.isPresent() && uid.get().getValue().equals(eventId)) {
-                return Optional.of(event);
-            }
-        }
-
-        return Optional.empty();
+        return calendar.getComponents(Component.VEVENT).stream()
+                .map(component -> (VEvent) component)
+                .filter(event -> event.getUid()
+                        .map(Uid::getValue)
+                        .filter(value -> value.equals(eventId))
+                        .isPresent())
+                .findFirst();
     }
 
     public VEvent createVEvent(String eventId, CalendarEvent data) {
