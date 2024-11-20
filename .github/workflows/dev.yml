@@ -2,8 +2,13 @@ name: Build and Deploy to Dev
 
 on:
   pull_request:
+  push:
+    branches: [main]
 
 jobs:
+  run-tests:
+    uses: ./.github/workflows/run_tests.yml
+    secrets: inherit
   build-dev-container:
     uses: ./.github/workflows/build_docker.yml
     secrets: inherit
