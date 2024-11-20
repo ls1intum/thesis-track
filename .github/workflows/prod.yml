@@ -18,5 +18,5 @@ jobs:
     secrets: inherit
     with:
       environment: Production
-      server_image_tag: "${{ needs.build-dev-container.outputs.server_image_tag }}"
-      client_image_tag: "${{ needs.build-dev-container.outputs.client_image_tag }}"
+      server_image_tag: "${{ needs.build-prod-container.outputs.server_image_tag }}"
+      client_image_tag: "${{ needs.build-prod-container.outputs.client_image_tag }}"
