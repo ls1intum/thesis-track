@@ -5,15 +5,18 @@ on:
     branches: [main]
 
 jobs:
+  run-tests:
+    uses: ./.github/workflows/run_tests.yml
   build-prod-container:
     uses: ./.github/workflows/build_docker.yml
     secrets: inherit
   deploy-prod-container:
-    needs: build-prod-container
+    needs:
+      - run-tests
+      - build-prod-container
     uses: ./.github/workflows/deploy_docker.yml
     secrets: inherit
     with:
       environment: Production
-      server_image_tag: "latest"
-      client_image_tag: "latest"
-    
+      server_image_tag: "${{ needs.build-dev-container.outputs.server_image_tag }}"
+      client_image_tag: "${{ needs.build-dev-container.outputs.client_image_tag }}"

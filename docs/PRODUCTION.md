@@ -98,7 +98,9 @@ volumes:
 
 ## Backup Strategy
 There are 2 places that require backups:
-- The PostgreSQL database. The backup strategy depends on the database setup, but the whole public schema of the connected database should be included in the backup. Example command: `pg_dump -U thesistrack --schema="public" thesistrack > backup_thesistrack.sql`
+- The PostgreSQL database. The backup strategy depends on the database setup, but the whole public schema of the connected database should be included in the backup. 
+  - Example backup command: `pg_dump -U thesistrack --schema="public" thesistrack > backup_thesistrack.sql`
+  - Example import command: `psql -U thesistrack -d thesistrack -f backup_thesistrack.sql`
 - The files stored at `/uploads`. In the docker example, these files are mounted to `./thesis_uploads` and backup system should collect the files from the mounted folder
 
 ## Further Configuration

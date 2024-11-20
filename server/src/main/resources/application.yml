@@ -5,7 +5,7 @@ logging:
 
 spring:
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/thesis-track}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5144/thesis-track}
     username: ${SPRING_DATASOURCE_USERNAME:thesis-track-postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:thesis-track-postgres}
     driver-class-name: org.postgresql.Driver
