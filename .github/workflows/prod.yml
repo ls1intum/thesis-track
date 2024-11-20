@@ -7,7 +7,6 @@ on:
 jobs:
   run-tests:
     uses: ./.github/workflows/run_tests.yml
-    secrets: inherit
   build-prod-container:
     uses: ./.github/workflows/build_docker.yml
     secrets: inherit
