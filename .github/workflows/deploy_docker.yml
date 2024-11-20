@@ -138,4 +138,5 @@ jobs:
           proxy_port: ${{ vars.DEPLOYMENT_GATEWAY_PORT }}
           script: |
             docker compose -f docker-compose.prod.yml --env-file=.env.prod pull client server
+            docker compose -f docker-compose.prod.yml --env-file=.env.prod restart postfix
             docker compose -f docker-compose.prod.yml --env-file=.env.prod up -d
