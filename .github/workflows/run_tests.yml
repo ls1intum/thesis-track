@@ -12,21 +12,8 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Get changed files in the client folder
-        id: changed-files-client-folder
-        uses: tj-actions/changed-files@v45
-        with:
-          files: client/**
-
-      - name: Get changed files in the server folder
-        id: changed-files-server-folder
-        uses: tj-actions/changed-files@v45
-        with:
-          files: server/**
-
       # Set up Java for server tests
       - name: Set up JDK 21
-        if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
         uses: actions/setup-java@v4
         with:
           java-version: '21'
@@ -35,12 +22,10 @@ jobs:
 
       # Grant execute permission for gradlew
       - name: Grant execute permission for gradlew
-        if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
         run: chmod +x ./server/gradlew
 
       # Run tests for server
       - name: Run server tests
-        if: ${{ steps.changed-files-server-folder.outputs.any_changed == 'true' && matrix.path == 'server' }}
         working-directory: ./server
         run: |
           ./gradlew test

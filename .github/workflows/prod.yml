@@ -12,7 +12,9 @@ jobs:
     uses: ./.github/workflows/build_docker.yml
     secrets: inherit
   deploy-prod-container:
-    needs: build-prod-container
+    needs:
+      - run-tests
+      - build-prod-container
     uses: ./.github/workflows/deploy_docker.yml
     secrets: inherit
     with:
