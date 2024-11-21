@@ -62,11 +62,11 @@ dependencies {
 	testImplementation "org.mockito:mockito-core:5.14.2"
 	testImplementation "org.mockito:mockito-junit-jupiter:5.14.2"
 
-	testImplementation "org.testcontainers:testcontainers:${testcontainer_version}"
-	testImplementation "org.testcontainers:junit-jupiter:${testcontainer_version}"
-	testImplementation "org.testcontainers:jdbc:${testcontainer_version}"
-	testImplementation "org.testcontainers:database-commons:${testcontainer_version}"
-	testImplementation "org.testcontainers:postgresql:${testcontainer_version}"
+	testImplementation "org.testcontainers:testcontainers:${test_container_version}"
+	testImplementation "org.testcontainers:junit-jupiter:${test_container_version}"
+	testImplementation "org.testcontainers:jdbc:${test_container_version}"
+	testImplementation "org.testcontainers:database-commons:${test_container_version}"
+	testImplementation "org.testcontainers:postgresql:${test_container_version}"
 
 	// TODO: for some reason an update of org.junit.jupiter:junit-jupiter-engine to 5.11.x breaks the tests
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.5"
