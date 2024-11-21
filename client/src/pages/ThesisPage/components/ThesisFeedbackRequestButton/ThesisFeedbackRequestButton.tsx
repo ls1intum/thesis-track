@@ -3,13 +3,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../providers/ThesisProvider/hooks'
-import {
-  Button,
-  Checkbox,
-  Modal,
-  Stack,
-  Textarea,
-} from '@mantine/core'
+import { Button, Checkbox, Modal, Stack, Textarea } from '@mantine/core'
 import { doRequest } from '../../../../requests/request'
 import { IThesis } from '../../../../requests/responses/thesis'
 import { ApiError } from '../../../../requests/handler'

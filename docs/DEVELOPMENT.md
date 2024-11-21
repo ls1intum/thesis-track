@@ -35,7 +35,7 @@ Notice: local development does not support mailing functionality. The mails are 
 ## Server
 
 ### Preconditions
-* Database available at `jdbc:postgresql://db:5432/thesis-track`
+* Database available at `jdbc:postgresql://db:5144/thesis-track`
 * Keycloak realm `thesis-track` is available under http://localhost:8081 (See [Keycloak Setup](#keycloak-setup))
 
 To start the sever application for local development, navigate to /server folder and execute the following command from the terminal:

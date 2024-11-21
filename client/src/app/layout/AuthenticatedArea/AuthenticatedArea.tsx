@@ -37,6 +37,7 @@ import ColorSchemeToggleButton from '../../../components/ColorSchemeToggleButton
 import CustomAvatar from '../../../components/CustomAvatar/CustomAvatar'
 import { formatUser } from '../../../utils/format'
 import ContentContainer from '../ContentContainer/ContentContainer'
+import Footer from '../../../components/Footer/Footer'
 
 export interface IAuthenticatedAreaProps {
   size?: MantineSize
@@ -256,19 +257,23 @@ const AuthenticatedArea = (props: PropsWithChildren<IAuthenticatedAreaProps>) =>
       </AppShell.Navbar>
 
       <AppShell.Main>
-        {auth.user ? (
-          <Suspense fallback={<PageLoader />}>
-            {!requiredGroups || requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
-              <ContentContainer size={size}>{children}</ContentContainer>
-            ) : (
-              <Center className={classes.fullHeight}>
-                <h1>403 - Unauthorized</h1>
-              </Center>
-            )}
-          </Suspense>
-        ) : (
-          <PageLoader />
-        )}
+        <div className={classes.mainHeight}>
+          {auth.user ? (
+            <Suspense fallback={<PageLoader />}>
+              {!requiredGroups ||
+              requiredGroups.some((role) => auth.user?.groups.includes(role)) ? (
+                <ContentContainer size={size}>{children}</ContentContainer>
+              ) : (
+                <Center className={classes.fullHeight}>
+                  <h1>403 - Unauthorized</h1>
+                </Center>
+              )}
+            </Suspense>
+          ) : (
+            <PageLoader />
+          )}
+        </div>
+        <Footer />
         <ScrollToTop />
       </AppShell.Main>
     </AppShell>
