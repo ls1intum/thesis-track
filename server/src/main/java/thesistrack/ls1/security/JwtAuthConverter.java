@@ -1,6 +1,8 @@
 package thesistrack.ls1.security;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -26,7 +28,8 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     }
 
     @Override
-    public AbstractAuthenticationToken convert(Jwt jwt) {
+    @Nullable
+    public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
         Collection<GrantedAuthority> authorities = Stream.concat(
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
                 extractResourceRoles(jwt).stream()).collect(Collectors.toSet());
@@ -35,17 +38,25 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     }
 
     private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt jwt) {
-        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-
-        Map<String, Object> resource;
-        Collection<String> resourceRoles;
-
-        if (resourceAccess == null
-                || (resource = (Map<String, Object>) resourceAccess.get(config.getClientId())) == null
-                || (resourceRoles = (Collection<String>) resource.get("roles")) == null) {
+        // Retrieve the resource access claim as a nested map structure
+        Map<String, Map<String, Collection<String>>> resourceAccess = jwt.getClaim("resource_access");
+        if (resourceAccess == null) {
             return Set.of();
         }
 
+        // Get the client-specific resource and its roles
+        var resourceObject = resourceAccess.get(config.getClientId());
+        if (resourceObject == null) {
+            return Set.of();
+        }
+
+        // Get the roles from the resource object
+        var resourceRoles = resourceObject.get("roles");
+        if (resourceRoles == null) {
+            return Set.of();
+        }
+
+        // Convert roles into GrantedAuthority objects
         return resourceRoles.stream()
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toSet());
