@@ -74,16 +74,15 @@ environment:
 
 ## Reverse Proxy
 ```yaml
-image: traefik:v2.10
+image: traefik:v3.2
 command:
   - "--providers.docker=true"
-  - "--providers.docker.exposedbydefault=false"
+  - "--providers.docker.exposedByDefault=false"
   - "--providers.docker.network=thesis-track-network"
   - "--entrypoints.web.address=:80"
   - "--entrypoints.websecure.address=:443"
-  - "--entrypoints.web.http.redirections.entrypoint.to=websecure"
-  - "--entrypoints.web.http.redirections.entrypoint.scheme=https"
-  - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+  - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+  - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
   - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
   - "--certificatesresolvers.letsencrypt.acme.email=admin@tum.de"
   - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
@@ -102,6 +101,8 @@ There are 2 places that require backups:
   - Example backup command: `pg_dump -U thesistrack --schema="public" thesistrack > backup_thesistrack.sql`
   - Example import command: `psql -U thesistrack -d thesistrack -f backup_thesistrack.sql`
 - The files stored at `/uploads`. In the docker example, these files are mounted to `./thesis_uploads` and backup system should collect the files from the mounted folder
+
+There is an example script [thesis-track-backup.sh](../thesis-track-backup.sh) that you can call in a cronjob to create regular backups.
 
 ## Further Configuration
 
