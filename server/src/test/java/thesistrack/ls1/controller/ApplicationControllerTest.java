@@ -4,13 +4,10 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import thesistrack.ls1.constants.ApplicationState;
 import thesistrack.ls1.controller.payload.AcceptApplicationPayload;
@@ -26,28 +23,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Testcontainers
 class ApplicationControllerTest extends BaseIntegrationTest {
-    @Container
-    static PostgreSQLContainer<?> dbContainer = new PostgreSQLContainer<>(
-            "postgres:16-alpine"
-    );
-
-    @BeforeAll
-    static void startDatabase() {
-        dbContainer.start();
-    }
-
-    @AfterAll
-    static void stopDatabase() {
-        dbContainer.stop();
-    }
 
     @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        dbContainer.start();
-
-        registry.add("spring.datasource.url", dbContainer::getJdbcUrl);
-        registry.add("spring.datasource.username", dbContainer::getUsername);
-        registry.add("spring.datasource.password", dbContainer::getPassword);
+    static void configureDynamicProperties(DynamicPropertyRegistry registry) {
+        configureProperties(registry);
     }
 
     @Test

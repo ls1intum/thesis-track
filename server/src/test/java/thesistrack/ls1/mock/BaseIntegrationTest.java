@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +14,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 import thesistrack.ls1.controller.payload.CreateApplicationPayload;
 import thesistrack.ls1.controller.payload.CreateThesisPayload;
 import thesistrack.ls1.controller.payload.ReplaceTopicPayload;
@@ -29,38 +35,55 @@ import java.util.*;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Import(TestSecurityConfig.class)
 public abstract class BaseIntegrationTest {
+
     @Autowired
     private ApplicationRepository applicationRepository;
+
     @Autowired
     private ApplicationReviewerRepository applicationReviewerRepository;
+
     @Autowired
     private NotificationSettingRepository notificationSettingRepository;
+
     @Autowired
     private ThesisAssessmentRepository thesisAssessmentRepository;
+
     @Autowired
     private ThesisCommentRepository thesisCommentRepository;
+
     @Autowired
     private ThesisFeedbackRepository thesisFeedbackRepository;
+
     @Autowired
     private ThesisFileRepository thesisFileRepository;
+
     @Autowired
     private ThesisPresentationInviteRepository thesisPresentationInviteRepository;
+
     @Autowired
     private ThesisPresentationRepository thesisPresentationRepository;
+
     @Autowired
     private ThesisProposalRepository thesisProposalRepository;
+
     @Autowired
     private ThesisRepository thesisRepository;
+
     @Autowired
     private ThesisRoleRepository thesisRoleRepository;
+
     @Autowired
     private ThesisStateChangeRepository thesisStateChangeRepository;
+
     @Autowired
     private TopicRepository topicRepository;
+
     @Autowired
     private TopicRoleRepository topicRoleRepository;
+
     @Autowired
     private UserGroupRepository userGroupRepository;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -69,6 +92,27 @@ public abstract class BaseIntegrationTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    @Container
+    protected static PostgreSQLContainer<?> dbContainer = new PostgreSQLContainer<>("postgres:17.1-alpine");
+
+    protected static void configureProperties(DynamicPropertyRegistry registry) {
+        dbContainer.start();
+
+        registry.add("spring.datasource.url", dbContainer::getJdbcUrl);
+        registry.add("spring.datasource.username", dbContainer::getUsername);
+        registry.add("spring.datasource.password", dbContainer::getPassword);
+    }
+
+    @BeforeAll
+    protected static void startDatabase() {
+        dbContainer.start();
+    }
+
+    @AfterAll
+    protected static void stopDatabase() {
+        dbContainer.stop();
+    }
 
     @BeforeEach
     void deleteDatabase() {
