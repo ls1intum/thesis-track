@@ -2,6 +2,7 @@ import { Anchor, Center, Image, List, Stack, Text, Title } from '@mantine/core'
 import flowchart from './flowchart.svg'
 import { usePageTitle } from '../../hooks/theme'
 import PublicArea from '../../app/layout/PublicArea/PublicArea'
+import { GLOBAL_CONFIG } from '../../config/global'
 
 const AboutPage = () => {
   usePageTitle('About')
@@ -11,15 +12,37 @@ const AboutPage = () => {
       <Stack>
         <Title>ThesisTrack</Title>
         <Text>
-          ThesisTrack is a web-based thesis management system designed to streamline the thesis
-          process in academic institutions by integrating essential stages into a single platform.
-          Developed to address challenges in managing large volumes of theses, it facilitates
-          seamless interactions between students, advisors, and supervisors. Key features include a
-          centralized application process, guided workflows for thesis writing, automated
-          notifications, and a comprehensive Gantt chart for tracking progress. By consolidating
-          communication, feedback, and file management, ThesisTrack enhances transparency, reduces
-          administrative burdens, and fosters efficient thesis supervision and assessment.
+          ThesisTrack addresses inefficient manual thesis management processes at large universities
+          through a web-based platform. The system digitizes the entire lifecycle from student
+          applications to final grading, serving three key stakeholders: supervisors (professors),
+          advisors (doctoral candidates), and students. Key features include:
         </Text>
+        <List>
+          <List.Item>
+            A structured application system allowing students to apply directly for specific thesis
+            topics
+          </List.Item>
+          <List.Item>
+            Centralized document management for proposals, theses, and presentations
+          </List.Item>
+          <List.Item>Built-in feedback mechanisms for proposal and thesis review</List.Item>
+          <List.Item>
+            A Gantt chart overview showing timelines and progress across multiple theses
+          </List.Item>
+          <List.Item>
+            Role-based access control with specific permissions for students, advisors, and
+            supervisors
+          </List.Item>
+          <List.Item>Automated notifications for important milestones and updates</List.Item>
+        </List>
+        <Title order={3}>Project Managers</Title>
+        <List>
+          <List.Item>
+            <Anchor href='https://ase.cit.tum.de/people/krusche/' target='_blank' rel='noreferrer'>
+              Stephan Krusche
+            </Anchor>
+          </List.Item>
+        </List>
         <Title order={3}>Contributors</Title>
         <List>
           <List.Item>
@@ -47,6 +70,15 @@ const AboutPage = () => {
         <Center>
           <Image src={flowchart} style={{ maxWidth: '600px' }} />
         </Center>
+        <Title order={3}>Git Information</Title>
+        <List>
+          <List.Item>
+            Branch: <b>{GLOBAL_CONFIG.git.branch}</b>
+          </List.Item>
+          <List.Item>
+            Commit: <b>{GLOBAL_CONFIG.git.commit}</b>
+          </List.Item>
+        </List>
       </Stack>
     </PublicArea>
   )

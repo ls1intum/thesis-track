@@ -13,6 +13,11 @@ export interface IGlobalConfig {
   study_degrees: Record<string, string>
   languages: Record<string, string>
 
+  git: {
+    commit: string
+    branch: string
+  }
+
   thesis_types: Record<
     string,
     {

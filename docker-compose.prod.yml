@@ -74,6 +74,8 @@ services:
       - CALDAV_USERNAME
       - CALDAV_PASSWORD
       - SCIENTIFIC_WRITING_GUIDE
+      - GIT_COMMIT
+      - GIT_BRANCH
     networks:
       - thesis-track-network
 
@@ -109,6 +111,8 @@ services:
       - APPLICATION_TITLE
       - CHAIR_NAME
       - CHAIR_URL
+      - GIT_COMMIT
+      - GIT_BRANCH
     depends_on:
       - server
     networks:
