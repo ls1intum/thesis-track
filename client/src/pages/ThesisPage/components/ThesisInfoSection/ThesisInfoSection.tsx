@@ -7,7 +7,7 @@ import {
   useLoadedThesisContext,
   useThesisUpdateAction,
 } from '../../../../providers/ThesisProvider/hooks'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import { ApiError } from '../../../../requests/handler'
 import DownloadAllFilesButton from './components/DownloadAllFilesButton/DownloadAllFilesButton'
 import { isThesisClosed } from '../../../../utils/thesis'

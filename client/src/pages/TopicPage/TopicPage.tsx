@@ -1,6 +1,6 @@
 import React from 'react'
 import { usePageTitle } from '../../hooks/theme'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router'
 import { useTopic } from '../../hooks/fetcher'
 import NotFound from '../../components/NotFound/NotFound'
 import PageLoader from '../../components/PageLoader/PageLoader'

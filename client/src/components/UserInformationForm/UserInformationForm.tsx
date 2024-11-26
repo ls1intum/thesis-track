@@ -20,7 +20,7 @@ import { useApiPdfFile } from '../../hooks/fetcher'
 import { showSimpleError } from '../../utils/notification'
 import { getHtmlTextLength } from '../../utils/validation'
 import { enrollmentDateToSemester, semesterToEnrollmentDate } from '../../utils/converter'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import AvatarInput from './components/AvatarInput/AvatarInput'
 
 interface IUserInformationFormProps {

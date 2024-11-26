@@ -3,7 +3,7 @@ import { Space, Tabs } from '@mantine/core'
 import { EnvelopeOpen, User } from 'phosphor-react'
 import MyInformation from './components/MyInformation/MyInformation'
 import NotificationSettings from './components/NotificationSettings/NotificationSettings'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 
 const SettingsPage = () => {
   const { tab } = useParams<{ tab: string }>()

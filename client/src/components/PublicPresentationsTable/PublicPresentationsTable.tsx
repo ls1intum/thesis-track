@@ -5,7 +5,7 @@ import { IPublishedPresentation } from '../../requests/responses/thesis'
 import { doRequest } from '../../requests/request'
 import { showSimpleError } from '../../utils/notification'
 import { getApiResponseErrorMessage } from '../../requests/handler'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 
 interface IPublicPresentationsTableProps {
   includeDrafts?: boolean

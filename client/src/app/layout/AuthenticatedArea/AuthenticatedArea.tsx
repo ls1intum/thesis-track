@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@mantine/core'
 import * as classes from './AuthenticatedArea.module.css'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router'
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks'
 import {
   CaretDoubleLeft,

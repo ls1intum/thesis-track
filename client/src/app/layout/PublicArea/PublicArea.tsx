@@ -1,6 +1,6 @@
 import React, { PropsWithChildren, ReactNode } from 'react'
 import Footer from '../../../components/Footer/Footer'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router'
 import { CaretLeft } from 'phosphor-react'
 import { Anchor, MantineSize } from '@mantine/core'
 import ContentContainer from '../ContentContainer/ContentContainer'

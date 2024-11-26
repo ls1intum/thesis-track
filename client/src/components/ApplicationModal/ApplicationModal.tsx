@@ -3,7 +3,7 @@ import { Button, Divider, Modal, Stack } from '@mantine/core'
 import React from 'react'
 import ApplicationReviewForm from '../ApplicationReviewForm/ApplicationReviewForm'
 import ApplicationData from '../ApplicationData/ApplicationData'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 interface IApplicationModalProps {
   application: IApplication | undefined

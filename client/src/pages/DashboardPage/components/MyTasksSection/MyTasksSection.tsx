@@ -5,7 +5,7 @@ import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
 import { ITask } from '../../../../requests/responses/dashboard'
 import { DataTable } from 'mantine-datatable'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router'
 import { Link as LinkIcon } from 'phosphor-react'
 
 const MyTasksSection = () => {

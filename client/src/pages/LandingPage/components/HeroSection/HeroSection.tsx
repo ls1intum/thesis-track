@@ -1,7 +1,7 @@
 import { Title, Text, Button, Container } from '@mantine/core'
 import * as classes from './HeroSection.module.css'
 import { HeroDots } from '../HeroDots/HeroDots'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 
 export function HeroSection() {
   return (

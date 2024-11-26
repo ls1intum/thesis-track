@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 import { useTopic } from '../../hooks/fetcher'
 import { Card, Center, Stack, Stepper, Text, Title } from '@mantine/core'
 import { useEffect, useState } from 'react'

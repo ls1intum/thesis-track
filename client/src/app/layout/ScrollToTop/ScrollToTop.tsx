@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import { useLocation } from 'react-router-dom'
-import { useNavigationType } from 'react-router'
+import { useNavigationType, useLocation } from 'react-router'
 
 const ScrollToTop = () => {
   const navigationType = useNavigationType()

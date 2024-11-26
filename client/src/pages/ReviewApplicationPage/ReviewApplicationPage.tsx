@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router'
 import { ApplicationState, IApplication } from '../../requests/responses/application'
 import { doRequest } from '../../requests/request'
 import ApplicationsProvider from '../../providers/ApplicationsProvider/ApplicationsProvider'

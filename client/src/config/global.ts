@@ -24,7 +24,7 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
 
   git: {
     commit: getEnvironmentVariable('GIT_COMMIT') || 'unknown',
-    branch: getEnvironmentVariable('GIT_BRANCH') || 'unknown'
+    branch: getEnvironmentVariable('GIT_BRANCH') || 'unknown',
   },
 
   genders: getEnvironmentVariable<Record<string, string>>('GENDERS', true) || {

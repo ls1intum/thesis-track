@@ -1,6 +1,6 @@
 import { IThesis } from '../../requests/responses/thesis'
 import { Button, Modal, Stack } from '@mantine/core'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import ThesisData from '../ThesisData/ThesisData'
 
 interface IThesisPreviewModalProps {

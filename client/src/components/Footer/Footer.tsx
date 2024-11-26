@@ -1,7 +1,7 @@
 import * as classes from './Footer.module.css'
 import { Anchor, Container, Group, MantineSize } from '@mantine/core'
 import { GLOBAL_CONFIG } from '../../config/global'
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router'
 import ColorSchemeToggleButton from '../ColorSchemeToggleButton/ColorSchemeToggleButton'
 import packageJson from '../../../package.json'
 
