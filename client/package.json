@@ -33,7 +33,7 @@
     "@mantine/dropzone": "7.14.2",
     "@mantine/form": "7.14.2",
     "@mantine/hooks": "7.14.2",
-    "@mantine/notifications": "7.14.2",
+    "@mantine/notifications": "7.14.3",
     "@mantine/tiptap": "7.14.2",
     "@tiptap/extension-highlight": "2.10.3",
     "@tiptap/extension-subscript": "2.10.3",
