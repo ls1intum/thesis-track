@@ -55,6 +55,20 @@ spring:
           starttls:
             enable: true
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  info:
+    java:
+      enabled: true
+    git:
+      enabled: true
+  health:
+    mail:
+      enabled: ${MAIL_ENABLED:false}
+
 server:
   servlet:
     context-path: /api

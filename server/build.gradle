@@ -2,6 +2,7 @@ plugins {
 	id "java"
 	id "idea"
 	id "com.github.andygoossens.modernizer" version "1.10.0"
+	id "com.gorylenko.gradle-git-properties" version "2.4.2"
 	id "org.springframework.boot" version "${spring_boot_version}"
 	id "io.spring.dependency-management" version "1.1.6"
 	id "com.github.ben-manes.versions" version "0.51.0"
@@ -30,6 +31,7 @@ dependencies {
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
 	implementation "org.springframework.boot:spring-boot-starter-oauth2-resource-server"
 	implementation "org.springframework.boot:spring-boot-starter-thymeleaf"
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 	// Avoid outdated version of netty to prevent security issues
 	implementation("io.netty:netty-common") {
@@ -70,6 +72,10 @@ dependencies {
 	testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.3"
 	compileOnly "org.projectlombok:lombok:1.18.36"
 	annotationProcessor "org.projectlombok:lombok:1.18.36"
+}
+
+springBoot {
+	buildInfo()
 }
 
 test {

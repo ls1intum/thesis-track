@@ -315,15 +315,16 @@ const ThesisWritingSection = () => {
             </Accordion.Item>
           </Accordion>
           <Stack mt='md'>
-            {access.student && thesis.state === ThesisState.WRITING && requiredFilesUploaded && (
+            {access.student && thesis.state === ThesisState.WRITING && (
               <ConfirmationButton
                 confirmationTitle='Final Submission'
                 confirmationText='Are you sure you want to submit your thesis? This action cannot be undone.'
                 ml='auto'
                 onClick={onFinalSubmission}
+                disabled={!requiredFilesUploaded}
                 loading={submitting}
               >
-                Mark Submission as final
+                Mark Submission as Final
               </ConfirmationButton>
             )}
           </Stack>

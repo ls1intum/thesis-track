@@ -270,7 +270,7 @@ const ThesisConfigSection = () => {
                 <Group>
                   {!isThesisClosed(thesis) && (
                     <ConfirmationButton
-                      confirmationText='Are you sure you want to close the thesis? This action cannot be undone.'
+                      confirmationText='Are you sure you want to close the thesis? This will set the thesis state to DROPPED OUT and cannot be undone.'
                       confirmationTitle='Close Thesis'
                       variant='outline'
                       color='red'

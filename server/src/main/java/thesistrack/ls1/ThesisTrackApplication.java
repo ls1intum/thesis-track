@@ -11,7 +11,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 public class ThesisTrackApplication implements ApplicationRunner {
-
 	private static final Logger logger = LoggerFactory.getLogger(ThesisTrackApplication.class);
 
 	public static void main(String[] args) {
@@ -22,5 +21,4 @@ public class ThesisTrackApplication implements ApplicationRunner {
 	public void run(ApplicationArguments applicationArguments) {
 		logger.info("Service running...");
 	}
-
 }
