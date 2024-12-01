@@ -22,11 +22,6 @@ export const GLOBAL_CONFIG: IGlobalConfig = {
 
   allow_suggested_topics: (getEnvironmentVariable('ALLOW_SUGGESTED_TOPICS') || 'true') === 'true',
 
-  git: {
-    commit: getEnvironmentVariable('GIT_COMMIT') || 'unknown',
-    branch: getEnvironmentVariable('GIT_BRANCH') || 'unknown',
-  },
-
   genders: getEnvironmentVariable<Record<string, string>>('GENDERS', true) || {
     MALE: 'Male',
     FEMALE: 'Female',

@@ -33,17 +33,6 @@ jobs:
           script: |
             docker compose -f docker-compose.prod.yml --env-file=.env.prod down --remove-orphans --rmi all
 
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Get Git Commit Hash
-        id: git_info
-        run: echo "GIT_COMMIT=$(git rev-parse HEAD)" >> $GITHUB_ENV
-
-      - name: Get Branch Name
-        id: branch_name
-        run: echo "GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-
       - name: Create main.cf and master.cf File
         run: |
           echo "${{ vars.POSTFIX_MAIN_CF }}" > main.cf
@@ -146,9 +135,6 @@ jobs:
             
             echo "SERVER_IMAGE_TAG=${{ inputs.server_image_tag }}" >> .env.prod
             echo "CLIENT_IMAGE_TAG=${{ inputs.client_image_tag }}" >> .env.prod
-            
-            echo "GIT_COMMIT=${{ env.GIT_COMMIT }}" >> .env.prod
-            echo "GIT_BRANCH=${{ env.GIT_BRANCH }}" >> .env.prod
 
       - name: SSH to VM and Execute Docker-Compose Up
         uses: appleboy/ssh-action@v1.0.3

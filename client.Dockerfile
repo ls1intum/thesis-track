@@ -2,22 +2,18 @@ FROM node:22-alpine as build
 
 WORKDIR /app
 
-COPY package.json ./
-COPY package-lock.json ./
+COPY . .
 
-RUN npm install
-
+WORKDIR /app/client
 ENV CI 1
-
-COPY . ./
 
 RUN npm install
 RUN npm run build
 
 FROM nginx:stable-alpine
 
-COPY --from=build /app/build /usr/share/nginx/html
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/client/build /usr/share/nginx/html
+COPY ./client/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 # use same node version like in the build image
 COPY --from=build /usr/lib /usr/lib

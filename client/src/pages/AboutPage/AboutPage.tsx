@@ -3,9 +3,40 @@ import flowchart from './flowchart.svg'
 import { usePageTitle } from '../../hooks/theme'
 import PublicArea from '../../app/layout/PublicArea/PublicArea'
 import { GLOBAL_CONFIG } from '../../config/global'
+import { useEffect, useState } from 'react'
+import { doRequest } from '../../requests/request'
+
+interface IActuatorInfo {
+  git: {
+    branch: string
+    commit: {
+      id: string
+      time: string
+    }
+  }
+}
 
 const AboutPage = () => {
   usePageTitle('About')
+
+  const [info, setInfo] = useState<IActuatorInfo>()
+
+  useEffect(() => {
+    setInfo(undefined)
+
+    return doRequest<IActuatorInfo>(
+      '/actuator/info',
+      {
+        method: 'GET',
+        requiresAuth: false,
+      },
+      (response) => {
+        if (response.ok) {
+          setInfo(response.data)
+        }
+      },
+    )
+  }, [])
 
   return (
     <PublicArea withBackButton={true}>
@@ -73,10 +104,10 @@ const AboutPage = () => {
         <Title order={3}>Git Information</Title>
         <List>
           <List.Item>
-            Branch: <b>{GLOBAL_CONFIG.git.branch}</b>
+            Branch: <b>{info?.git.branch || 'unknown'}</b>
           </List.Item>
           <List.Item>
-            Commit: <b>{GLOBAL_CONFIG.git.commit}</b>
+            Commit: <b>{info?.git.commit.id || 'unknown'}</b>
           </List.Item>
         </List>
       </Stack>

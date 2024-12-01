@@ -17,13 +17,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ./client/Dockerfile
+          - dockerfile: ./client.Dockerfile
             image: ghcr.io/ls1intum/thesis-track/thesis-track-client
-            context: ./client
+            context: ./
             path: client
-          - dockerfile: ./server/Dockerfile
+          - dockerfile: ./server.Dockerfile
             image: ghcr.io/ls1intum/thesis-track/thesis-track-server
-            context: ./server
+            context: ./
             path: server
     outputs:
       server_image_tag: "${{ steps.output-tag-server.outputs.server_image_tag }}"

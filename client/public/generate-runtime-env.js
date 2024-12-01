@@ -9,8 +9,6 @@ const ALLOWED_ENVIRONMENT_VARIABLES = [
   'CHAIR_URL',
   'PRIVACY',
   'IMPRINT',
-  'GIT_COMMIT',
-  'GIT_BRANCH',
   // environments with defaults
   'ALLOW_SUGGESTED_TOPICS',
   'DEFAULT_SUPERVISOR_UUID',
