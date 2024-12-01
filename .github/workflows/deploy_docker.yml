@@ -33,6 +33,9 @@ jobs:
           script: |
             docker compose -f docker-compose.prod.yml --env-file=.env.prod down --remove-orphans --rmi all
 
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
       - name: Create main.cf and master.cf File
         run: |
           echo "${{ vars.POSTFIX_MAIN_CF }}" > main.cf
