@@ -1,16 +1,23 @@
 import { Title } from '@mantine/core'
-import { GLOBAL_CONFIG } from '../../config/global'
-import DocumentEditor from '../../components/DocumentEditor/DocumentEditor'
 import { usePageTitle } from '../../hooks/theme'
 import PublicArea from '../../app/layout/PublicArea/PublicArea'
+import { useEffect, useState } from 'react'
 
 const PrivacyPage = () => {
   usePageTitle('Privacy')
 
+  const [content, setContent] = useState('')
+
+  useEffect(() => {
+    fetch('/privacy.html')
+      .then((res) => res.text())
+      .then((res) => setContent(res))
+  }, [])
+
   return (
     <PublicArea withBackButton={true}>
       <Title mb='md'>Privacy</Title>
-      <DocumentEditor value={GLOBAL_CONFIG.privacy_text} />
+      <div dangerouslySetInnerHTML={{ __html: content }} />
     </PublicArea>
   )
 }

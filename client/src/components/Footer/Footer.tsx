@@ -7,8 +7,8 @@ import packageJson from '../../../package.json'
 
 const links = [
   { link: '/about', label: 'About', visible: true },
-  { link: '/imprint', label: 'Imprint', visible: !!GLOBAL_CONFIG.imprint_text },
-  { link: '/privacy', label: 'Privacy', visible: !!GLOBAL_CONFIG.privacy_text },
+  { link: '/imprint', label: 'Imprint', visible: true },
+  { link: '/privacy', label: 'Privacy', visible: true },
 ]
 
 interface IFooterProps {

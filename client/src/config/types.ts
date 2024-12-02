@@ -39,9 +39,6 @@ export interface IGlobalConfig {
     }
   >
 
-  privacy_text: string
-  imprint_text: string
-
   default_supervisors: string[]
   calendar_url: string
 

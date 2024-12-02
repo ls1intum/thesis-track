@@ -61,6 +61,9 @@ labels:
   - "traefik.http.routers.client.priority=1"
 expose:
   - "80"
+volumes:
+  - ./templates/privacy.html:/usr/share/nginx/html/privacy.html
+  - ./templates/imprint.html:/usr/share/nginx/html/imprint.html
 environment:
   - SERVER_HOST=
   - KEYCLOAK_HOST=
@@ -68,8 +71,6 @@ environment:
   - KEYCLOAK_CLIENT_ID=
   - CHAIR_NAME=
   - CHAIR_URL=
-  - PRIVACY=
-  - IMPRINT=
 ```
 
 ## Reverse Proxy
