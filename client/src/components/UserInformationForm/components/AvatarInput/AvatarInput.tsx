@@ -26,7 +26,7 @@ const AvatarInput = (props: IAvatarInputProps) => {
   const [scale, setScale] = useState(1)
 
   const onSave = async () => {
-    const canvas = editorRef.current?.getImage().toDataURL()
+    const canvas = editorRef.current?.getImageScaledToCanvas().toDataURL()
 
     if (!canvas) {
       return
@@ -45,7 +45,6 @@ const AvatarInput = (props: IAvatarInputProps) => {
         onDrop={(files) => {
           setFile(files[0])
         }}
-        maxSize={2 * 1024 * 1024}
         accept={IMAGE_MIME_TYPE}
       >
         <Group>
@@ -58,9 +57,6 @@ const AvatarInput = (props: IAvatarInputProps) => {
           <Stack>
             <Text size='xl' inline>
               Drag the file here or click to select file
-            </Text>
-            <Text size='sm' c='dimmed' inline>
-              The file should not exceed 2MB
             </Text>
           </Stack>
         </Group>
