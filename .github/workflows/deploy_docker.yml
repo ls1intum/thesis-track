@@ -105,8 +105,6 @@ jobs:
             echo "APPLICATION_TITLE=${{ vars.APPLICATION_TITLE }}" >> .env.prod
             echo "CHAIR_NAME=${{ vars.CHAIR_NAME }}" >> .env.prod
             echo "CHAIR_URL=${{ vars.CHAIR_URL }}" >> .env.prod
-            echo "PRIVACY=${{ vars.PRIVACY }}" >> .env.prod
-            echo "IMPRINT=${{ vars.IMPRINT }}" >> .env.prod
             echo "DEFAULT_SUPERVISOR_UUID=${{ vars.DEFAULT_SUPERVISOR_UUID }}" >> .env.prod
             echo "ALLOW_SUGGESTED_TOPICS=${{ vars.ALLOW_SUGGESTED_TOPICS }}" >> .env.prod
             echo "THESIS_TYPES=${{ vars.THESIS_TYPES }}" >> .env.prod

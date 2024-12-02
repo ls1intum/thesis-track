@@ -99,8 +99,6 @@ services:
       - KEYCLOAK_CLIENT_ID
       - ALLOW_SUGGESTED_TOPICS
       - DEFAULT_SUPERVISOR_UUID
-      - PRIVACY
-      - IMPRINT
       - THESIS_TYPES
       - STUDY_PROGRAMS
       - STUDY_DEGREES
@@ -111,8 +109,6 @@ services:
       - APPLICATION_TITLE
       - CHAIR_NAME
       - CHAIR_URL
-      - GIT_COMMIT
-      - GIT_BRANCH
     depends_on:
       - server
     networks:
