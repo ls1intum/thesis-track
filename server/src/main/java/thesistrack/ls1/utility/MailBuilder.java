@@ -213,7 +213,7 @@ public class MailBuilder {
     }
 
     public MailBuilder fillThesisPlaceholders(Thesis thesis) {
-        fillPlaceholder("thesis", ThesisDto.fromThesisEntity(thesis, false));
+        fillPlaceholder("thesis", ThesisDto.fromThesisEntity(thesis, false, true));
         fillPlaceholder("thesisUrl", config.getClientHost() + "/theses/" + thesis.getId());
 
         return this;

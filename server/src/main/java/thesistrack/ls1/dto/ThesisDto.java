@@ -198,7 +198,7 @@ public record ThesisDto (
         }
     }
 
-    public static ThesisDto fromThesisEntity(Thesis thesis, boolean protectedAccess) {
+    public static ThesisDto fromThesisEntity(Thesis thesis, boolean advisorAccess, boolean studentAccess) {
         if (thesis == null) {
             return null;
         }
@@ -238,11 +238,11 @@ public record ThesisDto (
                 thesis.getStartDate(),
                 thesis.getEndDate(),
                 thesis.getCreatedAt(),
-                protectedAccess && !assessments.isEmpty() ? ThesisAssessmentDto.fromAssessmentEntity(assessments.getFirst()) : null,
+                advisorAccess && !assessments.isEmpty() ? ThesisAssessmentDto.fromAssessmentEntity(assessments.getFirst()) : null,
                 proposals.stream().map(ThesisProposalDto::fromProposalEntity).toList(),
                 thesis.getFeedback().stream().map(ThesisFeedbackDto::fromThesisFeedbackEntity).toList(),
                 thesis.getFiles().stream().map(ThesisFilesDto::fromThesisFileEntity).toList(),
-                ThesisGradeDto.fromThesisEntity(thesis),
+                studentAccess ? ThesisGradeDto.fromThesisEntity(thesis) : null,
                 presentations.stream().map(ThesisPresentationDto::fromPresentationEntity).toList(),
                 students,
                 advisors,

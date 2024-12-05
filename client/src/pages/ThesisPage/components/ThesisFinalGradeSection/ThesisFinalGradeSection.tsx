@@ -31,7 +31,11 @@ const ThesisFinalGradeSection = () => {
   }, 'Thesis successfully marked as finished')
 
   if (!checkMinimumThesisState(thesis, ThesisState.ASSESSED)) {
-    return <></>
+    return null
+  }
+
+  if (!access.student) {
+    return null
   }
 
   return (
