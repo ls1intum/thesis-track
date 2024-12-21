@@ -4,7 +4,7 @@ plugins {
 	id "com.github.andygoossens.modernizer" version "1.10.0"
 	id "com.gorylenko.gradle-git-properties" version "2.4.2"
 	id "org.springframework.boot" version "${spring_boot_version}"
-	id "io.spring.dependency-management" version "1.1.6"
+	id "io.spring.dependency-management" version "1.1.7"
 	id "com.github.ben-manes.versions" version "0.51.0"
 }
 
@@ -45,7 +45,7 @@ dependencies {
 
 	implementation "commons-io:commons-io:2.18.0"
 	implementation "com.github.vladimir-bukhtoyarov:bucket4j-core:8.0.1"
-	implementation "org.mnode.ical4j:ical4j:4.0.6"
+	implementation "org.mnode.ical4j:ical4j:4.0.7"
 	implementation "com.itextpdf:itext-core:9.0.0"
 	implementation "com.itextpdf:html2pdf:6.0.0"
 	implementation "com.auth0:java-jwt:4.4.0"
@@ -53,12 +53,14 @@ dependencies {
 	// use newest version of commons-compress to avoid security issues through outdated dependencies
 	implementation "org.apache.commons:commons-compress:1.27.1"
 
+	compileOnly "org.projectlombok:lombok:1.18.36"
+	annotationProcessor "org.projectlombok:lombok:1.18.36"
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test:${spring_boot_version}") {
 		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
 		exclude group: "com.vaadin.external.google", module: "android-json"
 		exclude group: "org.xmlunit", module: "xmlunit-core"
 	}
-	testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.3"
 	testImplementation "org.mockito:mockito-core:5.14.2"
 	testImplementation "org.mockito:mockito-junit-jupiter:5.14.2"
 
@@ -68,10 +70,9 @@ dependencies {
 	testImplementation "org.testcontainers:database-commons:${test_container_version}"
 	testImplementation "org.testcontainers:postgresql:${test_container_version}"
 
-	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.3"
-	testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.3"
-	compileOnly "org.projectlombok:lombok:1.18.36"
-	annotationProcessor "org.projectlombok:lombok:1.18.36"
+	testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
+	testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.4"
 }
 
 springBoot {
