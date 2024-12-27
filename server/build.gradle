@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "thesis-track.ls1"
-version = "3.0.3"
+version = "3.0.4"
 description = "Thesis Track"
 
 java {

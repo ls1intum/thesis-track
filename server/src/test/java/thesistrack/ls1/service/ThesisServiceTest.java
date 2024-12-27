@@ -74,6 +74,7 @@ class ThesisServiceTest {
                 testUser,
                 "Test Thesis",
                 "Bachelor",
+                "ENGLISH",
                 supervisorIds,
                 advisorIds,
                 studentIds,

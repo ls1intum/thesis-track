@@ -176,7 +176,7 @@ const ThesisConfigSection = () => {
       <Accordion.Item value='open'>
         <Accordion.Control>Configuration</Accordion.Control>
         <Accordion.Panel>
-          <form onSubmit={form.onSubmit(onSave)}>
+          <form onSubmit={form.onSubmit(() => void onSave())}>
             <Stack gap='md'>
               <TextInput
                 label='Thesis Title'

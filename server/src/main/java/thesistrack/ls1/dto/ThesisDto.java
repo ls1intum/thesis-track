@@ -2,6 +2,7 @@ package thesistrack.ls1.dto;
 
 import thesistrack.ls1.constants.*;
 import thesistrack.ls1.entity.*;
+import thesistrack.ls1.entity.jsonb.ThesisMetadata;
 
 import java.time.Instant;
 import java.util.*;
@@ -10,6 +11,8 @@ public record ThesisDto (
         UUID thesisId,
         String title,
         String type,
+        String language,
+        ThesisMetadata metadata,
         ThesisVisibility visibility,
         Set<String> keywords,
         String infoText,
@@ -229,6 +232,8 @@ public record ThesisDto (
                 thesis.getId(),
                 thesis.getTitle(),
                 thesis.getType(),
+                thesis.getLanguage(),
+                thesis.getMetadata(),
                 thesis.getVisibility(),
                 thesis.getKeywords(),
                 thesis.getInfo(),

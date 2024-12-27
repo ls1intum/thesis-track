@@ -13,6 +13,7 @@ import thesistrack.ls1.constants.*;
 import thesistrack.ls1.controller.payload.RequestChangesPayload;
 import thesistrack.ls1.controller.payload.ThesisStatePayload;
 import thesistrack.ls1.entity.*;
+import thesistrack.ls1.entity.jsonb.ThesisMetadata;
 import thesistrack.ls1.entity.key.ThesisRoleId;
 import thesistrack.ls1.entity.key.ThesisStateChangeId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
@@ -98,6 +99,7 @@ public class ThesisService {
             User creator,
             String thesisTitle,
             String thesisType,
+            String language,
             List<UUID> supervisorIds,
             List<UUID> advisorIds,
             List<UUID> studentIds,
@@ -108,6 +110,8 @@ public class ThesisService {
 
         thesis.setTitle(thesisTitle);
         thesis.setType(thesisType);
+        thesis.setLanguage(language);
+        thesis.setMetadata(ThesisMetadata.getEmptyMetadata());
         thesis.setVisibility(ThesisVisibility.INTERNAL);
         thesis.setKeywords(new HashSet<>());
         thesis.setInfo("");
