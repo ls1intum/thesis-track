@@ -49,7 +49,7 @@
     "phosphor-react": "1.4.1",
     "react": "18.3.1",
     "react-avatar-editor": "13.0.2",
-    "react-dom": "18.3.1",
+    "react-dom": "19.0.0",
     "react-router": "7.1.1"
   },
   "devDependencies": {
@@ -58,7 +58,7 @@
     "@eslint/js": "9.17.0",
     "@types/react": "18.3.18",
     "@types/react-avatar-editor": "13.0.3",
-    "@types/react-dom": "18.3.5",
+    "@types/react-dom": "19.0.2",
     "@typescript-eslint/eslint-plugin": "8.18.2",
     "@typescript-eslint/parser": "8.18.2",
     "clean-webpack-plugin": "4.0.0",
