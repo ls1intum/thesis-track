@@ -47,6 +47,7 @@ class ThesisControllerTest extends BaseIntegrationTest {
             CreateThesisPayload payload = new CreateThesisPayload(
                     "Test Thesis",
                     "MASTER",
+                    "ENGLISH",
                     List.of(advisorId),
                     List.of(advisorId),
                     List.of(advisorId)
@@ -69,6 +70,7 @@ class ThesisControllerTest extends BaseIntegrationTest {
             UpdateThesisPayload payload = new UpdateThesisPayload(
                     "Updated Thesis",
                     "MASTER",
+                    "ENGLISH",
                     ThesisVisibility.PUBLIC,
                     Set.of("keyword1", "keyword2"),
                     Instant.now(),
