@@ -207,7 +207,7 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.secondaryTitles())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}/credits")
@@ -228,7 +228,7 @@ public class ThesisController {
                 payload.credits()
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     /* FEEDBACK ENDPOINTS */
