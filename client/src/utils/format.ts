@@ -131,6 +131,20 @@ export function formatApplicationState(state: ApplicationState) {
   return stateMap[state]
 }
 
+export function formatLanguage(language: string) {
+  return GLOBAL_CONFIG.languages[language] ?? language
+}
+
+export function getDefaultLanguage() {
+  const languages = Object.keys(GLOBAL_CONFIG.languages)
+
+  if (languages.length === 1) {
+    return languages[0]
+  }
+
+  return null
+}
+
 export function formatPresentationType(type: string) {
   if (type === 'INTERMEDIATE') {
     return 'Intermediate'

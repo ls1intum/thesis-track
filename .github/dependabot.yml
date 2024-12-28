@@ -3,14 +3,14 @@ updates:
   - package-ecosystem: "npm"
     directory: "/client"
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   - package-ecosystem: "github-actions"
     directory: "/.github"
     schedule:
-      interval: "daily"
+      interval: "weekly"
 
   - package-ecosystem: "gradle"
     directory: "/server"
     schedule:
-      interval: "daily"
+      interval: "weekly"

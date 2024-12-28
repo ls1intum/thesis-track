@@ -224,6 +224,7 @@ public abstract class BaseIntegrationTest {
         CreateThesisPayload payload = new CreateThesisPayload(
                 title,
                 "MASTER",
+                "ENGLISH",
                 List.of(advisorId),
                 List.of(advisorId),
                 List.of(advisorId)

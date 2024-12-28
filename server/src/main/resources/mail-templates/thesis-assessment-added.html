@@ -4,19 +4,19 @@
   [[${assessment.createdBy.firstName}]] [[${assessment.createdBy.lastName}]] added an assessment to thesis "[[${thesis.title}]]"
 </p>
 
-<p th:inline="text">
+<p >
   <strong>Summary</strong><br />
-  [[${assessment.summary}]]
+  <span th:utext="${assessment.summary}"></span>
 </p>
 
-<p th:inline="text">
+<p>
   <strong>Positives</strong><br />
-  [[${assessment.positives}]]
+  <span th:utext="${assessment.positives}"></span>
 </p>
 
-<p th:inline="text">
+<p>
   <strong>Negatives</strong><br />
-  [[${assessment.negatives}]]
+  <span th:utext="${assessment.negatives}"></span>
 </p>
 
 <p th:inline="text">

@@ -10,6 +10,7 @@ import { Stack } from '@mantine/core'
 import ThesisHeader from './components/ThesisHeader/ThesisHeader'
 import ThesisProvider from '../../providers/ThesisProvider/ThesisProvider'
 import ThesisAdvisorCommentsSection from './components/ThesisAdvisorCommentsSection/ThesisAdvisorCommentsSection'
+import ThesisStudentInfoSection from './components/ThesisStudentInfoSection/ThesisStudentInfoSection'
 
 const ThesisPage = () => {
   const { thesisId } = useParams<{ thesisId: string }>()
@@ -21,6 +22,7 @@ const ThesisPage = () => {
       <Stack>
         <ThesisHeader />
         <ThesisConfigSection />
+        <ThesisStudentInfoSection />
         <ThesisAdvisorCommentsSection />
         <ThesisInfoSection />
         <ThesisProposalSection />

@@ -133,7 +133,7 @@ class ApplicationServiceTest {
         User reviewer = new User();
         reviewer.setId(UUID.randomUUID());
         when(applicationRepository.save(any(Application.class))).thenAnswer(invocation -> invocation.getArgument(0));
-        when(thesisService.createThesis(any(), any(), any(), any(), any(), any(), any(), anyBoolean()))
+        when(thesisService.createThesis(any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean()))
                 .thenReturn(EntityMockFactory.createThesis("Test Thesis"));
 
         List<Application> results = applicationService.accept(
@@ -141,6 +141,7 @@ class ApplicationServiceTest {
                 testApplication,
                 "Test Thesis",
                 "Bachelor",
+                "ENGLISH",
                 List.of(UUID.randomUUID()),
                 List.of(UUID.randomUUID()),
                 true,
@@ -149,7 +150,7 @@ class ApplicationServiceTest {
 
         assertFalse(results.isEmpty());
         assertEquals(ApplicationState.ACCEPTED, results.getFirst().getState());
-        verify(thesisService).createThesis(any(), any(), any(), any(), any(), any(), any(), anyBoolean());
+        verify(thesisService).createThesis(any(), any(), any(), any(), any(), any(), any(), any(), anyBoolean());
         verify(mailingService).sendApplicationAcceptanceEmail(any(), any());
     }
 

@@ -99,6 +99,7 @@ class ApplicationControllerTest extends BaseIntegrationTest {
         AcceptApplicationPayload payload = new AcceptApplicationPayload(
                 "Final Thesis Title",
                 "MASTER",
+                "ENGLISH",
                 List.of(advisorId),
                 List.of(supervisorId),
                 true,

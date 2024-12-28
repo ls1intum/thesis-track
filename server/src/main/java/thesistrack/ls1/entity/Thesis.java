@@ -12,6 +12,7 @@ import thesistrack.ls1.constants.ThesisRoleName;
 import thesistrack.ls1.constants.ThesisState;
 import thesistrack.ls1.constants.ThesisVisibility;
 import thesistrack.ls1.dto.LightUserDto;
+import thesistrack.ls1.entity.jsonb.ThesisMetadata;
 
 import java.time.Instant;
 import java.util.*;
@@ -33,6 +34,15 @@ public class Thesis {
     @NotNull
     @Column(name = "type", nullable = false)
     private String type;
+
+    @NotNull
+    @Column(name = "language", nullable = false)
+    private String language;
+
+    @NotNull
+    @Column(name = "metadata", nullable = false, columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private ThesisMetadata metadata;
 
     @NotNull
     @Column(name = "info", nullable = false)
