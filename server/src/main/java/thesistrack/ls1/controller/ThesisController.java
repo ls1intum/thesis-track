@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,7 @@ import thesistrack.ls1.utility.RequestValidator;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -93,7 +95,7 @@ public class ThesisController {
         );
 
         return ResponseEntity.ok(PaginationDto.fromSpringPage(
-                theses.map(thesis -> ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)))
+                theses.map(thesis -> ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)))
         ));
     }
 
@@ -106,7 +108,7 @@ public class ThesisController {
             throw new AccessDeniedException("You do not have the required permissions to view this thesis");
         }
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PostMapping
@@ -128,7 +130,7 @@ public class ThesisController {
                 true
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}")
@@ -160,7 +162,7 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.states())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @DeleteMapping("/{thesisId}")
@@ -177,7 +179,7 @@ public class ThesisController {
 
         thesis = thesisService.closeThesis(authenticatedUser, thesis);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}/info")
@@ -246,7 +248,7 @@ public class ThesisController {
 
         thesis = thesisService.completeFeedback(thesis, feedbackId, action.equals("complete"));
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @DeleteMapping("/{thesisId}/feedback/{feedbackId}")
@@ -264,7 +266,7 @@ public class ThesisController {
 
         thesis = thesisService.deleteFeedback(thesis, feedbackId);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/feedback")
@@ -287,7 +289,7 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.requestedChanges())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     /* PROPOSAL ENDPOINTS */
@@ -309,6 +311,7 @@ public class ThesisController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_PDF)
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=proposal_%s.pdf", thesisId))
                 .body(thesisService.getProposalFile(proposal));
     }
@@ -328,7 +331,7 @@ public class ThesisController {
 
         thesis = thesisService.deleteProposal(thesis, proposalId);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/proposal")
@@ -350,7 +353,7 @@ public class ThesisController {
 
         thesis = thesisService.uploadProposal(authenticatedUser, thesis, RequestValidator.validateNotNull(proposalFile));
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}/proposal/accept")
@@ -367,7 +370,7 @@ public class ThesisController {
 
         thesis = thesisService.acceptProposal(authenticatedUser, thesis);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     /* WRITING ENDPOINTS */
@@ -386,7 +389,7 @@ public class ThesisController {
 
         thesis = thesisService.submitThesis(thesis);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/files")
@@ -409,7 +412,7 @@ public class ThesisController {
 
         thesis = thesisService.uploadThesisFile(authenticatedUser, thesis, type, RequestValidator.validateNotNull(file));
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @GetMapping("/{thesisId}/files/{fileId}")
@@ -429,6 +432,7 @@ public class ThesisController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=" + file.getFilename(), thesisId))
                 .body(thesisService.getThesisFile(file));
     }
@@ -448,7 +452,7 @@ public class ThesisController {
 
         thesis = thesisService.deleteThesisFile(thesis, fileId);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/presentations")
@@ -475,7 +479,7 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.date())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PutMapping("/{thesisId}/presentations/{presentationId}")
@@ -507,7 +511,7 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.date())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/presentations/{presentationId}/schedule")
@@ -532,7 +536,7 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.optionalAttendees())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @DeleteMapping("/{thesisId}/presentations/{presentationId}")
@@ -550,7 +554,7 @@ public class ThesisController {
 
         Thesis thesis = thesisPresentationService.deletePresentation(authenticatedUser, presentation);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @GetMapping("/{thesisId}/comments")
@@ -625,6 +629,7 @@ public class ThesisController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("inline; filename=" + comment.getFilename(), commentId))
                 .body(thesisCommentService.getCommentFile(comment));
     }
@@ -689,7 +694,7 @@ public class ThesisController {
                 RequestValidator.validateStringMaxLength(payload.gradeSuggestion(), StringLimits.THESIS_GRADE.getLimit())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     /* GRADE ENDPOINTS */
@@ -714,7 +719,7 @@ public class ThesisController {
                 RequestValidator.validateNotNull(payload.visibility())
         );
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 
     @PostMapping("/{thesisId}/complete")
@@ -731,6 +736,6 @@ public class ThesisController {
 
         thesis = thesisService.completeThesis(thesis);
 
-        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser), thesis.hasStudentAccess(authenticatedUser)));
     }
 }

@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import thesistrack.ls1.service.UserService;
 
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RestController
@@ -48,6 +50,7 @@ public class AvatarController {
 
         return ResponseEntity.ok()
                 .contentType(MediaType.IMAGE_PNG)
+                .cacheControl(CacheControl.maxAge(1, TimeUnit.DAYS).cachePublic())
                 .body(uploadService.load(avatar));
     }
 }
