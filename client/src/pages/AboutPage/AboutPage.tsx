@@ -2,7 +2,6 @@ import { Anchor, Center, Image, List, Stack, Text, Title } from '@mantine/core'
 import flowchart from './flowchart.svg'
 import { usePageTitle } from '../../hooks/theme'
 import PublicArea from '../../app/layout/PublicArea/PublicArea'
-import { GLOBAL_CONFIG } from '../../config/global'
 import { useEffect, useState } from 'react'
 import { doRequest } from '../../requests/request'
 

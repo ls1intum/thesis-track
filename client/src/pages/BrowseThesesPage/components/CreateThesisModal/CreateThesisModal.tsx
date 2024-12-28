@@ -99,7 +99,11 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
             }))}
             {...form.getInputProps('type')}
           />
-          <LanguageSelect required={true} {...form.getInputProps('language')} />
+          <LanguageSelect
+            label='Thesis Language'
+            required={true}
+            {...form.getInputProps('language')}
+          />
           <UserMultiSelect
             label='Student(s)'
             required={true}

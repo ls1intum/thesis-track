@@ -264,7 +264,11 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             {...form.getInputProps('type')}
           />
 
-          <LanguageSelect required={true} {...form.getInputProps('language')} />
+          <LanguageSelect
+            label='Thesis Language'
+            required={true}
+            {...form.getInputProps('language')}
+          />
 
           <UserMultiSelect
             label='Supervisor'

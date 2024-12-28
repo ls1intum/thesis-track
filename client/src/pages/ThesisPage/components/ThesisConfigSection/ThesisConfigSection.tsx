@@ -200,7 +200,11 @@ const ThesisConfigSection = () => {
                 }))}
                 {...form.getInputProps('type')}
               />
-              <LanguageSelect required={true} {...form.getInputProps('language')} />
+              <LanguageSelect
+                label='Thesis Language'
+                required={true}
+                {...form.getInputProps('language')}
+              />
               <ThesisVisibilitySelect
                 label='Visibility'
                 required={true}

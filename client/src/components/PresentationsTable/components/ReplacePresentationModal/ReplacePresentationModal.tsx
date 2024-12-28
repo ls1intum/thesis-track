@@ -12,7 +12,6 @@ import {
 } from '../../../../requests/responses/thesis'
 import { ApiError } from '../../../../requests/handler'
 import { formatPresentationType, getDefaultLanguage } from '../../../../utils/format'
-import { GLOBAL_CONFIG } from '../../../../config/global'
 import PublicPresentationsTable from '../../../PublicPresentationsTable/PublicPresentationsTable'
 import LanguageSelect from '../../../LanguageSelect/LanguageSelect'
 
@@ -178,7 +177,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
           />
           <TextInput label='Location' {...form.getInputProps('location')} />
           <TextInput type='url' label='Stream URL' {...form.getInputProps('streamUrl')} />
-          <LanguageSelect required {...form.getInputProps('language')} />
+          <LanguageSelect label='Language' required {...form.getInputProps('language')} />
           <DateTimePicker label='Scheduled At' required {...form.getInputProps('date')} />
           <Button
             fullWidth

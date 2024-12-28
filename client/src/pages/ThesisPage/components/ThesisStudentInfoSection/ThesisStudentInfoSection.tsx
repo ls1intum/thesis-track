@@ -1,5 +1,5 @@
-import { Accordion, Button, Grid, Group, NumberInput, Paper, Stack, TextInput } from '@mantine/core'
-import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
+import { Accordion, Button, Grid, Group, NumberInput, Paper, Stack } from '@mantine/core'
+import { IThesis } from '../../../../requests/responses/thesis'
 import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
@@ -55,12 +55,9 @@ const ThesisStudentInfoSection = () => {
   ]
 
   return (
-    <Accordion
-      variant='separated'
-      defaultValue='open'
-    >
+    <Accordion variant='separated' defaultValue=''>
       <Accordion.Item value='open'>
-        <Accordion.Control>Student Information</Accordion.Control>
+        <Accordion.Control>Involved Persons</Accordion.Control>
         <Accordion.Panel>
           <Stack gap='sm'>
             {users.map((user) => (

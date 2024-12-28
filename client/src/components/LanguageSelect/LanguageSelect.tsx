@@ -6,7 +6,6 @@ import { SelectProps } from '@mantine/core/lib/components/Select/Select'
 const LanguageSelect = (props: Omit<SelectProps, 'data'>) => {
   return (
     <Select
-      label='Language'
       data={Object.keys(GLOBAL_CONFIG.languages).map((key) => ({
         label: formatLanguage(key),
         value: key,
