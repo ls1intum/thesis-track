@@ -57,6 +57,36 @@ The videos are grouped by the roles student, advisor and supervisor.
 - [Add Final Grade + Complete Thesis](https://live.rbg.tum.de/w/artemisintro/53610)  
   Allows supervisors to add the final grade and officially mark the thesis as complete. This feature consolidates all feedback and grading, ensuring the thesis lifecycle is fully documented.
 
+#### Thesis Page Permissions
+
+Admins can view and edit all theses on the platform. 
+For the other roles, please view this access table.
+Supervisor, Advisor and Student means that the user is directly assigned to the thesis with that role.
+
+|                             | Supervisor | Advisor | Student | Viewer |
+|-----------------------------|------------|---------|---------|--------|
+| Configure Thesis            | ✅          | ✅       | ❌       | ❌      |
+| View Student Information    | ✅          | ✅       | ❌       | ❌      |
+| Update Thesis Credits       | ✅          | ✅       | ❌       | ❌      |
+| Add Abstract / Links        | ✅          | ✅       | ✅       | ❌      |
+| Edit Thesis Titles          | ✅          | ✅       | ✅       | ❌      |
+| Upload Proposal             | ✅          | ✅       | ✅       | ❌      |
+| View Proposal               | ✅          | ✅       | ✅       | ✅      |
+| Request Proposal Changes    | ✅          | ✅       | ❌       | ❌      |
+| Accept Proposal             | ✅          | ✅       | ❌       | ❌      |
+| Upload Thesis Files         | ✅          | ✅       | ✅       | ❌      |
+| View Thesis Files           | ✅          | ✅       | ✅       | ✅      |
+| Create Presentation Draft   | ✅          | ✅       | ✅       | ❌      |
+| Schedule Presentation       | ✅          | ✅       | ❌       | ❌      |
+| Post / View Student Comment | ✅          | ✅       | ✅       | ❌      |
+| Post / View Advisor Comment | ✅          | ✅       | ❌       | ❌      |
+| Submit Thesis               | ✅          | ✅       | ✅       | ❌      |
+| Add Assessment              | ✅          | ✅       | ❌       | ❌      |
+| View Assessment             | ✅          | ✅       | ❌       | ❌      |
+| Add Final Grade             | ✅          | ❌       | ❌       | ❌      |
+| View Final Grade            | ✅          | ✅       | ✅       | ❌      |
+| Complete Thesis             | ✅          | ❌       | ❌       | ❌      |
+
 ## Developer Documentation
 
 1. [Production Setup](docs/PRODUCTION.md)
