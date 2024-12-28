@@ -68,14 +68,19 @@ Supervisor, Advisor and Student means that the user is directly assigned to the 
 | Configure Thesis            | ✅          | ✅       | ❌       | ❌      |
 | View Student Information    | ✅          | ✅       | ❌       | ❌      |
 | Update Thesis Credits       | ✅          | ✅       | ❌       | ❌      |
+| View Thesis Info            | ✅          | ✅       | ✅       | ✅      |
 | Add Abstract / Links        | ✅          | ✅       | ✅       | ❌      |
 | Edit Thesis Titles          | ✅          | ✅       | ✅       | ❌      |
 | Upload Proposal             | ✅          | ✅       | ✅       | ❌      |
 | View Proposal               | ✅          | ✅       | ✅       | ✅      |
+| View Proposal History       | ✅          | ✅       | ✅       | ❌      |
+| Delete Proposal             | ✅          | ✅       | ❌       | ❌      |
 | Request Proposal Changes    | ✅          | ✅       | ❌       | ❌      |
 | Accept Proposal             | ✅          | ✅       | ❌       | ❌      |
 | Upload Thesis Files         | ✅          | ✅       | ✅       | ❌      |
 | View Thesis Files           | ✅          | ✅       | ✅       | ✅      |
+| View Thesis File History    | ✅          | ✅       | ✅       | ❌      |
+| Delete Thesis File          | ✅          | ✅       | ❌       | ❌      |
 | Create Presentation Draft   | ✅          | ✅       | ✅       | ❌      |
 | Schedule Presentation       | ✅          | ✅       | ❌       | ❌      |
 | Post / View Student Comment | ✅          | ✅       | ✅       | ❌      |
