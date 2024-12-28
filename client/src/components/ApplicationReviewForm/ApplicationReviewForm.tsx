@@ -24,7 +24,8 @@ import { getApiResponseErrorMessage } from '../../requests/handler'
 import ApplicationRejectButton from '../ApplicationRejectButton/ApplicationRejectButton'
 import { useLoggedInUser } from '../../hooks/authentication'
 import AvatarUser from '../AvatarUser/AvatarUser'
-import { formatDate, formatThesisType } from '../../utils/format'
+import { formatDate, formatThesisType, getDefaultLanguage } from '../../utils/format'
+import LanguageSelect from '../LanguageSelect/LanguageSelect'
 
 interface IApplicationReviewFormProps {
   application: IApplication
@@ -35,6 +36,7 @@ interface IApplicationReviewForm {
   applicationId: string | null
   title: string
   type: string | null
+  language: string | null
   comment: string
   advisors: string[]
   supervisors: string[]
@@ -54,6 +56,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
       applicationId: null,
       title: '',
       type: null,
+      language: getDefaultLanguage(),
       comment: '',
       advisors: [],
       supervisors: [],
@@ -79,6 +82,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           application.thesisType || GLOBAL_CONFIG.thesis_types[application.user.studyDegree || '']
             ? application.user.studyDegree
             : null,
+        language: getDefaultLanguage(),
         advisors: application.topic?.advisors.map((advisor) => advisor.userId) ?? [],
         supervisors:
           application.topic?.supervisors.map((supervisor) => supervisor.userId) ??
@@ -135,6 +139,7 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
           data: {
             thesisTitle: values.title,
             thesisType: values.type,
+            language: values.language,
             advisorIds: values.advisors,
             supervisorIds: values.supervisors,
             notifyUser: values.notifyUser,
@@ -258,6 +263,8 @@ const ApplicationReviewForm = (props: IApplicationReviewFormProps) => {
             }))}
             {...form.getInputProps('type')}
           />
+
+          <LanguageSelect required={true} {...form.getInputProps('language')} />
 
           <UserMultiSelect
             label='Supervisor'

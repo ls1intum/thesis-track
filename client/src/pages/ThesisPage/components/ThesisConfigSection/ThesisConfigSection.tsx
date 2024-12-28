@@ -17,10 +17,12 @@ import { ApiError } from '../../../../requests/handler'
 import ThesisStateBadge from '../../../../components/ThesisStateBadge/ThesisStateBadge'
 import ThesisVisibilitySelect from '../ThesisVisibilitySelect/ThesisVisibilitySelect'
 import { formatThesisType } from '../../../../utils/format'
+import LanguageSelect from '../../../../components/LanguageSelect/LanguageSelect'
 
 interface IThesisConfigSectionFormValues {
   title: string
   type: string
+  language: string
   visibility: string
   keywords: string[]
   startDate: DateValue | undefined
@@ -59,6 +61,7 @@ const ThesisConfigSection = () => {
     initialValues: {
       title: thesis.title,
       type: thesis.type,
+      language: thesis.language,
       visibility: thesis.visibility,
       keywords: thesis.keywords,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
@@ -75,6 +78,7 @@ const ThesisConfigSection = () => {
     validate: {
       title: isNotEmpty('Title must not be empty'),
       type: isNotEmpty('Type must not be empty'),
+      language: isNotEmpty('Language must not be empty'),
       visibility: isNotEmpty('Visibility must not be empty'),
       keywords: (value) => {
         if (value && value.length > 2) {
@@ -112,6 +116,7 @@ const ThesisConfigSection = () => {
     form.setInitialValues({
       title: thesis.title,
       type: thesis.type,
+      language: thesis.language,
       visibility: thesis.visibility,
       keywords: thesis.keywords,
       startDate: thesis.startDate ? new Date(thesis.startDate) : undefined,
@@ -126,7 +131,7 @@ const ThesisConfigSection = () => {
     })
 
     form.reset()
-  }, [thesis.thesisId])
+  }, [thesis])
 
   const [closing, onClose] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}`, {
@@ -150,6 +155,7 @@ const ThesisConfigSection = () => {
       data: {
         thesisTitle: values.title,
         thesisType: values.type,
+        language: values.language,
         visibility: values.visibility,
         keywords: values.keywords,
         startDate: values.startDate,
@@ -194,6 +200,7 @@ const ThesisConfigSection = () => {
                 }))}
                 {...form.getInputProps('type')}
               />
+              <LanguageSelect required={true} {...form.getInputProps('language')} />
               <ThesisVisibilitySelect
                 label='Visibility'
                 required={true}

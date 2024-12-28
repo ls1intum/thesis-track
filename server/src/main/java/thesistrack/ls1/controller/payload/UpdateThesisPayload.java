@@ -10,6 +10,7 @@ import java.util.UUID;
 public record UpdateThesisPayload(
         String thesisTitle,
         String thesisType,
+        String language,
         ThesisVisibility visibility,
         Set<String> keywords,
         Instant startDate,

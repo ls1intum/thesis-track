@@ -164,6 +164,7 @@ public class ThesisService {
             Thesis thesis,
             String thesisTitle,
             String thesisType,
+            String language,
             ThesisVisibility visibility,
             Set<String> keywords,
             Instant startDate,
@@ -175,6 +176,7 @@ public class ThesisService {
     ) {
         thesis.setTitle(thesisTitle);
         thesis.setType(thesisType);
+        thesis.setLanguage(language);
         thesis.setVisibility(visibility);
         thesis.setKeywords(keywords);
 
@@ -212,6 +214,38 @@ public class ThesisService {
         thesisPresentationService.updateThesisCalendarEvents(thesis);
 
         return thesis;
+    }
+
+    @Transactional
+    public Thesis updateThesisTitles(
+            Thesis thesis,
+            String primaryTitle,
+            Map<String, String> titles
+    ) {
+        thesis.setMetadata(new ThesisMetadata(
+                titles,
+                thesis.getMetadata().credits()
+        ));
+        thesis.setTitle(primaryTitle);
+
+        thesis = thesisRepository.save(thesis);
+
+        thesisPresentationService.updateThesisCalendarEvents(thesis);
+
+        return thesis;
+    }
+
+    @Transactional
+    public Thesis updateThesisCredits(
+            Thesis thesis,
+            Map<UUID, Number> credits
+    ) {
+        thesis.setMetadata(new ThesisMetadata(
+                thesis.getMetadata().titles(),
+                credits
+        ));
+
+        return thesisRepository.save(thesis);
     }
 
     /* FEEDBACK */

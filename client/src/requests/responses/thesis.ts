@@ -28,6 +28,11 @@ export interface IThesis {
   thesisId: string
   title: string
   type: string
+  language: string
+  metadata: {
+    credits: Record<string, number>
+    titles: Record<string, string>
+  }
   visibility: string
   keywords: string[]
   infoText: string

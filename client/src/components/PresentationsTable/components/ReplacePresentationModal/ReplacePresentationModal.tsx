@@ -11,9 +11,10 @@ import {
   IThesisPresentation,
 } from '../../../../requests/responses/thesis'
 import { ApiError } from '../../../../requests/handler'
-import { formatPresentationType } from '../../../../utils/format'
+import { formatPresentationType, getDefaultLanguage } from '../../../../utils/format'
 import { GLOBAL_CONFIG } from '../../../../config/global'
 import PublicPresentationsTable from '../../../PublicPresentationsTable/PublicPresentationsTable'
+import LanguageSelect from '../../../LanguageSelect/LanguageSelect'
 
 interface IReplacePresentationModalProps {
   opened: boolean
@@ -42,7 +43,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
       visibility: 'PUBLIC',
       location: '',
       streamUrl: '',
-      language: null,
+      language: getDefaultLanguage(),
       date: null,
     },
     validateInputOnBlur: true,
@@ -177,15 +178,7 @@ const ReplacePresentationModal = (props: IReplacePresentationModalProps) => {
           />
           <TextInput label='Location' {...form.getInputProps('location')} />
           <TextInput type='url' label='Stream URL' {...form.getInputProps('streamUrl')} />
-          <Select
-            label='Language'
-            required
-            data={Object.entries(GLOBAL_CONFIG.languages).map(([key, value]) => ({
-              label: value,
-              value: key,
-            }))}
-            {...form.getInputProps('language')}
-          />
+          <LanguageSelect required {...form.getInputProps('language')} />
           <DateTimePicker label='Scheduled At' required {...form.getInputProps('date')} />
           <Button
             fullWidth

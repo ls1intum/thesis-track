@@ -1,6 +1,6 @@
 import { IThesis } from '../../../../requests/responses/thesis'
 import React, { useEffect, useState } from 'react'
-import { Accordion, Button, Flex, Grid, Group, Stack } from '@mantine/core'
+import { Accordion, Button, Flex, Grid, Group, Stack, TextInput } from '@mantine/core'
 import DocumentEditor from '../../../../components/DocumentEditor/DocumentEditor'
 import { doRequest } from '../../../../requests/request'
 import {
@@ -11,6 +11,9 @@ import { Link } from 'react-router'
 import { ApiError } from '../../../../requests/handler'
 import DownloadAllFilesButton from './components/DownloadAllFilesButton/DownloadAllFilesButton'
 import { isThesisClosed } from '../../../../utils/thesis'
+import { GLOBAL_CONFIG } from '../../../../config/global'
+import { formatLanguage } from '../../../../utils/format'
+import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
 
 const ThesisInfoSection = () => {
   const { thesis, access } = useLoadedThesisContext()
@@ -19,11 +22,16 @@ const ThesisInfoSection = () => {
 
   const [infoText, setInfoText] = useState(thesis.infoText)
   const [abstractText, setAbstractText] = useState(thesis.abstractText)
+  const [titles, setTitles] = useState<Record<string, string>>({})
 
   useEffect(() => {
     setInfoText(thesis.infoText)
     setAbstractText(thesis.abstractText)
-  }, [thesis.infoText, thesis.abstractText])
+    setTitles({
+      ...thesis.metadata.titles,
+      [thesis.language]: thesis.title,
+    })
+  }, [thesis.infoText, thesis.abstractText, thesis.metadata, thesis.title, thesis.language])
 
   const [saving, onSave] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/info`, {
@@ -32,6 +40,8 @@ const ThesisInfoSection = () => {
       data: {
         abstractText,
         infoText,
+        primaryTitle: titles[thesis.language],
+        secondaryTitles: titles,
       },
     })
 
@@ -50,6 +60,29 @@ const ThesisInfoSection = () => {
         <Accordion.Control>Info</Accordion.Control>
         <Accordion.Panel>
           <Stack>
+            {editMode ? (
+              <Stack>
+                {Object.keys(GLOBAL_CONFIG.languages).map((language) => (
+                  <TextInput
+                    key={`input-${language}`}
+                    label={`${formatLanguage(language)} Title`}
+                    value={titles[language] || ''}
+                    onChange={(e) => setTitles((prev) => ({ ...prev, [language]: e.target.value }))}
+                  />
+                ))}
+              </Stack>
+            ) : (
+              <Stack>
+                {Object.keys(GLOBAL_CONFIG.languages).map((language) => (
+                  <LabeledItem
+                    key={`label-${language}`}
+                    label={`${formatLanguage(language)} Title`}
+                    value={titles[language] || 'No Title'}
+                    copyText={titles[language]}
+                  />
+                ))}
+              </Stack>
+            )}
             <DocumentEditor
               label='Abstract'
               value={abstractText}

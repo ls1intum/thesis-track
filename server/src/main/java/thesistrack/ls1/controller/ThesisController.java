@@ -149,6 +149,7 @@ public class ThesisController {
                 thesis,
                 RequestValidator.validateStringMaxLength(payload.thesisTitle(), StringLimits.THESIS_TITLE.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.thesisType(), StringLimits.SHORTTEXT.getLimit()),
+                RequestValidator.validateStringMaxLength(payload.language(), StringLimits.SHORTTEXT.getLimit()),
                 RequestValidator.validateNotNull(payload.visibility()),
                 RequestValidator.validateNotNull(payload.keywords()),
                 payload.startDate(),
@@ -196,6 +197,33 @@ public class ThesisController {
                 thesis,
                 RequestValidator.validateStringMaxLength(payload.abstractText(), StringLimits.UNLIMITED_TEXT.getLimit()),
                 RequestValidator.validateStringMaxLength(payload.infoText(), StringLimits.UNLIMITED_TEXT.getLimit())
+        );
+
+        thesis = thesisService.updateThesisTitles(
+                thesis,
+                RequestValidator.validateStringMaxLength(payload.primaryTitle(), StringLimits.THESIS_TITLE.getLimit()),
+                RequestValidator.validateNotNull(payload.secondaryTitles())
+        );
+
+        return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));
+    }
+
+    @PutMapping("/{thesisId}/credits")
+    public ResponseEntity<ThesisDto> updateThesisCredits(
+            @PathVariable UUID thesisId,
+            @RequestBody UpdateThesisCreditsPayload payload,
+            JwtAuthenticationToken jwt
+    ) {
+        User authenticatedUser = authenticationService.getAuthenticatedUser(jwt);
+        Thesis thesis = thesisService.findById(thesisId);
+
+        if (!thesis.hasAdvisorAccess(authenticatedUser)) {
+            throw new AccessDeniedException("You need to be an advisor of this thesis to update the student credits");
+        }
+
+        thesis = thesisService.updateThesisCredits(
+                thesis,
+                payload.credits()
         );
 
         return ResponseEntity.ok(ThesisDto.fromThesisEntity(thesis, thesis.hasAdvisorAccess(authenticatedUser)));

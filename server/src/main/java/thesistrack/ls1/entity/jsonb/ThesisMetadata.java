@@ -22,12 +22,4 @@ public record ThesisMetadata(
         this.titles = titles == null ? new HashMap<>() : titles;
         this.credits = credits == null ? new HashMap<>() : credits;
     }
-
-    public void setThesisTitle(String language, String title) {
-        titles.put(language, title);
-    }
-
-    public void setStudentCredits(UUID userId, Number amount) {
-        credits.put(userId, amount);
-    }
 }

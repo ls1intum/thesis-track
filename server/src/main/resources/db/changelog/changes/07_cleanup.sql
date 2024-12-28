@@ -148,4 +148,4 @@ UPDATE thesis_comments SET upload_name = filename;
 
 --changeset emilius:07-cleanup-17
 ALTER TABLE theses ADD COLUMN language TEXT NOT NULL DEFAULT 'ENGLISH';
-ALTER TABLE theses ADD COLUMN metadata JSONB NOT NULL DEFAULT '{}';
+ALTER TABLE theses ADD COLUMN metadata JSONB NOT NULL DEFAULT '{"titles":{},"credits":{}}';

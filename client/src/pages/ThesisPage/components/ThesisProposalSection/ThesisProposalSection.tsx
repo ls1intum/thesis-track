@@ -1,5 +1,5 @@
 import { IThesis, ThesisState } from '../../../../requests/responses/thesis'
-import { Accordion, Center, Grid, Group, Paper, Stack, Text } from '@mantine/core'
+import { Accordion, Center, Group, Stack, Text } from '@mantine/core'
 import { doRequest } from '../../../../requests/request'
 import { showSimpleError, showSimpleSuccess } from '../../../../utils/notification'
 import ConfirmationButton from '../../../../components/ConfirmationButton/ConfirmationButton'
@@ -8,10 +8,7 @@ import {
   useThesisUpdateAction,
 } from '../../../../providers/ThesisProvider/hooks'
 import { ApiError, getApiResponseErrorMessage } from '../../../../requests/handler'
-import LabeledItem from '../../../../components/LabeledItem/LabeledItem'
-import { formatThesisFilename, formatUser } from '../../../../utils/format'
-import { GLOBAL_CONFIG } from '../../../../config/global'
-import { useHighlightedBackgroundColor } from '../../../../hooks/theme'
+import { formatThesisFilename } from '../../../../utils/format'
 import ThesisFeedbackRequestButton from '../ThesisFeedbackRequestButton/ThesisFeedbackRequestButton'
 import ThesisFeedbackOverview from '../ThesisFeedbackOverview/ThesisFeedbackOverview'
 import AuthenticatedFilePreview from '../../../../components/AuthenticatedFilePreview/AuthenticatedFilePreview'
@@ -21,8 +18,6 @@ import { isThesisClosed } from '../../../../utils/thesis'
 
 const ThesisProposalSection = () => {
   const { thesis, access, updateThesis } = useLoadedThesisContext()
-
-  const studentBackgroundColor = useHighlightedBackgroundColor(false)
 
   const [accepting, onAccept] = useThesisUpdateAction(async () => {
     const response = await doRequest<IThesis>(`/v2/theses/${thesis.thesisId}/proposal/accept`, {
@@ -68,72 +63,6 @@ const ThesisProposalSection = () => {
         <Accordion.Control>Proposal</Accordion.Control>
         <Accordion.Panel>
           <Stack>
-            {access.advisor && (
-              <Stack gap='sm'>
-                {thesis.students.map((student) => (
-                  <Paper
-                    key={student.userId}
-                    p='md'
-                    radius='sm'
-                    style={{ backgroundColor: studentBackgroundColor }}
-                  >
-                    <Grid>
-                      <Grid.Col span={{ md: 2 }}>
-                        <LabeledItem label='Student' value={formatUser(student)} />
-                      </Grid.Col>
-                      <Grid.Col span={{ md: 2 }}>
-                        <LabeledItem
-                          label='University ID'
-                          value={student.universityId}
-                          copyText={student.universityId}
-                        />
-                      </Grid.Col>
-                      {student.matriculationNumber && (
-                        <Grid.Col span={{ md: 2 }}>
-                          <LabeledItem
-                            label='Matriculation Number'
-                            value={student.matriculationNumber}
-                            copyText={student.matriculationNumber || undefined}
-                          />
-                        </Grid.Col>
-                      )}
-                      {student.email && (
-                        <Grid.Col span={{ md: 2 }}>
-                          <LabeledItem
-                            label='E-Mail'
-                            value={student.email}
-                            copyText={student.email || undefined}
-                          />
-                        </Grid.Col>
-                      )}
-                      {student.studyProgram && student.studyDegree && (
-                        <Grid.Col span={{ md: 2 }}>
-                          <LabeledItem
-                            label='Study Degree'
-                            value={`${
-                              GLOBAL_CONFIG.study_programs[student.studyProgram || ''] ??
-                              student.studyProgram
-                            } ${
-                              GLOBAL_CONFIG.study_degrees[student.studyDegree || ''] ??
-                              student.studyDegree
-                            } `}
-                          />
-                        </Grid.Col>
-                      )}
-                      {student.customData &&
-                        Object.entries(student.customData).map(([key, value]) => (
-                          <Grid.Col key={key} span={{ md: 6 }}>
-                            <LabeledItem
-                              label={GLOBAL_CONFIG.custom_data[key]?.label ?? key}
-                              value={value}
-                            />
-                          </Grid.Col>
-                        ))}
-                    </Grid>
-                  </Paper>
-                ))}
-              </Stack>
-            )}
             {proposal ? (
               <AuthenticatedFilePreview
                 url={`/v2/theses/${thesis.thesisId}/proposal/${proposal.proposalId}`}

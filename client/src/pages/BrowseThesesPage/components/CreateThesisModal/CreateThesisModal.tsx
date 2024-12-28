@@ -9,7 +9,8 @@ import { IThesis } from '../../../../requests/responses/thesis'
 import { isNotEmptyUserList } from '../../../../utils/validation'
 import { showSimpleError } from '../../../../utils/notification'
 import { getApiResponseErrorMessage } from '../../../../requests/handler'
-import { formatThesisType } from '../../../../utils/format'
+import { formatThesisType, getDefaultLanguage } from '../../../../utils/format'
+import LanguageSelect from '../../../../components/LanguageSelect/LanguageSelect'
 
 interface ICreateThesisModalProps {
   opened: boolean
@@ -24,6 +25,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
   const form = useForm<{
     title: string
     type: string | null
+    language: string | null
     students: string[]
     advisors: string[]
     supervisors: string[]
@@ -32,6 +34,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
     initialValues: {
       title: '',
       type: null,
+      language: getDefaultLanguage(),
       students: [],
       advisors: [],
       supervisors: GLOBAL_CONFIG.default_supervisors,
@@ -40,6 +43,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
     validate: {
       title: isNotEmpty('Thesis title must not be empty'),
       type: isNotEmpty('Thesis type must not be empty'),
+      language: isNotEmpty('Thesis language must not be empty'),
       students: isNotEmptyUserList('student'),
       advisors: isNotEmptyUserList('advisor'),
       supervisors: isNotEmptyUserList('supervisor'),
@@ -61,6 +65,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
               data: {
                 thesisTitle: values.title,
                 thesisType: values.type,
+                language: values.language,
                 studentIds: values.students,
                 advisorIds: values.advisors,
                 supervisorIds: values.supervisors,
@@ -94,6 +99,7 @@ const CreateThesisModal = (props: ICreateThesisModalProps) => {
             }))}
             {...form.getInputProps('type')}
           />
+          <LanguageSelect required={true} {...form.getInputProps('language')} />
           <UserMultiSelect
             label='Student(s)'
             required={true}
