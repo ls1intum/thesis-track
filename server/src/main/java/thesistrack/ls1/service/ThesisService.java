@@ -19,6 +19,7 @@ import thesistrack.ls1.entity.key.ThesisStateChangeId;
 import thesistrack.ls1.exception.request.ResourceInvalidParametersException;
 import thesistrack.ls1.exception.request.ResourceNotFoundException;
 import thesistrack.ls1.repository.*;
+import thesistrack.ls1.utility.DataFormatter;
 import thesistrack.ls1.utility.PDFBuilder;
 import thesistrack.ls1.utility.RequestValidator;
 
@@ -453,13 +454,39 @@ public class ThesisService {
 
     public Resource getAssessmentFile(Thesis thesis) {
         ThesisAssessment assessment = thesis.getAssessments().getFirst();
+        ThesisPresentation presentation = thesis.getPresentations().getFirst();
+
+        String students = String.join(", ", thesis.getStudents().stream().map(student -> student.getFirstName() + " " + student.getLastName()).toList());
+        String advisors = String.join(", ", thesis.getAdvisors().stream().map(advisor -> advisor.getFirstName() + " " + advisor.getLastName()).toList());
+        String supervisors = String.join(", ", thesis.getSupervisors().stream().map(supervisor -> supervisor.getFirstName() + " " + supervisor.getLastName()).toList());
 
         PDFBuilder builder = new PDFBuilder("Assessment of \"" + thesis.getTitle() + "\"");
 
-        builder.addSection("Summary", assessment.getSummary());
-        builder.addSection("Strengths", assessment.getPositives());
-        builder.addSection("Weaknesses", assessment.getNegatives());
-        builder.addSection("Grade Suggestion", assessment.getGradeSuggestion());
+        builder
+                .addData("Thesis Type", DataFormatter.formatConstantName(thesis.getType()))
+                .addData("Student", students)
+                .addData("Advisor", advisors)
+                .addData("Supervisor", supervisors)
+                .addData("", "");
+
+        for (var stateChange : thesis.getStates()) {
+            if (stateChange.getId().getState() == ThesisState.ASSESSED) {
+                builder.addData("Assessment Date", DataFormatter.formatDate(stateChange.getChangedAt()));
+            }
+
+            if (stateChange.getId().getState() == ThesisState.SUBMITTED) {
+                builder.addData("Submission Date", DataFormatter.formatDate(stateChange.getChangedAt()));
+            }
+        }
+
+        if (presentation != null) {
+            builder.addData("Presentation Date", DataFormatter.formatDate(presentation.getScheduledAt()));
+        }
+
+        builder.addSection("Summary", assessment.getSummary())
+                .addSection("Strengths", assessment.getPositives())
+                .addSection("Weaknesses", assessment.getNegatives())
+                .addSection("Grade Suggestion", assessment.getGradeSuggestion());
 
         return builder.build();
     }
