@@ -108,8 +108,8 @@ dependencies {
 	// Semantic version comparison for SBOM vulnerability range matching
 	implementation "com.vdurmont:semver4j:3.1.0"
 
-	compileOnly "org.projectlombok:lombok:1.18.46"
-	annotationProcessor "org.projectlombok:lombok:1.18.46"
+	compileOnly "org.projectlombok:lombok:1.18.48"
+	annotationProcessor "org.projectlombok:lombok:1.18.48"
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude group: "org.junit.vintage", module: "junit-vintage-engine"
