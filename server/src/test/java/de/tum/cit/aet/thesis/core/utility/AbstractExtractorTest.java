@@ -335,12 +335,15 @@ class AbstractExtractorTest {
 	}
 
 	@Test
-	void normalizeHyphens_softHyphenTrailingKeptOtherwiseDropped() {
+	void normalizeHyphens_softHyphenBecomesHardHyphen() {
 		String soft = String.valueOf((char) 0x00AD);
-		// A trailing soft hyphen marks a real break point and becomes a hyphen for the rejoin.
+		// Trailing soft hyphen becomes a hard hyphen so the line-join rejoin can remove it.
 		assertThat(AbstractExtractor.normalizeHyphens("auto" + soft)).isEqualTo("auto-");
-		// A soft hyphen that did not break is invisible and is dropped.
-		assertThat(AbstractExtractor.normalizeHyphens("co" + soft + "operate")).isEqualTo("cooperate");
+		// Mid-word soft hyphens preserve compounds (LaTeX discretionary hyphens in real theses).
+		assertThat(AbstractExtractor.normalizeHyphens("role" + soft + "sensitive"))
+				.isEqualTo("role-sensitive");
+		assertThat(AbstractExtractor.normalizeHyphens("guideline" + soft + "based"))
+				.isEqualTo("guideline-based");
 	}
 
 	@Test
@@ -357,6 +360,28 @@ class AbstractExtractorTest {
 		AbstractExtractor.Result result = AbstractExtractor.extract(pdf);
 
 		assertThat(result.html()).contains("automated").doesNotContain(soft);
+	}
+
+	@Test
+	void extract_midWordSoftHyphen_keepsCompoundHyphen() {
+		// Real theses often encode compounds with a soft hyphen mid-line; dropping it would glue
+		// the parts together ("rolesensitive"). It must become a visible hard hyphen.
+		String soft = String.valueOf((char) 0x00AD);
+		byte[] pdf = buildPdf(List.of(
+				new Line("Abstract", 14f, 780f),
+				new Line("We implement a role" + soft + "sensitive workflow with guideline"
+						+ soft + "based review for this evaluation.", 11f, 750f),
+				new Line("1 Introduction", 14f, 720f)
+		));
+
+		AbstractExtractor.Result result = AbstractExtractor.extract(pdf);
+
+		assertThat(result.html())
+				.contains("role-sensitive")
+				.contains("guideline-based")
+				.doesNotContain("rolesensitive")
+				.doesNotContain("guidelinebased")
+				.doesNotContain(soft);
 	}
 
 	/** Builds a PDF with one page per inner list of lines, for front-matter / page-window tests. */

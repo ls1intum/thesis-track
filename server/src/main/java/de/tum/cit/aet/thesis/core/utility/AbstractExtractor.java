@@ -215,8 +215,9 @@ public final class AbstractExtractor {
 	 * Normalizes the various hyphen encodings real PDFs use into a plain ASCII hyphen so the
 	 * line-join de-hyphenation works uniformly. Some thesis fonts map their hyphen glyph to the
 	 * Unicode replacement character (U+FFFD); Unicode hyphen / non-breaking hyphen are also
-	 * folded in. A soft hyphen (U+00AD) is only a real break when it ends a line — anywhere else
-	 * it is an invisible discretionary hyphen and is dropped.
+	 * folded in. Soft hyphens (U+00AD) become hard hyphens: trailing ones feed the line-join
+	 * rejoin logic, and mid-word ones preserve compounds such as {@code role-sensitive} that
+	 * LaTeX often encodes with a discretionary hyphen.
 	 *
 	 * <p>Package-private so the normalization can be unit-tested directly: the U+FFFD case cannot
 	 * be reproduced through a synthetic PDF because standard fonts drop the glyph at write time.
@@ -225,15 +226,11 @@ public final class AbstractExtractor {
 	 * @return the line text with hyphen encodings normalized
 	 */
 	static String normalizeHyphens(String text) {
-		String result = text
+		return text
 				.replace((char) 0xFFFD, '-')
 				.replace((char) 0x2010, '-')
-				.replace((char) 0x2011, '-');
-		String softHyphen = String.valueOf((char) 0x00AD);
-		if (result.endsWith(softHyphen)) {
-			result = result.substring(0, result.length() - 1) + "-";
-		}
-		return result.replace(softHyphen, "");
+				.replace((char) 0x2011, '-')
+				.replace((char) 0x00AD, '-');
 	}
 
 	private static int findHeadingIndex(List<Line> lines) {
