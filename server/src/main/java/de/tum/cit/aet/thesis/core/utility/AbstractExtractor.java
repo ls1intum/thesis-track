@@ -35,10 +35,19 @@ public final class AbstractExtractor {
 	private static final int MAX_PAGES = 12;
 	/** Baselines within this many points are considered the same text line. */
 	private static final float LINE_Y_TOLERANCE = 3f;
-	/** A new paragraph starts when the vertical gap exceeds this multiple of the median line gap. */
-	private static final float PARAGRAPH_GAP_FACTOR = 1.5f;
+	/**
+	 * A new paragraph starts when the vertical gap exceeds this multiple of the typical
+	 * (intra-paragraph) line gap. Kept modest so Word/LibreOffice abstracts that only add a
+	 * little extra space after each paragraph are still split.
+	 */
+	private static final float PARAGRAPH_GAP_FACTOR = 1.25f;
 	/** A line indented more than this many points past the left margin starts a new paragraph. */
 	private static final float PARAGRAPH_INDENT_MIN = 6f;
+	/**
+	 * A line whose visible width is below this fraction of the body's widest line is treated as
+	 * a short (likely final) line of a paragraph — used with sentence-end detection.
+	 */
+	private static final float SHORT_LINE_WIDTH_FACTOR = 0.85f;
 	/** Minimum plausible abstract length (characters) for a confident result. */
 	private static final int MIN_CONFIDENT_LENGTH = 50;
 	/** Maximum plausible abstract length (characters) for a confident result. */
@@ -60,6 +69,8 @@ public final class AbstractExtractor {
 	private static final Pattern CHAPTER_HEADING = Pattern.compile("^chapter\\s+\\d.*");
 	private static final Pattern TRAILING_PUNCTUATION = Pattern.compile("[\\s:.]+$");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+	/** End of a sentence, optionally followed by a closing quote. */
+	private static final Pattern SENTENCE_END = Pattern.compile("[.!?]\u201d?\"?'?\\s*$");
 
 	private AbstractExtractor() {
 	}
@@ -86,7 +97,7 @@ public final class AbstractExtractor {
 	private record Chunk(String text, float startX, float endX, float y, float fontSize, int page) {
 	}
 
-	private record Line(String text, int page, float y, float startX, float fontSize) {
+	private record Line(String text, int page, float y, float startX, float endX, float fontSize) {
 	}
 
 	/**
@@ -197,7 +208,7 @@ public final class AbstractExtractor {
 
 		String collapsed = WHITESPACE.matcher(text.toString()).replaceAll(" ").trim();
 		return new Line(normalizeHyphens(collapsed), parts.getFirst().page(), parts.getFirst().y(),
-				parts.getFirst().startX(), maxFontSize);
+				parts.getFirst().startX(), parts.getLast().endX(), maxFontSize);
 	}
 
 	/**
@@ -299,19 +310,22 @@ public final class AbstractExtractor {
 			return paragraphs;
 		}
 
-		float medianGap = medianGap(body);
+		float typicalGap = typicalGap(body);
 		float leftMargin = leftMargin(body);
+		float maxLineWidth = maxLineWidth(body);
 		List<Line> current = new ArrayList<>();
 		current.add(body.getFirst());
 
 		for (int i = 1; i < body.size(); i++) {
 			Line prev = body.get(i - 1);
 			Line line = body.get(i);
-			// A paragraph break shows up either as extra vertical space or — in LaTeX-style
-			// abstracts with no inter-paragraph space — as a first-line indent.
+			// A paragraph break shows up as: extra vertical space; a first-line indent
+			// (LaTeX-style with no inter-paragraph space); or a short last line that ended a
+			// sentence while the next line starts a new one (flush-left, same leading).
 			boolean newParagraph = prev.page() != line.page()
-					|| (prev.y() - line.y()) > PARAGRAPH_GAP_FACTOR * medianGap
-					|| line.startX() - leftMargin > PARAGRAPH_INDENT_MIN;
+					|| (prev.y() - line.y()) > PARAGRAPH_GAP_FACTOR * typicalGap
+					|| line.startX() - leftMargin > PARAGRAPH_INDENT_MIN
+					|| isParagraphBreakByShortLine(prev, line, leftMargin, maxLineWidth);
 			if (newParagraph) {
 				paragraphs.add(joinLines(current));
 				current = new ArrayList<>();
@@ -333,7 +347,20 @@ public final class AbstractExtractor {
 		return min;
 	}
 
-	private static float medianGap(List<Line> body) {
+	private static float maxLineWidth(List<Line> body) {
+		float max = 0f;
+		for (Line line : body) {
+			max = Math.max(max, line.endX() - line.startX());
+		}
+		return max;
+	}
+
+	/**
+	 * Typical intra-paragraph line gap: a low percentile of observed gaps so large paragraph
+	 * gaps (common in abstracts with many short paragraphs) do not inflate the baseline the way
+	 * a plain median would.
+	 */
+	private static float typicalGap(List<Line> body) {
 		List<Float> gaps = new ArrayList<>();
 		for (int i = 1; i < body.size(); i++) {
 			float gap = body.get(i - 1).y() - body.get(i).y();
@@ -341,8 +368,37 @@ public final class AbstractExtractor {
 				gaps.add(gap);
 			}
 		}
+		if (gaps.isEmpty()) {
+			return 0f;
+		}
 		gaps.sort(Float::compare);
-		return median(gaps);
+		int index = Math.min(gaps.size() - 1, Math.max(0, (int) (gaps.size() * 0.25f)));
+		return gaps.get(index);
+	}
+
+	/**
+	 * Detects a paragraph break when layout uses neither extra vertical space nor a first-line
+	 * indent: the previous line ends a sentence and is visually short (not wrapping to the
+	 * column edge), while the next line starts with a capital letter.
+	 */
+	private static boolean isParagraphBreakByShortLine(
+			Line prev, Line next, float leftMargin, float maxLineWidth) {
+		if (maxLineWidth <= 0f) {
+			return false;
+		}
+		String prevText = prev.text().trim();
+		String nextText = next.text().trim();
+		if (prevText.isEmpty() || nextText.isEmpty()) {
+			return false;
+		}
+		if (!SENTENCE_END.matcher(prevText).find()) {
+			return false;
+		}
+		if (!Character.isUpperCase(nextText.codePointAt(0))) {
+			return false;
+		}
+		float prevWidth = prev.endX() - leftMargin;
+		return prevWidth < SHORT_LINE_WIDTH_FACTOR * maxLineWidth;
 	}
 
 	private static String joinLines(List<Line> lines) {

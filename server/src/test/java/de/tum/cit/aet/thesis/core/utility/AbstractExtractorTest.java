@@ -94,6 +94,64 @@ class AbstractExtractorTest {
 	}
 
 	@Test
+	void extract_modestParagraphGapWithoutIndent_areSplit() {
+		// Word-style abstracts often add only a little extra space between flush-left paragraphs
+		// (well under 1.5x the line gap). That modest gap must still start a new <p>.
+		byte[] pdf = buildPdf(List.of(
+				new Line("Abstract", 14f, 780f),
+				new Line("First paragraph runs across the full column width with plenty of words here.", 11f, 750f),
+				new Line("It continues onto a second line that also fills most of the column width.", 11f, 735f),
+				new Line("Second paragraph starts after only a modest vertical gap without indent.", 11f, 715f),
+				new Line("It also continues so the body has a clear typical intra-paragraph gap.", 11f, 700f),
+				new Line("1 Introduction", 14f, 670f)
+		));
+
+		AbstractExtractor.Result result = AbstractExtractor.extract(pdf);
+
+		assertThat(result.html())
+				.contains("<p>First paragraph runs across the full column width with plenty of words here. "
+						+ "It continues onto a second line that also fills most of the column width.</p>")
+				.contains("<p>Second paragraph starts after only a modest vertical gap without indent. "
+						+ "It also continues so the body has a clear typical intra-paragraph gap.</p>");
+	}
+
+	@Test
+	void extract_shortLastLineSentenceBreak_splitsFlushParagraphs() {
+		// Flush-left, identical leading: the only cue is a short last line that ends a sentence.
+		byte[] pdf = buildPdf(List.of(
+				new Line("Abstract", 14f, 780f),
+				new Line("This opening line is deliberately long so it defines the full column width clearly.", 11f, 750f),
+				new Line("Short end.", 11f, 735f),
+				new Line("Next paragraph begins here with a capital and should stand alone in HTML.", 11f, 720f),
+				new Line("1 Introduction", 14f, 690f)
+		));
+
+		AbstractExtractor.Result result = AbstractExtractor.extract(pdf);
+
+		assertThat(result.html())
+				.contains("<p>This opening line is deliberately long so it defines the full column width clearly. "
+						+ "Short end.</p>")
+				.contains("<p>Next paragraph begins here with a capital and should stand alone in HTML.</p>");
+	}
+
+	@Test
+	void extract_fullWidthSentenceWrap_doesNotSplitMidParagraph() {
+		// A mid-paragraph wrap after a period on a full-width line must stay in one <p>.
+		byte[] pdf = buildPdf(List.of(
+				new Line("Abstract", 14f, 780f),
+				new Line("We evaluate several baselines and report the main results. Additional", 11f, 750f),
+				new Line("detail about the setup follows in this same paragraph without a break.", 11f, 735f),
+				new Line("1 Introduction", 14f, 700f)
+		));
+
+		AbstractExtractor.Result result = AbstractExtractor.extract(pdf);
+
+		assertThat(result.html()).isEqualTo(
+				"<p>We evaluate several baselines and report the main results. Additional "
+						+ "detail about the setup follows in this same paragraph without a break.</p>");
+	}
+
+	@Test
 	void extract_clearAbstractWithIntroductionBoundary_returnsConfidentDehyphenatedParagraphs() {
 		byte[] pdf = buildPdf(List.of(
 				new Line("Abstract", 14f, 780f),
