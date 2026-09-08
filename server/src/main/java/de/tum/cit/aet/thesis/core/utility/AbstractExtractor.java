@@ -35,10 +35,25 @@ public final class AbstractExtractor {
 	private static final int MAX_PAGES = 12;
 	/** Baselines within this many points are considered the same text line. */
 	private static final float LINE_Y_TOLERANCE = 3f;
-	/** A new paragraph starts when the vertical gap exceeds this multiple of the median line gap. */
-	private static final float PARAGRAPH_GAP_FACTOR = 1.5f;
+	/**
+	 * A new paragraph starts when the vertical gap exceeds this multiple of the typical
+	 * (intra-paragraph) line gap. Kept modest so Word/LibreOffice abstracts that only add a
+	 * little extra space after each paragraph are still split.
+	 */
+	private static final float PARAGRAPH_GAP_FACTOR = 1.25f;
 	/** A line indented more than this many points past the left margin starts a new paragraph. */
 	private static final float PARAGRAPH_INDENT_MIN = 6f;
+	/**
+	 * Modest extra leading (above the typical line gap) that, together with a short sentence-ending
+	 * line, marks a paragraph break. Real thesis templates often use only ~10–15% extra space
+	 * between paragraphs — below {@link #PARAGRAPH_GAP_FACTOR} alone.
+	 */
+	private static final float MODEST_PARAGRAPH_GAP_FACTOR = 1.08f;
+	/**
+	 * A line whose visible width is below this fraction of the body's widest line is treated as
+	 * a short (likely final) line of a paragraph — used with sentence-end detection.
+	 */
+	private static final float SHORT_LINE_WIDTH_FACTOR = 0.85f;
 	/** Minimum plausible abstract length (characters) for a confident result. */
 	private static final int MIN_CONFIDENT_LENGTH = 50;
 	/** Maximum plausible abstract length (characters) for a confident result. */
@@ -60,6 +75,8 @@ public final class AbstractExtractor {
 	private static final Pattern CHAPTER_HEADING = Pattern.compile("^chapter\\s+\\d.*");
 	private static final Pattern TRAILING_PUNCTUATION = Pattern.compile("[\\s:.]+$");
 	private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+	/** End of a sentence, optionally followed by a closing quote. */
+	private static final Pattern SENTENCE_END = Pattern.compile("[.!?]\u201d?\"?'?\\s*$");
 
 	private AbstractExtractor() {
 	}
@@ -86,7 +103,7 @@ public final class AbstractExtractor {
 	private record Chunk(String text, float startX, float endX, float y, float fontSize, int page) {
 	}
 
-	private record Line(String text, int page, float y, float startX, float fontSize) {
+	private record Line(String text, int page, float y, float startX, float endX, float fontSize) {
 	}
 
 	/**
@@ -197,15 +214,16 @@ public final class AbstractExtractor {
 
 		String collapsed = WHITESPACE.matcher(text.toString()).replaceAll(" ").trim();
 		return new Line(normalizeHyphens(collapsed), parts.getFirst().page(), parts.getFirst().y(),
-				parts.getFirst().startX(), maxFontSize);
+				parts.getFirst().startX(), parts.getLast().endX(), maxFontSize);
 	}
 
 	/**
 	 * Normalizes the various hyphen encodings real PDFs use into a plain ASCII hyphen so the
 	 * line-join de-hyphenation works uniformly. Some thesis fonts map their hyphen glyph to the
 	 * Unicode replacement character (U+FFFD); Unicode hyphen / non-breaking hyphen are also
-	 * folded in. A soft hyphen (U+00AD) is only a real break when it ends a line — anywhere else
-	 * it is an invisible discretionary hyphen and is dropped.
+	 * folded in. Soft hyphens (U+00AD) become hard hyphens: trailing ones feed the line-join
+	 * rejoin logic, and mid-word ones preserve compounds such as {@code role-sensitive} that
+	 * LaTeX often encodes with a discretionary hyphen.
 	 *
 	 * <p>Package-private so the normalization can be unit-tested directly: the U+FFFD case cannot
 	 * be reproduced through a synthetic PDF because standard fonts drop the glyph at write time.
@@ -214,15 +232,11 @@ public final class AbstractExtractor {
 	 * @return the line text with hyphen encodings normalized
 	 */
 	static String normalizeHyphens(String text) {
-		String result = text
+		return text
 				.replace((char) 0xFFFD, '-')
 				.replace((char) 0x2010, '-')
-				.replace((char) 0x2011, '-');
-		String softHyphen = String.valueOf((char) 0x00AD);
-		if (result.endsWith(softHyphen)) {
-			result = result.substring(0, result.length() - 1) + "-";
-		}
-		return result.replace(softHyphen, "");
+				.replace((char) 0x2011, '-')
+				.replace((char) 0x00AD, '-');
 	}
 
 	private static int findHeadingIndex(List<Line> lines) {
@@ -299,19 +313,26 @@ public final class AbstractExtractor {
 			return paragraphs;
 		}
 
-		float medianGap = medianGap(body);
+		float typicalGap = typicalGap(body);
 		float leftMargin = leftMargin(body);
+		float maxLineWidth = maxLineWidth(body);
 		List<Line> current = new ArrayList<>();
 		current.add(body.getFirst());
 
 		for (int i = 1; i < body.size(); i++) {
 			Line prev = body.get(i - 1);
 			Line line = body.get(i);
-			// A paragraph break shows up either as extra vertical space or — in LaTeX-style
-			// abstracts with no inter-paragraph space — as a first-line indent.
+			float gap = prev.y() - line.y();
+			boolean clearGap = prev.page() == line.page() && gap > PARAGRAPH_GAP_FACTOR * typicalGap;
+			boolean modestGap = prev.page() == line.page() && gap > MODEST_PARAGRAPH_GAP_FACTOR * typicalGap;
+			// Break on a clear vertical gap, a first-line indent, or — for thesis templates that
+			// only add slight extra leading — a short sentence-ending line together with that
+			// modest gap. A short sentence wrap at normal leading alone is not enough (ragged
+			// right text can look identical without being a new paragraph).
 			boolean newParagraph = prev.page() != line.page()
-					|| (prev.y() - line.y()) > PARAGRAPH_GAP_FACTOR * medianGap
-					|| line.startX() - leftMargin > PARAGRAPH_INDENT_MIN;
+					|| clearGap
+					|| line.startX() - leftMargin > PARAGRAPH_INDENT_MIN
+					|| (modestGap && isParagraphBreakByShortLine(prev, line, leftMargin, maxLineWidth));
 			if (newParagraph) {
 				paragraphs.add(joinLines(current));
 				current = new ArrayList<>();
@@ -333,7 +354,20 @@ public final class AbstractExtractor {
 		return min;
 	}
 
-	private static float medianGap(List<Line> body) {
+	private static float maxLineWidth(List<Line> body) {
+		float max = 0f;
+		for (Line line : body) {
+			max = Math.max(max, line.endX() - line.startX());
+		}
+		return max;
+	}
+
+	/**
+	 * Typical intra-paragraph line gap: a low percentile of observed gaps so large paragraph
+	 * gaps (common in abstracts with many short paragraphs) do not inflate the baseline the way
+	 * a plain median would.
+	 */
+	private static float typicalGap(List<Line> body) {
 		List<Float> gaps = new ArrayList<>();
 		for (int i = 1; i < body.size(); i++) {
 			float gap = body.get(i - 1).y() - body.get(i).y();
@@ -341,8 +375,38 @@ public final class AbstractExtractor {
 				gaps.add(gap);
 			}
 		}
+		if (gaps.isEmpty()) {
+			return 0f;
+		}
 		gaps.sort(Float::compare);
-		return median(gaps);
+		int index = Math.min(gaps.size() - 1, Math.max(0, (int) (gaps.size() * 0.25f)));
+		return gaps.get(index);
+	}
+
+	/**
+	 * Candidate paragraph end: previous line ends a sentence and is visually short (not wrapping
+	 * to the column edge), while the next line starts with a capital letter. Must be combined
+	 * with a modest extra vertical gap by the caller — by itself this also matches ordinary
+	 * ragged-right sentence wraps.
+	 */
+	private static boolean isParagraphBreakByShortLine(
+			Line prev, Line next, float leftMargin, float maxLineWidth) {
+		if (maxLineWidth <= 0f) {
+			return false;
+		}
+		String prevText = prev.text().trim();
+		String nextText = next.text().trim();
+		if (prevText.isEmpty() || nextText.isEmpty()) {
+			return false;
+		}
+		if (!SENTENCE_END.matcher(prevText).find()) {
+			return false;
+		}
+		if (!Character.isUpperCase(nextText.codePointAt(0))) {
+			return false;
+		}
+		float prevWidth = prev.endX() - leftMargin;
+		return prevWidth < SHORT_LINE_WIDTH_FACTOR * maxLineWidth;
 	}
 
 	private static String joinLines(List<Line> lines) {
