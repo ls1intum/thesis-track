@@ -116,14 +116,36 @@ class AbstractExtractorTest {
 	}
 
 	@Test
-	void extract_shortLastLineSentenceBreak_splitsFlushParagraphs() {
-		// Flush-left, identical leading: the only cue is a short last line that ends a sentence.
+	void extract_shortSentenceEndingWrap_doesNotSplitMidParagraph() {
+		// A ragged-right wrap can leave a short line that ends a sentence before a capitalized
+		// word that did not fit. At normal leading (no modest extra gap) that must stay one <p>.
 		byte[] pdf = buildPdf(List.of(
 				new Line("Abstract", 14f, 780f),
 				new Line("This opening line is deliberately long so it defines the full column width clearly.", 11f, 750f),
 				new Line("Short end.", 11f, 735f),
-				new Line("Next paragraph begins here with a capital and should stand alone in HTML.", 11f, 720f),
+				new Line("Next capitalized words continue the same paragraph at normal leading here.", 11f, 720f),
 				new Line("1 Introduction", 14f, 690f)
+		));
+
+		AbstractExtractor.Result result = AbstractExtractor.extract(pdf);
+
+		assertThat(result.html()).isEqualTo(
+				"<p>This opening line is deliberately long so it defines the full column width clearly. "
+						+ "Short end. Next capitalized words continue the same paragraph at normal "
+						+ "leading here.</p>");
+	}
+
+	@Test
+	void extract_shortLastLineWithModestGap_splitsParagraph() {
+		// Thesis templates often add only slight extra leading between flush-left paragraphs.
+		// A short sentence-ending line plus that modest gap must start a new <p>.
+		byte[] pdf = buildPdf(List.of(
+				new Line("Abstract", 14f, 780f),
+				new Line("This opening line is deliberately long so it defines the full column width clearly.", 11f, 750f),
+				new Line("Short end.", 11f, 735f),
+				// 17.5pt after a 15pt intra-paragraph gap (~1.17x) — modest, below the clear-gap factor.
+				new Line("Next paragraph begins here with a capital and should stand alone in HTML.", 11f, 717.5f),
+				new Line("1 Introduction", 14f, 685f)
 		));
 
 		AbstractExtractor.Result result = AbstractExtractor.extract(pdf);

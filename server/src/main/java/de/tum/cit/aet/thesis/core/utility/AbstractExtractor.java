@@ -44,6 +44,12 @@ public final class AbstractExtractor {
 	/** A line indented more than this many points past the left margin starts a new paragraph. */
 	private static final float PARAGRAPH_INDENT_MIN = 6f;
 	/**
+	 * Modest extra leading (above the typical line gap) that, together with a short sentence-ending
+	 * line, marks a paragraph break. Real thesis templates often use only ~10–15% extra space
+	 * between paragraphs — below {@link #PARAGRAPH_GAP_FACTOR} alone.
+	 */
+	private static final float MODEST_PARAGRAPH_GAP_FACTOR = 1.08f;
+	/**
 	 * A line whose visible width is below this fraction of the body's widest line is treated as
 	 * a short (likely final) line of a paragraph — used with sentence-end detection.
 	 */
@@ -316,13 +322,17 @@ public final class AbstractExtractor {
 		for (int i = 1; i < body.size(); i++) {
 			Line prev = body.get(i - 1);
 			Line line = body.get(i);
-			// A paragraph break shows up as: extra vertical space; a first-line indent
-			// (LaTeX-style with no inter-paragraph space); or a short last line that ended a
-			// sentence while the next line starts a new one (flush-left, same leading).
+			float gap = prev.y() - line.y();
+			boolean clearGap = prev.page() == line.page() && gap > PARAGRAPH_GAP_FACTOR * typicalGap;
+			boolean modestGap = prev.page() == line.page() && gap > MODEST_PARAGRAPH_GAP_FACTOR * typicalGap;
+			// Break on a clear vertical gap, a first-line indent, or — for thesis templates that
+			// only add slight extra leading — a short sentence-ending line together with that
+			// modest gap. A short sentence wrap at normal leading alone is not enough (ragged
+			// right text can look identical without being a new paragraph).
 			boolean newParagraph = prev.page() != line.page()
-					|| (prev.y() - line.y()) > PARAGRAPH_GAP_FACTOR * typicalGap
+					|| clearGap
 					|| line.startX() - leftMargin > PARAGRAPH_INDENT_MIN
-					|| isParagraphBreakByShortLine(prev, line, leftMargin, maxLineWidth);
+					|| (modestGap && isParagraphBreakByShortLine(prev, line, leftMargin, maxLineWidth));
 			if (newParagraph) {
 				paragraphs.add(joinLines(current));
 				current = new ArrayList<>();
@@ -374,9 +384,10 @@ public final class AbstractExtractor {
 	}
 
 	/**
-	 * Detects a paragraph break when layout uses neither extra vertical space nor a first-line
-	 * indent: the previous line ends a sentence and is visually short (not wrapping to the
-	 * column edge), while the next line starts with a capital letter.
+	 * Candidate paragraph end: previous line ends a sentence and is visually short (not wrapping
+	 * to the column edge), while the next line starts with a capital letter. Must be combined
+	 * with a modest extra vertical gap by the caller — by itself this also matches ordinary
+	 * ragged-right sentence wraps.
 	 */
 	private static boolean isParagraphBreakByShortLine(
 			Line prev, Line next, float leftMargin, float maxLineWidth) {
